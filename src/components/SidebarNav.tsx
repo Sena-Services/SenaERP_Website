@@ -100,8 +100,6 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    activeSectionRef.current = id;
-    setActiveSection(id);
     target.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
@@ -109,18 +107,18 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   };
 
   return (
-    <aside className="fixed left-4 top-1/2 z-50 flex w-[10rem] sm:w-[11rem] lg:w-[12rem] -translate-y-1/2 transform">
+    <aside className="fixed left-4 top-1/2 z-50 flex w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
       <div className="w-full">
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-3xl bg-waygent-light-blue border border-waygent-light-blue px-3 sm:px-4 py-5 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-3xl bg-waygent-light-blue border border-waygent-light-blue px-3 py-4 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
             style={{
               boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
             }}
           >
 
-            <ul className="flex flex-col gap-1.5 text-waygent-text-secondary">
+            <ul className="flex flex-col gap-1 text-waygent-text-secondary">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const step = (index + 1).toString().padStart(2, "0");
@@ -135,22 +133,22 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className={`group relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-all duration-300 ease-out focus-visible:outline-none ${
+                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-all duration-200 ease-out focus-visible:outline-none ${
                         isActive
-                          ? "bg-waygent-orange text-white shadow-sm"
-                          : "bg-transparent hover:bg-white/50 hover:shadow-sm"
+                          ? "bg-waygent-orange"
+                          : "hover:bg-white/40"
                       }`}
                     >
-                      <span className={`text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.3em] ${
-                        isActive ? "text-white/90" : "text-waygent-text-muted"
+                      <span className={`text-[9px] font-medium tracking-wider ${
+                        isActive ? "text-white" : "text-gray-500"
                       }`}>
                         {step}
                       </span>
                       <span
-                        className={`flex-1 text-[12px] sm:text-[13px] font-semibold ${
+                        className={`flex-1 text-[11px] sm:text-[12px] font-medium leading-tight ${
                           isActive
                             ? "text-white"
-                            : "text-waygent-text-primary group-hover:text-waygent-orange"
+                            : "text-gray-800 group-hover:text-waygent-orange"
                         }`}
                       >
                         {section.label}
