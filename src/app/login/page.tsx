@@ -79,7 +79,7 @@ export default function LoginPage() {
                 src="/logo.png"
                 width={64}
                 height={64}
-                alt="Waygent logo"
+                alt="Sena logo"
                 className="mx-auto mb-4"
               />
             </Link>

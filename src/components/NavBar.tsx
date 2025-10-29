@@ -64,11 +64,11 @@ export default function NavBar() {
           href="#intro"
           className={`flex items-center ${NAVBAR_CONTROLS.logoGap} px-2 sm:px-3 py-1.5 rounded-lg transition-all duration-300 ease-out hover:bg-white/20 hover:shadow-sm`}
         >
-          <Image src="/logo.png" width={28} height={28} alt="Waygent logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
+          <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
           <span
             className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
           >
-            Waygent
+            Sena
           </span>
         </Link>
 

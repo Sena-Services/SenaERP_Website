@@ -3,7 +3,6 @@ import Image from "next/image";
 import NavBar from "@/components/NavBar";
 import IntroSection from "@/components/IntroSection";
 import SidebarNav from "@/components/SidebarNav";
-import { GridPattern } from "@/components/magicui/grid-pattern";
 
 const sections = [
   { id: "intro", label: "Intro" },
@@ -149,17 +148,10 @@ const blogPosts = [
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-waygent-cream text-waygent-text-primary">
-      <GridPattern
-        width={40}
-        height={40}
-        x={-5}
-        y={-5}
-        className="pointer-events-none absolute inset-0 h-full w-full fill-gray-900/10 stroke-gray-400/10"
-      />
-      <div className="relative z-10 flex min-h-screen w-full flex-col xl:flex-row">
-        <SidebarNav sections={sections} />
+      <SidebarNav sections={sections} />
 
-        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
+      <div className="relative z-10 flex min-h-screen w-full flex-col">
+        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream pl-0 sm:pl-[11rem] lg:pl-[13rem]">
           <NavBar />
           <div className="flex-1 flex flex-col">
             <section id="intro" className="scroll-mt-32">
@@ -227,7 +219,7 @@ export default function Home() {
                       Connect your CRM, calendar, and communication tools to build a live memory for your business.
                     </h1>
                     <p className="text-lg text-waygent-text-secondary">
-                      Waygent keeps your teams aligned with unified knowledge, synchronized tasks, and contextual insights that automatically refresh every minute.
+                      Sena keeps your teams aligned with unified knowledge, synchronized tasks, and contextual insights that automatically refresh every minute.
                     </p>
                     <div className="flex flex-wrap gap-3">
                       <Link
@@ -288,7 +280,7 @@ export default function Home() {
                       Give every workflow a system that understands context.
                     </h2>
                     <p className="mt-4 text-lg text-waygent-text-secondary">
-                      Waygent listens to your tools, learns your processes, and suggests the next best action. No more copying data between apps—your command center lives here.
+                      Sena listens to your tools, learns your processes, and suggests the next best action. No more copying data between apps—your command center lives here.
                     </p>
                   </div>
                   <div className="grid gap-4 lg:w-1/2">
@@ -351,7 +343,7 @@ export default function Home() {
                   Connect the tools you already use.
                 </h2>
                 <p className="mt-4 max-w-3xl text-lg text-waygent-text-secondary">
-                  Plug Waygent into your existing stack—Slack, Salesforce, Notion, Google Workspace, HubSpot, and 30+ others. Data flows bi-directionally so updates never go stale.
+                  Plug Sena into your existing stack—Slack, Salesforce, Notion, Google Workspace, HubSpot, and 30+ others. Data flows bi-directionally so updates never go stale.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3 text-sm text-waygent-text-secondary">
                   {integrationTools.map((tool) => (
@@ -371,7 +363,7 @@ export default function Home() {
                 <div className="rounded-3xl border border-waygent-light-blue bg-waygent-light-blue p-8 text-waygent-text-primary shadow-xl">
                   <h3 className="text-2xl font-semibold">Results</h3>
                   <p className="mt-4 text-sm text-waygent-text-secondary">
-                    Teams running on Waygent ship faster and react sooner. See how operators measure their impact.
+                    Teams running on Sena ship faster and react sooner. See how operators measure their impact.
                   </p>
                   <Link
                     href="#"
@@ -435,7 +427,7 @@ export default function Home() {
                   <span className="text-sm uppercase tracking-[0.3em] text-waygent-text-secondary">
                     Blog
                   </span>
-                  <h2 className="text-3xl font-semibold">Latest thinking from the Waygent team.</h2>
+                  <h2 className="text-3xl font-semibold">Latest thinking from the Sena team.</h2>
                 </div>
                 <div className="grid gap-6 lg:grid-cols-3">
                   {blogPosts.map((post) => (
