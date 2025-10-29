@@ -20,7 +20,7 @@ const config: Config = {
         // Primary Brand Colors
         "waygent-blue": "#3b82f6",
         "waygent-orange": "#f59e0b",
-        "waygent-cream": "##FAF9F5",
+        "waygent-cream": "#FAF9F5",
         "waygent-light-blue": "#EEF2FF",
         
         // Supporting Colors
