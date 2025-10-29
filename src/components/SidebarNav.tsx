@@ -13,6 +13,8 @@ type SidebarNavProps = {
 
 type ProgressMap = Record<string, number>;
 
+const MIN_BAR_WIDTH = 12;
+
 export default function SidebarNav({ sections }: SidebarNavProps) {
   const sectionIds = useMemo(
     () => sections.map((section) => section.id),
@@ -72,13 +74,13 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         const sectionCenter = sectionTop + sectionHeight / 2;
 
         const rawProgress = (viewportCenter - sectionTop) / sectionHeight;
-        const progress = Math.min(1, Math.max(0, rawProgress));
-        next[id] = progress;
+        const boundedProgress = Math.min(1, Math.max(0, rawProgress));
+        next[id] = boundedProgress;
 
         const distance = Math.abs(sectionCenter - viewportCenter);
         const normalized =
           1 - distance / (viewportHeight / 2 + sectionHeight / 2);
-        const score = normalized + progress * 0.05;
+        const score = normalized + boundedProgress * 0.05;
         if (score > bestScore) {
           bestScore = score;
           bestId = id;
@@ -87,16 +89,16 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
 
       setProgressMap((prev) => {
         let changed = false;
-        const upcoming: ProgressMap = {};
+        const incoming: ProgressMap = {};
         sectionIds.forEach((id) => {
           const nextValue = Math.max(0, Math.min(1, next[id] ?? 0));
-          const prevValue = prev[id] ?? 0;
-          if (!changed && Math.abs(nextValue - prevValue) > 0.02) {
+          const previous = prev[id] ?? 0;
+          if (!changed && Math.abs(nextValue - previous) > 0.025) {
             changed = true;
           }
-          upcoming[id] = nextValue;
+          incoming[id] = nextValue;
         });
-        return changed ? upcoming : prev;
+        return changed ? incoming : prev;
       });
 
       if (bestId && bestId !== activeSectionRef.current) {
@@ -115,6 +117,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
     scheduleUpdate();
     window.addEventListener("scroll", scheduleUpdate, { passive: true });
     window.addEventListener("resize", scheduleUpdate);
+
     return () => {
       if (rafId.current) {
         cancelAnimationFrame(rafId.current);
@@ -125,96 +128,78 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   }, [sectionIds]);
 
   const handleClick = (id: string) => {
-    const element = document.getElementById(id);
-    if (!element) return;
-
+    const el = document.getElementById(id);
+    if (!el) return;
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     activeSectionRef.current = id;
     setActiveSection(id);
-    element.scrollIntoView({
+    el.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
   };
 
   return (
-    <aside className="sticky top-3 z-30 hidden h-[calc(100vh-1.5rem)] w-52 min-w-[12rem] flex-col items-center justify-center rounded-r-3xl border border-waygent-light-blue/70 border-l-0 bg-gradient-to-b from-waygent-light-blue via-waygent-cream to-waygent-light-blue px-4 py-8 shadow-[0_18px_40px_-15px_rgba(59,130,246,0.25),0_8px_30px_-20px_rgba(245,158,11,0.35)] backdrop-blur-sm xl:flex">
-      <nav
-        aria-label="Section index"
-        className="flex h-full w-full flex-col items-stretch justify-center gap-4"
-      >
-        {sections.map((section, index) => {
-          const progress = progressMap[section.id] ?? 0;
-          const isActive = section.id === activeSection;
-          const progressHeight = Math.min(100, Math.max(progress * 100, 6));
-          const labelToken = section.label.slice(0, 2).toUpperCase();
-          const step = (index + 1).toString().padStart(2, "0");
+    <aside className="sticky top-3 z-30 hidden h-[calc(100vh-1.5rem)] w-56 min-w-[13rem] xl:flex">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-r-3xl border border-waygent-light-blue bg-waygent-cream/96 shadow-[0_12px_35px_rgba(59,130,246,0.12)]">
+        <nav
+          aria-label="Section index"
+          className="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-thumb-waygent-light-blue/80 scrollbar-track-transparent"
+        >
+          <ul className="flex flex-col gap-3">
+            {sections.map((section, index) => {
+              const progress = progressMap[section.id] ?? 0;
+              const isActive = section.id === activeSection;
+              const width = Math.max(MIN_BAR_WIDTH, progress * 100);
+              const step = (index + 1).toString().padStart(2, "0");
 
-          return (
-            <button
-              key={section.id}
-              type="button"
-              aria-label={section.label}
-              aria-current={isActive ? "true" : undefined}
-              onClick={() => handleClick(section.id)}
-              className={`group relative flex w-full items-center gap-4 overflow-visible rounded-2xl px-3 py-4 transition-all duration-500 ease-out ${
-                isActive
-                  ? "bg-white/95 shadow-lg shadow-waygent-light-blue/50"
-                  : "hover:bg-white/75"
-              }`}
-            >
-              <div className="relative flex h-16 w-8 items-center justify-center">
-                <div className="absolute inset-y-0 left-1/2 w-[2px] -translate-x-1/2 rounded-full bg-white/40" />
-                <div
-                  className="absolute bottom-0 left-1/2 w-[4px] -translate-x-1/2 rounded-full bg-gradient-to-b from-waygent-blue via-waygent-orange to-waygent-blue transition-[height] duration-500 ease-out"
-                  style={{ height: `${progressHeight}%` }}
-                />
-                <span
-                  className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-waygent-cream/90 text-[10px] font-semibold uppercase tracking-[0.15em] transition-all duration-500 ease-out ${
-                    isActive
-                      ? "border-waygent-orange bg-white text-waygent-blue shadow-lg shadow-waygent-light-blue/40"
-                      : "text-waygent-text-secondary group-hover:border-waygent-blue group-hover:bg-white group-hover:text-waygent-blue"
-                  }`}
-                >
-                  {labelToken}
-                </span>
-              </div>
-
-              <div className="flex flex-1 flex-col items-start">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.45em] text-waygent-text-secondary">
-                  {step}
-                </span>
-                <span
-                  className={`text-sm font-semibold transition-all duration-300 ${
-                    isActive
-                      ? "text-waygent-blue"
-                      : "text-waygent-text-secondary group-hover:text-waygent-blue"
-                  }`}
-                >
-                  {section.label}
-                </span>
-                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/60">
-                  <div
-                    className={`h-full rounded-full bg-gradient-to-r from-waygent-blue via-waygent-orange to-waygent-blue transition-[width] duration-500 ease-out ${
-                      isActive ? "shadow-[0_0_12px_rgba(245,158,11,0.35)]" : ""
+              return (
+                <li key={section.id}>
+                  <button
+                    type="button"
+                    aria-current={isActive ? "true" : undefined}
+                    aria-label={section.label}
+                    onClick={() => handleClick(section.id)}
+                    className={`group flex w-full flex-col gap-2 rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
+                      isActive
+                        ? "border-waygent-blue bg-white shadow-[0_10px_25px_rgba(59,130,246,0.18)]"
+                        : "border-transparent hover:border-waygent-light-blue/70 hover:bg-white/90"
                     }`}
-                    style={{ width: `${Math.max(12, progress * 100)}%` }}
-                  />
-                </div>
-              </div>
-
-              <div
-                className={`pointer-events-none absolute inset-0 rounded-2xl border border-waygent-blue/30 transition-opacity duration-500 ${
-                  isActive ? "opacity-100" : "opacity-0 group-hover:opacity-50"
-                }`}
-              />
-            </button>
-          );
-        })}
-      </nav>
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.4em] text-waygent-text-muted">
+                        {step}
+                      </span>
+                      <span
+                        className={`text-sm font-semibold ${
+                          isActive
+                            ? "text-waygent-blue"
+                            : "text-waygent-text-secondary group-hover:text-waygent-blue"
+                        }`}
+                      >
+                        {section.label}
+                      </span>
+                    </div>
+                    <div className="h-1 rounded-full bg-waygent-light-blue/70">
+                      <div
+                        className={`h-full rounded-full transition-[width] duration-300 ${
+                          isActive
+                            ? "bg-waygent-blue"
+                            : "bg-waygent-text-muted/50 group-hover:bg-waygent-blue/70"
+                        }`}
+                        style={{ width: `${width}%` }}
+                      />
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
     </aside>
   );
 }
