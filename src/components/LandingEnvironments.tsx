@@ -289,19 +289,35 @@ export default function LandingEnvironments() {
   return (
     <section className="px-4 pb-12 pt-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <header className="mb-14 max-w-3xl space-y-4">
-          <p className="text-sm uppercase tracking-[0.3em] text-waygent-blue">
+        <div className="mb-8">
+          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight">
             Environments
-          </p>
-          <h2 className="text-4xl font-semibold leading-tight sm:text-5xl">
-            Launch-ready verticals built into Sena.
           </h2>
-          <p className="text-lg text-waygent-text-secondary">
-            Every environment is a complete workspace—UI, workflows, data,
-            automations, and agents—trained on industry playbooks. Start with a
-            template, then ask Sena to adapt it to your processes.
-          </p>
-        </header>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[520px_1fr] mb-14">
+          {/* EnvironmentSelector on the left */}
+          <div className="relative h-[600px] overflow-hidden rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur">
+            <EnvironmentSelector
+              readOnly
+              previewMode
+              currentEnvironment={activeId}
+              initialEnvironments={selectorEnvironments}
+            />
+          </div>
+
+          {/* Description on the right */}
+          <div className="flex flex-col justify-center space-y-6">
+            <h3 className="text-3xl font-semibold leading-tight text-waygent-text-primary sm:text-4xl">
+              Launch-ready verticals built into Sena.
+            </h3>
+            <p className="text-lg text-waygent-text-secondary">
+              Every environment is a complete workspace—UI, workflows, data,
+              automations, and agents—trained on industry playbooks. Start with a
+              template, then ask Sena to adapt it to your processes.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div

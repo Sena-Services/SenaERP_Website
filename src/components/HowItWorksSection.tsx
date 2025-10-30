@@ -10,23 +10,21 @@ type Step = {
 const steps: Step[] = [
   {
     id: "discovery",
-    title: "Discovery",
-    subtitle: "Talk about your business requirements to the AI.",
-    description: "Share the outcomes you want and let Sena sketch the plan.",
+    title: "Talk to Sena",
+    subtitle: "Describe your business in plain English",
+    description: "Share your workflows, challenges, and goals. Sena asks the right questions to understand exactly what you need—no technical jargon required.",
   },
   {
     id: "preview",
-    title: "Preview",
-    subtitle:
-      "Review the ERP it drafts for you and see every primitive it used.",
-    description: "Walk through the generated tables, flows, and components in minutes.",
+    title: "Review & Refine",
+    subtitle: "See your custom ERP before it goes live",
+    description: "Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and ensure it's exactly right.",
   },
   {
     id: "publish",
-    title: "Publish",
-    subtitle:
-      "Click publish and your tailored environment is ready instantly.",
-    description: "Launch the environment and make it live for your team right away.",
+    title: "Go Live",
+    subtitle: "Deploy your tailored system instantly",
+    description: "One click and your custom ERP is live. Your team can start using it immediately—no setup, no installation, no complexity.",
   },
 ];
 
@@ -45,7 +43,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
     };
 
     return (
-      <div className="relative w-full overflow-hidden bg-[#f6efe4] aspect-[3/4]">
+      <div className="relative w-full overflow-hidden bg-[#f6efe4] aspect-[5/6]">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           loop
@@ -74,7 +72,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
     };
 
     return (
-      <div className="relative w-full overflow-hidden bg-[#f5f2e9] aspect-[3/4]">
+      <div className="relative w-full overflow-hidden bg-[#f5f2e9] aspect-[5/6]">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           loop
@@ -110,7 +108,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#f6f2fb] aspect-[3/4]">
+    <div className="relative w-full overflow-hidden bg-[#f6f2fb] aspect-[5/6]">
       <video
         className="absolute inset-0 h-full w-full object-cover"
         muted
@@ -132,7 +130,7 @@ export default function HowItWorksSection() {
   return (
     <section
       id="how-it-works"
-      className="scroll-mt-32 mt-16 sm:mt-20 px-4 sm:px-6 lg:px-8"
+      className="scroll-mt-32 mt-8 sm:mt-8 px-4 sm:px-6 lg:px-8"
     >
       <div className="relative mx-auto w-full max-w-7xl font-space-grotesk">
         <div className="pointer-events-none absolute inset-0 -z-10">
@@ -155,14 +153,21 @@ export default function HowItWorksSection() {
                 className="flex h-full flex-col overflow-hidden rounded-[28px] border border-waygent-light-blue/40 bg-white text-waygent-text-primary shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <StepVisual id={step.id} />
-                <div className="flex flex-1 flex-col gap-2 border-t border-waygent-light-blue/30 px-5 py-3">
-                  <div className="flex items-center gap-3 text-base font-semibold text-waygent-text-primary">
-                    <span className="grid h-8 w-8 place-items-center rounded-full border border-waygent-light-blue/70 bg-white text-sm font-semibold text-waygent-blue">
+                <div className="flex flex-1 flex-col gap-2.5 border-t border-waygent-light-blue/30 px-5 py-4">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-waygent-blue text-sm font-bold text-white">
                       {index + 1}
                     </span>
-                    {step.subtitle}
+                    <div className="flex flex-col gap-0.5">
+                      <h3 className="text-base font-bold text-waygent-text-primary leading-snug">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm font-medium text-waygent-text-secondary leading-relaxed">
+                        {step.subtitle}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[13px] leading-relaxed text-waygent-text-secondary">
+                  <p className="text-[13px] leading-relaxed text-waygent-text-secondary/90 pl-10">
                     {step.description}
                   </p>
                 </div>
