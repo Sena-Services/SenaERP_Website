@@ -60,17 +60,14 @@ export default function NavBar() {
         }}
       >
         {/* logo block */}
-        <Link
-          href="#intro"
-          className={`flex items-center ${NAVBAR_CONTROLS.logoGap} px-2 sm:px-3 py-1.5 rounded-lg transition-all duration-300 ease-out hover:bg-white/20 hover:shadow-sm`}
-        >
+        <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} px-2 sm:px-3 py-1.5`}>
           <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
           <span
             className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
           >
             Sena
           </span>
-        </Link>
+        </div>
 
         {/* RIGHT SIDE */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.navToButtonGap}`}>
@@ -96,17 +93,7 @@ export default function NavBar() {
                 {/* Login Button */}
                 <Link
                   href="/login"
-                  className={`inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out
-                             whitespace-nowrap text-sm font-medium border border-gray-300
-                             bg-transparent text-gray-600 cursor-pointer outline-none relative transform translate-y-0
-                             shadow-none leading-none font-sans hover:bg-gray-50 hover:text-gray-800
-                             hover:border-gray-400 hover:-translate-y-0.5 hover:shadow-sm hover:shadow-gray-100
-                             active:bg-gray-100 active:text-gray-900 active:border-gray-500 active:translate-y-0
-                             active:scale-95 active:shadow-sm active:shadow-gray-200
-                             focus-visible:shadow-md focus-visible:shadow-gray-200 focus-visible:outline-none`}
-                  style={{
-                    boxShadow: 'none'
-                  }}
+                  className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-medium border border-gray-300 bg-transparent text-gray-600 cursor-pointer outline-none leading-none font-sans hover:bg-white/60 hover:shadow-sm hover:text-gray-800 hover:border-gray-400 focus-visible:outline-none"
                 >
                   <span className="leading-none">Log In</span>
                 </Link>
@@ -114,17 +101,7 @@ export default function NavBar() {
                 {/* Sign Up Button */}
                 <Link
                   href="/signup"
-                  className={`inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out
-                             whitespace-nowrap text-sm font-medium border-2 border-waygent-orange
-                             bg-waygent-orange text-white cursor-pointer outline-none relative transform translate-y-0
-                             shadow-sm leading-none font-sans hover:bg-waygent-orange hover:border-waygent-orange
-                             hover:-translate-y-0.5 hover:shadow-md hover:shadow-orange-200
-                             active:bg-waygent-orange active:border-waygent-orange active:translate-y-0
-                             active:scale-95 active:shadow-sm active:shadow-orange-300
-                             focus-visible:shadow-lg focus-visible:shadow-orange-300 focus-visible:outline-none`}
-                  style={{
-                    boxShadow: '0 1px 3px 0 rgba(245, 158, 11, 0.1), 0 1px 2px 0 rgba(245, 158, 11, 0.06)'
-                  }}
+                  className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-medium border-2 border-waygent-orange bg-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-sans hover:bg-waygent-orange/90 hover:shadow-md focus-visible:outline-none"
                 >
                   <div className="flex items-center gap-1.5">
                     <div className="w-4 h-4 flex-shrink-0 transition-all duration-300 ease-out hidden xs:block sm:block">
@@ -143,7 +120,7 @@ export default function NavBar() {
                 {/* Environment/Home Button */}
                 <Link
                   href={isOnEnvironmentSelector ? "/" : "/environment-selector"}
-                  className="group inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-medium border border-gray-300 bg-white/50 backdrop-blur-sm cursor-pointer outline-none relative transform translate-y-0 shadow-none leading-none font-sans hover:border-orange-300 hover:bg-orange-50/50 hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 active:scale-95 focus-visible:outline-none"
+                  className="group inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-medium border border-gray-300 bg-white/50 backdrop-blur-sm cursor-pointer outline-none leading-none font-sans hover:bg-white/60 hover:shadow-sm hover:border-gray-400 focus-visible:outline-none"
                 >
                   <div className="flex items-center gap-1.5">
                     {isOnEnvironmentSelector ? (

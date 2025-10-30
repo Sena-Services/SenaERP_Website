@@ -11,6 +11,13 @@ type SidebarNavProps = {
   sections: Section[];
 };
 
+type IndicatorState = {
+  top: number;
+  height: number;
+};
+
+const INITIAL_INDICATOR: IndicatorState = { top: 0, height: 0 };
+
 export default function SidebarNav({ sections }: SidebarNavProps) {
   const sectionIds = useMemo(
     () => sections.map((section) => section.id),
@@ -18,6 +25,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   );
 
   const [activeSection, setActiveSection] = useState(sectionIds[0] ?? "");
+  const [indicator, setIndicator] = useState<IndicatorState>(INITIAL_INDICATOR);
 
   const rafId = useRef<number | null>(null);
   const activeSectionRef = useRef(activeSection);
@@ -68,11 +76,36 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
     }
   }, [sectionIds]);
 
+  const updateIndicator = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const button = itemRefs.current[activeSectionRef.current] ?? null;
+    if (!button) {
+      setIndicator(INITIAL_INDICATOR);
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+
+    const top = buttonRect.top - containerRect.top + container.scrollTop;
+    const height = buttonRect.height;
+
+    setIndicator((prev) => {
+      if (Math.abs(prev.top - top) < 0.5 && Math.abs(prev.height - height) < 0.5) {
+        return prev;
+      }
+      return { top, height };
+    });
+  }, []);
+
   useEffect(() => {
     const schedule = () => {
       if (rafId.current) cancelAnimationFrame(rafId.current);
       rafId.current = requestAnimationFrame(() => {
         updateActiveSection();
+        updateIndicator();
       });
     };
 
@@ -90,7 +123,12 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       window.removeEventListener("resize", schedule);
       container?.removeEventListener("scroll", schedule);
     };
-  }, [updateActiveSection]);
+  }, [updateActiveSection, updateIndicator]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(updateIndicator, 0);
+    return () => window.clearTimeout(timer);
+  }, [activeSection, updateIndicator]);
 
   const handleClick = (id: string) => {
     const target = document.getElementById(id);
@@ -107,18 +145,28 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   };
 
   return (
-    <aside className="fixed left-4 top-1/2 z-50 flex w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
+    <aside className="fixed left-0 top-1/2 z-50 flex w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
       <div className="w-full">
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-3xl bg-waygent-light-blue border border-waygent-light-blue px-3 py-4 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-waygent-light-blue border border-waygent-light-blue border-l-0 px-3 py-4 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
             style={{
               boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
             }}
           >
+            {/* Smooth sliding indicator */}
+            <div
+              className="absolute left-3 right-3 rounded-lg bg-gradient-to-r from-waygent-orange to-waygent-orange/90 shadow-md pointer-events-none transition-all duration-500 ease-out"
+              style={{
+                top: indicator.top,
+                height: indicator.height,
+                opacity: indicator.height > 0 ? 1 : 0,
+                transform: indicator.height > 0 ? 'scale(1)' : 'scale(0.95)',
+              }}
+            />
 
-            <ul className="flex flex-col gap-1 text-waygent-text-secondary">
+            <ul className="relative flex flex-col gap-1 text-waygent-text-secondary">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const step = (index + 1).toString().padStart(2, "0");
@@ -133,23 +181,28 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-all duration-200 ease-out focus-visible:outline-none ${
-                        isActive
-                          ? "bg-waygent-orange"
-                          : "hover:bg-white/40"
+                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer ${
+                        !isActive && 'hover:bg-white/60 hover:shadow-sm'
                       }`}
                     >
-                      <span className={`text-[9px] font-medium tracking-wider ${
-                        isActive ? "text-white" : "text-gray-500"
-                      }`}>
+                      <span
+                        className="text-[9px] font-medium tracking-wider transition-colors duration-300"
+                        style={{
+                          color: isActive ? 'white' : 'rgb(107, 114, 128)',
+                          transitionDelay: isActive ? '500ms' : '0ms',
+                        }}
+                      >
                         {step}
                       </span>
                       <span
-                        className={`flex-1 text-[11px] sm:text-[12px] font-medium leading-tight ${
-                          isActive
-                            ? "text-white"
-                            : "text-gray-800 group-hover:text-waygent-orange"
+                        className={`flex-1 text-[11px] sm:text-[12px] font-medium leading-tight transition-all duration-300 ${
+                          !isActive && 'group-hover:text-waygent-orange'
                         }`}
+                        style={{
+                          color: isActive ? 'white' : 'rgb(31, 41, 55)',
+                          transform: isActive ? 'translateX(2px)' : 'translateX(0)',
+                          transitionDelay: isActive ? '500ms' : '0ms',
+                        }}
                       >
                         {section.label}
                       </span>
