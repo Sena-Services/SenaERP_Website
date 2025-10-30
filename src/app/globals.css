@@ -75,6 +75,34 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Futura PT";
+  src: url("/fonts/futura-pt/FuturaCyrillicBook.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Futura PT";
+  src: url("/fonts/futura-pt/FuturaCyrillicMedium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Futura PT";
+  src: url("/fonts/futura-pt/FuturaCyrillicDemi.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Futura PT";
+  src: url("/fonts/futura-pt/FuturaCyrillicBold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
 @import "tailwindcss";
 
 /* Temporary test rule for Rockwell font */
@@ -110,6 +138,12 @@
 /* Test rule for Awesome font */
 .font-awesome {
   font-family: Awesome, cursive !important;
+  background-color: transparent !important;
+}
+
+/* Test rule for Futura PT font */
+.font-futura {
+  font-family: "Futura PT", sans-serif !important;
   background-color: transparent !important;
 }
 

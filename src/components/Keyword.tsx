@@ -22,7 +22,7 @@ export function Keyword({
     <span
       onMouseEnter={() => setActive(index)}
       onMouseLeave={onMouseLeave}
-      className={`relative inline-block cursor-pointer transition-all duration-300 font-space-grotesk font-bold ${color} ${
+      className={`relative inline-block cursor-pointer transition-all duration-300 font-futura font-bold ${color} ${
         isActive ? 'opacity-100' : 'opacity-70 hover:opacity-90'
       }`}
     >

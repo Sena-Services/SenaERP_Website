@@ -5,6 +5,8 @@ import IntroSection from "@/components/IntroSection";
 import SidebarNav from "@/components/SidebarNav";
 import ScrollShowcase from "@/components/ScrollShowcase";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import LandingEnvironments from "@/components/LandingEnvironments";
+import IntegrationsSection from "@/components/IntegrationsSection";
 
 const sections = [
   { id: "intro", label: "Introduction" },
@@ -80,19 +82,6 @@ const agents = [
   },
 ] as const;
 
-const integrationTools = [
-  "Slack",
-  "Salesforce",
-  "Notion",
-  "Linear",
-  "Gmail",
-  "Calendly",
-  "QuickBooks",
-  "Rippling",
-  "Zendesk",
-  "Snowflake",
-] as const;
-
 const resultStats = [
   {
     stat: "78%",
@@ -160,6 +149,9 @@ export default function Home() {
               <IntroSection />
             </section>
             <HowItWorksSection />
+            <section id="environments" className="scroll-mt-32 mt-24">
+              <LandingEnvironments />
+            </section>
             <section id="platform-story" className="scroll-mt-32 mt-4">
               <ScrollShowcase />
             </section>
@@ -340,29 +332,7 @@ export default function Home() {
               </div>
             </section>
 
-            <section id="integrations" className="scroll-mt-32">
-              <div className="rounded-3xl border border-waygent-light-blue bg-waygent-light-blue p-10 shadow-lg">
-                <span className="text-sm uppercase tracking-[0.3em] text-waygent-text-secondary">
-                  Integrations
-                </span>
-                <h2 className="mt-3 text-3xl font-semibold">
-                  Connect the tools you already use.
-                </h2>
-                <p className="mt-4 max-w-3xl text-lg text-waygent-text-secondary">
-                  Plug Sena into your existing stack—Slack, Salesforce, Notion, Google Workspace, HubSpot, and 30+ others. Data flows bi-directionally so updates never go stale.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-3 text-sm text-waygent-text-secondary">
-                  {integrationTools.map((tool) => (
-                    <span
-                      key={tool}
-                      className="rounded-full border border-waygent-light-blue/70 bg-waygent-cream px-4 py-2 shadow-sm"
-                    >
-                      {tool}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </section>
+            <IntegrationsSection />
 
             <section id="results" className="scroll-mt-32">
               <div className="grid gap-6 lg:grid-cols-3">

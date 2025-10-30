@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-interface Environment {
+export interface Environment {
   name: string;
   display_name?: string;
   environment_name?: string;
@@ -15,17 +15,24 @@ interface Environment {
 
 interface EnvironmentSelectorProps {
   currentEnvironment?: string;
-  onEnvironmentSelect: (environmentName: string) => void;
+  onEnvironmentSelect?: (environmentName: string) => void;
+  initialEnvironments?: Environment[];
+  readOnly?: boolean;
+  previewMode?: boolean;
 }
 
 export default function EnvironmentSelector({
   currentEnvironment,
-  onEnvironmentSelect,
+  onEnvironmentSelect = () => {},
+  initialEnvironments,
+  readOnly = false,
+  previewMode = false,
 }: EnvironmentSelectorProps) {
   // State - Environment List
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeEnvironments, setActiveEnvironments] = useState<Environment[]>([]);
+  const [activeEnvironments, setActiveEnvironments] = useState<Environment[]>(
+    initialEnvironments ?? [],
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   // State - Create/Edit Dialog
@@ -70,7 +77,13 @@ export default function EnvironmentSelector({
   // Load Environments
   const loadEnvironments = async () => {
     try {
-      setIsLoading(true);
+      if (readOnly) {
+        if (initialEnvironments) {
+          setActiveEnvironments(initialEnvironments);
+        }
+        return;
+      }
+
       setError(null);
 
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
@@ -95,13 +108,13 @@ export default function EnvironmentSelector({
     } catch (err: any) {
       console.error("[EnvironmentSelector] Error loading environments:", err);
       setError(err.message || "Failed to load environments");
-    } finally {
-      setIsLoading(false);
     }
   };
 
   // Handle Create Environment
   const handleCreateEnvironment = async () => {
+    if (readOnly) return;
+
     if (!newEnvironment.displayName.trim()) return;
 
     // Check for duplicate environment name
@@ -161,6 +174,8 @@ export default function EnvironmentSelector({
 
   // Handle Update Environment
   const handleUpdateEnvironment = async () => {
+    if (readOnly) return;
+
     if (!newEnvironment.displayName.trim() || !editingEnvironment) return;
 
     // Check for duplicate environment name (excluding current environment)
@@ -221,6 +236,8 @@ export default function EnvironmentSelector({
 
   // Handle Delete Environment
   const handleDeleteEnvironment = async () => {
+    if (readOnly) return;
+
     if (!editingEnvironment) return;
 
     try {
@@ -270,6 +287,8 @@ export default function EnvironmentSelector({
   };
 
   const createNewEnvironment = () => {
+    if (readOnly) return;
+
     setIsEditMode(false);
     setEditingEnvironment(null);
     setNewEnvironment({
@@ -281,6 +300,8 @@ export default function EnvironmentSelector({
   };
 
   const openEditDialog = (env: Environment) => {
+    if (readOnly) return;
+
     setIsEditMode(true);
     setEditingEnvironment(env);
     setNewEnvironment({
@@ -301,7 +322,13 @@ export default function EnvironmentSelector({
 
   // Lifecycle - Load environments and start tagline rotation
   useEffect(() => {
-    loadEnvironments();
+    if (readOnly) {
+      if (initialEnvironments) {
+        setActiveEnvironments(initialEnvironments);
+      }
+    } else {
+      loadEnvironments();
+    }
 
     taglineIntervalRef.current = setInterval(() => {
       setCurrentTaglineIndex((prev) => (prev + 1) % taglines.length);
@@ -312,7 +339,7 @@ export default function EnvironmentSelector({
         clearInterval(taglineIntervalRef.current);
       }
     };
-  }, []);
+  }, [initialEnvironments, readOnly]);
 
   // Animated tagline characters
   const animatedTagline = taglines[currentTaglineIndex]
@@ -581,6 +608,8 @@ export default function EnvironmentSelector({
                       type="text"
                       placeholder="Search environments..."
                       className="search-input"
+                      readOnly={readOnly && previewMode}
+                      aria-readonly={readOnly && previewMode}
                     />
                   </div>
                 </div>
@@ -588,7 +617,13 @@ export default function EnvironmentSelector({
 
               {/* Environment Cards */}
               {activeEnvironments.length > 0 && (
-                <div className="flex-1 overflow-y-auto mb-6 custom-scrollbar pt-3">
+                <div
+                  className={`flex-1 mb-6 pt-3 ${
+                    readOnly && previewMode
+                      ? "overflow-visible"
+                      : "overflow-y-auto custom-scrollbar"
+                  }`}
+                >
                   <div
                     className={`grid gap-3 md:grid-cols-2 ${
                       activeEnvironments.length === 1 ? "single-env-grid" : ""
@@ -597,6 +632,7 @@ export default function EnvironmentSelector({
                     {filteredEnvironments.map((env) => (
                       <div
                         key={env.name}
+                        data-environment-card={env.name}
                         className={`group cursor-pointer environment-card ${
                           env.name === currentEnvironment ? "environment-card-selected" : ""
                         } ${
@@ -604,28 +640,30 @@ export default function EnvironmentSelector({
                         }`}
                       >
                         {/* Edit Icon */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEditDialog(env);
-                          }}
-                          className="edit-icon-button"
-                          title="Edit environment"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                        {!readOnly && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditDialog(env);
+                            }}
+                            className="edit-icon-button"
+                            title="Edit environment"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                          </svg>
-                        </button>
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                              />
+                            </svg>
+                          </button>
+                        )}
 
                         {/* Card Content */}
                         <div
@@ -796,7 +834,12 @@ export default function EnvironmentSelector({
                 <div className="w-1/2">
                   <div
                     onClick={createNewEnvironment}
-                    className="group cursor-pointer environment-card create-new-card"
+                    className={
+                      "group environment-card create-new-card" +
+                      (readOnly
+                        ? " cursor-default pointer-events-none opacity-80"
+                        : " cursor-pointer")
+                    }
                   >
                     <div className="flex items-center gap-3 environment-card-inner">
                       <div className="flex-shrink-0 flex items-center justify-center">

@@ -46,18 +46,43 @@ const FALLBACK_UNDERLINE_COLOR = "#f59e0b";
 export default function IntroSection() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [lastHoveredIdx, setLastHoveredIdx] = useState(-1);
   const [definitionMaxHeight, setDefinitionMaxHeight] = useState(0);
+  const [progress, setProgress] = useState(0);
   const hiddenRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => {
+    if (paused) {
+      // Clear progress animation when paused
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+      return;
+    }
+
+    // Reset progress to 0 when starting new keyword
+    setProgress(0);
+
+    // Advance keyword after 4 seconds
+    const keywordTimer = setTimeout(() => {
       setActiveIdx((i) => (i + 1) % tokens.length);
-      setLastHoveredIdx(-1);
     }, 4000);
-    return () => clearInterval(id);
-  }, [paused]);
+
+    // Smoothly fill progress bar over 4 seconds (update every 50ms)
+    progressIntervalRef.current = setInterval(() => {
+      setProgress((p) => {
+        const newProgress = p + (50 / 4000) * 100; // increment by percentage
+        return newProgress >= 100 ? 100 : newProgress;
+      });
+    }, 50);
+
+    return () => {
+      clearTimeout(keywordTimer);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, [paused, activeIdx]);
 
   useEffect(() => {
     const measure = () => {
@@ -78,19 +103,13 @@ export default function IntroSection() {
 
   const activeToken = activeIdx >= 0 ? tokens[activeIdx] : null;
 
-
   const handleKeywordHover = (index: number) => {
     setActiveIdx(index);
-    setLastHoveredIdx(index);
     setPaused(true);
   };
 
   const handleKeywordLeave = () => {
     setPaused(false);
-    // Keep the last hovered keyword active until timer takes over
-    if (lastHoveredIdx >= 0) {
-      // setActiveIdx(lastHoveredIdx); // Optional: keep last hovered active immediately
-    }
   };
 
   return (
@@ -130,17 +149,17 @@ export default function IntroSection() {
           <div className="max-w-xl space-y-5">
           {/* Main heading */}
           <div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 font-space-grotesk leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 font-futura leading-tight">
               Compose your business like a painting
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 font-space-grotesk">
+            <p className="text-lg sm:text-xl text-gray-600 font-futura font-medium">
               Describe. Build. Orchestrate.
             </p>
           </div>
 
           {/* Description with keywords */}
           <div>
-            <p className="text-base sm:text-lg text-gray-800 leading-relaxed font-space-grotesk">
+            <p className="text-base sm:text-lg text-gray-800 leading-relaxed font-futura">
               <span>A </span>
               <Keyword
                 word={tokens[0].word}
@@ -212,19 +231,6 @@ export default function IntroSection() {
 
           {/* Definition block with progress indicator */}
           <div className="space-y-3">
-            {/* Progress indicator */}
-            <div className="flex gap-1.5">
-              {tokens.map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1 flex-1 rounded-full transition-all duration-300"
-                  style={{
-                    backgroundColor: i === activeIdx ? '#3b82f6' : '#cbd5e1',
-                  }}
-                />
-              ))}
-            </div>
-
             {/* Definition */}
             <div
               style={{ minHeight: definitionMaxHeight ? `${definitionMaxHeight}px` : '100px' }}
@@ -233,7 +239,7 @@ export default function IntroSection() {
                 {activeToken && (
                   <div className="animate-in fade-in duration-400">
                     <div className="rounded-xl bg-white/60 backdrop-blur-md border border-gray-200 px-4 py-3 shadow-lg">
-                      <p className="text-gray-800 text-sm sm:text-base leading-relaxed font-space-grotesk">
+                      <p className="text-gray-800 text-sm sm:text-base leading-relaxed font-futura">
                         {activeToken.definition}
                       </p>
                     </div>
@@ -258,6 +264,26 @@ export default function IntroSection() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Progress indicator - now below definition */}
+            <div className="flex gap-1.5">
+              {tokens.map((_, i) => (
+                <div
+                  key={i}
+                  className="h-1 flex-1 rounded-full bg-gray-300 overflow-hidden relative"
+                >
+                  {/* Filling bar that animates */}
+                  <div
+                    className="absolute inset-0 rounded-full transition-all"
+                    style={{
+                      backgroundColor: '#3b82f6',
+                      width: i === activeIdx ? `${progress}%` : (i < activeIdx ? '100%' : '0%'),
+                      transition: i === activeIdx ? 'none' : 'width 300ms ease-out',
+                    }}
+                  />
+                </div>
+              ))}
             </div>
           </div>
           </div>
