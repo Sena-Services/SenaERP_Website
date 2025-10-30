@@ -96,21 +96,22 @@ export default function IntroSection() {
   return (
     <section
       id="intro"
-      className="pt-16 sm:pt-20 pb-12 px-4 sm:px-6 lg:px-8"
+      className="pt-4 sm:pt-6 pb-4 sm:pb-6 px-4 sm:px-6 lg:px-8"
     >
       {/* Compact, rounded container */}
       <div
-        className="relative max-w-7xl mx-auto rounded-[40px] overflow-hidden border-2 border-waygent-light-blue"
+        className="relative max-w-7xl mx-auto rounded-[40px]"
         style={{
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundImage: 'url(/illustrations/monet-intro.png), url(/illustrations/monet-left-edge.png)',
           backgroundSize: 'auto 100%, auto 100%',
           backgroundPosition: 'right center, left center',
           backgroundRepeat: 'no-repeat, repeat-x',
-          backgroundColor: '#FAF9F5',
-          minHeight: '550px',
-          height: '65vh',
-          maxHeight: '700px'
+          backgroundColor: '#EBE5D9',
+          minHeight: '450px',
+          height: '75vh',
+          maxHeight: '600px',
+          overflow: 'hidden'
         }}
       >
         {/* Gradient overlay to smooth repeating edges */}
