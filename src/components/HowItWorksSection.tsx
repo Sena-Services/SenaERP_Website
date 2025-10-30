@@ -130,7 +130,7 @@ export default function HowItWorksSection() {
   return (
     <section
       id="how-it-works"
-      className="scroll-mt-32 mt-8 sm:mt-8 px-4 sm:px-6 lg:px-8"
+      className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8"
     >
       <div className="relative mx-auto w-full max-w-7xl font-space-grotesk">
         <div className="pointer-events-none absolute inset-0 -z-10">
@@ -139,9 +139,9 @@ export default function HowItWorksSection() {
           <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[#ffe7f1] opacity-45 blur-[110px]" />
         </div>
 
-        <div className="relative flex flex-col gap-4">
-          <div>
-            <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight">
+        <div className="relative flex flex-col">
+          <div className="mb-8">
+            <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
               How it works
             </h2>
           </div>

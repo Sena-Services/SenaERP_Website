@@ -162,8 +162,7 @@ function useEnvironmentCardTransform(
 }
 
 export default function LandingEnvironments() {
-  const [activeId, setActiveId] = useState(environments[0].id);
-  const [userInteracted, setUserInteracted] = useState(false);
+  const [activeId, setActiveId] = useState<string | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const selectorEnvironments = useMemo<SelectorEnvironment[]>(() => {
     return environments.map((environment) => {
@@ -199,54 +198,9 @@ export default function LandingEnvironments() {
     >
   >({});
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  const boardOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
-  const boardTranslate = useTransform(scrollYProgress, [0, 0.25], [0, -60]);
-  const detailOpacity = useTransform(scrollYProgress, [0.35, 0.55], [0, 1]);
-  const detailTranslate = useTransform(scrollYProgress, [0.35, 0.55], [80, 0]);
-  const backgroundShift = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
-  const cardTransforms = [
-    useEnvironmentCardTransform(
-      0,
-      scrollYProgress,
-      initialPositions[environments[0].id],
-    ),
-    useEnvironmentCardTransform(
-      1,
-      scrollYProgress,
-      initialPositions[environments[1].id],
-    ),
-    useEnvironmentCardTransform(
-      2,
-      scrollYProgress,
-      initialPositions[environments[2].id],
-    ),
-    useEnvironmentCardTransform(
-      3,
-      scrollYProgress,
-      initialPositions[environments[3].id],
-    ),
-  ];
-
-  useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (userInteracted) return;
-    const thresholds = [0.42, 0.58, 0.74];
-    let nextIndex = 0;
-    if (value >= thresholds[0]) nextIndex = 1;
-    if (value >= thresholds[1]) nextIndex = 2;
-    if (value >= thresholds[2]) nextIndex = 3;
-    const nextId = environments[nextIndex]?.id ?? environments[0].id;
-    if (nextId !== activeId) {
-      setActiveId(nextId);
-    }
-  });
 
   const activeEnvironment = useMemo(
-    () => environments.find((env) => env.id === activeId) ?? environments[0],
+    () => activeId ? environments.find((env) => env.id === activeId) : null,
     [activeId],
   );
 
@@ -287,189 +241,117 @@ export default function LandingEnvironments() {
   }, []);
 
   return (
-    <section className="px-4 pb-12 pt-6 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+    <section id="environments" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-0">
         <div className="mb-8">
-          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight">
+          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
             Environments
           </h2>
         </div>
+      </div>
 
-        <div className="grid gap-8 lg:grid-cols-[520px_1fr] mb-14">
-          {/* EnvironmentSelector on the left */}
-          <div className="relative h-[600px] overflow-hidden rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-[640px_1fr] gap-12">
+          {/* Left side - EnvironmentSelector */}
+          <div className="relative h-[460px] overflow-hidden rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur">
             <EnvironmentSelector
-              readOnly
               previewMode
+              readOnly
               currentEnvironment={activeId}
               initialEnvironments={selectorEnvironments}
+              onEnvironmentSelect={(envName) => {
+                // Toggle: if already selected, deselect it
+                if (activeId === envName) {
+                  setActiveId(undefined);
+                } else {
+                  setActiveId(envName);
+                }
+              }}
             />
           </div>
 
-          {/* Description on the right */}
-          <div className="flex flex-col justify-center space-y-6">
-            <h3 className="text-3xl font-semibold leading-tight text-waygent-text-primary sm:text-4xl">
-              Launch-ready verticals built into Sena.
-            </h3>
-            <p className="text-lg text-waygent-text-secondary">
-              Every environment is a complete workspace—UI, workflows, data,
-              automations, and agents—trained on industry playbooks. Start with a
-              template, then ask Sena to adapt it to your processes.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div
-        ref={containerRef}
-        className="relative hidden min-h-[240vh] lg:block"
-      >
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-[42px] bg-gradient-to-br from-[#f2f7ff] via-[#fdfbf5] to-[#fde6ff]"
-          style={{ y: backgroundShift }}
-        />
-
-        <div className="sticky top-28">
-          <div className="mx-auto grid max-w-7xl grid-cols-[640px_minmax(0,1fr)] gap-16 px-4 sm:px-6 lg:px-0">
-            <div className="relative h-[820px]">
+          {/* Right side - Content that changes on click */}
+          <div className="relative pt-8">
+            <AnimatePresence mode="wait">
               <motion.div
-                aria-hidden="true"
-                style={{ opacity: boardOpacity, y: boardTranslate }}
-                ref={boardRef}
-                className="absolute inset-0 overflow-hidden rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-[0_36px_110px_rgba(15,23,42,0.16)] backdrop-blur"
+                key={activeEnvironment?.id || 'initial'}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="flex flex-col space-y-6"
               >
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  data-environment-selector-preview
-                >
-                  <EnvironmentSelector
-                    readOnly
-                    previewMode
-                    currentEnvironment={activeId}
-                    initialEnvironments={selectorEnvironments}
-                  />
+              {!activeEnvironment ? (
+                // Initial content - Launch-ready description
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <h3 className="text-5xl font-bold leading-[1.15] text-waygent-text-primary tracking-tight">
+                      Launch-ready verticals built into Sena.
+                    </h3>
+                    <p className="text-xl text-waygent-text-secondary leading-relaxed">
+                      Every environment is a complete workspace—UI, workflows, data,
+                      automations, and agents—trained on industry playbooks.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-waygent-blue">
+                      What's included
+                    </h4>
+                    <div className="space-y-3 pl-4 border-l-2 border-waygent-light-blue/30">
+                      <div>
+                        <p className="font-medium text-waygent-text-primary">
+                          Pre-built UI components
+                        </p>
+                        <p className="text-sm text-waygent-text-secondary mt-0.5">
+                          Forms, tables, dashboards, and mobile views designed for your vertical.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-waygent-text-primary">
+                          Smart automations
+                        </p>
+                        <p className="text-sm text-waygent-text-secondary mt-0.5">
+                          Workflows that handle bookings, invoicing, reminders, and operations.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-waygent-text-primary">
+                          AI agents
+                        </p>
+                        <p className="text-sm text-waygent-text-secondary mt-0.5">
+                          Copilots trained on industry best practices to accelerate your team.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </motion.div>
-              <div className="absolute inset-0">
-                {environments.map((environment, index) => {
-                  const isActive = environment.id === activeId;
-                  const transform = cardTransforms[index];
-
-                  return (
-                    <motion.button
-                      key={environment.id}
-                      type="button"
-                      onClick={() => {
-                        setActiveId(environment.id);
-                        setUserInteracted(true);
-                      }}
-                      style={{
-                        x: transform.x,
-                        y: transform.y,
-                        width: transform.width,
-                        borderRadius: transform.borderRadius,
-                        boxShadow: transform.boxShadow,
-                        opacity: transform.opacity,
-                      }}
-                      className={clsx(
-                        "absolute flex flex-col gap-3 border bg-white/95 p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-waygent-blue/40",
-                        isActive
-                          ? "border-waygent-blue shadow-waygent-blue/20"
-                          : "border-slate-200 hover:border-waygent-blue/40",
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={clsx(
-                              "inline-flex h-8 w-8 items-center justify-center rounded-full border text-base",
-                              isActive
-                                ? "border-waygent-blue/40 bg-waygent-blue/10 text-waygent-blue"
-                                : "border-slate-200 bg-white text-waygent-blue",
-                            )}
-                          >
-                            ✦
-                          </span>
-                          <span className="text-sm font-semibold text-slate-900">
-                            {environment.label}
-                          </span>
-                        </div>
-                        <span
-                          className={clsx(
-                            "inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold",
-                            isActive
-                              ? "bg-waygent-blue text-white"
-                              : "bg-slate-100 text-slate-500",
-                          )}
-                        >
-                          {index + 1}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500">
-                        {environment.persona}
-                      </p>
-                      <div className="flex flex-wrap gap-2 text-[11px] text-slate-500">
-                        {environment.metrics.map((metric) => (
-                          <span
-                            key={metric.id}
-                            className={clsx(
-                              "inline-flex items-center gap-1 rounded-full border px-2 py-1",
-                              isActive
-                                ? "border-waygent-blue/50 bg-waygent-blue/10 text-waygent-blue"
-                                : "border-slate-200 bg-white/80",
-                            )}
-                            title={metric.label}
-                          >
-                            <span>{metric.icon}</span>
-                            <span className="font-medium">
-                              {metric.value}
-                            </span>
-                          </span>
-                        ))}
-                      </div>
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <motion.aside
-              style={{ opacity: detailOpacity, y: detailTranslate }}
-              className="relative rounded-[32px] border border-white/60 bg-white/80 p-10 shadow-[0_30px_90px_rgba(15,23,42,0.12)] backdrop-blur"
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeEnvironment.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="space-y-6"
-                >
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs uppercase tracking-[0.35em] text-waygent-blue">
+              ) : (
+                // Environment details (only shown on click)
+                <div className="space-y-6">
+                  <div className="flex flex-col gap-3">
+                    <span className="text-xs uppercase tracking-[0.35em] text-waygent-blue font-semibold">
                       {activeEnvironment.label}
                     </span>
-                    <h3 className="text-3xl font-semibold text-waygent-text-primary">
+                    <h3 className="text-3xl font-semibold text-waygent-text-primary leading-tight">
                       Built for {activeEnvironment.label.toLowerCase()}.
                     </h3>
-                    <p className="text-lg text-waygent-text-secondary">
+                    <p className="text-lg text-waygent-text-secondary leading-relaxed">
                       {activeEnvironment.summary}
                     </p>
                   </div>
                   <ul className="space-y-3 text-sm text-waygent-text-secondary">
                     {activeEnvironment.bullets.map((bullet) => (
                       <li key={bullet} className="flex items-start gap-3">
-                        <span className="mt-1 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
+                        <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
                         <span>{bullet}</span>
                       </li>
                     ))}
                   </ul>
-                  <div className="flex flex-wrap items-center gap-4 pt-3">
+                  <div className="flex flex-wrap items-center gap-4 pt-4">
                     <Link
                       href="/environment-selector"
-                      className="rounded-full bg-waygent-blue px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover"
+                      className="rounded-full bg-waygent-blue px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover hover:shadow-waygent-blue/35"
                     >
                       Launch this environment
                     </Link>
@@ -477,10 +359,17 @@ export default function LandingEnvironments() {
                       Fork it, remix it, or ask Sena to generate a new vertical.
                     </span>
                   </div>
-                </motion.div>
-              </AnimatePresence>
-            </motion.aside>
-          </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-waygent-text-secondary italic">
+            Click any environment to see what's included, or launch the selector to customize one for your business.
+          </p>
         </div>
       </div>
 

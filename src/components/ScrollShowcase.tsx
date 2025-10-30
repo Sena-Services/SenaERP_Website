@@ -97,10 +97,18 @@ export default function ScrollShowcase() {
   const activeStep = showcaseSteps[activeIndex];
 
   return (
-    <section
-      aria-label="Sena platform capabilities story"
-      className="relative isolate overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#e7f3ff] via-[#fefcf7] to-[#fbe7ff] text-waygent-text-primary"
-    >
+    <div className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-7xl">
+        <div className="mb-8">
+          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+            Builder
+          </h2>
+        </div>
+
+        <section
+          aria-label="Sena platform capabilities story"
+          className="relative isolate overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#e7f3ff] via-[#fefcf7] to-[#fbe7ff] text-waygent-text-primary"
+        >
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.25),transparent_60%)]"
@@ -229,7 +237,9 @@ export default function ScrollShowcase() {
             </div>
           </div>
         </div>
+        </div>
+        </section>
       </div>
-    </section>
+    </div>
   );
 }

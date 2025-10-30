@@ -283,7 +283,12 @@ export default function EnvironmentSelector({
 
   // Event Handlers
   const selectEnvironment = (environmentName: string) => {
-    onEnvironmentSelect(environmentName);
+    if (!readOnly && !previewMode) {
+      onEnvironmentSelect(environmentName);
+    } else if (previewMode) {
+      // In preview mode, still allow selection but just update parent
+      onEnvironmentSelect(environmentName);
+    }
   };
 
   const createNewEnvironment = () => {
@@ -350,7 +355,7 @@ export default function EnvironmentSelector({
     }));
 
   return (
-    <div className="environment-selector">
+    <div className={`environment-selector ${previewMode ? 'preview-zoom' : ''}`}>
       {/* Create/Edit Environment Dialog */}
       {showCreateDialog && (
         <div className="dialog-overlay" onClick={() => setShowCreateDialog(false)}>
@@ -563,13 +568,13 @@ export default function EnvironmentSelector({
               style={{ maxHeight: "calc(100vh - 4rem)" }}
             >
               {/* Hero Section */}
-              <div className="text-center mb-8 flex-shrink-0">
-                <div className="inline-flex items-center justify-center mb-2">
-                  <img src="/waygent.png" alt="Sena ERP" className="w-20 h-20" />
+              <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-6' : 'mb-8'}`}>
+                <div className={`inline-flex items-center justify-center ${previewMode ? 'mb-1' : 'mb-2'}`}>
+                  <img src="/waygent.png" alt="Sena ERP" className={previewMode ? 'w-12 h-12' : 'w-20 h-20'} />
                 </div>
-                <h1 className="text-7xl font-bold text-gray-800 mb-3">Sena ERP</h1>
+                <h1 className={`font-bold text-gray-800 ${previewMode ? 'text-4xl mb-2' : 'text-7xl mb-3'}`}>Sena ERP</h1>
                 <div className="tagline-container">
-                  <p className="tagline">
+                  <p className={`tagline ${previewMode ? 'text-sm' : ''}`}>
                     <span className="tagline-text">
                       {animatedTagline.map((item, index) => (
                         <span
@@ -587,10 +592,10 @@ export default function EnvironmentSelector({
 
               {/* Search Bar */}
               {activeEnvironments.length >= 4 && (
-                <div className="mb-6 flex-shrink-0 flex justify-center w-full">
-                  <div className="relative w-1/2">
+                <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-4' : 'mb-6'}`}>
+                  <div className={`relative ${previewMode ? 'w-2/3' : 'w-1/2'}`}>
                     <svg
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10 pointer-events-none"
+                      className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 pointer-events-none ${previewMode ? 'w-4 h-4' : 'w-5 h-5'}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -608,8 +613,6 @@ export default function EnvironmentSelector({
                       type="text"
                       placeholder="Search environments..."
                       className="search-input"
-                      readOnly={readOnly && previewMode}
-                      aria-readonly={readOnly && previewMode}
                     />
                   </div>
                 </div>
@@ -640,7 +643,7 @@ export default function EnvironmentSelector({
                         }`}
                       >
                         {/* Edit Icon */}
-                        {!readOnly && (
+                        {!readOnly && !previewMode && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -668,7 +671,7 @@ export default function EnvironmentSelector({
                         {/* Card Content */}
                         <div
                           onClick={() => selectEnvironment(env.name)}
-                          className="environment-card-clickable"
+                          className={previewMode ? "environment-card-clickable cursor-pointer" : "environment-card-clickable"}
                         >
                           <div className="flex items-start gap-3 environment-card-inner">
                             <div className="flex-shrink-0 flex items-center justify-center">
@@ -824,51 +827,53 @@ export default function EnvironmentSelector({
               )}
 
               {/* Create New Environment Card */}
-              <div
-                className={
-                  activeEnvironments.length > 0
-                    ? "flex justify-center mb-6 flex-shrink-0"
-                    : "flex justify-center flex-shrink-0"
-                }
-              >
-                <div className="w-1/2">
-                  <div
-                    onClick={createNewEnvironment}
-                    className={
-                      "group environment-card create-new-card" +
-                      (readOnly
-                        ? " cursor-default pointer-events-none opacity-80"
-                        : " cursor-pointer")
-                    }
-                  >
-                    <div className="flex items-center gap-3 environment-card-inner">
-                      <div className="flex-shrink-0 flex items-center justify-center">
-                        <svg
-                          className="w-6 h-6 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 4v16m8-8H4"
-                          />
-                        </svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-800 text-sm mb-0.5 leading-tight">
-                          Create New Environment
-                        </h3>
-                        <p className="text-xs text-gray-600 leading-snug">
-                          Start fresh with a new ERP environment
-                        </p>
+              {!previewMode && (
+                <div
+                  className={
+                    activeEnvironments.length > 0
+                      ? "flex justify-center mb-6 flex-shrink-0"
+                      : "flex justify-center flex-shrink-0"
+                  }
+                >
+                  <div className="w-1/2">
+                    <div
+                      onClick={createNewEnvironment}
+                      className={
+                        "group environment-card create-new-card" +
+                        (readOnly
+                          ? " cursor-default pointer-events-none opacity-80"
+                          : " cursor-pointer")
+                      }
+                    >
+                      <div className="flex items-center gap-3 environment-card-inner">
+                        <div className="flex-shrink-0 flex items-center justify-center">
+                          <svg
+                            className="w-6 h-6 text-gray-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-gray-800 text-sm mb-0.5 leading-tight">
+                            Create New Environment
+                          </h3>
+                          <p className="text-xs text-gray-600 leading-snug">
+                            Start fresh with a new ERP environment
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -882,6 +887,18 @@ export default function EnvironmentSelector({
           flex-direction: column;
           background-color: transparent;
           overflow-y: auto;
+        }
+
+        .environment-selector.preview-zoom {
+          overflow: hidden;
+          transform: scale(0.68) translate(-23.5%, -30%);
+          transform-origin: center;
+          width: 147%;
+          height: 147%;
+        }
+
+        .environment-selector.preview-zoom .selector-content {
+          overflow: hidden;
         }
 
         .selector-content {
@@ -957,6 +974,44 @@ export default function EnvironmentSelector({
           position: relative;
         }
 
+        /* Bigger cards only in preview mode */
+        .preview-zoom .environment-card {
+          padding: 20px;
+          min-height: 140px;
+        }
+
+        /* Bigger content in preview mode cards */
+        .preview-zoom .environment-card h3 {
+          font-size: 1rem;
+          line-height: 1.4;
+        }
+
+        .preview-zoom .env-description {
+          font-size: 0.8rem;
+          line-height: 1.5;
+          margin-bottom: 0.75rem;
+        }
+
+        .preview-zoom .environment-card svg {
+          width: 1.75rem;
+          height: 1.75rem;
+        }
+
+        .preview-zoom .component-badge {
+          height: 24px;
+          padding: 0 8px;
+          gap: 5px;
+        }
+
+        .preview-zoom .component-badge svg {
+          width: 14px;
+          height: 14px;
+        }
+
+        .preview-zoom .component-badge span {
+          font-size: 11px;
+        }
+
         /* Edit Icon Button */
         .edit-icon-button {
           position: absolute;
@@ -1009,9 +1064,14 @@ export default function EnvironmentSelector({
             0 8px 24px -8px rgba(59, 130, 246, 0.3), 0 0 20px -8px rgba(59, 130, 246, 0.15);
         }
 
-        .environment-card-selected .environment-card-clickable {
+        .environment-card-selected .environment-card-clickable:not(.cursor-pointer) {
           cursor: default;
           pointer-events: none;
+        }
+
+        .preview-zoom .environment-card-clickable {
+          cursor: pointer !important;
+          pointer-events: auto !important;
         }
 
         .selected-badge {
@@ -1150,6 +1210,10 @@ export default function EnvironmentSelector({
         .custom-scrollbar {
           scrollbar-width: thin;
           scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+        }
+
+        .preview-zoom .custom-scrollbar {
+          overflow: visible;
         }
 
         .custom-scrollbar::-webkit-scrollbar {

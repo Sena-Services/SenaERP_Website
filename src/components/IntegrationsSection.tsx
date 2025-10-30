@@ -1,102 +1,72 @@
 "use client";
 
-import { useState } from "react";
-import {
-  SiWhatsapp,
-  SiInstagram,
-  SiGmail,
-  SiGooglesheets,
-  SiGoogledocs,
-  SiGooglecalendar,
-  SiSlack,
-  SiGithub,
-  SiTypeform
-} from "react-icons/si";
-import { IconType } from "react-icons";
-
 type Integration = {
   id: string;
   name: string;
-  icon: IconType;
-  color: string;
+  iconUrl: string;
+  useColor?: boolean;
 };
 
 const integrations: Integration[] = [
-  { id: "whatsapp", name: "WhatsApp", icon: SiWhatsapp, color: "#25D366" },
-  { id: "instagram", name: "Instagram", icon: SiInstagram, color: "#E4405F" },
-  { id: "gmail", name: "Gmail", icon: SiGmail, color: "#EA4335" },
-  { id: "sheets", name: "Google Sheets", icon: SiGooglesheets, color: "#0F9D58" },
-  { id: "docs", name: "Google Docs", icon: SiGoogledocs, color: "#4285F4" },
-  { id: "calendar", name: "Google Calendar", icon: SiGooglecalendar, color: "#4285F4" },
-  { id: "slack", name: "Slack", icon: SiSlack, color: "#4A154B" },
-  { id: "github", name: "GitHub", icon: SiGithub, color: "#181717" },
-  { id: "tally", name: "Tally", icon: SiTypeform, color: "#5A6BF5" },
+  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true },
+  { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true },
+  { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true },
+  { id: "sheets", name: "Sheets", iconUrl: "https://ssl.gstatic.com/docs/spreadsheets/favicon3.ico", useColor: true },
+  { id: "docs", name: "Docs", iconUrl: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico", useColor: true },
+  { id: "calendar", name: "Calendar", iconUrl: "https://calendar.google.com/googlecalendar/images/favicons_2020q4/calendar_31.ico", useColor: true },
+  { id: "slack", name: "Slack", iconUrl: "https://a.slack-edge.com/80588/marketing/img/icons/icon_slack_hash_colored.png", useColor: true },
+  { id: "github", name: "GitHub", iconUrl: "https://cdn.worldvectorlogo.com/logos/github-icon-1.svg", useColor: true },
+  { id: "tally", name: "Tally", iconUrl: "/icons/Tally.png", useColor: true },
 ];
 
 export default function IntegrationsSection() {
-  const [selectedIntegration, setSelectedIntegration] = useState<string | null>(null);
 
   return (
-    <section id="integrations" className="scroll-mt-32">
-      <div className="rounded-3xl border border-waygent-light-blue bg-waygent-light-blue p-10 shadow-lg">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-semibold text-waygent-text-primary">
-            Connect the tools you already use
+    <section id="integrations" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-7xl">
+        <div className="mb-8">
+          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+            Integrations
           </h2>
         </div>
 
-        <div className="mt-12 mx-auto max-w-4xl">
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+        <div className="max-w-7xl">
+          <div className="flex flex-wrap gap-4">
             {integrations.map((integration) => {
-              const isSelected = selectedIntegration === integration.id;
-
-              const Icon = integration.icon;
-
               return (
-                <button
+                <div
                   key={integration.id}
-                  onClick={() => setSelectedIntegration(integration.id)}
-                  className={`
-                    group relative flex flex-col items-center justify-center
-                    rounded-2xl bg-white p-6
-                    transition-all duration-200 ease-out
-                    hover:shadow-lg hover:scale-105
-                    ${isSelected
-                      ? 'ring-2 ring-waygent-blue shadow-lg scale-105'
-                      : 'shadow-sm hover:ring-2 hover:ring-waygent-blue/50'
-                    }
-                  `}
-                  aria-label={`Connect ${integration.name}`}
+                  className="group flex flex-col items-center gap-1.5"
                 >
-                  <Icon
-                    className="w-10 h-10 transition-colors duration-200"
-                    style={{ color: integration.color }}
-                  />
-
-                  {/* Show name on hover or when selected */}
                   <div
-                    className={`
-                      absolute -bottom-8 left-1/2 -translate-x-1/2
-                      whitespace-nowrap text-xs font-semibold text-waygent-text-primary
-                      bg-white px-3 py-1 rounded-full shadow-md
-                      transition-all duration-200
-                      ${isSelected
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0'
-                      }
-                    `}
+                    className="relative flex items-center justify-center w-14 h-14 rounded-[14px] backdrop-blur-sm bg-transparent border border-gray-300/40 transition-all duration-200 ease-out hover:bg-white/10 hover:border-waygent-blue/40 hover:-translate-y-0.5 hover:scale-105 hover:shadow-md"
                   >
-                    {integration.name}
+                    <img
+                      src={integration.iconUrl}
+                      alt={integration.name}
+                      className={`transition-all duration-200 object-contain ${
+                        integration.id === 'tally'
+                          ? 'w-14 h-14 group-hover:w-11 group-hover:h-11'
+                          : integration.id === 'github'
+                          ? 'w-9 h-9 group-hover:w-10 group-hover:h-10'
+                          : integration.id === 'whatsapp'
+                          ? 'w-8 h-8 group-hover:w-9 group-hover:h-9'
+                          : 'w-7 h-7 group-hover:w-8 group-hover:h-8'
+                      }`}
+                    />
                   </div>
-                </button>
+                  <span className="text-[10px] font-medium text-waygent-text-secondary text-center leading-tight">
+                    {integration.name}
+                  </span>
+                </div>
               );
             })}
           </div>
         </div>
 
-        <div className="mt-16 text-center">
-          <p className="text-sm text-waygent-text-secondary">
-            And 30+ more integrations to connect your entire stack
+        <div className="mt-8">
+          <p className="text-sm text-waygent-text-secondary/80 font-medium">
+            and much more on the way
           </p>
         </div>
       </div>

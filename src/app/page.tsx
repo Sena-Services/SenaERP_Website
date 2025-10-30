@@ -149,12 +149,9 @@ export default function Home() {
               <IntroSection />
             </section>
             <HowItWorksSection />
-            <section id="environments" className="scroll-mt-32 mt-24">
-              <LandingEnvironments />
-            </section>
-            <section id="platform-story" className="scroll-mt-32 mt-4">
-              <ScrollShowcase />
-            </section>
+            <LandingEnvironments />
+            <IntegrationsSection />
+            <ScrollShowcase />
           </div>
 
           <div className="mt-24 space-y-24 px-4 pb-20 sm:px-6 lg:px-10 xl:px-14">
@@ -331,8 +328,6 @@ export default function Home() {
                 </div>
               </div>
             </section>
-
-            <IntegrationsSection />
 
             <section id="results" className="scroll-mt-32">
               <div className="grid gap-6 lg:grid-cols-3">
