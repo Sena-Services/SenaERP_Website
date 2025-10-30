@@ -96,7 +96,7 @@ export default function IntroSection() {
   return (
     <section
       id="intro"
-      className="pt-4 sm:pt-6 pb-4 sm:pb-6 px-4 sm:px-6 lg:px-8"
+      className="pt-4 sm:pt-6 pb-2 sm:pb-3 px-4 sm:px-6 lg:px-8"
     >
       {/* Compact, rounded container */}
       <div

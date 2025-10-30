@@ -145,19 +145,19 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   };
 
   return (
-    <aside className="fixed left-0 top-1/2 z-50 flex w-[7rem] sm:w-[7.5rem] -translate-y-1/2 transform">
+    <aside className="fixed left-0 top-1/2 z-50 flex w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
       <div className="w-full">
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-waygent-light-blue border-2 border-waygent-light-blue border-l-0 px-2 py-2.5 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-waygent-light-blue border-2 border-waygent-light-blue border-l-0 px-2.5 py-2.5 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
             style={{
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
             }}
           >
             {/* Smooth sliding indicator */}
             <div
-              className="absolute left-2 right-2 rounded-lg bg-gradient-to-r from-waygent-orange to-waygent-orange/90 shadow-md pointer-events-none transition-all duration-500 ease-out"
+              className="absolute left-2.5 right-2.5 rounded-lg bg-gradient-to-r from-waygent-orange to-waygent-orange/90 shadow-md pointer-events-none transition-all duration-500 ease-out"
               style={{
                 top: indicator.top,
                 height: indicator.height,
@@ -181,27 +181,29 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className={`group relative flex w-full items-center gap-1.5 rounded-lg px-2 py-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer ${
+                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2.5 py-[9px] text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer ${
                         !isActive && 'hover:bg-white/60 hover:shadow-sm'
                       }`}
                     >
                       <span
-                        className="text-[9px] font-semibold tracking-wider transition-colors duration-300 w-4 flex-shrink-0 text-center leading-none flex items-center justify-center"
+                        className="text-[9px] font-semibold tracking-wider transition-colors duration-300 w-5 flex-shrink-0 flex items-center justify-center"
                         style={{
                           color: isActive ? 'white' : 'rgb(107, 114, 128)',
                           transitionDelay: isActive ? '500ms' : '0ms',
+                          lineHeight: '1',
                         }}
                       >
                         {step}
                       </span>
                       <span
-                        className={`flex-1 text-[11px] sm:text-[12px] font-semibold leading-relaxed transition-all duration-300 flex items-center ${
+                        className={`flex-1 text-[10.5px] sm:text-[11px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap ${
                           !isActive && 'group-hover:text-waygent-orange'
                         }`}
                         style={{
                           color: isActive ? 'white' : 'rgb(31, 41, 55)',
                           transform: isActive ? 'translateX(2px)' : 'translateX(0)',
                           transitionDelay: isActive ? '500ms' : '0ms',
+                          lineHeight: '1.3',
                         }}
                       >
                         {section.label}

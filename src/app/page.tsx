@@ -6,16 +6,15 @@ import SidebarNav from "@/components/SidebarNav";
 import ScrollShowcase from "@/components/ScrollShowcase";
 
 const sections = [
-  { id: "intro", label: "Intro" },
-  { id: "platform-story", label: "Story" },
-  { id: "cofounder", label: "Cofounder" },
-  { id: "use-cases", label: "Use Cases" },
-  { id: "product", label: "Product" },
-  { id: "agents", label: "Agents" },
+  { id: "intro", label: "Introduction" },
+  { id: "how-it-works", label: "How it Works" },
+  { id: "environments", label: "Environments" },
   { id: "integrations", label: "Integrations" },
-  { id: "results", label: "Results" },
+  { id: "builder", label: "Builder" },
+  { id: "community", label: "Community" },
   { id: "pricing", label: "Pricing" },
   { id: "blog", label: "Blog" },
+  { id: "join-us", label: "Join Us" },
 ];
 
 const checklistItems = [
@@ -153,13 +152,13 @@ export default function Home() {
       <SidebarNav sections={sections} />
 
       <div className="relative z-10 flex min-h-screen w-full flex-col">
-        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream pl-0 sm:pl-[9.5rem]">
+        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream pl-0 sm:pl-[9rem]">
           <NavBar />
           <div className="flex-1 flex flex-col">
             <section id="intro" className="scroll-mt-32">
               <IntroSection />
             </section>
-            <section id="platform-story" className="scroll-mt-32 mt-24">
+            <section id="platform-story" className="scroll-mt-32 mt-4">
               <ScrollShowcase />
             </section>
           </div>
