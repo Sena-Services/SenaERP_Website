@@ -145,19 +145,19 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   };
 
   return (
-    <aside className="fixed left-0 top-1/2 z-50 flex w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
+    <aside className="fixed left-0 top-1/2 z-50 flex w-[9.2rem] sm:w-[9.5rem] -translate-y-1/2 transform">
       <div className="w-full">
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-waygent-light-blue border border-waygent-light-blue border-l-0 px-3 py-4 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-waygent-light-blue border border-waygent-light-blue border-l-0 px-2.5 py-4 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
             style={{
               boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
             }}
           >
             {/* Smooth sliding indicator */}
             <div
-              className="absolute left-3 right-3 rounded-lg bg-gradient-to-r from-waygent-orange to-waygent-orange/90 shadow-md pointer-events-none transition-all duration-500 ease-out"
+              className="absolute left-2.5 right-2.5 rounded-lg bg-gradient-to-r from-waygent-orange to-waygent-orange/90 shadow-md pointer-events-none transition-all duration-500 ease-out"
               style={{
                 top: indicator.top,
                 height: indicator.height,
@@ -166,7 +166,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
               }}
             />
 
-            <ul className="relative flex flex-col gap-1 text-waygent-text-secondary">
+            <ul className="relative flex flex-col gap-1 text-waygent-text-secondary font-space-grotesk">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const step = (index + 1).toString().padStart(2, "0");
@@ -181,12 +181,12 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer ${
+                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer ${
                         !isActive && 'hover:bg-white/60 hover:shadow-sm'
                       }`}
                     >
                       <span
-                        className="text-[9px] font-medium tracking-wider transition-colors duration-300"
+                        className="text-[9px] font-semibold tracking-wider transition-colors duration-300"
                         style={{
                           color: isActive ? 'white' : 'rgb(107, 114, 128)',
                           transitionDelay: isActive ? '500ms' : '0ms',
@@ -195,7 +195,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                         {step}
                       </span>
                       <span
-                        className={`flex-1 text-[11px] sm:text-[12px] font-medium leading-tight transition-all duration-300 ${
+                        className={`flex-1 text-[11px] sm:text-[12px] font-semibold leading-tight transition-all duration-300 ${
                           !isActive && 'group-hover:text-waygent-orange'
                         }`}
                         style={{

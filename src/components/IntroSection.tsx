@@ -7,31 +7,31 @@ const tokens = [
   {
     word: `lightweight`,
     definition:
-      "Cloud-native architecture means zero installations, zero maintenance, and zero IT headaches. Our platform runs entirely in your browser with enterprise-grade security and performance. No servers to manage, no software to update, no complex integrations. Just instant access from anywhere in the world with nothing more than an internet connection.",
+      "Cloud-native. Zero installation. Instant access from anywhere.",
     color: "text-waygent-blue",
   },
   {
     word: "end-to-end",
     definition:
-      "From initial customer inquiry to final account reconciliation, Sena handles every single business workflow. Customer management, order processing, inventory tracking, payment processing, supplier coordination, document handling, customer communication, reporting, and financial reconciliation—all seamlessly integrated in one unified platform.",
+      "From inquiry to invoice. Every workflow, seamlessly integrated.",
     color: "text-waygent-blue",
   },
   {
-    word: "AI-centred",
+    word: "AI-powered",
     definition:
-      "Our advanced AI engine transforms how you work by intelligently analyzing customer data, suggesting profitable upsells based on customer preferences, providing instant customer support responses, optimizing pricing strategies, and automating routine tasks. Think of it as having an expert business analyst and operations manager working 24/7 alongside your team.",
+      "Smart automation that learns your business and suggests what's next.",
     color: "text-waygent-blue",
   },
   {
     word: "ERP",
     definition:
-      "Enterprise Resource Planning system that integrates all core business processes including finance, human resources, supply chain, manufacturing, and customer relationship management. Built specifically for companies that need comprehensive business management, not just basic tools. We understand complex organizational structures, multi-department workflows, and enterprise-level requirements.",
+      "Enterprise-grade system built for teams that need real business tools.",
     color: "text-waygent-blue",
   },
   {
     word: "all sizes",
     definition:
-      "Whether you're a startup just getting off the ground, a mid-size company managing hundreds of transactions monthly, or an enterprise handling thousands of operations, Sena automatically scales with your business. Our flexible pricing, modular features, and infrastructure grow seamlessly as you expand without any platform migrations or disruptions.",
+      "Scales from startup to enterprise without platform migrations.",
     color: "text-waygent-blue",
   },
 ] as const;
@@ -96,148 +96,178 @@ export default function IntroSection() {
   return (
     <section
       id="intro"
-      className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center pt-32 sm:pt-36 pb-20 px-4 sm:px-6 lg:px-8"
+      className="pt-16 sm:pt-20 pb-12 px-4 sm:px-6 lg:px-8"
     >
-      <div className="w-full max-w-7xl mx-auto">
-        {/* Main heading */}
-        <div className="text-center mb-16 sm:mb-20">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-gray-900 tracking-tight mb-4">
-            What is{" "}
-            <span className="text-waygent-blue relative inline-block">
-              Sena
-              <svg
-                className="absolute left-0 -bottom-2 w-full"
-                viewBox="0 0 200 10"
-                preserveAspectRatio="none"
-                style={{ height: '8px' }}
-              >
-                <path
-                  d="M0,5 Q50,0 100,5 T200,5"
-                  stroke="#3b82f6"
-                  strokeWidth="2"
-                  fill="none"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="text-gray-900">?</span>
-          </h1>
-        </div>
-
-        {/* Description with keywords */}
-        <div className="text-center mb-16 sm:mb-20">
-          <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-800 leading-relaxed max-w-6xl mx-auto font-light">
-            <span>Sena is a </span>
-            <Keyword
-              word={tokens[0].word}
-              index={0}
-              active={activeIdx}
-              setActive={handleKeywordHover}
-              onMouseLeave={handleKeywordLeave}
-              color={tokens[0].color}
-              resolvedUnderlineColor={
-                tailwindToHexColorMap[tokens[0].color] ||
-                FALLBACK_UNDERLINE_COLOR
-              }
-            />
-            {", "}
-            <Keyword
-              word={tokens[1].word}
-              index={1}
-              active={activeIdx}
-              setActive={handleKeywordHover}
-              onMouseLeave={handleKeywordLeave}
-              color={tokens[1].color}
-              resolvedUnderlineColor={
-                tailwindToHexColorMap[tokens[1].color] ||
-                FALLBACK_UNDERLINE_COLOR
-              }
-            />
-            {", "}
-            <Keyword
-              word={tokens[2].word}
-              index={2}
-              active={activeIdx}
-              setActive={handleKeywordHover}
-              onMouseLeave={handleKeywordLeave}
-              color={tokens[2].color}
-              resolvedUnderlineColor={
-                tailwindToHexColorMap[tokens[2].color] ||
-                FALLBACK_UNDERLINE_COLOR
-              }
-            />
-            {", "}
-            <Keyword
-              word={tokens[3].word}
-              index={3}
-              active={activeIdx}
-              setActive={handleKeywordHover}
-              onMouseLeave={handleKeywordLeave}
-              color={tokens[3].color}
-              resolvedUnderlineColor={
-                tailwindToHexColorMap[tokens[3].color] ||
-                FALLBACK_UNDERLINE_COLOR
-              }
-            />
-            {", "}
-            <span>for companies of </span>
-            <Keyword
-              word={tokens[4].word}
-              index={4}
-              active={activeIdx}
-              setActive={handleKeywordHover}
-              onMouseLeave={handleKeywordLeave}
-              color={tokens[4].color}
-              resolvedUnderlineColor={
-                tailwindToHexColorMap[tokens[4].color] ||
-                FALLBACK_UNDERLINE_COLOR
-              }
-            />
-            <span>.</span>
-          </p>
-        </div>
-
-        {/* Definition block with fixed height to prevent layout shift */}
+      {/* Compact, rounded container */}
+      <div
+        className="relative max-w-7xl mx-auto rounded-[40px] overflow-hidden shadow-2xl border-2 border-waygent-light-blue"
+        style={{
+          backgroundImage: 'url(/illustrations/monet-intro.png), url(/illustrations/monet-left-edge.png)',
+          backgroundSize: 'auto 100%, auto 100%',
+          backgroundPosition: 'right center, left center',
+          backgroundRepeat: 'no-repeat, repeat-x',
+          backgroundColor: '#FAF9F5',
+          minHeight: '550px',
+          height: '65vh',
+          maxHeight: '700px'
+        }}
+      >
+        {/* Gradient overlay to smooth repeating edges */}
         <div
-          className="mx-auto max-w-5xl"
-          style={{ minHeight: definitionMaxHeight ? `${definitionMaxHeight}px` : '300px' }}
-        >
-          <div className="relative">
-            {activeToken && (
-              <div className="text-center animate-in fade-in duration-500">
-                <div className="mb-8">
-                  <span className={`${activeToken.color} font-semibold text-3xl sm:text-4xl md:text-5xl tracking-tight relative inline-block`}>
-                    {activeToken.word}
-                    <div className="absolute left-0 right-0 -bottom-2 h-1 bg-gradient-to-r from-transparent via-waygent-blue to-transparent opacity-50"></div>
-                  </span>
-                </div>
-                <p className="text-gray-700 text-lg sm:text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto">
-                  {activeToken.definition}
-                </p>
-              </div>
-            )}
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to right, transparent 0%, rgba(250, 249, 245, 0.05) 30%, rgba(250, 249, 245, 0.05) 70%, transparent 100%)',
+            backgroundSize: '200px 100%',
+            backgroundRepeat: 'repeat-x',
+            mixBlendMode: 'overlay'
+          }}
+        />
+
+        {/* Content positioned on the left (on top of cream area of image) */}
+        <div className="relative h-full flex items-center py-12 sm:py-16 px-6 sm:px-10 lg:px-16">
+          <div className="max-w-xl lg:max-w-2xl">
+          {/* Decorative top brushstroke */}
+          <div className="flex justify-start mb-4">
+            <svg className="w-20 h-2" viewBox="0 0 100 10" style={{ opacity: 0.3 }}>
+              <path d="M0,5 Q25,2 50,5 T100,5" stroke="#f59e0b" strokeWidth="2" fill="none" strokeLinecap="round" />
+            </svg>
           </div>
 
-          {/* Hidden measurer to compute the tallest definition */}
-          <div className="absolute opacity-0 pointer-events-none -z-10" aria-hidden="true">
-            {tokens.map((t, i) => (
-              <div
-                key={t.word}
-                ref={(el) => {
-                  hiddenRefs.current[i] = el;
-                }}
-                className="text-center max-w-5xl"
-              >
-                <div className="mb-8">
-                  <span className={`${t.color} font-semibold text-3xl sm:text-4xl md:text-5xl tracking-tight`}>
-                    {t.word}
-                  </span>
+          {/* Main heading */}
+          <div className="mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight mb-3 font-space-grotesk">
+              An ERP that feels like{" "}
+              <span className="relative inline-block">
+                <span className="text-waygent-blue">art</span>
+                <svg
+                  className="absolute left-0 -bottom-1 w-full"
+                  viewBox="0 0 200 12"
+                  preserveAspectRatio="none"
+                  style={{ height: '6px' }}
+                >
+                  <path
+                    d="M2,8 Q50,4 100,8 T198,8"
+                    stroke="#3b82f6"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeLinecap="round"
+                    opacity="0.4"
+                  />
+                </svg>
+              </span>
+            </h1>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light font-space-grotesk">
+              Lightweight. Intelligent. Beautiful.
+            </p>
+          </div>
+
+          {/* Description with keywords */}
+          <div className="mb-6">
+            <p className="text-base sm:text-lg md:text-xl text-gray-800 leading-relaxed font-light font-space-grotesk">
+              <span>A </span>
+              <Keyword
+                word={tokens[0].word}
+                index={0}
+                active={activeIdx}
+                setActive={handleKeywordHover}
+                onMouseLeave={handleKeywordLeave}
+                color={tokens[0].color}
+                resolvedUnderlineColor={
+                  tailwindToHexColorMap[tokens[0].color] ||
+                  FALLBACK_UNDERLINE_COLOR
+                }
+              />
+              {", "}
+              <Keyword
+                word={tokens[1].word}
+                index={1}
+                active={activeIdx}
+                setActive={handleKeywordHover}
+                onMouseLeave={handleKeywordLeave}
+                color={tokens[1].color}
+                resolvedUnderlineColor={
+                  tailwindToHexColorMap[tokens[1].color] ||
+                  FALLBACK_UNDERLINE_COLOR
+                }
+              />
+              {", "}
+              <Keyword
+                word={tokens[2].word}
+                index={2}
+                active={activeIdx}
+                setActive={handleKeywordHover}
+                onMouseLeave={handleKeywordLeave}
+                color={tokens[2].color}
+                resolvedUnderlineColor={
+                  tailwindToHexColorMap[tokens[2].color] ||
+                  FALLBACK_UNDERLINE_COLOR
+                }
+              />
+              {" "}
+              <Keyword
+                word={tokens[3].word}
+                index={3}
+                active={activeIdx}
+                setActive={handleKeywordHover}
+                onMouseLeave={handleKeywordLeave}
+                color={tokens[3].color}
+                resolvedUnderlineColor={
+                  tailwindToHexColorMap[tokens[3].color] ||
+                  FALLBACK_UNDERLINE_COLOR
+                }
+              />
+              {" "}
+              <span>for companies of </span>
+              <Keyword
+                word={tokens[4].word}
+                index={4}
+                active={activeIdx}
+                setActive={handleKeywordHover}
+                onMouseLeave={handleKeywordLeave}
+                color={tokens[4].color}
+                resolvedUnderlineColor={
+                  tailwindToHexColorMap[tokens[4].color] ||
+                  FALLBACK_UNDERLINE_COLOR
+                }
+              />
+              <span>.</span>
+            </p>
+          </div>
+
+          {/* Definition block - compact */}
+          <div
+            style={{ minHeight: definitionMaxHeight ? `${definitionMaxHeight}px` : '80px' }}
+          >
+            <div className="relative">
+              {activeToken && (
+                <div className="animate-in fade-in duration-400">
+                  <div className="rounded-xl bg-white/40 backdrop-blur-sm border border-waygent-light-blue/60 px-4 py-3 shadow-sm">
+                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed font-medium font-space-grotesk">
+                      {activeToken.definition}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-gray-700 text-lg sm:text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto">
-                  {t.definition}
-                </p>
-              </div>
-            ))}
+              )}
+            </div>
+
+            {/* Hidden measurer */}
+            <div className="absolute opacity-0 pointer-events-none -z-10" aria-hidden="true">
+              {tokens.map((t, i) => (
+                <div
+                  key={t.word}
+                  ref={(el) => {
+                    hiddenRefs.current[i] = el;
+                  }}
+                >
+                  <div className="rounded-xl bg-white/40 backdrop-blur-sm border border-waygent-light-blue/60 px-4 py-3">
+                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed font-medium">
+                      {t.definition}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           </div>
         </div>
       </div>

@@ -93,7 +93,8 @@ export default function NavBar() {
                 {/* Login Button */}
                 <Link
                   href="/login"
-                  className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-medium border border-gray-300 bg-transparent text-gray-600 cursor-pointer outline-none leading-none font-sans hover:bg-white/60 hover:shadow-sm hover:text-gray-800 hover:border-gray-400 focus-visible:outline-none"
+                  className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border cursor-pointer outline-none leading-none font-space-grotesk hover:border-waygent-orange/60 hover:text-waygent-orange focus-visible:outline-none"
+                  style={{ borderColor: '#E5E7EB', backgroundColor: '#FAF9F5', color: '#6B7280' }}
                 >
                   <span className="leading-none">Log In</span>
                 </Link>
@@ -101,7 +102,7 @@ export default function NavBar() {
                 {/* Sign Up Button */}
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-medium border-2 border-waygent-orange bg-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-sans hover:bg-waygent-orange/90 hover:shadow-md focus-visible:outline-none"
+                  className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border-2 border-waygent-orange bg-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:bg-waygent-orange/90 hover:shadow-md focus-visible:outline-none"
                 >
                   <div className="flex items-center gap-1.5">
                     <div className="w-4 h-4 flex-shrink-0 transition-all duration-300 ease-out hidden xs:block sm:block">
@@ -120,21 +121,22 @@ export default function NavBar() {
                 {/* Environment/Home Button */}
                 <Link
                   href={isOnEnvironmentSelector ? "/" : "/environment-selector"}
-                  className="group inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-medium border border-gray-300 bg-white/50 backdrop-blur-sm cursor-pointer outline-none leading-none font-sans hover:bg-white/60 hover:shadow-sm hover:border-gray-400 focus-visible:outline-none"
+                  className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 ease-out whitespace-nowrap cursor-pointer outline-none leading-none font-space-grotesk focus-visible:outline-none bg-white/70 border border-gray-200 hover:bg-white/90 hover:shadow-sm hover:border-gray-300"
+                  style={{
+                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                  }}
                 >
-                  <div className="flex items-center gap-1.5">
-                    {isOnEnvironmentSelector ? (
-                      <>
-                        <Home className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-waygent-orange" />
-                        <span className="leading-none text-gray-700 transition-colors duration-300 group-hover:text-waygent-orange">Home</span>
-                      </>
-                    ) : (
-                      <>
-                        <Database className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-waygent-orange group-hover:fill-waygent-orange/20" />
-                        <span className="leading-none text-gray-700 transition-colors duration-300 group-hover:text-waygent-orange">ERP Environment</span>
-                      </>
-                    )}
-                  </div>
+                  {isOnEnvironmentSelector ? (
+                    <>
+                      <Home className="w-4 h-4 text-gray-500 transition-colors duration-300 group-hover:text-waygent-orange" />
+                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-waygent-orange">Home</span>
+                    </>
+                  ) : (
+                    <>
+                      <Database className="w-4 h-4 text-gray-500 transition-colors duration-300 group-hover:text-waygent-orange" />
+                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-waygent-orange">ERP Environment</span>
+                    </>
+                  )}
                 </Link>
 
                 {/* User Avatar */}

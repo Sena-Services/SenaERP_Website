@@ -49,50 +49,55 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Avatar Button */}
+      {/* Avatar Button - Circular with Initials Only */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-1.5 py-1 rounded-full bg-gradient-to-br from-gray-50 to-white border border-gray-300 hover:border-gray-400 hover:shadow-md transition-all duration-300 group"
+        className="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 bg-white/70 border border-gray-200 hover:bg-white/90 hover:shadow-sm hover:border-gray-300 outline-none focus-visible:outline-none cursor-pointer font-space-grotesk"
+        style={{
+          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        }}
       >
-        {/* Avatar Circle */}
-        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white text-[10px] font-bold shadow-sm">
+        {/* Avatar Initials */}
+        <span className="text-sm font-bold text-waygent-orange">
           {initials}
-        </div>
-
-        {/* User Name */}
-        <span className="text-xs font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200 px-1.5">
-          {user.full_name || user.email}
         </span>
-
-        {/* Chevron Icon */}
-        <ChevronDown
-          className={`w-3 h-3 text-gray-400 transition-all duration-300 group-hover:text-gray-600 mr-0.5 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+        <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg border py-1 z-50 font-space-grotesk" style={{ backgroundColor: '#FAF9F5', borderColor: '#E5E7EB' }}>
           {/* User Info Section */}
-          <div className="px-4 py-3 border-b border-gray-100">
+          <div className="px-4 py-3" style={{ borderBottom: '1px solid #EEF2FF' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-300 flex items-center justify-center text-gray-700 text-sm font-semibold shadow-sm">
-                {initials}
+              <div className="w-10 h-10 flex items-center justify-center">
+                <span className="text-2xl font-bold text-waygent-orange">
+                  {initials}
+                </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
+                <p className="text-sm font-semibold truncate" style={{ color: '#374151' }}>
                   {user.full_name || user.email}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                <p className="text-xs truncate" style={{ color: '#9CA3AF' }}>{user.email}</p>
               </div>
             </div>
           </div>
 
           {/* Profile Menu Item (Placeholder) */}
           <button
-            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+            className="w-full px-4 py-2 text-left text-sm font-medium flex items-center gap-2 transition-colors"
+            style={{
+              backgroundColor: 'transparent',
+              color: '#6B7280'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#EEF2FF';
+              e.currentTarget.style.color = '#F59E0B';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#6B7280';
+            }}
             onClick={() => {
               // Placeholder for profile action
               console.log("Profile clicked");
@@ -105,7 +110,19 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
           {/* Environment Selector Menu Item - Only show if not already on that page */}
           {!isOnEnvironmentSelector && (
             <button
-              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+              className="w-full px-4 py-2 text-left text-sm font-medium flex items-center gap-2 transition-colors"
+              style={{
+                backgroundColor: 'transparent',
+                color: '#6B7280'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#EEF2FF';
+                e.currentTarget.style.color = '#F59E0B';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#6B7280';
+              }}
               onClick={() => {
                 setIsOpen(false);
                 router.push("/environment-selector");
@@ -119,7 +136,20 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
           {/* Logout Menu Item */}
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
+            className="w-full px-4 py-2 text-left text-sm font-medium flex items-center gap-2 transition-colors"
+            style={{
+              backgroundColor: 'transparent',
+              borderTop: '1px solid #EEF2FF',
+              color: '#6B7280'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#EEF2FF';
+              e.currentTarget.style.color = '#F59E0B';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#6B7280';
+            }}
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>
