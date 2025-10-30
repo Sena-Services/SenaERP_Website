@@ -51,12 +51,11 @@ export default function NavBar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full">
+    <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8">
       <nav
-        className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} px-3 sm:px-6 lg:px-8 bg-waygent-light-blue border border-waygent-light-blue border-t-0 rounded-b-3xl shadow-lg backdrop-blur-sm`}
+        className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} px-3 sm:px-6 lg:px-8 bg-waygent-light-blue border-2 border-waygent-light-blue border-t-0 rounded-b-3xl backdrop-blur-sm max-w-7xl mx-auto`}
         style={{
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-          margin: '0 1rem 0 1rem'
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         }}
       >
         {/* logo block */}

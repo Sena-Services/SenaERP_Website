@@ -100,8 +100,9 @@ export default function IntroSection() {
     >
       {/* Compact, rounded container */}
       <div
-        className="relative max-w-7xl mx-auto rounded-[40px] overflow-hidden shadow-2xl border-2 border-waygent-light-blue"
+        className="relative max-w-7xl mx-auto rounded-[40px] overflow-hidden border-2 border-waygent-light-blue"
         style={{
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundImage: 'url(/illustrations/monet-intro.png), url(/illustrations/monet-left-edge.png)',
           backgroundSize: 'auto 100%, auto 100%',
           backgroundPosition: 'right center, left center',
