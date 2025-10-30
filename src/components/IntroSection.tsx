@@ -5,33 +5,33 @@ import { Keyword } from "./Keyword";
 
 const tokens = [
   {
-    word: `lightweight`,
+    word: `composable`,
     definition:
-      "Cloud-native. Zero installation. Instant access from anywhere.",
+      "Start with pre-built UI components, databases, workflows, and agents. Mix and match primitives like building blocks—no code required. Each piece connects seamlessly to create your custom business operating system.",
     color: "text-waygent-blue",
   },
   {
-    word: "end-to-end",
+    word: "platform",
     definition:
-      "From inquiry to invoice. Every workflow, seamlessly integrated.",
+      "More than tools—it's a complete operating system for your business. Everything from customer management to invoicing lives in one unified, intelligent workspace that evolves with your needs.",
     color: "text-waygent-blue",
   },
   {
-    word: "AI-powered",
+    word: "AI-built",
     definition:
-      "Smart automation that learns your business and suggests what's next.",
+      "AI doesn't just automate—it architects. From responsive UIs to complex workflows, our builder generates production-ready primitives on demand, tailored precisely to your specifications.",
     color: "text-waygent-blue",
   },
   {
-    word: "ERP",
+    word: "natural language",
     definition:
-      "Enterprise-grade system built for teams that need real business tools.",
+      "Just describe what you need in plain English. Our AI understands your requirements and generates the exact interfaces, data structures, and automations your business needs—all through conversation.",
     color: "text-waygent-blue",
   },
   {
-    word: "all sizes",
+    word: "small teams",
     definition:
-      "Scales from startup to enterprise without platform migrations.",
+      "Built for nimble, AI-first teams who need enterprise-grade power without enterprise-grade complexity. Get the capabilities of Salesforce with the speed of a startup—no IT department required.",
     color: "text-waygent-blue",
   },
 ] as const;
@@ -108,9 +108,9 @@ export default function IntroSection() {
           backgroundPosition: 'right center, left center',
           backgroundRepeat: 'no-repeat, repeat-x',
           backgroundColor: '#EBE5D9',
-          minHeight: '450px',
-          height: '75vh',
-          maxHeight: '600px',
+          minHeight: '500px',
+          height: '80vh',
+          maxHeight: '650px',
           overflow: 'hidden'
         }}
       >
@@ -126,46 +126,21 @@ export default function IntroSection() {
         />
 
         {/* Content positioned on the left (on top of cream area of image) */}
-        <div className="relative h-full flex items-center py-12 sm:py-16 px-6 sm:px-10 lg:px-16">
-          <div className="max-w-xl lg:max-w-2xl">
-          {/* Decorative top brushstroke */}
-          <div className="flex justify-start mb-4">
-            <svg className="w-20 h-2" viewBox="0 0 100 10" style={{ opacity: 0.3 }}>
-              <path d="M0,5 Q25,2 50,5 T100,5" stroke="#f59e0b" strokeWidth="2" fill="none" strokeLinecap="round" />
-            </svg>
-          </div>
-
+        <div className="relative h-full flex items-center py-8 sm:py-10 px-6 sm:px-8 lg:px-12">
+          <div className="max-w-xl space-y-5">
           {/* Main heading */}
-          <div className="mb-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight mb-3 font-space-grotesk">
-              An ERP that feels like{" "}
-              <span className="relative inline-block">
-                <span className="text-waygent-blue">art</span>
-                <svg
-                  className="absolute left-0 -bottom-1 w-full"
-                  viewBox="0 0 200 12"
-                  preserveAspectRatio="none"
-                  style={{ height: '6px' }}
-                >
-                  <path
-                    d="M2,8 Q50,4 100,8 T198,8"
-                    stroke="#3b82f6"
-                    strokeWidth="2"
-                    fill="none"
-                    strokeLinecap="round"
-                    opacity="0.4"
-                  />
-                </svg>
-              </span>
+          <div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 font-space-grotesk leading-tight">
+              Compose your business like a painting
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light font-space-grotesk">
-              Lightweight. Intelligent. Beautiful.
+            <p className="text-lg sm:text-xl text-gray-600 font-space-grotesk">
+              Describe. Build. Orchestrate.
             </p>
           </div>
 
           {/* Description with keywords */}
-          <div className="mb-6">
-            <p className="text-base sm:text-lg md:text-xl text-gray-800 leading-relaxed font-light font-space-grotesk">
+          <div>
+            <p className="text-base sm:text-lg text-gray-800 leading-relaxed font-space-grotesk">
               <span>A </span>
               <Keyword
                 word={tokens[0].word}
@@ -179,7 +154,7 @@ export default function IntroSection() {
                   FALLBACK_UNDERLINE_COLOR
                 }
               />
-              {", "}
+              {" "}
               <Keyword
                 word={tokens[1].word}
                 index={1}
@@ -192,7 +167,7 @@ export default function IntroSection() {
                   FALLBACK_UNDERLINE_COLOR
                 }
               />
-              {", "}
+              {" that's "}
               <Keyword
                 word={tokens[2].word}
                 index={2}
@@ -205,7 +180,7 @@ export default function IntroSection() {
                   FALLBACK_UNDERLINE_COLOR
                 }
               />
-              {" "}
+              {" through "}
               <Keyword
                 word={tokens[3].word}
                 index={3}
@@ -218,8 +193,7 @@ export default function IntroSection() {
                   FALLBACK_UNDERLINE_COLOR
                 }
               />
-              {" "}
-              <span>for companies of </span>
+              {" for "}
               <Keyword
                 word={tokens[4].word}
                 index={4}
@@ -236,38 +210,54 @@ export default function IntroSection() {
             </p>
           </div>
 
-          {/* Definition block - compact */}
-          <div
-            style={{ minHeight: definitionMaxHeight ? `${definitionMaxHeight}px` : '80px' }}
-          >
-            <div className="relative">
-              {activeToken && (
-                <div className="animate-in fade-in duration-400">
-                  <div className="rounded-xl bg-white/40 backdrop-blur-sm border border-waygent-light-blue/60 px-4 py-3 shadow-sm">
-                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed font-medium font-space-grotesk">
-                      {activeToken.definition}
-                    </p>
-                  </div>
-                </div>
-              )}
+          {/* Definition block with progress indicator */}
+          <div className="space-y-3">
+            {/* Progress indicator */}
+            <div className="flex gap-1.5">
+              {tokens.map((_, i) => (
+                <div
+                  key={i}
+                  className="h-1 flex-1 rounded-full transition-all duration-300"
+                  style={{
+                    backgroundColor: i === activeIdx ? '#3b82f6' : '#cbd5e1',
+                  }}
+                />
+              ))}
             </div>
 
-            {/* Hidden measurer */}
-            <div className="absolute opacity-0 pointer-events-none -z-10" aria-hidden="true">
-              {tokens.map((t, i) => (
-                <div
-                  key={t.word}
-                  ref={(el) => {
-                    hiddenRefs.current[i] = el;
-                  }}
-                >
-                  <div className="rounded-xl bg-white/40 backdrop-blur-sm border border-waygent-light-blue/60 px-4 py-3">
-                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed font-medium">
-                      {t.definition}
-                    </p>
+            {/* Definition */}
+            <div
+              style={{ minHeight: definitionMaxHeight ? `${definitionMaxHeight}px` : '100px' }}
+            >
+              <div className="relative">
+                {activeToken && (
+                  <div className="animate-in fade-in duration-400">
+                    <div className="rounded-xl bg-white/60 backdrop-blur-md border border-gray-200 px-4 py-3 shadow-lg">
+                      <p className="text-gray-800 text-sm sm:text-base leading-relaxed font-space-grotesk">
+                        {activeToken.definition}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )}
+              </div>
+
+              {/* Hidden measurer */}
+              <div className="absolute opacity-0 pointer-events-none -z-10" aria-hidden="true">
+                {tokens.map((t, i) => (
+                  <div
+                    key={t.word}
+                    ref={(el) => {
+                      hiddenRefs.current[i] = el;
+                    }}
+                  >
+                    <div className="rounded-xl bg-white/60 backdrop-blur-md border border-gray-200 px-4 py-3">
+                      <p className="text-gray-800 text-sm sm:text-base leading-relaxed">
+                        {t.definition}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           </div>

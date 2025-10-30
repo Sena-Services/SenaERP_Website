@@ -4,6 +4,7 @@ import NavBar from "@/components/NavBar";
 import IntroSection from "@/components/IntroSection";
 import SidebarNav from "@/components/SidebarNav";
 import ScrollShowcase from "@/components/ScrollShowcase";
+import HowItWorksSection from "@/components/HowItWorksSection";
 
 const sections = [
   { id: "intro", label: "Introduction" },
@@ -158,6 +159,7 @@ export default function Home() {
             <section id="intro" className="scroll-mt-32">
               <IntroSection />
             </section>
+            <HowItWorksSection />
             <section id="platform-story" className="scroll-mt-32 mt-4">
               <ScrollShowcase />
             </section>
