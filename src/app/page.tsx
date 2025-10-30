@@ -3,7 +3,7 @@ import Image from "next/image";
 import NavBar from "@/components/NavBar";
 import IntroSection from "@/components/IntroSection";
 import SidebarNav from "@/components/SidebarNav";
-import ScrollShowcase from "@/components/ScrollShowcase";
+import Builder from "@/components/Builder";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import LandingEnvironments from "@/components/LandingEnvironments";
 import IntegrationsSection from "@/components/IntegrationsSection";
@@ -151,7 +151,7 @@ export default function Home() {
             <HowItWorksSection />
             <LandingEnvironments />
             <IntegrationsSection />
-            <ScrollShowcase />
+            <Builder />
           </div>
 
           <div className="mt-24 space-y-24 px-4 pb-20 sm:px-6 lg:px-10 xl:px-14">

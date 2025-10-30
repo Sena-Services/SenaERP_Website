@@ -62,7 +62,7 @@ const showcaseSteps: ShowcaseStep[] = [
   },
 ];
 
-export default function ScrollShowcase() {
+export default function Builder() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const totalSteps = showcaseSteps.length;
   const scrollLength = (totalSteps + 1) * 105;
@@ -85,7 +85,7 @@ export default function ScrollShowcase() {
     }
   });
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]); 
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]);
   const productScale = useTransform(scrollYProgress, [0, 0.12], [1.05, 0.9]);
   const productX = useTransform(scrollYProgress, [0, 0.12], [-120, 0]);
   const productY = useTransform(scrollYProgress, [0, 0.12], [110, 0]);
@@ -97,7 +97,7 @@ export default function ScrollShowcase() {
   const activeStep = showcaseSteps[activeIndex];
 
   return (
-    <div className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+    <div id="builder" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl">
         <div className="mb-8">
           <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
