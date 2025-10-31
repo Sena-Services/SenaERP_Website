@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 type Step = {
   id: string;
   title: string;
@@ -28,24 +30,34 @@ const steps: Step[] = [
   },
 ];
 
+// Card aspect ratio - change this to adjust height of all cards
+const CARD_ASPECT_RATIO = "1/1";
+
 function StepVisual({ id }: { id: Step["id"] }) {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   if (id === "discovery") {
     const handleMouseEnter = (e: React.MouseEvent<HTMLVideoElement>) => {
+      setIsHovered(true);
       const video = e.currentTarget;
       video.playbackRate = 0.5;
       video.play();
     };
 
     const handleMouseLeave = (e: React.MouseEvent<HTMLVideoElement>) => {
+      setIsHovered(false);
       const video = e.currentTarget;
       video.pause();
       video.currentTime = 0;
     };
 
     return (
-      <div className="relative w-full overflow-hidden bg-[#f6efe4] aspect-[5/6]">
+      <div className={`relative w-full overflow-hidden bg-[#f6efe4] aspect-[${CARD_ASPECT_RATIO}]`}>
         <video
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+            isHovered ? "opacity-100" : "opacity-70"
+          }`}
+          style={{ objectPosition: 'center 40%' }}
           loop
           muted
           playsInline
@@ -60,21 +72,26 @@ function StepVisual({ id }: { id: Step["id"] }) {
 
   if (id === "preview") {
     const handleMouseEnter = (e: React.MouseEvent<HTMLVideoElement>) => {
+      setIsHovered(true);
       const video = e.currentTarget;
       video.playbackRate = 0.75;
       video.play();
     };
 
     const handleMouseLeave = (e: React.MouseEvent<HTMLVideoElement>) => {
+      setIsHovered(false);
       const video = e.currentTarget;
       video.pause();
       video.currentTime = 0;
     };
 
     return (
-      <div className="relative w-full overflow-hidden bg-[#f5f2e9] aspect-[5/6]">
+      <div className={`relative w-full overflow-hidden bg-[#f5f2e9] aspect-[${CARD_ASPECT_RATIO}]`}>
         <video
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+            isHovered ? "opacity-100" : "opacity-70"
+          }`}
+          style={{ objectPosition: 'center 45%' }}
           loop
           muted
           playsInline
@@ -88,6 +105,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
   }
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLVideoElement>) => {
+    setIsHovered(true);
     const video = e.currentTarget;
     video.currentTime = 3;
     video.playbackRate = 0.5;
@@ -95,6 +113,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLVideoElement>) => {
+    setIsHovered(false);
     const video = e.currentTarget;
     video.pause();
     video.currentTime = 3;
@@ -108,9 +127,12 @@ function StepVisual({ id }: { id: Step["id"] }) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#f6f2fb] aspect-[5/6]">
+    <div className={`relative w-full overflow-hidden bg-[#f6f2fb] aspect-[${CARD_ASPECT_RATIO}]`}>
       <video
-        className="absolute inset-0 h-full w-full object-cover"
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+          isHovered ? "opacity-100" : "opacity-70"
+        }`}
+        style={{ objectPosition: 'center 80%' }}
         muted
         playsInline
         onMouseEnter={handleMouseEnter}
@@ -140,7 +162,7 @@ export default function HowItWorksSection() {
         </div>
 
         <div className="relative flex flex-col">
-          <div className="mb-8">
+          <div className="mb-6">
             <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
               How it works
             </h2>
@@ -150,26 +172,23 @@ export default function HowItWorksSection() {
             {steps.map((step, index) => (
               <article
                 key={step.id}
-                className="flex h-full flex-col overflow-hidden rounded-[28px] border border-waygent-light-blue/40 bg-white text-waygent-text-primary shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="flex flex-col overflow-hidden rounded-[24px] border border-waygent-light-blue/40 bg-white text-waygent-text-primary shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <StepVisual id={step.id} />
-                <div className="flex flex-1 flex-col gap-2.5 border-t border-waygent-light-blue/30 px-5 py-4">
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-waygent-blue text-sm font-bold text-white">
-                      {index + 1}
-                    </span>
-                    <div className="flex flex-col gap-0.5">
-                      <h3 className="text-base font-bold text-waygent-text-primary leading-snug">
+                <div className="flex flex-1 flex-col border-t border-waygent-light-blue/30 px-4 py-3.5">
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-waygent-blue text-xs font-bold text-white">
+                        {index + 1}
+                      </span>
+                      <h3 className="text-[15px] font-bold text-waygent-text-primary leading-snug">
                         {step.title}
                       </h3>
-                      <p className="text-sm font-medium text-waygent-text-secondary leading-relaxed">
-                        {step.subtitle}
-                      </p>
                     </div>
+                    <p className="text-[12px] leading-relaxed text-waygent-text-secondary/90">
+                      {step.description}
+                    </p>
                   </div>
-                  <p className="text-[13px] leading-relaxed text-waygent-text-secondary/90 pl-10">
-                    {step.description}
-                  </p>
                 </div>
               </article>
             ))}

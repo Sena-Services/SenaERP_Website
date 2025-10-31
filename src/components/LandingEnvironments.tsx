@@ -243,7 +243,7 @@ export default function LandingEnvironments() {
   return (
     <section id="environments" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl px-0">
-        <div className="mb-8">
+        <div className="mb-6">
           <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
             Environments
           </h2>

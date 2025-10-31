@@ -4,111 +4,14 @@ import { useState, ChangeEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-const sliderStops = [
-  { value: 100, label: "100" },
-  { value: 2000, label: "2K" },
-  { value: 10000, label: "10K" },
-  { value: 100000, label: "100K" },
-  { value: 1000000, label: "1M" },
-  { value: 2000000, label: "2M" },
-] as const;
+// New simple configuration
+const MIN_CREDITS = 4000;
+const MAX_CREDITS = 25001;
+const NUM_BARS = 50;
 
-const MIN_TASKS = sliderStops[0].value;
-const MAX_TASKS = sliderStops[sliderStops.length - 1].value;
-const LOG_MIN = Math.log10(MIN_TASKS);
-const LOG_MAX = Math.log10(MAX_TASKS);
-const LOG_RANGE = LOG_MAX - LOG_MIN;
-
-type TickKind = "major" | "medium" | "minor";
-
-type SliderTick = {
-  value: number;
-  percent: number;
-  kind: TickKind;
-};
-
-const sliderStopsWithPercent = sliderStops.map((stop) => ({
-  ...stop,
-  percent: valueToPercent(stop.value),
-}));
-
-const sliderTicks = generateSliderTicks();
-
-const TICK_HEIGHTS: Record<TickKind, number> = {
-  major: 14,
-  medium: 10,
-  minor: 8,
-};
-
-const TRACK_TOP = 14;
-const TRACK_HEIGHT = 3;
-
-function valueToPercent(value: number): number {
-  const clamped = Math.min(Math.max(value, MIN_TASKS), MAX_TASKS);
-  const logValue = Math.log10(clamped);
-  return ((logValue - LOG_MIN) / LOG_RANGE) * 100;
-}
-
-function percentToValue(percent: number): number {
-  const normalized = Math.min(Math.max(percent, 0), 100) / 100;
-  const logValue = LOG_MIN + normalized * LOG_RANGE;
-  const rawValue = Math.pow(10, logValue);
-  return snapTaskValue(rawValue);
-}
-
-function snapTaskValue(value: number): number {
-  let snapped: number;
-
-  if (value <= 1000) {
-    snapped = Math.round(value / 50) * 50;
-  } else if (value <= 10000) {
-    snapped = Math.round(value / 100) * 100;
-  } else if (value <= 100000) {
-    snapped = Math.round(value / 500) * 500;
-  } else if (value <= 1000000) {
-    snapped = Math.round(value / 1000) * 1000;
-  } else {
-    snapped = Math.round(value / 25000) * 25000;
-  }
-
-  return clampTasks(snapped);
-}
-
-function clampTasks(value: number): number {
-  return Math.min(Math.max(Math.round(value), MIN_TASKS), MAX_TASKS);
-}
-
-function generateSliderTicks(): SliderTick[] {
-  const tickMultipliers = [1, 2, 5] as const;
-  const majorValues = new Set(sliderStops.map((stop) => stop.value));
-  const seen = new Set<number>();
-  const ticks: SliderTick[] = [];
-
-  for (let exponent = Math.floor(LOG_MIN); exponent <= Math.ceil(LOG_MAX); exponent += 1) {
-    for (const base of tickMultipliers) {
-      const value = base * Math.pow(10, exponent);
-      if (value < MIN_TASKS || value > MAX_TASKS || seen.has(value)) {
-        continue;
-      }
-
-      seen.add(value);
-
-      const kind: TickKind = majorValues.has(value)
-        ? "major"
-        : base === 5
-          ? "medium"
-          : "minor";
-
-      ticks.push({
-        value,
-        percent: valueToPercent(value),
-        kind,
-      });
-    }
-  }
-
-  return ticks.sort((a, b) => a.value - b.value);
-}
+// Bar height configuration - more compact
+const BASE_BAR_HEIGHT = 6; // Unselected bars
+const ELEVATED_BAR_HEIGHT = 16; // Selected bars
 
 const currencies = [
   { code: "USD", symbol: "$" },
@@ -122,7 +25,7 @@ const pricingTiers = [
     monthlyPrice: 0,
     annualPrice: 0,
     tagline: "Perfect for trying Sena",
-    maxTasks: 1000,
+    maxCredits: 1000,
     features: [
       "Live knowledgebase",
       "Weekly AI digests",
@@ -136,7 +39,7 @@ const pricingTiers = [
     monthlyPrice: 39,
     annualPrice: 29,
     tagline: "per user / month",
-    maxTasks: 100000,
+    maxCredits: 100000,
     features: [
       "Everything in Free",
       "Unlimited automations",
@@ -151,18 +54,24 @@ const pricingTiers = [
 
 export default function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(false);
-  const [selectedTasks, setSelectedTasks] = useState(1500);
+  const [selectedCredits, setSelectedCredits] = useState(8000);
   const [currency, setCurrency] = useState(currencies[0]);
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
 
-  const sliderPercent = valueToPercent(selectedTasks);
-  const formattedTaskCount = selectedTasks.toLocaleString();
+  // Calculate which bar index is selected
+  const selectedBarIndex = Math.round(((selectedCredits - MIN_CREDITS) / (MAX_CREDITS - MIN_CREDITS)) * (NUM_BARS - 1));
+  const badgePosition = (selectedBarIndex / (NUM_BARS - 1)) * 100;
+
+  const formattedCreditCount = selectedCredits.toLocaleString();
 
   const handleSliderChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const nextPercent = parseFloat(event.target.value);
-    if (Number.isNaN(nextPercent)) {
+    const percent = parseFloat(event.target.value);
+    if (Number.isNaN(percent)) {
       return;
     }
-    setSelectedTasks(percentToValue(nextPercent));
+    // Convert slider percent to credit value
+    const credits = Math.round(MIN_CREDITS + (percent / 100) * (MAX_CREDITS - MIN_CREDITS));
+    setSelectedCredits(credits);
   };
 
   const formatPrice = (price: number) => {
@@ -171,27 +80,27 @@ export default function PricingSection() {
   };
 
   const getRecommendedPlan = () => {
-    return selectedTasks <= 1000 ? "Free" : "Pro";
+    return selectedCredits <= 1000 ? "Free" : "Pro";
   };
 
   return (
     <section id="pricing" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl">
-        <div className="mb-8">
+        <div className="mb-6">
           <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
             Pricing
           </h2>
         </div>
 
         {/* Interactive Controls */}
-        <div className="mb-12 rounded-[28px] border border-[#dcd2c1] bg-[#fbf8f1] px-6 py-6 shadow-[0_14px_40px_rgba(36,28,23,0.08)]">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2 text-[15px] font-futura font-semibold text-[#211a14]">
+        <div className="mb-12 rounded-[28px] border border-[#dcd2c1] bg-[#fbf8f1] px-5 py-4 shadow-[0_14px_40px_rgba(36,28,23,0.08)]">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2 text-[14px] font-futura font-semibold text-[#211a14]">
               <span>I need</span>
-              <span className="inline-flex rounded-full bg-[#f45a0d] px-3 py-[6px] text-[13px] font-bold tracking-wide text-white">
-                {formattedTaskCount}
+              <span className="inline-flex rounded-full bg-waygent-blue px-2.5 py-[5px] text-[12px] font-bold tracking-wide text-white">
+                {formattedCreditCount}
               </span>
-              <span>tasks per month</span>
+              <span>credits per month</span>
             </div>
             <button
               type="button"
@@ -211,219 +120,201 @@ export default function PricingSection() {
                 <path d="M16 2.5v4" />
                 <path d="M3.5 10.5h17" />
               </svg>
-              <span>Learn about tasks</span>
+              <span>Learn about credits</span>
             </button>
           </div>
 
-          <div className="relative mt-3 h-12 px-1.5">
+          {/* Bar Chart Slider */}
+          <div className="relative mt-4 mx-auto max-w-md">
+            {/* Floating Value Badge */}
             <div
-              className="absolute left-0 right-0 z-0"
+              className="absolute -top-7 transform -translate-x-1/2 z-20"
               style={{
-                top: `${TRACK_TOP}px`,
-                height: `${TRACK_HEIGHT}px`,
-                backgroundColor: "#d8d0c1",
-              }}
-            />
-            <div
-              className="absolute left-0 z-10 transition-all duration-300 ease-out"
-              style={{
-                top: `${TRACK_TOP}px`,
-                height: `${TRACK_HEIGHT}px`,
-                width: `${sliderPercent}%`,
-                backgroundColor: "#1f1714",
-              }}
-            />
-            {sliderTicks.map((tick) => {
-              const height = TICK_HEIGHTS[tick.kind];
-              const color =
-                tick.kind === "major"
-                  ? "#241c17"
-                  : tick.kind === "medium"
-                    ? "#807563"
-                    : "#b8af9d";
-
-              return (
-                <span
-                  key={`tick-${tick.value}`}
-                  className="absolute w-px"
-                  style={{
-                    left: `${tick.percent}%`,
-                    top: `${TRACK_TOP - height}px`,
-                    height: `${height}px`,
-                    transform: "translateX(-50%)",
-                    backgroundColor: color,
-                    zIndex: 20,
-                  }}
-                />
-              );
-            })}
-            <div
-              className="absolute z-30 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#0f0c0a] transition-transform duration-300"
-              style={{
-                top: `${TRACK_TOP + TRACK_HEIGHT / 2}px`,
-                left: `${sliderPercent}%`,
-                transform: "translate(-50%, -50%)",
-                boxShadow: "0 0 0 3px #2a4efe, 0 2px 7px rgba(0,0,0,0.4)",
+                left: `${badgePosition}%`,
               }}
             >
+              <span className="inline-flex rounded-full border-2 border-waygent-blue bg-white px-3 py-1.5 text-xs font-semibold text-waygent-blue shadow-sm">
+                {formattedCreditCount}
+              </span>
             </div>
+
+            {/* Bars Container */}
+            <div className="relative flex items-end justify-between gap-[2px] h-[18px]">
+              {Array.from({ length: NUM_BARS }).map((_, index) => {
+                const isSelected = index <= selectedBarIndex;
+                const height = isSelected ? ELEVATED_BAR_HEIGHT : BASE_BAR_HEIGHT;
+                const color = isSelected ? "#3b82f6" : "#e5e7eb";
+
+                return (
+                  <div
+                    key={`bar-${index}`}
+                    className="flex-1 rounded-t-[1px]"
+                    style={{
+                      height: `${height}px`,
+                      backgroundColor: color,
+                      transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Tick marks below bars */}
+            <div className="relative h-2 mt-0.5">
+              {Array.from({ length: 11 }).map((_, i) => (
+                <span
+                  key={`tick-${i}`}
+                  className="absolute w-px h-1.5 bg-gray-300"
+                  style={{
+                    left: `${(i / 10) * 100}%`,
+                    transform: "translateX(-50%)",
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Hidden range input for interaction */}
             <input
               type="range"
               min={0}
               max={100}
-              step={0.1}
-              value={sliderPercent}
+              step={0.5}
+              value={((selectedCredits - MIN_CREDITS) / (MAX_CREDITS - MIN_CREDITS)) * 100}
               onChange={handleSliderChange}
-              aria-label="Tasks per month"
-              className="pricing-slider absolute left-0 right-0 cursor-pointer appearance-none bg-transparent"
+              aria-label="Credits per month"
+              className="absolute top-0 left-0 right-0 w-full h-full cursor-pointer appearance-none bg-transparent opacity-0 z-30"
               style={{
-                top: `${TRACK_TOP - 18}px`,
-                height: "48px",
                 WebkitAppearance: "none",
-                appearance: "none",
-                background: "transparent",
-                zIndex: 40,
               }}
             />
           </div>
 
-          <div className="relative mt-0 h-4 px-2 text-[11px] font-futura text-[#433c2f]">
-            {sliderStopsWithPercent.map((stop) => {
-              const translate =
-                stop.value === MIN_TASKS ? "translateX(0)" : stop.value === MAX_TASKS ? "translateX(-100%)" : "translateX(-50%)";
-
-              return (
-                <button
-                  key={stop.value}
-                  type="button"
-                  onClick={() => setSelectedTasks(stop.value)}
-                  className={`absolute whitespace-nowrap transition-colors duration-200 ${
-                    selectedTasks === stop.value ? "font-semibold text-black" : "text-[#6f6657] hover:text-black"
-                  }`}
-                  style={{
-                    left: `${stop.percent}%`,
-                    transform: translate,
-                  }}
-                >
-                  {stop.label}
-                </button>
-              );
-            })}
+          {/* Range Labels */}
+          <div className="relative mt-2 flex justify-between mx-auto max-w-md text-[10px] font-futura text-gray-400">
+            <span>{MIN_CREDITS.toLocaleString()} credits</span>
+            <span>{MAX_CREDITS.toLocaleString()} credits</span>
           </div>
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <div className="inline-flex items-center gap-1 rounded-full border border-[#d3c5b1] bg-white p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]">
-              <button
-                type="button"
-                onClick={() => setIsAnnual(false)}
-                className={`px-3 py-1 text-[11px] font-futura font-semibold transition-all ${
-                  !isAnnual
-                    ? "rounded-full bg-[#f45a0d] text-white shadow-[0_6px_14px_rgba(244,90,13,0.3)]"
-                    : "rounded-full text-[#3f362a] hover:bg-[#f5ede1] hover:text-[#21190f]"
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsAnnual(true)}
-                className={`px-3 py-1 text-[11px] font-futura font-semibold transition-all ${
-                  isAnnual
-                    ? "rounded-full bg-[#f45a0d] text-white shadow-[0_6px_14px_rgba(244,90,13,0.3)]"
-                    : "rounded-full text-[#3f362a] hover:bg-[#f5ede1] hover:text-[#21190f]"
-                }`}
-              >
-                Annual
-              </button>
+
+          {/* Billing and Currency Controls */}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            {/* Billing Period Toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-gray-700 font-futura">Billing:</span>
+              <div className="relative inline-flex items-center bg-gray-100 rounded-full p-0.5 shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => setIsAnnual(false)}
+                  className={`relative z-10 px-3 py-1 text-[11px] font-bold font-futura rounded-full transition-all duration-300 ${
+                    !isAnnual
+                      ? "text-white"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAnnual(true)}
+                  className={`relative z-10 px-3 py-1 text-[11px] font-bold font-futura rounded-full transition-all duration-300 ${
+                    isAnnual
+                      ? "text-white"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  Annual
+                </button>
+                {/* Sliding background */}
+                <div
+                  className="absolute top-0.5 bottom-0.5 bg-waygent-blue rounded-full shadow-sm transition-all duration-300 ease-out"
+                  style={{
+                    left: isAnnual ? '50%' : '2px',
+                    right: isAnnual ? '2px' : '50%',
+                  }}
+                />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 text-[11px] font-futura font-semibold text-[#6a6254]">
-              <span>Currency</span>
+            {/* Currency Selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-gray-700 font-futura">Currency:</span>
               <div className="relative">
-                <select
-                  value={currency.code}
-                  onChange={(event) =>
-                    setCurrency(currencies.find((curr) => curr.code === event.target.value) || currencies[0])
-                  }
-                  className="appearance-none rounded-full border border-[#d8d0c1] bg-white/80 px-3 pr-8 py-1 text-[#1f1b15] shadow-sm transition-all duration-150 hover:bg-white hover:shadow focus:outline-none focus:ring-2 focus:ring-[#f45a0d]/40"
+                <button
+                  type="button"
+                  onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                  className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold font-futura text-gray-900 bg-white border border-gray-200 rounded-full hover:border-gray-300 shadow-sm"
                 >
-                  {currencies.map((curr) => (
-                    <option key={curr.code} value={curr.code}>
-                      {curr.code} ({curr.symbol})
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[#f45a0d]"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.6}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 7.5 10 12.5 15 7.5" />
-                </svg>
+                  {currency.symbol} {currency.code}
+                  <svg
+                    className="w-3 h-3 text-gray-500"
+                    style={{
+                      transform: isCurrencyOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s'
+                    }}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isCurrencyOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsCurrencyOpen(false)}
+                    />
+                    <div className="absolute top-full mt-1 right-0 bg-white border border-gray-200 rounded-lg shadow-xl z-20 min-w-[110px]">
+                      {currencies.map((curr) => (
+                        <div
+                          key={curr.code}
+                          onClick={() => {
+                            setCurrency(curr);
+                            setIsCurrencyOpen(false);
+                          }}
+                          className="px-3 py-2 text-[11px] font-bold font-futura cursor-pointer first:rounded-t-lg last:rounded-b-lg"
+                          style={{
+                            backgroundColor: currency.code === curr.code ? '#3b82f6' : 'transparent',
+                            color: currency.code === curr.code ? '#ffffff' : '#1f2937',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (currency.code !== curr.code) {
+                              e.currentTarget.style.backgroundColor = '#f3f4f6';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (currency.code !== curr.code) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }
+                          }}
+                        >
+                          {curr.symbol} {curr.code}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          <style jsx>{`
-            .pricing-slider::-webkit-slider-thumb {
-              -webkit-appearance: none;
-              appearance: none;
-              height: 0;
-              width: 0;
-              border: none;
-            }
-
-            .pricing-slider::-moz-range-thumb {
-              appearance: none;
-              height: 0;
-              width: 0;
-              border: none;
-              background: transparent;
-            }
-
-            .pricing-slider::-ms-thumb {
-              appearance: none;
-              height: 0;
-              width: 0;
-              border: none;
-              background: transparent;
-            }
-
-            .pricing-slider::-webkit-slider-runnable-track {
-              background: transparent;
-            }
-
-            .pricing-slider::-moz-range-track {
-              background: transparent;
-            }
-
-            .pricing-slider::-ms-track {
-              background: transparent;
-              border-color: transparent;
-              color: transparent;
-            }
-          `}</style>
-        </div>
-
-        {/* Pricing Cards */}
-        <div className="grid gap-5 md:grid-cols-2 max-w-4xl mx-auto">
+          {/* Pricing Cards */}
+          <div className="mt-6 grid gap-4 md:grid-cols-2 max-w-3xl mx-auto">
           {pricingTiers.map((tier) => {
             const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
             const isFree = price === 0;
             const isRecommended = getRecommendedPlan() === tier.plan;
-            const isAvailable = selectedTasks <= tier.maxTasks;
+            const isAvailable = selectedCredits <= tier.maxCredits;
 
             return (
               <article
                 key={tier.plan}
-                className={`flex flex-col overflow-hidden rounded-[28px] border border-waygent-light-blue/40 bg-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                className={`flex flex-col overflow-hidden rounded-[20px] border border-waygent-light-blue/40 bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-lg ${
                   !isAvailable ? 'opacity-50' : ''
                 }`}
               >
-                <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9]">
+                <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9]">
                   <Image
                     src="/illustrations/starter-pricing.jpg"
                     alt={tier.plan}
@@ -442,42 +333,42 @@ export default function PricingSection() {
                   )}
                 </div>
 
-                <div className="flex flex-1 flex-col border-t border-waygent-light-blue/30 px-5 py-4">
-                  <div className="mb-3">
-                    <h3 className="text-base font-bold text-gray-900 font-futura mb-1">
+                <div className="flex flex-1 flex-col border-t border-waygent-light-blue/30 px-4 py-3">
+                  <div className="mb-2">
+                    <h3 className="text-sm font-bold text-gray-900 font-futura mb-0.5">
                       {tier.plan}
                     </h3>
-                    <div className="flex items-baseline gap-1.5 mb-1">
-                      <span className="text-[2rem] font-bold text-gray-900 leading-none font-futura">
+                    <div className="flex items-baseline gap-1.5 mb-0.5">
+                      <span className="text-[1.5rem] font-bold text-gray-900 leading-none font-futura">
                         {formatPrice(price)}
                       </span>
                       {!isFree && (
-                        <span className="text-[10px] text-gray-600 font-futura">/month</span>
+                        <span className="text-[9px] text-gray-600 font-futura">/month</span>
                       )}
                     </div>
-                    <p className="text-[10px] text-gray-500 font-futura">
-                      Up to {tier.maxTasks.toLocaleString()} tasks per month
+                    <p className="text-[9px] text-gray-500 font-futura">
+                      Up to {tier.maxCredits.toLocaleString()} credits per month
                     </p>
                   </div>
 
                   <Link
                     href="/signup"
-                    className={`w-full rounded-full px-6 py-3.5 text-center text-base font-bold transition font-futura mb-4 border-2 ${
+                    className={`w-full rounded-full px-5 py-2.5 text-center text-sm font-bold transition font-futura mb-3 border-2 ${
                       isAvailable
-                        ? 'bg-black border-black text-white hover:bg-gray-900 hover:border-gray-900 shadow-lg hover:shadow-xl'
+                        ? 'bg-black border-black text-white hover:bg-gray-900 hover:border-gray-900 shadow-md hover:shadow-lg'
                         : 'bg-white border-gray-300 text-gray-400 cursor-not-allowed'
                     }`}
                   >
                     {!isAvailable ? 'Not available' : (tier.plan === "Free" ? "Get started" : "Start trial")}
                   </Link>
 
-                  <ul className="space-y-2">
+                  <ul className="space-y-1.5">
                     {tier.features.slice(0, 3).map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
-                        <svg className="w-3.5 h-3.5 text-gray-700 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <li key={feature} className="flex items-start gap-1.5">
+                        <svg className="w-3 h-3 text-gray-700 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span className="text-[11px] text-gray-700 leading-relaxed font-futura">
+                        <span className="text-[10px] text-gray-700 leading-relaxed font-futura">
                           {feature}
                         </span>
                       </li>
@@ -487,6 +378,7 @@ export default function PricingSection() {
               </article>
             );
           })}
+          </div>
         </div>
       </div>
     </section>
