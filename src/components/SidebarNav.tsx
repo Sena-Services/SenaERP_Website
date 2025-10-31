@@ -138,9 +138,13 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    target.scrollIntoView({
+    // Calculate the position accounting for the top navbar
+    const navbarHeight = 80; // Adjust this value based on your navbar height
+    const targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
+
+    window.scrollTo({
+      top: targetPosition,
       behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "start",
     });
   };
 
