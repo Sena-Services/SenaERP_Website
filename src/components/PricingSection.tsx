@@ -17,6 +17,7 @@ const currencies = [
   { code: "USD", symbol: "$" },
   { code: "EUR", symbol: "€" },
   { code: "GBP", symbol: "£" },
+  { code: "INR", symbol: "₹" },
 ];
 
 const pricingTiers = [
@@ -276,7 +277,7 @@ export default function PricingSection() {
                           className="px-3 py-2 text-[11px] font-bold font-futura cursor-pointer first:rounded-t-lg last:rounded-b-lg"
                           style={{
                             backgroundColor: currency.code === curr.code ? '#3b82f6' : 'transparent',
-                            color: currency.code === curr.code ? '#ffffff' : '#1f2937',
+                            color: '#1f2937',
                           }}
                           onMouseEnter={(e) => {
                             if (currency.code !== curr.code) {
@@ -305,7 +306,8 @@ export default function PricingSection() {
             const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
             const isFree = price === 0;
             const isRecommended = getRecommendedPlan() === tier.plan;
-            const isAvailable = selectedCredits <= tier.maxCredits;
+            // Free tier is always available
+            const isAvailable = tier.plan === "Free" ? true : selectedCredits <= tier.maxCredits;
 
             return (
               <article
@@ -355,7 +357,7 @@ export default function PricingSection() {
                     href="/signup"
                     className={`w-full rounded-full px-5 py-2.5 text-center text-sm font-bold transition font-futura mb-3 border-2 ${
                       isAvailable
-                        ? 'bg-black border-black text-white hover:bg-gray-900 hover:border-gray-900 shadow-md hover:shadow-lg'
+                        ? 'bg-white border-gray-900 text-gray-900 hover:bg-gray-50 hover:border-black shadow-md hover:shadow-lg'
                         : 'bg-white border-gray-300 text-gray-400 cursor-not-allowed'
                     }`}
                   >

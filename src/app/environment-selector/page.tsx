@@ -35,15 +35,15 @@ export default function EnvironmentSelectorPage() {
   }, [router]);
 
   const handleEnvironmentSelect = (environmentName: string) => {
-    // Save environment to localStorage (for landing page)
+    // Save environment to localStorage
     saveEnvironment(environmentName);
     setCurrentEnvironment(environmentName);
 
-    // Redirect to frontend live view with environment as URL parameter
-    // The frontend will read this and save to its own localStorage
-    const frontendUrl =
-      process.env.NEXT_PUBLIC_CRM_FRONTEND_URL || "http://localhost:8080";
-    window.location.href = `${frontendUrl}/crm/live?env=${encodeURIComponent(environmentName)}`;
+    console.log('[EnvironmentSelector] Environment selected and saved:', environmentName);
+
+    // Redirect to Frappe site
+    const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://senatest2.localhost:8080";
+    window.location.href = frappeUrl;
   };
 
   if (isCheckingAuth) {

@@ -101,10 +101,10 @@ export default function JoinUsSection() {
             {/* Main heading */}
             <div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 font-futura leading-tight">
-                Join us
+                Join our team
               </h2>
               <p className="text-base sm:text-lg text-gray-700 font-futura font-medium max-w-xl mx-auto">
-                Be part of the movement building the next generation of business tools
+                Help us build the future of business software
               </p>
             </div>
 
@@ -127,10 +127,10 @@ export default function JoinUsSection() {
             {/* CTA Button */}
             <div className="pt-1">
               <Link
-                href="#"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-gray-900 text-white font-futura font-bold text-base shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-black transition-all duration-300 hover:-translate-y-1 border-2 border-gray-900"
+                href="/careers"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-white text-gray-700 font-futura font-bold text-base shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-gray-50 transition-all duration-300 hover:-translate-y-1 border-2 border-gray-200"
               >
-                <span>Get early access</span>
+                <span>View open positions</span>
                 <svg
                   className="w-4 h-4 group-hover:translate-x-1 transition-transform"
                   fill="none"
@@ -145,7 +145,7 @@ export default function JoinUsSection() {
 
             {/* Optional tagline */}
             <p className="text-xs text-gray-600 font-futura pt-1">
-              No credit card required · Join 1,000+ early adopters
+              Remote-friendly · Competitive benefits · Growing team
             </p>
           </div>
         </div>

@@ -46,6 +46,23 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   const updateActiveSection = useCallback(() => {
     if (sectionIds.length === 0) return;
 
+    // Check if we're at the bottom of the page
+    const scrollHeight = document.documentElement.scrollHeight;
+    const scrollTop = window.scrollY;
+    const clientHeight = window.innerHeight;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10; // 10px threshold
+
+    // If at bottom, select the last section
+    if (isAtBottom) {
+      const lastId = sectionIds[sectionIds.length - 1]!;
+      if (lastId !== activeSectionRef.current) {
+        activeSectionRef.current = lastId;
+        setActiveSection(lastId);
+      }
+      return;
+    }
+
+    // Otherwise, use center-based detection
     const viewportHeight = window.innerHeight || 1;
     const viewportCenter = window.scrollY + viewportHeight / 2;
     let bestId = sectionIds[0]!;

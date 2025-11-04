@@ -7,6 +7,8 @@ import Link from "next/link";
 import UserAvatar from "./UserAvatar";
 import { checkAuth, type User } from "@/lib/auth";
 import { Database, Home } from "lucide-react";
+import EarlyAccessModal from "./EarlyAccessModal";
+import Toast from "./Toast";
 
 const links: { href: string; label: string }[] = [
   // { href: "#features", label: "Features" },
@@ -17,8 +19,16 @@ export default function NavBar() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const isOnEnvironmentSelector = pathname === "/environment-selector";
+
+  const handleWaitlistSuccess = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -91,17 +101,16 @@ export default function NavBar() {
           <div className="flex items-center gap-2 sm:gap-3">
             {!isCheckingAuth && !user && (
               <>
-                {/* Login Button */}
-                <Link
+                {/* Commented out Login and Sign Up buttons */}
+                {/* <Link
                   href="/login"
                   className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border cursor-pointer outline-none leading-none font-space-grotesk hover:border-waygent-orange/60 hover:text-waygent-orange focus-visible:outline-none"
                   style={{ borderColor: '#E5E7EB', backgroundColor: '#FAF9F5', color: '#6B7280' }}
                 >
                   <span className="leading-none">Log In</span>
-                </Link>
+                </Link> */}
 
-                {/* Sign Up Button */}
-                <Link
+                {/* <Link
                   href="/signup"
                   className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border-2 border-waygent-orange bg-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:bg-waygent-orange/90 hover:shadow-md focus-visible:outline-none"
                 >
@@ -113,7 +122,15 @@ export default function NavBar() {
                     </div>
                     <span className="leading-none">Sign Up</span>
                   </div>
-                </Link>
+                </Link> */}
+
+                {/* Get Early Access Button */}
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="inline-flex items-center justify-center px-4 py-2 h-8 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border-2 border-waygent-orange bg-waygent-orange text-black cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:bg-waygent-orange/90 hover:shadow-md focus-visible:outline-none"
+                >
+                  <span className="leading-none">Get Early Access</span>
+                </button>
               </>
             )}
 
@@ -147,6 +164,20 @@ export default function NavBar() {
           </div>
         </div>
       </nav>
+
+      {/* Early Access Modal */}
+      <EarlyAccessModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handleWaitlistSuccess}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </header>
   );
 }
