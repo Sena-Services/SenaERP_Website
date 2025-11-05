@@ -61,14 +61,14 @@ export default function CareersSection() {
 
   if (openings.length === 0) {
     return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 font-futura mb-6">
-            Join Our Team
-          </h1>
-          <div className="text-center text-gray-600 font-space-grotesk py-12">
-            <p className="text-lg">No open positions at the moment.</p>
-            <p className="text-sm mt-2">Check back soon for new opportunities!</p>
+      <section className="px-4 sm:px-6 lg:px-8 pb-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-center items-center">
+            <img
+              src="/noopening.png"
+              alt="No open positions"
+              className="max-w-full h-auto"
+            />
           </div>
         </div>
       </section>
