@@ -4,6 +4,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sena",
   description: "Sena: AI-centred B2B travel platform",
+  icons: {
+    icon: "/logo.ico",
+    shortcut: "/logo.ico",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

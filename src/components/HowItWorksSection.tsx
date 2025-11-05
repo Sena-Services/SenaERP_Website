@@ -37,6 +37,11 @@ function StepVisual({ id }: { id: Step["id"] }) {
   const [isHovered, setIsHovered] = React.useState(false);
 
   if (id === "discovery") {
+    const handleLoadedData = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+      const video = e.currentTarget;
+      video.currentTime = 0.1; // Load first frame
+    };
+
     const handleMouseEnter = (e: React.MouseEvent<HTMLVideoElement>) => {
       setIsHovered(true);
       const video = e.currentTarget;
@@ -52,7 +57,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
     };
 
     return (
-      <div className={`relative w-full overflow-hidden bg-[#f6efe4] aspect-[${CARD_ASPECT_RATIO}]`}>
+      <div className="relative w-full overflow-hidden bg-[#f6efe4]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
         <video
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
             isHovered ? "opacity-100" : "opacity-70"
@@ -61,6 +66,8 @@ function StepVisual({ id }: { id: Step["id"] }) {
           loop
           muted
           playsInline
+          preload="auto"
+          onLoadedData={handleLoadedData}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -71,6 +78,11 @@ function StepVisual({ id }: { id: Step["id"] }) {
   }
 
   if (id === "preview") {
+    const handleLoadedData = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+      const video = e.currentTarget;
+      video.currentTime = 0.1; // Load first frame
+    };
+
     const handleMouseEnter = (e: React.MouseEvent<HTMLVideoElement>) => {
       setIsHovered(true);
       const video = e.currentTarget;
@@ -86,7 +98,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
     };
 
     return (
-      <div className={`relative w-full overflow-hidden bg-[#f5f2e9] aspect-[${CARD_ASPECT_RATIO}]`}>
+      <div className="relative w-full overflow-hidden bg-[#f5f2e9]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
         <video
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
             isHovered ? "opacity-100" : "opacity-70"
@@ -95,6 +107,8 @@ function StepVisual({ id }: { id: Step["id"] }) {
           loop
           muted
           playsInline
+          preload="auto"
+          onLoadedData={handleLoadedData}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -103,6 +117,11 @@ function StepVisual({ id }: { id: Step["id"] }) {
       </div>
     );
   }
+
+  const handleLoadedData = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const video = e.currentTarget;
+    video.currentTime = 3;
+  };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLVideoElement>) => {
     setIsHovered(true);
@@ -127,7 +146,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
   };
 
   return (
-    <div className={`relative w-full overflow-hidden bg-[#f6f2fb] aspect-[${CARD_ASPECT_RATIO}]`}>
+    <div className="relative w-full overflow-hidden bg-[#f6f2fb]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
       <video
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
           isHovered ? "opacity-100" : "opacity-70"
@@ -135,12 +154,11 @@ function StepVisual({ id }: { id: Step["id"] }) {
         style={{ objectPosition: 'center 80%' }}
         muted
         playsInline
+        preload="auto"
+        onLoadedData={handleLoadedData}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onTimeUpdate={handleTimeUpdate}
-        ref={(video) => {
-          if (video) video.currentTime = 3;
-        }}
       >
         <source src="/videos/card3.mp4" type="video/mp4" />
       </video>

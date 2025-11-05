@@ -456,3 +456,11 @@ body {
   border-top: 2px solid #e5e7eb;
   margin: 2rem 0;
 }
+
+.get-early-access-btn {
+  background-color: #f59e0b !important;
+}
+
+.get-early-access-btn:hover {
+  background-color: #d97706 !important;
+}

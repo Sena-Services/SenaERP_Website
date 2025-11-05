@@ -205,27 +205,29 @@ export default function BlogSection() {
                 </article>
               ))}
 
-              <div className="flex items-center justify-center ml-8">
-                <a
-                  href="#"
-                  className="group flex flex-col items-center gap-3 transition"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-waygent-text-primary/20 bg-white transition hover:border-waygent-text-primary hover:bg-waygent-text-primary">
-                    <svg
-                      className="h-5 w-5 transition group-hover:text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <span className="text-xs font-semibold text-waygent-text-secondary whitespace-nowrap">
-                    See more
-                  </span>
-                </a>
-              </div>
+              {blogPosts.length > 4 && (
+                <div className="flex items-center justify-center ml-8">
+                  <a
+                    href="#"
+                    className="group flex flex-col items-center gap-3 transition"
+                  >
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-waygent-text-primary/20 bg-white transition hover:border-waygent-text-primary hover:bg-waygent-text-primary">
+                      <svg
+                        className="h-5 w-5 transition group-hover:text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <span className="text-xs font-semibold text-waygent-text-secondary whitespace-nowrap">
+                      See more
+                    </span>
+                  </a>
+                </div>
+              )}
             </div>
           )}
         </div>

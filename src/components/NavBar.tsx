@@ -127,7 +127,7 @@ export default function NavBar() {
                 {/* Get Early Access Button */}
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center justify-center px-4 py-2 h-8 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border-2 border-waygent-orange bg-waygent-orange text-black cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:bg-waygent-orange/90 hover:shadow-md focus-visible:outline-none"
+                  className="get-early-access-btn inline-flex items-center justify-center px-4 py-2 h-8 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border-2 border-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:shadow-md focus-visible:outline-none"
                 >
                   <span className="leading-none">Get Early Access</span>
                 </button>
