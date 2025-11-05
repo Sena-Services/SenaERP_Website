@@ -63,6 +63,14 @@ export default function CareersSection() {
     return (
       <section className="px-4 sm:px-6 lg:px-8 pb-4">
         <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 font-futura mb-3">
+              Join Our Team
+            </h1>
+            <p className="text-lg text-gray-600 font-space-grotesk">
+              Help us build the future of business software
+            </p>
+          </div>
           <div className="flex justify-center items-center">
             <img
               src="/noopening.png"
