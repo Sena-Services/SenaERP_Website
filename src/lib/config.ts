@@ -1,10 +1,24 @@
 /**
  * API Configuration
  * Centralized configuration for API endpoints and base URLs
+ *
+ * Environment Setup:
+ * - Production (default): https://senamarketing.senaerp.com/
+ * - Development: Set isDev = true to use http://senatest2.localhost:8000
  */
 
+// Toggle this to switch between dev and production
+// Set to true for local development, false for production (default: false)
+const isDev = process.env.NEXT_PUBLIC_IS_DEV === 'true' || false;
+
+// Environment-specific URLs
+const PRODUCTION_URL = 'https://senamarketing.senaerp.com';
+const DEVELOPMENT_URL = 'http://senatest2.localhost:8000';
+
 export const API_CONFIG = {
-  BASE_URL: 'http://senatest2.localhost:8000',
+  // Use production URL by default
+  BASE_URL: isDev ? DEVELOPMENT_URL : PRODUCTION_URL,
+  IS_DEV: isDev,
   ENDPOINTS: {
     GET_PUBLISHED_BLOGS: '/api/method/websitecms.api.website_blog.get_published_blogs',
     GET_BLOG_BY_ID: '/api/method/websitecms.api.website_blog.get_blog_by_id',

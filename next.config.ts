@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         hostname: 'senatest2.localhost',
         port: '8000',
       },
+      {
+        protocol: 'https',
+        hostname: 'senamarketing.senaerp.com',
+      },
     ],
   },
   // WSL2 optimizations to prevent file watching issues
