@@ -45,7 +45,7 @@ export default function JoinUsSection() {
   return (
     <section
       id="join-us"
-      className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8 pb-16"
+      className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8 pb-16 mb-8"
     >
       <div
         className="relative max-w-7xl mx-auto rounded-[40px]"

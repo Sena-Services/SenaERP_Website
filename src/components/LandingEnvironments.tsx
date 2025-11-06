@@ -251,7 +251,7 @@ export default function LandingEnvironments() {
       </div>
 
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-[640px_1fr] gap-12">
+        <div className="hidden lg:grid lg:grid-cols-[640px_1fr] gap-8 lg:gap-12">
           {/* Left side - EnvironmentSelector */}
           <div className="relative h-[460px] overflow-hidden rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur">
             <EnvironmentSelector
@@ -366,7 +366,7 @@ export default function LandingEnvironments() {
         </div>
       </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center hidden lg:block">
           <p className="text-sm text-waygent-text-secondary italic">
             Click any environment to see what's included, or launch the selector to customize one for your business.
           </p>
@@ -390,7 +390,6 @@ export default function LandingEnvironments() {
                 type="button"
                 onClick={() => {
                   setActiveId(environment.id);
-                  setUserInteracted(true);
                 }}
                 className="flex w-full flex-col gap-3 text-left"
               >

@@ -166,7 +166,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   };
 
   return (
-    <aside className="fixed left-0 top-1/2 z-50 flex w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
+    <aside className="hidden lg:flex fixed left-0 top-1/2 z-50 w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
       <div className="w-full">
         <nav aria-label="Section index" className="relative">
           <div

@@ -61,7 +61,7 @@ export default function NavBar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 bg-waygent-cream pb-2">
       <nav
         className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} px-3 sm:px-6 lg:px-8 bg-waygent-light-blue border-2 border-waygent-light-blue border-t-0 backdrop-blur-sm max-w-7xl mx-auto`}
         style={{
@@ -127,7 +127,7 @@ export default function NavBar() {
                 {/* Get Early Access Button */}
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="get-early-access-btn inline-flex items-center justify-center px-4 py-2 h-8 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border-2 border-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:shadow-md focus-visible:outline-none"
+                  className="get-early-access-btn inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 h-7 sm:h-8 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold border-2 border-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:shadow-md focus-visible:outline-none mr-2 sm:mr-0"
                 >
                   <span className="leading-none">Get Early Access</span>
                 </button>

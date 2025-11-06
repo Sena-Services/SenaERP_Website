@@ -104,7 +104,7 @@ export default function Home() {
       <SidebarNav sections={sections} />
 
       <div className="relative z-10 flex min-h-screen w-full flex-col">
-        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream pl-0 sm:pl-[9rem]">
+        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream pl-0 lg:pl-[9rem]">
           <NavBar />
           <div className="flex-1 flex flex-col">
             <section id="intro" className="scroll-mt-32">

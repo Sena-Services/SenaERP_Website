@@ -78,7 +78,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-[32px] shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div className="relative bg-white rounded-2xl sm:rounded-[32px] shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <div className="grid md:grid-cols-2 gap-0">
           {/* Left side - Image */}
           <div className="relative hidden md:block bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9] min-h-[500px]">
@@ -92,15 +92,15 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
           </div>
 
           {/* Right side - Form */}
-          <div className="p-8 md:p-10">
+          <div className="p-5 sm:p-8 md:p-10">
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 rounded-full hover:bg-gray-100 transition-colors"
               aria-label="Close modal"
             >
               <svg
-                className="w-6 h-6 text-gray-500"
+                className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -111,17 +111,17 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
             </button>
 
             {/* Header */}
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 font-futura mb-2">
+            <div className="mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 font-futura mb-2">
                 Get Early Access
               </h2>
-              <p className="text-sm text-gray-600 font-space-grotesk">
+              <p className="text-xs sm:text-sm text-gray-600 font-space-grotesk">
                 Join the waitlist and be among the first to experience Sena
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               {/* Error Message */}
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -133,7 +133,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-semibold text-gray-700 mb-1.5 font-space-grotesk"
+                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
                 >
                   Name *
                 </label>
@@ -144,7 +144,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                   placeholder="John Doe"
                 />
               </div>
@@ -153,7 +153,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
               <div>
                 <label
                   htmlFor="companyName"
-                  className="block text-sm font-semibold text-gray-700 mb-1.5 font-space-grotesk"
+                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
                 >
                   Company Name *
                 </label>
@@ -164,7 +164,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
                   required
                   value={formData.companyName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                   placeholder="Acme Inc."
                 />
               </div>
@@ -173,7 +173,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-semibold text-gray-700 mb-1.5 font-space-grotesk"
+                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
                 >
                   Email *
                 </label>
@@ -184,7 +184,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                   placeholder="john@example.com"
                 />
               </div>
@@ -193,7 +193,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
               <div>
                 <label
                   htmlFor="phone"
-                  className="block text-sm font-semibold text-gray-700 mb-1.5 font-space-grotesk"
+                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
                 >
                   Phone *
                 </label>
@@ -204,24 +204,24 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
                   required
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                   placeholder="+1 (555) 000-0000"
                 />
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all font-space-grotesk"
+                  className="hidden sm:flex flex-1 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all font-space-grotesk items-center justify-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-6 py-3 bg-waygent-orange border-2 border-waygent-orange text-black font-semibold rounded-lg hover:bg-waygent-orange/90 transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:flex-1 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-waygent-orange border-2 border-waygent-orange text-black font-semibold rounded-lg hover:bg-waygent-orange/90 transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </button>

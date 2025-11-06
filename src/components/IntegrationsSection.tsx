@@ -62,7 +62,7 @@ export default function IntegrationsSection() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-[auto_1fr] gap-12">
+        <div className="flex flex-col lg:grid lg:grid-cols-[auto_1fr] gap-8 lg:gap-12">
           {/* Left side - Integrations grid */}
           <div className="flex flex-col gap-8">
             {/* Native Integrations */}
@@ -173,7 +173,7 @@ export default function IntegrationsSection() {
           </div>
 
           {/* Right side - Screenshot preview */}
-          <div className="relative h-[460px] overflow-hidden rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur flex items-center justify-center">
+          <div className="relative h-[300px] lg:h-[460px] overflow-hidden rounded-[24px] lg:rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur flex items-center justify-center">
             {activeIntegration && (
               <Image
                 src={activeIntegration.screenshot}

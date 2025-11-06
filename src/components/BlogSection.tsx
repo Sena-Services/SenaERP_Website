@@ -40,10 +40,12 @@ const fallbackBlogPosts: BlogPost[] = [
 
 function BlogVisual({
   attachment,
-  isHovered
+  isHovered,
+  isActive = false
 }: {
   attachment?: string;
-  isHovered: boolean
+  isHovered: boolean;
+  isActive?: boolean;
 }) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
@@ -59,14 +61,19 @@ function BlogVisual({
     const video = videoRef.current;
     if (!video) return;
 
-    if (isHovered) {
+    // Play video if hovered (desktop) or active (mobile)
+    const shouldPlay = isHovered || isActive;
+
+    if (shouldPlay) {
       video.playbackRate = 0.5;
-      video.play();
+      video.play().catch(() => {
+        // Ignore play errors (e.g., if user hasn't interacted yet)
+      });
     } else {
       video.pause();
       video.currentTime = 0;
     }
-  }, [isHovered, isVideo]);
+  }, [isHovered, isActive, isVideo]);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#f6efe4] aspect-[5/4]">
@@ -75,7 +82,7 @@ function BlogVisual({
           <video
             ref={videoRef}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-              isHovered ? "opacity-100" : "opacity-50"
+              isHovered || isActive ? "opacity-100" : "opacity-50"
             }`}
             loop
             muted
@@ -88,7 +95,7 @@ function BlogVisual({
             src={attachment}
             alt="Blog visual"
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-              isHovered ? "opacity-100" : "opacity-50"
+              isHovered || isActive ? "opacity-100" : "opacity-50"
             }`}
           />
         )
@@ -105,6 +112,8 @@ export default function BlogSection() {
   const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
   const [blogPosts, setBlogPosts] = React.useState<BlogPost[]>(fallbackBlogPosts);
   const [loading, setLoading] = React.useState(true);
+  const [activeCardIndex, setActiveCardIndex] = React.useState<number>(1); // Start with second card active
+  const carouselRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     // Fetch blog posts from the custom Website Blog API
@@ -150,19 +159,101 @@ export default function BlogSection() {
     fetchBlogs();
   }, []);
 
+  // Scroll to center the second card on mount (mobile)
+  React.useEffect(() => {
+    if (!loading && carouselRef.current && blogPosts.length >= 2) {
+      const carousel = carouselRef.current;
+
+      // Small delay to ensure layout is complete
+      const timeoutId = setTimeout(() => {
+        // Only on mobile/tablet (not desktop)
+        if (window.innerWidth < 768) {
+          // Get the actual cards
+          const cards = carousel.querySelectorAll('article');
+          if (cards.length >= 2) {
+            // Get the second card
+            const secondCard = cards[1] as HTMLElement;
+
+            // Scroll the second card into view at the center
+            secondCard.scrollIntoView({
+              behavior: 'auto',
+              block: 'nearest',
+              inline: 'center'
+            });
+          }
+        }
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [loading, blogPosts]);
+
+  // Detect which card is centered on scroll
+  React.useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const handleScroll = () => {
+      // Only on mobile/tablet
+      if (window.innerWidth >= 768) return;
+
+      const cards = carousel.querySelectorAll('article');
+      const carouselRect = carousel.getBoundingClientRect();
+      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      cards.forEach((card, index) => {
+        const cardRect = card.getBoundingClientRect();
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const distance = Math.abs(cardCenter - carouselCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      setActiveCardIndex(closestIndex);
+    };
+
+    // Initial check
+    handleScroll();
+
+    carousel.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      carousel.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [loading, blogPosts]);
+
   return (
     <section
       id="blog"
-      className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8"
+      className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8 overflow-visible"
     >
-      <div className="relative mx-auto w-full max-w-7xl font-space-grotesk">
+      <style jsx>{`
+        .blog-carousel::-webkit-scrollbar {
+          display: none;
+        }
+        @media (max-width: 767px) {
+          .blog-carousel {
+            padding-left: max(1rem, calc(50% - 140px));
+            padding-right: max(1rem, calc(50% - 140px));
+          }
+        }
+      `}</style>
+      <div className="relative mx-auto w-full max-w-7xl font-space-grotesk overflow-visible">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute -left-32 top-0 h-80 w-80 rounded-full bg-[#ffe7f1] opacity-50 blur-3xl" />
           <div className="absolute left-1/2 top-12 h-64 w-64 -translate-x-1/2 rounded-full bg-[#f6efe4] opacity-40 blur-3xl" />
           <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[#e5f0ff] opacity-45 blur-[110px]" />
         </div>
 
-        <div className="relative flex flex-col">
+        <div className="relative flex flex-col overflow-visible">
           <div className="mb-6">
             <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
               Blog
@@ -174,17 +265,32 @@ export default function BlogSection() {
               <div className="text-waygent-text-secondary">Loading blog posts...</div>
             </div>
           ) : (
-            <div className="flex gap-4 items-stretch">
-              {blogPosts.map((post) => (
-                <article
-                  key={post.id}
-                  className="flex flex-col overflow-hidden rounded-[24px] border border-waygent-light-blue/40 bg-white text-waygent-text-primary shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl w-[280px] flex-shrink-0"
-                  onMouseEnter={() => setHoveredCardId(post.id)}
-                  onMouseLeave={() => setHoveredCardId(null)}
-                >
+            <div
+              ref={carouselRef}
+              className="blog-carousel flex gap-4 items-center md:items-stretch overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none mb-6 py-6 md:py-0"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+              }}
+            >
+              {blogPosts.map((post, index) => {
+                const isActive = index === activeCardIndex;
+                return (
+                  <article
+                    key={post.id}
+                    className={`flex flex-col overflow-hidden rounded-[24px] border bg-white text-waygent-text-primary shadow-lg transition-all duration-300 w-[280px] flex-shrink-0 snap-center md:snap-align-none hover:-translate-y-1 hover:shadow-xl ${
+                      isActive
+                        ? 'border-waygent-orange scale-105 md:scale-100 shadow-xl md:border-waygent-light-blue/40 md:opacity-100'
+                        : 'border-waygent-light-blue/40 opacity-60 md:opacity-100 scale-95 md:scale-100 hover:opacity-100'
+                    }`}
+                    onMouseEnter={() => setHoveredCardId(post.id)}
+                    onMouseLeave={() => setHoveredCardId(null)}
+                  >
+
                   <BlogVisual
                     attachment={post.attachment}
                     isHovered={hoveredCardId === post.id}
+                    isActive={isActive && typeof window !== 'undefined' && window.innerWidth < 768}
                   />
                   <div className="flex flex-1 flex-col gap-2.5 border-t border-waygent-light-blue/30 px-4 py-3.5">
                     <div className="flex flex-col gap-2 flex-1">
@@ -203,10 +309,11 @@ export default function BlogSection() {
                     </Link>
                   </div>
                 </article>
-              ))}
+                );
+              })}
 
               {blogPosts.length > 4 && (
-                <div className="flex items-center justify-center ml-8">
+                <div className="hidden md:flex items-center justify-center ml-8">
                   <a
                     href="#"
                     className="group flex flex-col items-center gap-3 transition"
