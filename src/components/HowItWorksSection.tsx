@@ -59,8 +59,8 @@ function StepVisual({ id }: { id: Step["id"] }) {
     return (
       <div className="relative w-full overflow-hidden bg-[#f6efe4]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
         <video
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-            isHovered ? "opacity-100" : "opacity-70"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 opacity-100 ${
+            isHovered ? "md:opacity-100" : "md:opacity-70"
           }`}
           style={{ objectPosition: 'center 40%' }}
           loop
@@ -100,8 +100,8 @@ function StepVisual({ id }: { id: Step["id"] }) {
     return (
       <div className="relative w-full overflow-hidden bg-[#f5f2e9]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
         <video
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-            isHovered ? "opacity-100" : "opacity-70"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 opacity-100 ${
+            isHovered ? "md:opacity-100" : "md:opacity-70"
           }`}
           style={{ objectPosition: 'center 45%' }}
           loop
@@ -148,8 +148,8 @@ function StepVisual({ id }: { id: Step["id"] }) {
   return (
     <div className="relative w-full overflow-hidden bg-[#f6f2fb]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
       <video
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-          isHovered ? "opacity-100" : "opacity-70"
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 opacity-100 ${
+          isHovered ? "md:opacity-100" : "md:opacity-70"
         }`}
         style={{ objectPosition: 'center 80%' }}
         muted
