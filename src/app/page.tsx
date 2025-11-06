@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import NavBar from "@/components/NavBar";
 import IntroSection from "@/components/IntroSection";
 import SidebarNav from "@/components/SidebarNav";
@@ -99,6 +102,36 @@ const resultStats = [
 
 
 export default function Home() {
+  // Always scroll to top on page load/reload
+  useEffect(() => {
+    // Disable browser scroll restoration
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
+    // Remove any hash from URL
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+
+    // Scroll to top immediately and forcefully
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    // Also scroll to top after a small delay to ensure it sticks
+    const timeoutId = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
+      // Enable smooth scrolling after initial scroll is done
+      document.documentElement.classList.add('smooth-scroll');
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   return (
     <main className="relative min-h-screen bg-waygent-cream text-waygent-text-primary">
       <SidebarNav sections={sections} />
@@ -113,7 +146,7 @@ export default function Home() {
             <HowItWorksSection />
             <LandingEnvironments />
             <IntegrationsSection />
-            {/* <Builder /> */}
+             {/* <Builder /> */}
           </div>
 
           <section id="builder" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">

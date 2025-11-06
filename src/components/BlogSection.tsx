@@ -174,12 +174,15 @@ export default function BlogSection() {
             // Get the second card
             const secondCard = cards[1] as HTMLElement;
 
-            // Scroll the second card into view at the center
-            secondCard.scrollIntoView({
-              behavior: 'auto',
-              block: 'nearest',
-              inline: 'center'
-            });
+            // Calculate scroll position to center the second card
+            // Use scrollLeft instead of scrollIntoView to avoid page scroll
+            const cardLeft = secondCard.offsetLeft;
+            const cardWidth = secondCard.offsetWidth;
+            const carouselWidth = carousel.offsetWidth;
+            const scrollPosition = cardLeft - (carouselWidth / 2) + (cardWidth / 2);
+
+            // Scroll only the carousel horizontally, not the page
+            carousel.scrollLeft = scrollPosition;
           }
         }
       }, 300);

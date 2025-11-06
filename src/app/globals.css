@@ -199,8 +199,12 @@ body {
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   overscroll-behavior: none;
+}
+
+html.smooth-scroll {
+  scroll-behavior: smooth;
 }
 
 :root {

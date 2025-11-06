@@ -35,6 +35,30 @@ const CARD_ASPECT_RATIO = "1/1";
 
 function StepVisual({ id }: { id: Step["id"] }) {
   const [isHovered, setIsHovered] = React.useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  React.useEffect(() => {
+    // Force video to load first frame on mobile
+    const video = videoRef.current;
+    if (video) {
+      video.load();
+      const loadFirstFrame = () => {
+        if (id === "discovery") {
+          video.currentTime = 0.1;
+        } else if (id === "preview") {
+          video.currentTime = 0.1;
+        } else {
+          video.currentTime = 3;
+        }
+      };
+
+      if (video.readyState >= 2) {
+        loadFirstFrame();
+      } else {
+        video.addEventListener('loadeddata', loadFirstFrame, { once: true });
+      }
+    }
+  }, [id]);
 
   if (id === "discovery") {
     const handleLoadedData = (e: React.SyntheticEvent<HTMLVideoElement>) => {
@@ -59,6 +83,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
     return (
       <div className="relative w-full overflow-hidden bg-[#f6efe4]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
         <video
+          ref={videoRef}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 opacity-100 ${
             isHovered ? "md:opacity-100" : "md:opacity-70"
           }`}
@@ -66,7 +91,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           onLoadedData={handleLoadedData}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -100,6 +125,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
     return (
       <div className="relative w-full overflow-hidden bg-[#f5f2e9]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
         <video
+          ref={videoRef}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 opacity-100 ${
             isHovered ? "md:opacity-100" : "md:opacity-70"
           }`}
@@ -107,7 +133,7 @@ function StepVisual({ id }: { id: Step["id"] }) {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           onLoadedData={handleLoadedData}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -148,13 +174,14 @@ function StepVisual({ id }: { id: Step["id"] }) {
   return (
     <div className="relative w-full overflow-hidden bg-[#f6f2fb]" style={{ aspectRatio: CARD_ASPECT_RATIO }}>
       <video
+        ref={videoRef}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 opacity-100 ${
           isHovered ? "md:opacity-100" : "md:opacity-70"
         }`}
         style={{ objectPosition: 'center 80%' }}
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
         onLoadedData={handleLoadedData}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
