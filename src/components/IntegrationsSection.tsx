@@ -185,7 +185,7 @@ export default function IntegrationsSection() {
                 src={activeIntegration.screenshot}
                 alt={`${activeIntegration.name} integration`}
                 fill
-                className="object-cover rounded-[36px]"
+                className="object-fill rounded-[36px]"
               />
             )}
           </div>
