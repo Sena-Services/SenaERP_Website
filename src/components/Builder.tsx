@@ -1,15 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import {
   motion,
+  AnimatePresence,
   useScroll,
   useTransform,
-  AnimatePresence,
-  useMotionValueEvent,
 } from "framer-motion";
-import clsx from "clsx";
 
 type ShowcaseStep = {
   id: string;
@@ -64,9 +62,8 @@ const showcaseSteps: ShowcaseStep[] = [
 
 export default function Builder() {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const totalSteps = showcaseSteps.length;
-  const scrollLength = (totalSteps + 1) * 105;
-  const activeIndexRef = useRef(0);
+  const leftScrollRef = useRef<HTMLDivElement | null>(null);
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const { scrollYProgress } = useScroll({
@@ -74,171 +71,261 @@ export default function Builder() {
     offset: ["start start", "end end"],
   });
 
-  useMotionValueEvent(scrollYProgress, "change", (value) => {
-    const nextIndex = Math.min(
-      totalSteps - 1,
-      Math.floor(value * totalSteps + 0.0001),
-    );
-    if (nextIndex !== activeIndexRef.current) {
-      activeIndexRef.current = nextIndex;
-      setActiveIndex(nextIndex);
-    }
-  });
+  // Detect active step based on left scroll position
+  useEffect(() => {
+    const leftScroll = leftScrollRef.current;
+    if (!leftScroll) return;
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]);
-  const productScale = useTransform(scrollYProgress, [0, 0.12], [1.05, 0.9]);
-  const productX = useTransform(scrollYProgress, [0, 0.12], [-120, 0]);
-  const productY = useTransform(scrollYProgress, [0, 0.12], [110, 0]);
-  const productShadow = useTransform(scrollYProgress, [0, 0.12], [18, 32]);
-  const productShadowValue = useTransform(productShadow, (value) =>
-    `0 ${value}px ${value * 2.4}px rgba(15, 23, 42, 0.25)`,
-  );
+    const handleLeftScroll = () => {
+      const scrollTop = leftScroll.scrollTop;
+      const clientHeight = leftScroll.clientHeight;
+
+      // Find which section is currently in view
+      let newActiveIndex = 0;
+      for (let i = 0; i < sectionRefs.current.length; i++) {
+        const ref = sectionRefs.current[i];
+        if (ref) {
+          const rect = ref.getBoundingClientRect();
+          const leftRect = leftScroll.getBoundingClientRect();
+          const relativeTop = rect.top - leftRect.top + scrollTop;
+
+          if (relativeTop <= scrollTop + clientHeight / 3) {
+            newActiveIndex = i;
+          }
+        }
+      }
+
+      if (newActiveIndex !== activeIndex) {
+        setActiveIndex(newActiveIndex);
+      }
+    };
+
+    leftScroll.addEventListener('scroll', handleLeftScroll, { passive: true });
+    handleLeftScroll(); // Initial check
+
+    return () => {
+      leftScroll.removeEventListener('scroll', handleLeftScroll);
+    };
+  }, [activeIndex]);
+
+  // Main scroll handler - drives internal scroll based on page scroll
+  useEffect(() => {
+    let ticking = false;
+    const NAVBAR_HEIGHT = 80;
+
+    const updateScroll = () => {
+      if (!containerRef.current || !leftScrollRef.current) return;
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const containerTop = containerRect.top;
+      const containerBottom = containerRect.bottom;
+      const windowHeight = window.innerHeight;
+
+      // Check if section is in sticky position (top is at navbar height)
+      const isSticky = containerTop <= NAVBAR_HEIGHT && containerBottom > windowHeight + NAVBAR_HEIGHT;
+
+      if (isSticky) {
+        // Calculate scroll progress through the section
+        const scrollStart = containerRef.current.offsetTop - NAVBAR_HEIGHT;
+        const currentScroll = window.scrollY;
+        const scrollProgress = currentScroll - scrollStart;
+
+        const leftScrollHeight = leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight;
+        const targetScroll = Math.max(0, Math.min(scrollProgress, leftScrollHeight));
+
+        leftScrollRef.current.scrollTop = targetScroll;
+      }
+
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll);
+        ticking = true;
+      }
+    };
+
+    // Prevent scroll loop on left section
+    const handleWheel = (e: WheelEvent) => {
+      if (!leftScrollRef.current) return;
+
+      // If the wheel event is on the left scroll area, prevent it from causing issues
+      const target = e.target as HTMLElement;
+      if (leftScrollRef.current.contains(target)) {
+        e.stopPropagation();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    // Add wheel listener to left section to prevent loop
+    const leftScroll = leftScrollRef.current;
+    if (leftScroll) {
+      leftScroll.addEventListener('wheel', handleWheel, { passive: true });
+    }
+
+    // Initial update after a brief delay to ensure elements are measured
+    setTimeout(updateScroll, 100);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      if (leftScroll) {
+        leftScroll.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []);
 
   const activeStep = showcaseSteps[activeIndex];
+  const NAVBAR_HEIGHT = 80;
 
   return (
-    <div id="builder" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
-      <div className="relative mx-auto w-full max-w-7xl">
-        <div className="mb-8">
-          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
-            Builder
-          </h2>
-        </div>
-
-        <section
-          aria-label="Sena platform capabilities story"
-          className="relative isolate overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#e7f3ff] via-[#fefcf7] to-[#fbe7ff] text-waygent-text-primary"
-        >
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.25),transparent_60%)]"
-        style={{ y: backgroundY }}
-      />
+    <div
+      id="builder"
+      ref={containerRef}
+      className="scroll-mt-20 mt-16 sm:mt-16 relative lg:min-h-[370vh]"
+    >
+      {/* Sticky Container - Desktop only */}
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-20 left-[5%] hidden h-[420px] w-[520px] rounded-[68px] bg-[linear-gradient(135deg,rgba(59,130,246,0.18),rgba(59,130,246,0))] blur-lg md:block"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-32 right-[8%] hidden h-[520px] w-[560px] rounded-[72px] bg-[linear-gradient(155deg,rgba(250,204,21,0.22),rgba(250,204,21,0))] blur-xl md:block"
-      />
-
-      <div
-        ref={containerRef}
-        className="relative"
-        style={{ minHeight: `${scrollLength}vh` }}
+        className="lg:sticky top-20 left-0 right-0 z-10 px-4 sm:px-6 lg:px-8"
+        style={{
+          top: `${NAVBAR_HEIGHT}px`,
+        }}
       >
-        <div className="sticky top-0 flex min-h-screen items-center">
-          <div className="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-12 xl:px-16">
-            <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:gap-12">
-              <div className="space-y-14 lg:w-[54%]">
-                <header className="space-y-6">
-                  <p className="text-sm uppercase tracking-[0.3em] text-waygent-blue">
-                    Platform preview
-                  </p>
-                  <h2 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-                    A single command center that moves with your scroll.
-                  </h2>
-                  <p className="max-w-2xl text-lg text-waygent-text-secondary">
-                    Start with the wallpaper hero inspired by Retool, then keep
-                    scrolling to see the same UI glide into position as it
-                    narrates each capability. No hard cuts—just a smooth handoff
-                    between story beats.
-                  </p>
-                </header>
+        <div className="relative mx-auto w-full max-w-7xl">
+          {/* Builder Header - Always Visible */}
+          <div className="mb-6 bg-waygent-cream pt-4">
+            <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+              Builder
+            </h2>
+          </div>
 
-                <div className="relative overflow-hidden rounded-3xl border border-black/5 bg-white/70 p-8 shadow-xl backdrop-blur">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeStep.id}
-                      initial={{ opacity: 0, y: 24 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -24 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="space-y-4"
-                    >
-                      <span className="inline-flex items-center rounded-full border border-waygent-blue/20 bg-waygent-blue/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-waygent-blue">
-                        {activeStep.eyebrow}
-                      </span>
-                      <h3 className="text-3xl font-semibold text-waygent-text-primary sm:text-4xl">
-                        {activeStep.title}
-                      </h3>
-                      <p className="text-lg text-waygent-text-secondary">
-                        {activeStep.description}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
-
-                  <div className="mt-8 grid gap-3">
-                    {showcaseSteps.map((step, index) => (
-                      <div
-                        key={step.id}
-                        className={clsx(
-                          "flex items-start gap-3 rounded-2xl border px-4 py-3 transition",
-                          index === activeIndex
-                            ? "border-waygent-blue/40 bg-waygent-blue/10 text-waygent-text-primary"
-                            : "border-black/10 bg-white/60 text-slate-500",
-                        )}
-                      >
-                        <span className={clsx(
-                          "mt-1 inline-flex h-2 w-2 flex-none rounded-full",
-                          index === activeIndex
-                            ? "bg-waygent-blue"
-                            : "bg-slate-300",
-                        )} />
-                        <div>
-                          <p className="text-[0.65rem] uppercase tracking-[0.35em] text-waygent-text-muted">
-                            {step.eyebrow}
-                          </p>
-                          <p className="text-sm font-medium leading-tight text-waygent-text-primary">
-                            {step.title}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+          {/* Mobile Layout - Simple vertical cards */}
+          <div className="flex flex-col lg:hidden bg-waygent-cream space-y-8 pb-12">
+            {showcaseSteps.map((step, index) => (
+              <div key={step.id} className="flex flex-col space-y-4">
+                {/* Mobile Image for each step */}
+                <div className="w-full px-4">
+                  <div className="relative w-full aspect-[16/10] rounded-2xl bg-white shadow-lg overflow-hidden">
+                    <Image
+                      src={step.image}
+                      alt={`Screenshot showcasing ${step.title}`}
+                      fill
+                      className="object-fill"
+                    />
                   </div>
                 </div>
+
+                {/* Mobile Content for each step */}
+                <div className="px-6 space-y-3">
+                  <p className="text-xs uppercase tracking-wider text-waygent-blue font-semibold">
+                    {step.eyebrow}
+                  </p>
+
+                  <h3 className="text-xl font-semibold text-waygent-text-primary font-futura leading-tight">
+                    {step.title}
+                  </h3>
+
+                  <p className="text-sm text-waygent-text-secondary leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+
+                {index < showcaseSteps.length - 1 && (
+                  <div className="mx-6 mt-4 h-px bg-gray-200" />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Layout - Side by side */}
+          <div className="hidden lg:flex flex-row h-[calc(100vh-140px)]">
+            {/* Left Side - Scrollable Content */}
+            <div className="w-[30%] flex flex-col bg-waygent-cream">
+              {/* Sticky Header with Dynamic Subtitle */}
+              <div className="bg-waygent-cream pb-4 px-8 border-b border-gray-200/50">
+                {/* Dynamic Second Line - Changes on Scroll */}
+                <AnimatePresence mode="wait">
+                  <motion.h3
+                    key={`subtitle-${activeStep.id}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-lg sm:text-xl font-semibold text-waygent-text-primary font-futura leading-tight"
+                  >
+                    {activeStep.title}
+                  </motion.h3>
+                </AnimatePresence>
               </div>
 
-              <div className="flex items-start justify-center lg:w-[46%] lg:justify-end">
-                <motion.div
-                  className="relative aspect-[4/3] w-full max-w-[520px] overflow-hidden rounded-[36px]"
-                  style={{
-                    scale: productScale,
-                    x: productX,
-                    y: productY,
-                    boxShadow: productShadowValue,
-                  }}
-                >
-                  {showcaseSteps.map((step, index) => (
-                    <motion.div
-                      key={step.id}
-                      className="absolute inset-0"
-                      style={{ zIndex: index === activeIndex ? 2 : 1 }}
-                      animate={{
-                        opacity: activeIndex === index ? 1 : 0,
-                        scale: activeIndex === index ? 1 : 0.98,
-                        filter:
-                          activeIndex === index ? "blur(0px)" : "blur(8px)",
-                      }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
-                    >
-                      <Image
-                        src={step.image}
-                        alt={`Screenshot showcasing ${step.title}`}
-                        fill
-                        priority={index === 0}
-                        className="h-full w-full object-cover"
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
+              {/* Scrollable Content Area */}
+              <div
+                ref={leftScrollRef}
+                className="flex-1 overflow-y-auto px-8 py-6 builder-no-scrollbar"
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  pointerEvents: 'none',
+                }}
+              >
+                {showcaseSteps.map((step, index) => (
+                  <div
+                    key={step.id}
+                    ref={(el) => {
+                      sectionRefs.current[index] = el;
+                    }}
+                    className={`mb-6 xl:mb-4 min-h-[50vh] flex flex-col justify-center ${
+                      index === showcaseSteps.length - 1 ? 'pb-[25vh]' : ''
+                    }`}
+                  >
+                    <div className="space-y-4">
+                      <p className="text-xs uppercase tracking-wider text-waygent-blue font-semibold">
+                        {step.eyebrow}
+                      </p>
+
+                      <h3 className="text-xl sm:text-2xl font-semibold text-waygent-text-primary font-futura leading-tight">
+                        {step.title}
+                      </h3>
+
+                      <p className="text-sm sm:text-base text-waygent-text-secondary leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+
+                    {index < showcaseSteps.length - 1 && (
+                      <div className="mt-6 h-px bg-gray-200" />
+                    )}
+                  </div>
+                ))}
               </div>
+            </div>
+
+            {/* Right Side - Static Image Display */}
+            <div className="w-[70%] flex items-center justify-center px-8 py-8 bg-waygent-cream">
+              <motion.div
+                key={activeStep.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="relative w-full max-w-[900px] aspect-[16/10] rounded-[2rem] bg-white shadow-2xl overflow-hidden"
+                style={{
+                  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
+                }}
+              >
+                <Image
+                  src={activeStep.image}
+                  alt={`Screenshot showcasing ${activeStep.title}`}
+                  fill
+                  priority
+                  className="object-fill"
+                />
+              </motion.div>
             </div>
           </div>
         </div>
-        </div>
-        </section>
       </div>
     </div>
   );

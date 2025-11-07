@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import NavBar from "@/components/NavBar";
 import IntroSection from "@/components/IntroSection";
 import SidebarNav from "@/components/SidebarNav";
-// import Builder from "@/components/Builder";
+import Builder from "@/components/Builder";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import LandingEnvironments from "@/components/LandingEnvironments";
 import IntegrationsSection from "@/components/IntegrationsSection";
@@ -146,18 +146,8 @@ export default function Home() {
             <HowItWorksSection />
             <LandingEnvironments />
             <IntegrationsSection />
-             {/* <Builder /> */}
+            <Builder /> 
           </div>
-
-          <section id="builder" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
-            <div className="relative mx-auto w-full max-w-7xl">
-              <div className="mb-8">
-                <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
-                  Builder
-                </h2>
-              </div>
-            </div>
-          </section>
 
           {/* <div className="mt-24 space-y-24 px-4 pb-20 sm:px-6 lg:px-10 xl:px-14">
             <section id="cofounder" className="scroll-mt-32">...</section>

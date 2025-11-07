@@ -9,13 +9,14 @@ type Integration = {
   iconUrl: string;
   useColor?: boolean;
   screenshot: string;
+  disabled?: boolean;
 };
 
 const nativeIntegrations: Integration[] = [
-  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/screenshots/agent.png" },
-  { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true, screenshot: "/screenshots/data.png" },
-  { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true, screenshot: "/screenshots/environment.png" },
-  { id: "tally", name: "Tally", iconUrl: "/icons/Tally.png", useColor: true, screenshot: "/screenshots/preview.png" },
+  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/whatsapp_integrations.png" },
+  { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true, screenshot: "/instagram_integrations.png" },
+  { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true, screenshot: "/Email_Integrations.png" },
+  { id: "tally", name: "Tally", iconUrl: "/icons/Tally.png", useColor: true, screenshot: "/screenshots/preview.png", disabled: true },
 ];
 
 const thirdPartyIntegrations: Integration[] = [
@@ -29,24 +30,25 @@ const thirdPartyIntegrations: Integration[] = [
 const integrations: Integration[] = [...nativeIntegrations, ...thirdPartyIntegrations];
 
 export default function IntegrationsSection() {
-  const [activeId, setActiveId] = useState<string>(nativeIntegrations[0].id);
+  const enabledNativeIntegrations = nativeIntegrations.filter(int => !int.disabled);
+  const [activeId, setActiveId] = useState<string>(enabledNativeIntegrations[0].id);
   const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
-  const activeIntegration = integrations.find((int) => int.id === activeId);
+  const activeIntegration = integrations.find((int) => int.id === activeId && !int.disabled);
 
-  // Auto-cycle through ONLY native integrations
+  // Auto-cycle through ONLY native integrations (excluding disabled ones)
   useEffect(() => {
     if (!isAutoCycling) return;
 
     const interval = setInterval(() => {
       setActiveId((currentId) => {
-        const currentIndex = nativeIntegrations.findIndex((int) => int.id === currentId);
-        const nextIndex = (currentIndex + 1) % nativeIntegrations.length;
-        return nativeIntegrations[nextIndex].id;
+        const currentIndex = enabledNativeIntegrations.findIndex((int) => int.id === currentId);
+        const nextIndex = (currentIndex + 1) % enabledNativeIntegrations.length;
+        return enabledNativeIntegrations[nextIndex].id;
       });
     }, 3000); // Change every 3 seconds
 
     return () => clearInterval(interval);
-  }, [isAutoCycling]);
+  }, [isAutoCycling, enabledNativeIntegrations]);
 
   const handleIntegrationClick = (id: string) => {
     setActiveId(id);
@@ -73,15 +75,19 @@ export default function IntegrationsSection() {
               <div className="flex flex-wrap gap-4 max-w-md">
                 {nativeIntegrations.map((integration) => {
                   const isActive = activeId === integration.id;
+                  const isDisabled = integration.disabled;
                   return (
                     <div key={integration.id} className="relative flex flex-col items-center gap-1.5">
                       <button
-                        onClick={() => handleIntegrationClick(integration.id)}
-                        className="group flex flex-col items-center gap-1.5"
+                        onClick={() => !isDisabled && handleIntegrationClick(integration.id)}
+                        className={`group flex flex-col items-center gap-1.5 ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                        disabled={isDisabled}
                       >
                         <div
                           className={`relative flex items-center justify-center w-14 h-14 rounded-[14px] backdrop-blur-sm border transition-all duration-200 ease-out ${
-                            isActive
+                            isDisabled
+                              ? 'bg-transparent border-gray-300/20'
+                              : isActive
                               ? 'bg-white/20 border-waygent-blue shadow-md scale-105'
                               : 'bg-transparent border-gray-300/40 hover:bg-white/10 hover:border-waygent-blue/40 hover:-translate-y-0.5 hover:scale-105 hover:shadow-md'
                           }`}
@@ -95,16 +101,16 @@ export default function IntegrationsSection() {
                                 : integration.id === 'whatsapp'
                                 ? 'w-8 h-8 group-hover:w-9 group-hover:h-9'
                                 : 'w-7 h-7 group-hover:w-8 group-hover:h-8'
-                            }`}
+                            } ${isDisabled ? 'grayscale' : ''}`}
                           />
                         </div>
                         <span className={`text-[10px] font-medium text-center leading-tight ${
-                          isActive ? 'text-waygent-blue' : 'text-waygent-text-secondary'
+                          isDisabled ? 'text-waygent-text-secondary/50' : isActive ? 'text-waygent-blue' : 'text-waygent-text-secondary'
                         }`}>
                           {integration.name}
                         </span>
                       </button>
-                      {isActive && !isAutoCycling && (
+                      {isActive && !isAutoCycling && !isDisabled && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
