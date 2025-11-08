@@ -174,72 +174,112 @@ export default function IntroSection() {
             marginLeft: '5%',
           }}
         >
-          {/* Top spacer */}
-          <div className="mt-20"></div>
-
-          <div className="space-y-8 flex-1 flex flex-col justify-center">
+          <div className="flex-1 flex flex-col py-6">
           {/* Main heading */}
-          <div>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 tracking-tight mb-5 font-futura leading-tight">
+          <div className="mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 leading-tight" style={{
+              fontFamily: 'Georgia, serif',
+              color: '#2C1810',
+            }}>
               Compose your business like a painting
             </h1>
-            <p className="text-2xl sm:text-3xl text-gray-700 font-futura font-medium mt-6">
+            <p className="text-xl sm:text-2xl mt-4" style={{
+              fontFamily: 'Georgia, serif',
+              color: '#5A4A3A',
+              fontStyle: 'italic',
+            }}>
               Every stroke deliberate. Every layer connected.
             </p>
           </div>
 
           {/* Description */}
-          <div className="mt-10 space-y-6">
-            <p className="text-xl sm:text-2xl text-gray-800 leading-relaxed font-futura">
+          <div className="space-y-5">
+            <p className="text-lg sm:text-xl leading-relaxed" style={{
+              fontFamily: 'Georgia, serif',
+              color: '#3A3A3A',
+            }}>
               We believe software should be as expressive as art. Not locked in rigid templates, not trapped in boxes someone else designed.
             </p>
 
-            <p className="text-xl sm:text-2xl text-gray-800 leading-relaxed font-futura">
+            <p className="text-lg sm:text-xl leading-relaxed" style={{
+              fontFamily: 'Georgia, serif',
+              color: '#3A3A3A',
+            }}>
               Sena is a canvas where your business takes shape—built from composable pieces that adapt to your vision, orchestrated by AI that understands your intent.
             </p>
 
-            <div className="space-y-5 mt-10">
-              <div className="flex items-start gap-4">
-                <div className="w-2 h-2 rounded-full bg-gray-800 mt-3"></div>
-                <p className="text-lg sm:text-xl text-gray-700 font-futura flex-1">
+            <div className="space-y-3 pt-2">
+              <div className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-800 mt-2.5"></div>
+                <p className="text-base sm:text-lg flex-1" style={{
+                  fontFamily: 'Georgia, serif',
+                  color: '#3A3A3A',
+                }}>
                   Start with primitives—databases, workflows, UI components—and combine them like brushstrokes
                 </p>
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-2 h-2 rounded-full bg-gray-800 mt-3"></div>
-                <p className="text-lg sm:text-xl text-gray-700 font-futura flex-1">
+              <div className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-800 mt-2.5"></div>
+                <p className="text-base sm:text-lg flex-1" style={{
+                  fontFamily: 'Georgia, serif',
+                  color: '#3A3A3A',
+                }}>
                   Describe what you need in natural language, and watch AI architect the solution
                 </p>
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-2 h-2 rounded-full bg-gray-800 mt-3"></div>
-                <p className="text-lg sm:text-xl text-gray-700 font-futura flex-1">
+              <div className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-800 mt-2.5"></div>
+                <p className="text-base sm:text-lg flex-1" style={{
+                  fontFamily: 'Georgia, serif',
+                  color: '#3A3A3A',
+                }}>
                   Let intelligent agents handle the mundane while you focus on what matters
                 </p>
               </div>
             </div>
 
-            <div className="mt-10 border-l-4 border-waygent-orange pl-6 py-4">
-              <p className="text-xl sm:text-2xl text-gray-800 font-futura italic leading-relaxed">
-                From CRM to invoicing, analytics to automation—your entire operating system, composed exactly as you envision it.
-              </p>
+            {/* Elegant divider with artistic flourish */}
+            <div className="mt-8 pt-6 border-t border-gray-400/30">
+              <div className="relative">
+                <div className="absolute -top-9 left-0 w-16 h-px bg-gradient-to-r from-gray-600/60 to-transparent"></div>
+                <p className="text-lg sm:text-xl leading-relaxed" style={{
+                  fontFamily: 'Georgia, serif',
+                  fontStyle: 'italic',
+                  color: '#4A3A2A',
+                  lineHeight: '1.8',
+                }}>
+                  From CRM to invoicing, analytics to automation—your entire operating system, composed exactly as you envision it.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* What makes it different */}
-          <div className="mt-auto pt-12 pb-10 space-y-5">
-            <div className="space-y-3">
-              <p className="text-sm uppercase tracking-wider text-gray-600 font-futura font-semibold">Built for creators, not corporations</p>
-              <p className="text-base sm:text-lg text-gray-700 font-futura leading-relaxed">
+          {/* Footer - positioned at bottom */}
+          <div className="mt-auto pt-46 pb-6" style={{ maxWidth: '65%' }}>
+            <div className="space-y-4 bg-black/5 backdrop-blur-sm p-8 rounded-xl border border-gray-400/20">
+              <p className="text-sm uppercase tracking-widest font-semibold" style={{
+                fontFamily: 'Georgia, serif',
+                color: '#6B5744',
+                letterSpacing: '0.18em',
+              }}>Built for creators, not corporations</p>
+              <p className="text-lg sm:text-xl leading-relaxed" style={{
+                fontFamily: 'Georgia, serif',
+                color: '#2C1810',
+                lineHeight: '1.8',
+              }}>
                 No rigid workflows. No endless configuration. No armies of consultants. Just you, your vision, and an intelligent system that grows with your imagination.
               </p>
-            </div>
-            <div className="h-px bg-gray-300 w-full"></div>
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600 font-futura">Begin composing your masterpiece</p>
-              <svg className="w-5 h-5 text-gray-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
+              <div className="h-px bg-gray-400/40 w-full mt-6"></div>
+              <div className="flex items-center justify-between pt-3">
+                <p className="text-base" style={{
+                  fontFamily: 'Georgia, serif',
+                  color: '#6B5744',
+                  fontStyle: 'italic',
+                }}>Begin composing your masterpiece</p>
+                <svg className="w-5 h-5 text-gray-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
             </div>
           </div>
           </div>
