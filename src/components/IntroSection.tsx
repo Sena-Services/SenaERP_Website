@@ -161,33 +161,133 @@ export default function IntroSection() {
             <NavBar />
           </div>
 
-          {/* Original single container - visible when splitProgress = 0 */}
-          {splitProgress === 0 && (
+          {/* Always show 3 cards, but when splitProgress = 0, they're flush together with no gap */}
+          <div
+            className="relative w-full h-full flex justify-center items-center"
+            style={{
+              gap: `${cardGap}px`,
+              transition: "gap 300ms ease-out",
+              filter: splitProgress === 0 ? `drop-shadow(${elevation})` : 'none',
+            }}
+          >
+            {/* Left Card - shows LEFT 1/3 of image */}
             <div
-              className="relative w-full h-full overflow-hidden"
+              className="relative overflow-hidden"
               style={{
+                width: `${cardWidth}px`,
+                height: "100%",
                 backgroundColor: "#EBE5D9",
-                borderRadius: `${borderRadius}px`,
-                boxShadow: elevation,
-                transition: "box-shadow 200ms ease",
+                borderTopLeftRadius: `${borderRadius}px`,
+                borderBottomLeftRadius: `${borderRadius}px`,
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+                boxShadow: splitProgress > 0 ? elevation : 'none',
+                transition: "width 300ms ease-out, box-shadow 200ms ease",
               }}
             >
-              <img
-                src="/illustrations/monet-intro-expanded2.png"
-                alt="Monet painting"
-                className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
-                style={{
-                  opacity: 0.95,
-                }}
-              />
-
               <div
-                className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
                 style={{
-                  opacity: contentOpacity,
-                  pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: `${currentWidthValue}px`,
+                  height: "100%",
                 }}
               >
+                <img
+                  src="/illustrations/monet-intro-expanded2.png"
+                  alt="Monet painting"
+                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  style={{
+                    opacity: 0.95,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Center Card - shows MIDDLE 1/3 of image */}
+            <div
+              className="relative overflow-hidden"
+              style={{
+                width: `${cardWidth}px`,
+                height: "100%",
+                backgroundColor: "#EBE5D9",
+                borderRadius: 0,
+                boxShadow: splitProgress > 0 ? elevation : 'none',
+                transition: "width 300ms ease-out, box-shadow 200ms ease",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: `${-(cardWidth + cardGap)}px`,
+                  width: `${currentWidthValue}px`,
+                  height: "100%",
+                }}
+              >
+                <img
+                  src="/illustrations/monet-intro-expanded2.png"
+                  alt="Monet painting"
+                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  style={{
+                    opacity: 0.95,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Right Card - shows RIGHT 1/3 of image */}
+            <div
+              className="relative overflow-hidden"
+              style={{
+                width: `${cardWidth}px`,
+                height: "100%",
+                backgroundColor: "#EBE5D9",
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+                borderTopRightRadius: `${borderRadius}px`,
+                borderBottomRightRadius: `${borderRadius}px`,
+                boxShadow: splitProgress > 0 ? elevation : 'none',
+                transition: "width 300ms ease-out, box-shadow 200ms ease",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: `${-(cardWidth * 2 + cardGap * 2)}px`,
+                  width: `${currentWidthValue}px`,
+                  height: "100%",
+                }}
+              >
+                <img
+                  src="/illustrations/monet-intro-expanded2.png"
+                  alt="Monet painting"
+                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  style={{
+                    opacity: 0.95,
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Content overlay - only visible during shrink phase */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              opacity: splitProgress > 0 ? 0 : 1,
+              transition: "opacity 200ms ease-out",
+            }}
+          >
+            <div
+              className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+              style={{
+                opacity: contentOpacity,
+                pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
+              }}
+            >
             <div className="mb-4 md:mb-5">
               <h1
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-1.5 md:mb-2 leading-tight"
@@ -354,107 +454,8 @@ export default function IntroSection() {
                 </div>
               </div>
             </div>
-              </div>
             </div>
-          )}
-
-          {/* 3-card split layout - visible when splitProgress > 0 */}
-          {splitProgress > 0 && (
-            <div
-              className="relative w-full h-full flex justify-center items-center"
-              style={{
-                gap: `${cardGap}px`,
-                transition: "gap 300ms ease-out",
-              }}
-            >
-              {/* Left Card - shows LEFT 1/3 of image */}
-              <div
-                className="relative overflow-hidden"
-                style={{
-                  width: `${cardWidth}px`,
-                  height: "100%",
-                  backgroundColor: "#EBE5D9",
-                  borderRadius: `${borderRadius}px`,
-                  boxShadow: elevation,
-                  opacity: splitProgress,
-                  transition: "opacity 300ms ease-out, box-shadow 200ms ease",
-                }}
-              >
-                <img
-                  src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting - left section"
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: `${currentWidthValue}px`,
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "left center",
-                    opacity: 0.95,
-                  }}
-                />
-              </div>
-
-              {/* Center Card - shows MIDDLE 1/3 of image */}
-              <div
-                className="relative overflow-hidden"
-                style={{
-                  width: `${cardWidth}px`,
-                  height: "100%",
-                  backgroundColor: "#EBE5D9",
-                  borderRadius: `${borderRadius}px`,
-                  boxShadow: elevation,
-                  opacity: splitProgress,
-                  transition: "opacity 300ms ease-out, box-shadow 200ms ease",
-                }}
-              >
-                <img
-                  src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting - center section"
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: `${-cardWidth}px`,
-                    width: `${currentWidthValue}px`,
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center center",
-                    opacity: 0.95,
-                  }}
-                />
-              </div>
-
-              {/* Right Card - shows RIGHT 1/3 of image */}
-              <div
-                className="relative overflow-hidden"
-                style={{
-                  width: `${cardWidth}px`,
-                  height: "100%",
-                  backgroundColor: "#EBE5D9",
-                  borderRadius: `${borderRadius}px`,
-                  boxShadow: elevation,
-                  opacity: splitProgress,
-                  transition: "opacity 300ms ease-out, box-shadow 200ms ease",
-                }}
-              >
-                <img
-                  src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting - right section"
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: `${-cardWidth * 2}px`,
-                    width: `${currentWidthValue}px`,
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "right center",
-                    opacity: 0.95,
-                  }}
-                />
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </section>
