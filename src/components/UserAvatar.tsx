@@ -52,13 +52,23 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
       {/* Avatar Button - Circular with Initials Only */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 bg-white/70 border border-gray-200 hover:bg-white/90 hover:shadow-sm hover:border-gray-300 outline-none focus-visible:outline-none cursor-pointer font-space-grotesk"
+        className="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 outline-none focus-visible:outline-none cursor-pointer font-space-grotesk"
         style={{
-          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+          background: 'rgba(255,255,255,0.15)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.25)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
+          e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+          e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
         }}
       >
         {/* Avatar Initials */}
-        <span className="text-sm font-bold text-waygent-orange">
+        <span className="text-sm font-bold text-gray-800">
           {initials}
         </span>
       </button>
@@ -70,7 +80,7 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
           <div className="px-4 py-3" style={{ borderBottom: '1px solid #EEF2FF' }}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 flex items-center justify-center">
-                <span className="text-2xl font-bold text-waygent-orange">
+                <span className="text-2xl font-bold text-gray-800">
                   {initials}
                 </span>
               </div>
@@ -84,53 +94,67 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
           </div>
 
           {/* Profile Menu Item (Placeholder) */}
-          <button
-            className="w-full px-4 py-2 text-left text-sm font-medium flex items-center gap-2 transition-colors"
-            style={{
-              backgroundColor: 'transparent',
-              color: '#6B7280'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#EEF2FF';
-              e.currentTarget.style.color = '#F59E0B';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#6B7280';
-            }}
-            onClick={() => {
-              // Placeholder for profile action
-              console.log("Profile clicked");
-            }}
-          >
-            <UserIcon className="w-4 h-4" />
-            <span>Profile Settings</span>
-          </button>
+          <div className="px-2 py-1">
+            <button
+              className="w-full text-left transition-all duration-300"
+              style={{
+                padding: '12px 16px',
+                background: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.25)',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
+                e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+                e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
+              }}
+              onClick={() => {
+                // Placeholder for profile action
+                console.log("Profile clicked");
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <UserIcon className="w-4 h-4" style={{ color: '#6B7280' }} />
+                <span className="text-sm font-medium" style={{ color: '#374151' }}>Profile Settings</span>
+              </div>
+            </button>
+          </div>
 
           {/* Environment Selector Menu Item - Only show if not already on that page */}
           {!isOnEnvironmentSelector && (
-            <button
-              className="w-full px-4 py-2 text-left text-sm font-medium flex items-center gap-2 transition-colors"
-              style={{
-                backgroundColor: 'transparent',
-                color: '#6B7280'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#EEF2FF';
-                e.currentTarget.style.color = '#F59E0B';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#6B7280';
-              }}
-              onClick={() => {
-                setIsOpen(false);
-                router.push("/environment-selector");
-              }}
-            >
-              <Database className="w-4 h-4" />
-              <span>ERP Environment</span>
-            </button>
+            <div className="px-2 py-1">
+              <button
+                className="w-full text-left transition-all duration-300"
+                style={{
+                  padding: '12px 16px',
+                  background: 'rgba(255,255,255,0.15)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255,255,255,0.25)',
+                  borderRadius: '12px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
+                  e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+                  e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
+                }}
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push("/environment-selector");
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <Database className="w-4 h-4" style={{ color: '#6B7280' }} />
+                  <span className="text-sm font-medium" style={{ color: '#374151' }}>ERP Environment</span>
+                </div>
+              </button>
+            </div>
           )}
 
           {/* Logout Menu Item */}
@@ -143,8 +167,8 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
               color: '#6B7280'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#EEF2FF';
-              e.currentTarget.style.color = '#F59E0B';
+              e.currentTarget.style.backgroundColor = '#F3F4F6';
+              e.currentTarget.style.color = '#1F2937';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';

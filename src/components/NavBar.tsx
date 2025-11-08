@@ -150,7 +150,7 @@ export default function NavBar() {
 
   return (
     <>
-      <header className="w-full px-4 sm:px-6 lg:px-8 pb-2 pt-2">
+      <header className="w-full px-4 sm:px-6 lg:px-8 pb-2 pt-8">
         <nav
           className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} px-3 sm:px-6 lg:px-8 bg-white/10 border-2 border-white/20 backdrop-blur-md max-w-7xl mx-auto`}
         style={{
@@ -177,7 +177,7 @@ export default function NavBar() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="px-3 py-1.5 rounded-lg transition-all duration-300 ease-out hover:text-waygent-orange hover:bg-orange-50 hover:shadow-sm"
+                  className="px-3 py-1.5 rounded-lg transition-all duration-300 ease-out hover:text-gray-900 hover:bg-gray-100 hover:shadow-sm"
                 >
                   {l.label}
                 </Link>
@@ -245,20 +245,30 @@ export default function NavBar() {
                 {/* Environment/Home Button */}
                 <Link
                   href={isOnEnvironmentSelector ? "/" : "/environment-selector"}
-                  className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 ease-out whitespace-nowrap cursor-pointer outline-none leading-none font-space-grotesk focus-visible:outline-none bg-white/70 border border-gray-200 hover:bg-white/90 hover:shadow-sm hover:border-gray-300"
+                  className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 ease-out whitespace-nowrap cursor-pointer outline-none leading-none font-space-grotesk focus-visible:outline-none"
                   style={{
-                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    background: 'rgba(255,255,255,0.15)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
+                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
                   }}
                 >
                   {isOnEnvironmentSelector ? (
                     <>
-                      <Home className="w-4 h-4 text-gray-500 transition-colors duration-300 group-hover:text-waygent-orange" />
-                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-waygent-orange">Home</span>
+                      <Home className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-gray-900" />
+                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-gray-900">Home</span>
                     </>
                   ) : (
                     <>
-                      <Database className="w-4 h-4 text-gray-500 transition-colors duration-300 group-hover:text-waygent-orange" />
-                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-waygent-orange">ERP Environment</span>
+                      <Database className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-gray-900" />
+                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-gray-900">ERP Environment</span>
                     </>
                   )}
                 </Link>

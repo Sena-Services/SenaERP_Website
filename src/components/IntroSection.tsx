@@ -155,35 +155,30 @@ export default function IntroSection() {
         <img
           src="/illustrations/monet-intro-expanded2.png"
           alt="Monet painting"
-          className="absolute inset-0 w-full h-full object-cover object-right"
+          className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
           style={{
             opacity: 0.95,
           }}
         />
 
-        {/* Navbar - positioned on the left, bigger and slightly right */}
-        <div className="absolute top-0 z-50" style={{ left: '5%', width: '60%' }}>
+        {/* Navbar - responsive positioning */}
+        <div className="absolute top-0 z-50 w-full md:w-3/4 lg:w-2/3 xl:w-[45%] left-0 md:left-[5%]">
           <NavBar />
         </div>
 
-        {/* Content - fills entire left side from top to bottom */}
+        {/* Content - responsive width and positioning */}
         <div
-          className="relative z-10 h-full flex flex-col justify-between py-20 px-8 sm:px-10 lg:px-16"
-          style={{
-            width: '60%',
-            marginLeft: '5%',
-          }}
+          className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
         >
-          <div className="flex-1 flex flex-col py-6">
           {/* Main heading */}
-          <div className="mb-8">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 leading-tight" style={{
+          <div className="mb-4 md:mb-5">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-1.5 md:mb-2 leading-tight" style={{
               fontFamily: 'Georgia, serif',
               color: '#2C1810',
             }}>
               Compose your business like a painting
             </h1>
-            <p className="text-xl sm:text-2xl mt-4" style={{
+            <p className="text-base sm:text-lg md:text-xl mt-1.5 md:mt-2" style={{
               fontFamily: 'Georgia, serif',
               color: '#5A4A3A',
               fontStyle: 'italic',
@@ -193,43 +188,43 @@ export default function IntroSection() {
           </div>
 
           {/* Description */}
-          <div className="space-y-5">
-            <p className="text-lg sm:text-xl leading-relaxed" style={{
+          <div className="space-y-2.5 md:space-y-3">
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed" style={{
               fontFamily: 'Georgia, serif',
               color: '#3A3A3A',
             }}>
               We believe software should be as expressive as art. Not locked in rigid templates, not trapped in boxes someone else designed.
             </p>
 
-            <p className="text-lg sm:text-xl leading-relaxed" style={{
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed" style={{
               fontFamily: 'Georgia, serif',
               color: '#3A3A3A',
             }}>
               Sena is a canvas where your business takes shape—built from composable pieces that adapt to your vision, orchestrated by AI that understands your intent.
             </p>
 
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-gray-800 mt-2.5"></div>
-                <p className="text-base sm:text-lg flex-1" style={{
+            <div className="space-y-1.5 md:space-y-2 pt-1.5">
+              <div className="flex items-start gap-2 md:gap-2.5">
+                <div className="w-1 h-1 rounded-full bg-gray-800 mt-1.5"></div>
+                <p className="text-xs sm:text-sm md:text-base flex-1" style={{
                   fontFamily: 'Georgia, serif',
                   color: '#3A3A3A',
                 }}>
                   Start with primitives—databases, workflows, UI components—and combine them like brushstrokes
                 </p>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-gray-800 mt-2.5"></div>
-                <p className="text-base sm:text-lg flex-1" style={{
+              <div className="flex items-start gap-2 md:gap-2.5">
+                <div className="w-1 h-1 rounded-full bg-gray-800 mt-1.5"></div>
+                <p className="text-xs sm:text-sm md:text-base flex-1" style={{
                   fontFamily: 'Georgia, serif',
                   color: '#3A3A3A',
                 }}>
                   Describe what you need in natural language, and watch AI architect the solution
                 </p>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-gray-800 mt-2.5"></div>
-                <p className="text-base sm:text-lg flex-1" style={{
+              <div className="flex items-start gap-2 md:gap-2.5">
+                <div className="w-1 h-1 rounded-full bg-gray-800 mt-1.5"></div>
+                <p className="text-xs sm:text-sm md:text-base flex-1" style={{
                   fontFamily: 'Georgia, serif',
                   color: '#3A3A3A',
                 }}>
@@ -239,14 +234,14 @@ export default function IntroSection() {
             </div>
 
             {/* Elegant divider with artistic flourish */}
-            <div className="mt-8 pt-6 border-t border-gray-400/30">
+            <div className="mt-4 md:mt-5 pt-3 md:pt-4 border-t border-gray-400/30">
               <div className="relative">
-                <div className="absolute -top-9 left-0 w-16 h-px bg-gradient-to-r from-gray-600/60 to-transparent"></div>
-                <p className="text-lg sm:text-xl leading-relaxed" style={{
+                <div className="absolute -top-5 md:-top-6 left-0 w-10 md:w-12 h-px bg-gradient-to-r from-gray-600/60 to-transparent"></div>
+                <p className="text-sm sm:text-base md:text-lg leading-relaxed" style={{
                   fontFamily: 'Georgia, serif',
                   fontStyle: 'italic',
                   color: '#4A3A2A',
-                  lineHeight: '1.8',
+                  lineHeight: '1.7',
                 }}>
                   From CRM to invoicing, analytics to automation—your entire operating system, composed exactly as you envision it.
                 </p>
@@ -254,42 +249,37 @@ export default function IntroSection() {
             </div>
           </div>
 
-          {/* Footer - positioned at bottom */}
-          <div className="mt-auto pt-46 pb-6" style={{ maxWidth: '65%' }}>
-            <div className="space-y-4 p-8 rounded-2xl" style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(235,229,217,0.2) 50%, rgba(255,255,255,0.18) 100%)',
-              backdropFilter: 'blur(16px)',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
-              borderTop: '2px solid rgba(255,255,255,0.6)',
-              borderLeft: '1px solid rgba(255,255,255,0.3)',
-              borderRight: '1px solid rgba(255,255,255,0.25)',
-              borderBottom: '1px solid rgba(255,255,255,0.2)',
+          {/* Footer - responsive positioning */}
+          <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 left-4 sm:left-8 md:left-10 lg:left-16 right-4 sm:right-auto w-auto sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%]">
+            <div className="space-y-2 md:space-y-2.5 p-3 sm:p-4 md:p-5 rounded-lg md:rounded-xl" style={{
+              background: 'rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.25)',
             }}>
-              <p className="text-sm uppercase tracking-widest font-semibold" style={{
+              <p className="text-[10px] sm:text-xs uppercase tracking-widest font-semibold" style={{
                 fontFamily: 'Georgia, serif',
                 color: '#6B5744',
                 letterSpacing: '0.18em',
               }}>Built for creators, not corporations</p>
-              <p className="text-lg sm:text-xl leading-relaxed" style={{
+              <p className="text-xs sm:text-sm md:text-base leading-relaxed" style={{
                 fontFamily: 'Georgia, serif',
                 color: '#2C1810',
-                lineHeight: '1.8',
+                lineHeight: '1.6',
               }}>
                 No rigid workflows. No endless configuration. No armies of consultants. Just you, your vision, and an intelligent system that grows with your imagination.
               </p>
-              <div className="h-px bg-gray-400/40 w-full mt-6"></div>
-              <div className="flex items-center justify-between pt-3">
-                <p className="text-base" style={{
+              <div className="h-px bg-gray-400/40 w-full mt-2 md:mt-3"></div>
+              <div className="flex items-center justify-between pt-1.5 md:pt-2">
+                <p className="text-[10px] sm:text-xs md:text-sm" style={{
                   fontFamily: 'Georgia, serif',
                   color: '#6B5744',
                   fontStyle: 'italic',
                 }}>Begin composing your masterpiece</p>
-                <svg className="w-5 h-5 text-gray-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
