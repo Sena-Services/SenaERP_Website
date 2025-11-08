@@ -1,5 +1,6 @@
 "use client";
 
+import { forwardRef } from "react";
 import Link from "next/link";
 
 const socialLinks = [
@@ -41,9 +42,10 @@ const socialLinks = [
   },
 ];
 
-export default function JoinUsSection() {
+const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref) {
   return (
     <section
+      ref={ref}
       id="join-us"
       className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8 pb-16 mb-8"
     >
@@ -100,7 +102,15 @@ export default function JoinUsSection() {
           <div className="max-w-2xl space-y-4">
             {/* Main heading */}
             <div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 font-futura leading-tight">
+              <h2
+                className="text-3xl sm:text-4xl md:text-5xl mb-2 leading-tight"
+                style={{
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  fontWeight: 400,
+                  letterSpacing: "-0.02em",
+                  color: "#2C1810",
+                }}
+              >
                 Join our team
               </h2>
               <p className="text-base sm:text-lg text-gray-700 font-futura font-medium max-w-xl mx-auto">
@@ -152,4 +162,6 @@ export default function JoinUsSection() {
       </div>
     </section>
   );
-}
+});
+
+export default JoinUsSection;

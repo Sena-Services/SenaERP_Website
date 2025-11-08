@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { forwardRef } from "react";
 import Link from "next/link";
 import { getApiUrl, getFileUrl, API_CONFIG } from "@/lib/config";
 
@@ -108,7 +108,7 @@ function BlogVisual({
   );
 }
 
-export default function BlogSection() {
+const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
   const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
   const [blogPosts, setBlogPosts] = React.useState<BlogPost[]>(fallbackBlogPosts);
   const [loading, setLoading] = React.useState(true);
@@ -235,6 +235,7 @@ export default function BlogSection() {
 
   return (
     <section
+      ref={ref}
       id="blog"
       className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8 overflow-visible"
     >
@@ -257,8 +258,16 @@ export default function BlogSection() {
         </div>
 
         <div className="relative flex flex-col overflow-visible">
-          <div className="mb-6">
-            <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+          <div className="mb-12 text-center">
+            <h2
+              className="text-4xl md:text-5xl lg:text-6xl"
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontWeight: 400,
+                letterSpacing: "-0.02em",
+                color: "#2C1810",
+              }}
+            >
               Blog
             </h2>
           </div>
@@ -344,4 +353,6 @@ export default function BlogSection() {
       </div>
     </section>
   );
-}
+});
+
+export default BlogSection;

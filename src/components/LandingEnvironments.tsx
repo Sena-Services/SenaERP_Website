@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, forwardRef } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import EnvironmentSelector, {
@@ -161,7 +161,7 @@ function useEnvironmentCardTransform(
   return { x, y, width, borderRadius, boxShadow, opacity };
 }
 
-export default function LandingEnvironments() {
+const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments(props, ref) {
   const [activeId, setActiveId] = useState<string | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const selectorEnvironments = useMemo<SelectorEnvironment[]>(() => {
@@ -241,10 +241,18 @@ export default function LandingEnvironments() {
   }, []);
 
   return (
-    <section id="environments" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="environments" className="scroll-mt-32 mt-8 sm:mt-8 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl px-0">
-        <div className="mb-6">
-          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+        <div className="mb-12 text-center">
+          <h2
+            className="text-4xl md:text-5xl lg:text-6xl"
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              color: "#2C1810",
+            }}
+          >
             Environments
           </h2>
         </div>
@@ -425,4 +433,6 @@ export default function LandingEnvironments() {
       </div>
     </section>
   );
-}
+});
+
+export default LandingEnvironments;

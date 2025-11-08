@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import Image from "next/image";
 
 type Integration = {
@@ -29,7 +29,7 @@ const thirdPartyIntegrations: Integration[] = [
 
 const integrations: Integration[] = [...nativeIntegrations, ...thirdPartyIntegrations];
 
-export default function IntegrationsSection() {
+const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection(props, ref) {
   const enabledNativeIntegrations = nativeIntegrations.filter(int => !int.disabled);
   const [activeId, setActiveId] = useState<string>(enabledNativeIntegrations[0].id);
   const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
@@ -56,10 +56,18 @@ export default function IntegrationsSection() {
   };
 
   return (
-    <section id="integrations" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="integrations" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl">
-        <div className="mb-6">
-          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+        <div className="mb-12 text-center">
+          <h2
+            className="text-4xl md:text-5xl lg:text-6xl"
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              color: "#2C1810",
+            }}
+          >
             Integrations
           </h2>
         </div>
@@ -193,4 +201,6 @@ export default function IntegrationsSection() {
       </div>
     </section>
   );
-}
+});
+
+export default IntegrationsSection;

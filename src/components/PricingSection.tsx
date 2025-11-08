@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, forwardRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -53,7 +53,7 @@ const pricingTiers = [
   },
 ] as const;
 
-export default function PricingSection() {
+const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, ref) {
   const [isAnnual, setIsAnnual] = useState(false);
   const [selectedCredits, setSelectedCredits] = useState(8000);
   const [currency, setCurrency] = useState(currencies[0]);
@@ -85,10 +85,18 @@ export default function PricingSection() {
   };
 
   return (
-    <section id="pricing" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="pricing" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl">
-        <div className="mb-6">
-          <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+        <div className="mb-12 text-center">
+          <h2
+            className="text-4xl md:text-5xl lg:text-6xl"
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              color: "#2C1810",
+            }}
+          >
             Pricing
           </h2>
         </div>
@@ -385,4 +393,6 @@ export default function PricingSection() {
       </div>
     </section>
   );
-}
+});
+
+export default PricingSection;

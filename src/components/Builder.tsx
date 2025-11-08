@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, forwardRef } from "react";
 import Image from "next/image";
 import {
   motion,
@@ -60,7 +60,7 @@ const showcaseSteps: ShowcaseStep[] = [
   },
 ];
 
-export default function Builder() {
+const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const leftScrollRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -184,7 +184,14 @@ export default function Builder() {
   return (
     <div
       id="builder"
-      ref={containerRef}
+      ref={(node) => {
+        containerRef.current = node;
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      }}
       className="scroll-mt-20 mt-16 sm:mt-16 relative lg:min-h-[370vh]"
     >
       {/* Sticky Container - Desktop only */}
@@ -196,8 +203,16 @@ export default function Builder() {
       >
         <div className="relative mx-auto w-full max-w-7xl">
           {/* Builder Header - Always Visible */}
-          <div className="mb-6 bg-waygent-cream pt-4">
-            <h2 className="text-4xl font-semibold text-waygent-text-primary sm:text-[2.75rem] sm:leading-tight font-futura">
+          <div className="mb-12 bg-waygent-cream pt-4 text-center">
+            <h2
+              className="text-4xl md:text-5xl lg:text-6xl"
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontWeight: 400,
+                letterSpacing: "-0.02em",
+                color: "#2C1810",
+              }}
+            >
               Builder
             </h2>
           </div>
@@ -329,4 +344,6 @@ export default function Builder() {
       </div>
     </div>
   );
-}
+});
+
+export default Builder;

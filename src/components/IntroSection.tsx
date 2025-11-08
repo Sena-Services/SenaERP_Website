@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import NavBar from "./NavBar";
 import FlipCard from "./FlipCard";
 import IntroContent from "./IntroContent";
 
@@ -94,32 +93,6 @@ export default function IntroSection() {
   const stickyFrameHeight =
     Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
 
-  const navWidthRatio =
-    viewportWidth >= 1280
-      ? 0.45
-      : viewportWidth >= 1024
-      ? 2 / 3
-      : viewportWidth >= 768
-      ? 0.75
-      : 1;
-  const navMarginRatio = viewportWidth >= 768 ? 0.05 : 0;
-  const navCenterStart = 0.05;
-  const navCenterEnd = 0.4;
-  const navCenterProgress = clamp01(
-    (scrollProgress - navCenterStart) / (navCenterEnd - navCenterStart)
-  );
-  const navWidthPx = currentWidthValue * navWidthRatio;
-  const navLeftMarginPx = currentWidthValue * navMarginRatio;
-  const navCenterOffsetPx =
-    currentWidthValue / 2 - (navLeftMarginPx + navWidthPx / 2);
-  const navLiftStart = 0.45;
-  const navLiftEnd = 0.9;
-  const navLiftProgress = clamp01(
-    (scrollProgress - navLiftStart) / (navLiftEnd - navLiftStart)
-  );
-  const navLiftMax = 110;
-  const navLiftPx = navLiftProgress * navLiftMax;
-
   const basePaddingTop = 16 + scrollProgress * 32;
   const optimalPadding = Math.max(
     24,
@@ -160,14 +133,27 @@ export default function IntroSection() {
             height: currentHeight,
           }}
         >
+          {/* Title that appears when cards split */}
           <div
-            className="absolute top-0 left-0 z-50 w-full md:w-3/4 lg:w-2/3 xl:w-[45%] px-4 sm:px-8 md:px-10 lg:px-16 ml-0 md:ml-[5%]"
+            className="absolute left-0 right-0 text-center z-10"
             style={{
-              transform: `translate(${navCenterOffsetPx * navCenterProgress}px, -${navLiftPx}px)`,
-              transition: "transform 200ms ease",
+              top: "-120px",
+              opacity: splitProgress,
+              transition: "opacity 400ms ease-out",
+              pointerEvents: "none",
             }}
           >
-            <NavBar />
+            <h2
+              className="text-4xl md:text-5xl lg:text-6xl"
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontWeight: 400,
+                letterSpacing: "-0.02em",
+                color: "#2C1810",
+              }}
+            >
+              How it <span style={{ fontStyle: "italic" }}>works</span>?
+            </h2>
           </div>
 
           {/* Always show 3 cards, but when splitProgress = 0, they're flush together with no gap */}
