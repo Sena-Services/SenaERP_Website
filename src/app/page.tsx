@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import NavBar from "@/components/NavBar";
 import IntroSection from "@/components/IntroSection";
 import SidebarNav from "@/components/SidebarNav";
@@ -102,6 +102,29 @@ const resultStats = [
 
 
 export default function Home() {
+  const [scrollProgress, setScrollProgress] = React.useState(0);
+
+  // Track scroll progress for IntroSection shrink
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const shrinkScrollDistance = 1500;
+      const progress = Math.min(scrollY / shrinkScrollDistance, 1);
+      setScrollProgress(progress);
+
+      // Once shrink is complete, allow normal scrolling
+      if (progress >= 1) {
+        // Reset scroll position to just after the intro section
+        if (scrollY <= shrinkScrollDistance + 10) {
+          window.scrollTo(0, shrinkScrollDistance);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Always scroll to top on page load/reload
   useEffect(() => {
     // Disable browser scroll restoration
@@ -133,14 +156,15 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-waygent-cream text-waygent-text-primary">
-      {/* Full-screen intro section (no sidebar, no navbar) */}
-      <div className="relative w-screen h-screen overflow-hidden">
+    <main className="relative bg-waygent-cream text-waygent-text-primary">
+      {/* Spacer for shrink animation scroll distance */}
+      <div style={{ height: '1500px', position: 'relative' }}>
+        {/* IntroSection - fixed during shrink */}
         <IntroSection />
       </div>
 
-      {/* Rest of the page without sidebar */}
-      <div className="relative z-10">
+      {/* Rest of the page - normal flow after shrink area */}
+      <div className="bg-waygent-cream w-full relative z-1">
         <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
           <div className="flex-1 flex flex-col">
             <HowItWorksSection />

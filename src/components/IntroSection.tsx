@@ -114,12 +114,13 @@ export default function IntroSection() {
     setPaused(false);
   };
 
-  // Track scroll progress for multi-stage animation
+  // Track scroll progress for shrinking animation
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const maxScroll = window.innerHeight * 1.5; // Total animation over 1.5 viewports
-      const progress = Math.min(scrollY / maxScroll, 1);
+      // Stage 1: Shrink animation (0 - 1500px of scroll)
+      const shrinkScrollDistance = 1500;
+      const progress = Math.min(scrollY / shrinkScrollDistance, 1);
       setScrollProgress(progress);
     };
 
@@ -127,59 +128,65 @@ export default function IntroSection() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Multi-stage scroll animation
-  // Stage 1 (0-0.5): Content disappears bottom-to-top via clip-path, container shrinks
-  // Stage 2 (0.5-1.0): Container collapses to thin header bar, image clips
-  const stage1Progress = Math.min(scrollProgress / 0.5, 1);
-  const stage2Progress = Math.max((scrollProgress - 0.5) / 0.5, 0);
+  // Calculate dimensions for shrinking from all sides
+  // Start: 95vw width, 94vh height
+  // End: Match HowItWorksSection width (max-w-7xl = 80rem = ~1280px)
+  const startWidthVw = 95;
+  const targetWidthPx = 1280; // max-w-7xl
+  const startHeightVh = 94;
+  const targetHeightVh = 70; // Shrink to a smaller height
 
-  // Content clips from BOTTOM to TOP (disappears upward)
-  const contentClipBottom = stage1Progress * 100;
+  // Calculate target width as percentage of viewport
+  const targetWidthVw = (targetWidthPx / window.innerWidth) * 100;
 
-  // Height shrinks throughout
-  const heightVh = scrollProgress < 0.5
-    ? 94 - (stage1Progress * 50) // 94vh -> 44vh
-    : 44 - (stage2Progress * 37); // 44vh -> 7vh
-  const containerHeight = `${heightVh}vh`;
+  // Calculate current dimensions based on scroll progress
+  // At scrollProgress = 0: full width (95vw)
+  // At scrollProgress = 1: target width (~80vw or 1280px, whichever is smaller)
+  const currentWidthVw = startWidthVw - (scrollProgress * (startWidthVw - Math.min(targetWidthVw, startWidthVw)));
+  const currentHeightVh = startHeightVh - (scrollProgress * (startHeightVh - targetHeightVh));
 
-  // Border radius
-  const borderRadius = 32 + (scrollProgress * 8);
+  // Calculate inset from all sides (for visual shrinking effect)
+  const topInset = 1 + (scrollProgress * 2); // Start at 1rem, move down to 3rem
+  const sideInset = scrollProgress * 2.5; // Move in from sides
 
-  // Image clips from bottom in stage 2
-  const imageClipBottom = stage2Progress * 70;
+  // Fade out content as we shrink
+  const contentOpacity = 1 - (scrollProgress * 0.8);
+
+  // Border radius increases as we shrink
+  const borderRadius = 32 + (scrollProgress * 12);
 
   return (
     <section
       id="intro"
-      className="relative w-full flex items-start justify-center px-4 sm:px-6 lg:px-8 pt-4"
+      className="w-full flex items-start justify-center"
       style={{
-        height: '250vh', // Tall section for scrolling
+        paddingTop: '1rem',
       }}
     >
-      {/* Hero container - FIXED POSITION, stays at top */}
+      {/* Hero container - FIXED POSITION during shrink, then normal flow */}
       <div
-        className="w-full mx-auto overflow-hidden"
+        className="mx-auto overflow-hidden"
         style={{
-          position: 'fixed',
-          top: '1rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
+          position: scrollProgress < 1 ? 'fixed' : 'relative',
+          top: scrollProgress < 1 ? `${topInset}rem` : 'auto',
+          left: scrollProgress < 1 ? '50%' : 'auto',
+          transform: scrollProgress < 1 ? 'translateX(-50%)' : 'none',
           backgroundColor: '#EBE5D9',
-          height: containerHeight,
-          maxWidth: '95vw',
+          height: `${currentHeightVh}vh`,
+          width: `${currentWidthVw}vw`,
           borderRadius: `${borderRadius}px`,
           boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15)',
           zIndex: 50,
+          margin: scrollProgress >= 1 ? '0 auto' : '0',
         }}
       >
-        {/* Expanded painting image - clips from bottom as it shrinks */}
+        {/* Expanded painting image */}
         <img
           src="/illustrations/monet-intro-expanded2.png"
           alt="Monet painting"
           className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
           style={{
             opacity: 0.95,
-            clipPath: `inset(0 0 ${imageClipBottom}% 0)`,
           }}
         />
 
@@ -188,12 +195,12 @@ export default function IntroSection() {
           <NavBar />
         </div>
 
-        {/* Content - responsive width and positioning - CLIPS from bottom to top */}
+        {/* Content - responsive width and positioning - fades out as we shrink */}
         <div
           className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
           style={{
-            clipPath: `inset(0 0 ${contentClipBottom}% 0)`,
-            pointerEvents: contentClipBottom > 90 ? 'none' : 'auto',
+            opacity: contentOpacity,
+            pointerEvents: contentOpacity < 0.3 ? 'none' : 'auto',
           }}
         >
           {/* Main heading */}
