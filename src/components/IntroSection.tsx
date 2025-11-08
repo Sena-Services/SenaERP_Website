@@ -256,7 +256,15 @@ export default function IntroSection() {
 
           {/* Footer - positioned at bottom */}
           <div className="mt-auto pt-46 pb-6" style={{ maxWidth: '65%' }}>
-            <div className="space-y-4 bg-black/5 backdrop-blur-sm p-8 rounded-xl border border-gray-400/20">
+            <div className="space-y-4 p-8 rounded-2xl" style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(235,229,217,0.2) 50%, rgba(255,255,255,0.18) 100%)',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
+              borderTop: '2px solid rgba(255,255,255,0.6)',
+              borderLeft: '1px solid rgba(255,255,255,0.3)',
+              borderRight: '1px solid rgba(255,255,255,0.25)',
+              borderBottom: '1px solid rgba(255,255,255,0.2)',
+            }}>
               <p className="text-sm uppercase tracking-widest font-semibold" style={{
                 fontFamily: 'Georgia, serif',
                 color: '#6B5744',
