@@ -137,10 +137,7 @@ export default function IntroSection() {
   return (
     <section
       id="intro"
-      className="relative w-full h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8"
-      style={{
-        paddingTop: '3rem',
-      }}
+      className="relative w-full h-screen flex items-start justify-center px-4 sm:px-6 lg:px-8 pt-4"
     >
       {/* Hero container with scroll-based scaling */}
       <div
@@ -148,9 +145,9 @@ export default function IntroSection() {
         style={{
           backgroundColor: '#EBE5D9',
           height: containerHeight,
-          maxWidth: scrollProgress < 1 ? '95vw' : '100%',
-          borderRadius: scrollProgress < 1 ? `${borderRadius}px` : '0px',
-          boxShadow: scrollProgress < 1 ? '0 20px 60px -12px rgba(0, 0, 0, 0.15)' : 'none',
+          maxWidth: '95vw',
+          borderRadius: `${borderRadius}px`,
+          boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15)',
           transform: `scale(${scale})`,
         }}
       >
@@ -164,157 +161,85 @@ export default function IntroSection() {
           }}
         />
 
-        {/* Navbar overlay on top of image */}
-        <div className="absolute top-0 left-0 right-0 z-50 w-full">
+        {/* Navbar - positioned on the left, bigger and slightly right */}
+        <div className="absolute top-0 z-50" style={{ left: '5%', width: '60%' }}>
           <NavBar />
         </div>
 
-        {/* Content - moves left proportionally as width decreases */}
+        {/* Content - fills entire left side from top to bottom */}
         <div
-          className="relative z-10 h-full w-full flex items-center py-8 sm:py-10 px-6 sm:px-8 lg:px-12"
+          className="relative z-10 h-full flex flex-col justify-between py-20 px-8 sm:px-10 lg:px-16"
           style={{
-            justifyContent: 'flex-start',
-            paddingLeft: 'max(1.5rem, calc(50vw - 600px))',
+            width: '60%',
+            marginLeft: '5%',
           }}
         >
-          <div className="max-w-2xl space-y-6 text-center">
+          {/* Top spacer */}
+          <div className="mt-20"></div>
+
+          <div className="space-y-8 flex-1 flex flex-col justify-center">
           {/* Main heading */}
           <div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 font-futura leading-tight">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 tracking-tight mb-5 font-futura leading-tight">
               Compose your business like a painting
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 font-futura font-medium">
-              Describe. Build. Orchestrate.
+            <p className="text-2xl sm:text-3xl text-gray-700 font-futura font-medium mt-6">
+              Every stroke deliberate. Every layer connected.
             </p>
           </div>
 
-          {/* Description with keywords */}
-          <div>
-            <p className="text-base sm:text-lg text-gray-800 leading-relaxed font-futura">
-              <span>A </span>
-              <Keyword
-                word={tokens[0].word}
-                index={0}
-                active={activeIdx}
-                setActive={handleKeywordHover}
-                onMouseLeave={handleKeywordLeave}
-                color={tokens[0].color}
-                resolvedUnderlineColor={
-                  tailwindToHexColorMap[tokens[0].color] ||
-                  FALLBACK_UNDERLINE_COLOR
-                }
-              />
-              {" "}
-              <Keyword
-                word={tokens[1].word}
-                index={1}
-                active={activeIdx}
-                setActive={handleKeywordHover}
-                onMouseLeave={handleKeywordLeave}
-                color={tokens[1].color}
-                resolvedUnderlineColor={
-                  tailwindToHexColorMap[tokens[1].color] ||
-                  FALLBACK_UNDERLINE_COLOR
-                }
-              />
-              {" that's "}
-              <Keyword
-                word={tokens[2].word}
-                index={2}
-                active={activeIdx}
-                setActive={handleKeywordHover}
-                onMouseLeave={handleKeywordLeave}
-                color={tokens[2].color}
-                resolvedUnderlineColor={
-                  tailwindToHexColorMap[tokens[2].color] ||
-                  FALLBACK_UNDERLINE_COLOR
-                }
-              />
-              {" through "}
-              <Keyword
-                word={tokens[3].word}
-                index={3}
-                active={activeIdx}
-                setActive={handleKeywordHover}
-                onMouseLeave={handleKeywordLeave}
-                color={tokens[3].color}
-                resolvedUnderlineColor={
-                  tailwindToHexColorMap[tokens[3].color] ||
-                  FALLBACK_UNDERLINE_COLOR
-                }
-              />
-              {" for "}
-              <Keyword
-                word={tokens[4].word}
-                index={4}
-                active={activeIdx}
-                setActive={handleKeywordHover}
-                onMouseLeave={handleKeywordLeave}
-                color={tokens[4].color}
-                resolvedUnderlineColor={
-                  tailwindToHexColorMap[tokens[4].color] ||
-                  FALLBACK_UNDERLINE_COLOR
-                }
-              />
-              <span>.</span>
+          {/* Description */}
+          <div className="mt-10 space-y-6">
+            <p className="text-xl sm:text-2xl text-gray-800 leading-relaxed font-futura">
+              We believe software should be as expressive as art. Not locked in rigid templates, not trapped in boxes someone else designed.
             </p>
-          </div>
 
-          {/* Definition block with progress indicator */}
-          <div className="space-y-3">
-            {/* Definition */}
-            <div
-              style={{ minHeight: definitionMaxHeight ? `${definitionMaxHeight}px` : '100px' }}
-            >
-              <div className="relative">
-                {activeToken && (
-                  <div className="animate-in fade-in duration-400">
-                    <div className="rounded-xl bg-white/60 backdrop-blur-md border border-gray-200 px-4 py-3 shadow-lg">
-                      <p className="text-gray-800 text-sm sm:text-base leading-relaxed font-futura">
-                        {activeToken.definition}
-                      </p>
-                    </div>
-                  </div>
-                )}
+            <p className="text-xl sm:text-2xl text-gray-800 leading-relaxed font-futura">
+              Sena is a canvas where your business takes shape—built from composable pieces that adapt to your vision, orchestrated by AI that understands your intent.
+            </p>
+
+            <div className="space-y-5 mt-10">
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-gray-800 mt-3"></div>
+                <p className="text-lg sm:text-xl text-gray-700 font-futura flex-1">
+                  Start with primitives—databases, workflows, UI components—and combine them like brushstrokes
+                </p>
               </div>
-
-              {/* Hidden measurer */}
-              <div className="absolute opacity-0 pointer-events-none -z-10" aria-hidden="true">
-                {tokens.map((t, i) => (
-                  <div
-                    key={t.word}
-                    ref={(el) => {
-                      hiddenRefs.current[i] = el;
-                    }}
-                  >
-                    <div className="rounded-xl bg-white/60 backdrop-blur-md border border-gray-200 px-4 py-3">
-                      <p className="text-gray-800 text-sm sm:text-base leading-relaxed">
-                        {t.definition}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-gray-800 mt-3"></div>
+                <p className="text-lg sm:text-xl text-gray-700 font-futura flex-1">
+                  Describe what you need in natural language, and watch AI architect the solution
+                </p>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-gray-800 mt-3"></div>
+                <p className="text-lg sm:text-xl text-gray-700 font-futura flex-1">
+                  Let intelligent agents handle the mundane while you focus on what matters
+                </p>
               </div>
             </div>
 
-            {/* Progress indicator - now below definition */}
-            <div className="flex gap-1.5">
-              {tokens.map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1 flex-1 rounded-full bg-gray-300 overflow-hidden relative"
-                >
-                  {/* Filling bar that animates */}
-                  <div
-                    className="absolute inset-0 rounded-full transition-all"
-                    style={{
-                      backgroundColor: '#3b82f6',
-                      width: i === activeIdx ? `${progress}%` : (i < activeIdx ? '100%' : '0%'),
-                      transition: i === activeIdx ? 'none' : 'width 300ms ease-out',
-                    }}
-                  />
-                </div>
-              ))}
+            <div className="mt-10 border-l-4 border-waygent-orange pl-6 py-4">
+              <p className="text-xl sm:text-2xl text-gray-800 font-futura italic leading-relaxed">
+                From CRM to invoicing, analytics to automation—your entire operating system, composed exactly as you envision it.
+              </p>
+            </div>
+          </div>
+
+          {/* What makes it different */}
+          <div className="mt-auto pt-12 pb-10 space-y-5">
+            <div className="space-y-3">
+              <p className="text-sm uppercase tracking-wider text-gray-600 font-futura font-semibold">Built for creators, not corporations</p>
+              <p className="text-base sm:text-lg text-gray-700 font-futura leading-relaxed">
+                No rigid workflows. No endless configuration. No armies of consultants. Just you, your vision, and an intelligent system that grows with your imagination.
+              </p>
+            </div>
+            <div className="h-px bg-gray-300 w-full"></div>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-600 font-futura">Begin composing your masterpiece</p>
+              <svg className="w-5 h-5 text-gray-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
             </div>
           </div>
           </div>
