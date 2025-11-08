@@ -5,12 +5,14 @@ import NavBar from "./NavBar";
 
 const SHRINK_SCROLL_DISTANCE = 900;
 const SPLIT_SCROLL_DISTANCE = 400; // Distance to split into 3 cards
+const ROTATE_SCROLL_DISTANCE = 800; // Distance to flip cards 180 degrees
 const EXTRA_HOLD_DISTANCE = 340;
 
 export default function IntroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [splitProgress, setSplitProgress] = useState(0);
+  const [rotateProgress, setRotateProgress] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1440
   );
@@ -50,6 +52,13 @@ export default function IntroSection() {
         SPLIT_SCROLL_DISTANCE
       );
       setSplitProgress(splitDistance / SPLIT_SCROLL_DISTANCE);
+
+      // Phase 3: Rotate animation (1300-1800px)
+      const rotateDistance = Math.min(
+        Math.max(totalDistance - SHRINK_SCROLL_DISTANCE - SPLIT_SCROLL_DISTANCE, 0),
+        ROTATE_SCROLL_DISTANCE
+      );
+      setRotateProgress(rotateDistance / ROTATE_SCROLL_DISTANCE);
     };
 
     handleScroll();
@@ -79,7 +88,7 @@ export default function IntroSection() {
       ? "0 20px 60px -12px rgba(0, 0, 0, 0.15)"
       : "0 12px 32px -10px rgba(0, 0, 0, 0.12)";
   const sectionHeight =
-    startHeight + SHRINK_SCROLL_DISTANCE + SPLIT_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
+    startHeight + SHRINK_SCROLL_DISTANCE + SPLIT_SCROLL_DISTANCE + ROTATE_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
   const stickyFrameHeight =
     Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
 
@@ -168,107 +177,264 @@ export default function IntroSection() {
               gap: `${cardGap}px`,
               transition: "gap 300ms ease-out",
               filter: splitProgress === 0 ? `drop-shadow(${elevation})` : 'none',
+              perspective: "2000px",
             }}
           >
             {/* Left Card - shows LEFT 1/3 of image */}
             <div
-              className="relative overflow-hidden"
+              className="relative"
               style={{
                 width: `${cardWidth}px`,
                 height: "100%",
-                backgroundColor: "#EBE5D9",
-                borderTopLeftRadius: `${borderRadius}px`,
-                borderBottomLeftRadius: `${borderRadius}px`,
-                borderTopRightRadius: 0,
-                borderBottomRightRadius: 0,
                 boxShadow: splitProgress > 0 ? elevation : 'none',
-                transition: "width 300ms ease-out, box-shadow 200ms ease",
+                transform: `rotateY(${rotateProgress * 180}deg)`,
+                transformStyle: "preserve-3d",
+                transition: "width 300ms ease-out, box-shadow 200ms ease, transform 600ms ease-out",
               }}
             >
+              {/* Front face - Monet image */}
               <div
+                className="absolute inset-0 overflow-hidden"
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: `${currentWidthValue}px`,
-                  height: "100%",
+                  backfaceVisibility: "hidden",
+                  backgroundColor: "#EBE5D9",
+                  borderTopLeftRadius: `${borderRadius}px`,
+                  borderBottomLeftRadius: `${borderRadius}px`,
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
                 }}
               >
-                <img
-                  src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting"
-                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                <div
                   style={{
-                    opacity: 0.95,
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: `${currentWidthValue}px`,
+                    height: "100%",
                   }}
-                />
+                >
+                  <img
+                    src="/illustrations/monet-intro-expanded2.png"
+                    alt="Monet painting"
+                    className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                    style={{
+                      opacity: 0.95,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Back face - "Talk to Sena" card from HowItWorks */}
+              <div
+                className="absolute inset-0 overflow-hidden flex flex-col"
+                style={{
+                  backfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                  backgroundColor: "#ffffff",
+                  borderTopLeftRadius: `${borderRadius}px`,
+                  borderBottomLeftRadius: `${borderRadius}px`,
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                  border: "1px solid rgba(59, 130, 246, 0.4)",
+                }}
+              >
+                <div className="relative w-full bg-[#f6efe4]" style={{ aspectRatio: "1/1" }}>
+                  <video
+                    className="absolute inset-0 h-full w-full object-cover opacity-70"
+                    style={{ objectPosition: 'center 40%' }}
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src="/videos/card1.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div className="flex flex-1 flex-col border-t border-blue-200/30 px-4 py-3.5">
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                        1
+                      </span>
+                      <h3 className="text-[15px] font-bold text-gray-900 leading-snug">
+                        Talk to Sena
+                      </h3>
+                    </div>
+                    <p className="text-[12px] leading-relaxed text-gray-600">
+                      Share your workflows, challenges, and goals. Sena asks the right questions to understand exactly what you need—no technical jargon required.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Center Card - shows MIDDLE 1/3 of image */}
             <div
-              className="relative overflow-hidden"
+              className="relative"
               style={{
                 width: `${cardWidth}px`,
                 height: "100%",
-                backgroundColor: "#EBE5D9",
-                borderRadius: 0,
                 boxShadow: splitProgress > 0 ? elevation : 'none',
-                transition: "width 300ms ease-out, box-shadow 200ms ease",
+                transform: `rotateY(${rotateProgress * 180}deg)`,
+                transformStyle: "preserve-3d",
+                transition: "width 300ms ease-out, box-shadow 200ms ease, transform 600ms ease-out",
               }}
             >
+              {/* Front face - Monet image */}
               <div
+                className="absolute inset-0 overflow-hidden"
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: `${-(cardWidth + cardGap)}px`,
-                  width: `${currentWidthValue}px`,
-                  height: "100%",
+                  backfaceVisibility: "hidden",
+                  backgroundColor: "#EBE5D9",
+                  borderRadius: 0,
                 }}
               >
-                <img
-                  src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting"
-                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                <div
                   style={{
-                    opacity: 0.95,
+                    position: "absolute",
+                    top: 0,
+                    left: `${-(cardWidth + cardGap)}px`,
+                    width: `${currentWidthValue}px`,
+                    height: "100%",
                   }}
-                />
+                >
+                  <img
+                    src="/illustrations/monet-intro-expanded2.png"
+                    alt="Monet painting"
+                    className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                    style={{
+                      opacity: 0.95,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Back face - "Review & Refine" card from HowItWorks */}
+              <div
+                className="absolute inset-0 overflow-hidden flex flex-col"
+                style={{
+                  backfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                  backgroundColor: "#ffffff",
+                  borderRadius: 0,
+                  border: "1px solid rgba(59, 130, 246, 0.4)",
+                }}
+              >
+                <div className="relative w-full bg-[#f5f2e9]" style={{ aspectRatio: "1/1" }}>
+                  <video
+                    className="absolute inset-0 h-full w-full object-cover opacity-70"
+                    style={{ objectPosition: 'center 45%' }}
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src="/videos/card2.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div className="flex flex-1 flex-col border-t border-blue-200/30 px-4 py-3.5">
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                        2
+                      </span>
+                      <h3 className="text-[15px] font-bold text-gray-900 leading-snug">
+                        Review & Refine
+                      </h3>
+                    </div>
+                    <p className="text-[12px] leading-relaxed text-gray-600">
+                      Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and ensure it's exactly right.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Right Card - shows RIGHT 1/3 of image */}
             <div
-              className="relative overflow-hidden"
+              className="relative"
               style={{
                 width: `${cardWidth}px`,
                 height: "100%",
-                backgroundColor: "#EBE5D9",
-                borderTopLeftRadius: 0,
-                borderBottomLeftRadius: 0,
-                borderTopRightRadius: `${borderRadius}px`,
-                borderBottomRightRadius: `${borderRadius}px`,
                 boxShadow: splitProgress > 0 ? elevation : 'none',
-                transition: "width 300ms ease-out, box-shadow 200ms ease",
+                transform: `rotateY(${rotateProgress * 180}deg)`,
+                transformStyle: "preserve-3d",
+                transition: "width 300ms ease-out, box-shadow 200ms ease, transform 600ms ease-out",
               }}
             >
+              {/* Front face - Monet image */}
               <div
+                className="absolute inset-0 overflow-hidden"
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: `${-(cardWidth * 2 + cardGap * 2)}px`,
-                  width: `${currentWidthValue}px`,
-                  height: "100%",
+                  backfaceVisibility: "hidden",
+                  backgroundColor: "#EBE5D9",
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                  borderTopRightRadius: `${borderRadius}px`,
+                  borderBottomRightRadius: `${borderRadius}px`,
                 }}
               >
-                <img
-                  src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting"
-                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                <div
                   style={{
-                    opacity: 0.95,
+                    position: "absolute",
+                    top: 0,
+                    left: `${-(cardWidth * 2 + cardGap * 2)}px`,
+                    width: `${currentWidthValue}px`,
+                    height: "100%",
                   }}
-                />
+                >
+                  <img
+                    src="/illustrations/monet-intro-expanded2.png"
+                    alt="Monet painting"
+                    className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                    style={{
+                      opacity: 0.95,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Back face - "Go Live" card from HowItWorks */}
+              <div
+                className="absolute inset-0 overflow-hidden flex flex-col"
+                style={{
+                  backfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                  backgroundColor: "#ffffff",
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                  borderTopRightRadius: `${borderRadius}px`,
+                  borderBottomRightRadius: `${borderRadius}px`,
+                  border: "1px solid rgba(59, 130, 246, 0.4)",
+                }}
+              >
+                <div className="relative w-full bg-[#f6f2fb]" style={{ aspectRatio: "1/1" }}>
+                  <video
+                    className="absolute inset-0 h-full w-full object-cover opacity-70"
+                    style={{ objectPosition: 'center 80%' }}
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src="/videos/card3.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div className="flex flex-1 flex-col border-t border-blue-200/30 px-4 py-3.5">
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                        3
+                      </span>
+                      <h3 className="text-[15px] font-bold text-gray-900 leading-snug">
+                        Go Live
+                      </h3>
+                    </div>
+                    <p className="text-[12px] leading-relaxed text-gray-600">
+                      One click and your custom ERP is live. Your team can start using it immediately—no setup, no installation, no complexity.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
