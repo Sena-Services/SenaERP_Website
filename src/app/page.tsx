@@ -25,8 +25,21 @@ export default function Home() {
     let isAnimating = false;
     let animationFrameId: number;
     let scrollTimeout: NodeJS.Timeout;
+    let directionLock: 'up' | 'down' | null = null;
+    let directionLockTimeout: NodeJS.Timeout | null = null;
     let autoRotateTriggered = false;
     let manualScrollEnabled = false;
+    let introSequencePlayed = false;
+    const lockDirection = (direction: 'up' | 'down', duration = 600) => {
+      directionLock = direction;
+      if (directionLockTimeout) {
+        clearTimeout(directionLockTimeout);
+      }
+      directionLockTimeout = setTimeout(() => {
+        directionLock = null;
+        directionLockTimeout = null;
+      }, duration);
+    };
 
     // Define snap points and zones
     const getSnapPoints = () => {
@@ -97,24 +110,84 @@ export default function Home() {
       animationFrameId = requestAnimationFrame(animate);
     };
 
+    const playIntroSequence = (points: ReturnType<typeof getSnapPoints>) => {
+      if (introSequencePlayed || isAnimating) return;
+
+      introSequencePlayed = true;
+      manualScrollEnabled = false;
+      autoRotateTriggered = true;
+      lockDirection('down', 1800);
+
+      animateToPosition(points.unitedCard, 600, () => {
+        animateToPosition(points.rotated, 1200, () => {
+          manualScrollEnabled = true;
+          autoRotateTriggered = false;
+        });
+      });
+    };
+
+    const playReverseSequence = (points: ReturnType<typeof getSnapPoints>) => {
+      if (isAnimating) return;
+
+      manualScrollEnabled = false;
+      autoRotateTriggered = false;
+      lockDirection('up', 1800);
+
+      const finishToIntro = () => {
+        animateToPosition(points.initial, 1200, () => {
+          introSequencePlayed = false;
+          manualScrollEnabled = false;
+          autoRotateTriggered = false;
+        });
+      };
+
+      if (window.scrollY > points.unitedCard + 10) {
+        animateToPosition(points.unitedCard, 600, finishToIntro);
+      } else {
+        finishToIntro();
+      }
+    };
+
     const handleWheel = (e: WheelEvent) => {
       const currentScrollY = window.scrollY;
       const direction = e.deltaY > 0 ? 'down' : 'up';
       const points = getSnapPoints();
+      const inSplitZone = isInSplitZone(currentScrollY);
 
-      // Check if we're in manual scroll zone (split zone)
-      if (manualScrollEnabled && isInSplitZone(currentScrollY)) {
-        // In manual zone - allow natural scrolling
-        // Check for auto-trigger threshold
-        if (direction === 'down' && currentScrollY >= points.autoTriggerPoint && !autoRotateTriggered) {
+      if (directionLock && direction !== directionLock) {
+        if (!isAnimating) {
+          directionLock = null;
+          if (directionLockTimeout) {
+            clearTimeout(directionLockTimeout);
+            directionLockTimeout = null;
+          }
+        } else {
           e.preventDefault();
-          autoRotateTriggered = true;
-          manualScrollEnabled = false;
-          animateToPosition(points.rotated, 1200, () => {
-            autoRotateTriggered = false;
-          });
+          return;
         }
-        return; // Allow natural scroll in split zone
+      }
+
+      // Manual split zone handling
+      if (inSplitZone) {
+        if (direction === 'up') {
+          e.preventDefault();
+          playReverseSequence(points);
+          return;
+        }
+
+        if (manualScrollEnabled) {
+          // Allow natural downward scroll until we hit the trigger
+          if (direction === 'down' && currentScrollY >= points.autoTriggerPoint && !autoRotateTriggered) {
+            e.preventDefault();
+            autoRotateTriggered = true;
+            manualScrollEnabled = false;
+            lockDirection('down');
+            animateToPosition(points.rotated, 1200, () => {
+              autoRotateTriggered = false;
+            });
+          }
+          return;
+        }
       }
 
       // Outside manual zone - prevent scroll and animate
@@ -129,12 +202,19 @@ export default function Home() {
       if (currentScrollY <= points.unitedCard + 50) {
         // At initial or united card position (with 50px tolerance)
         if (direction === 'down') {
-          animateToPosition(points.unitedCard, 1200, () => {
-            manualScrollEnabled = true; // Enable manual scroll in split zone
-          });
+          if (!introSequencePlayed) {
+            playIntroSequence(points);
+          } else {
+            lockDirection('down');
+            animateToPosition(points.unitedCard, 1200, () => {
+              manualScrollEnabled = true; // Enable manual scroll in split zone
+            });
+          }
         } else if (direction === 'up' && currentScrollY > points.initial + 50) {
           // Scroll up from united card to initial
           manualScrollEnabled = false;
+          introSequencePlayed = false;
+          lockDirection('up');
           animateToPosition(points.initial, 1200);
         }
       } else if (currentScrollY > points.unitedCard + 50 && currentScrollY < points.splitZoneEnd + 50) {
@@ -145,24 +225,27 @@ export default function Home() {
         } else if (direction === 'up') {
           // Scroll up from split zone goes back to initial
           manualScrollEnabled = false;
+          introSequencePlayed = false;
+          lockDirection('up');
           animateToPosition(points.initial, 1200);
         }
       } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY < points.environments - 50) {
         // At or after rotated position (anywhere between split end and environments)
         if (direction === 'down') {
+          lockDirection('down');
           animateToPosition(points.environments, 1200);
         } else if (direction === 'up') {
-          // Scroll up from rotated back to united card
-          manualScrollEnabled = false;
-          autoRotateTriggered = false;
-          animateToPosition(points.unitedCard, 1200, () => {
-            manualScrollEnabled = true; // Re-enable manual scroll
-          });
+          playReverseSequence(points);
         }
       } else if (currentScrollY >= points.environments - 50) {
-        // At environments section
+        // Either at environments section or beyond
         if (direction === 'up') {
-          animateToPosition(points.rotated, 1200);
+          if (currentScrollY <= points.rotated + 50) {
+            playReverseSequence(points);
+          } else {
+            lockDirection('up');
+            animateToPosition(points.rotated, 1200);
+          }
         }
       }
     };
@@ -220,6 +303,9 @@ export default function Home() {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
       clearTimeout(scrollTimeout);
+      if (directionLockTimeout) {
+        clearTimeout(directionLockTimeout);
+      }
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
