@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import NavBar from "./NavBar";
 
 const SHRINK_SCROLL_DISTANCE = 900;
+const EXTRA_HOLD_DISTANCE = 340;
 
 export default function IntroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -58,14 +59,17 @@ export default function IntroSection() {
   const currentHeight =
     viewportHeight === 0 ? "92vh" : `${currentHeightValue}px`;
 
+  const clamp01 = (n: number) => Math.min(Math.max(n, 0), 1);
   const borderRadius = 32 + scrollProgress * 16;
   const contentOpacity = Math.max(0, 1 - scrollProgress * 1.2);
   const elevation =
     scrollProgress < 1
       ? "0 20px 60px -12px rgba(0, 0, 0, 0.15)"
       : "0 12px 32px -10px rgba(0, 0, 0, 0.12)";
-  const sectionHeight = targetHeight + SHRINK_SCROLL_DISTANCE;
-  const stickyFrameHeight = currentHeightValue;
+  const sectionHeight =
+    startHeight + SHRINK_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
+  const stickyFrameHeight =
+    Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
 
   const navWidthRatio =
     viewportWidth >= 1280
@@ -76,12 +80,34 @@ export default function IntroSection() {
       ? 0.75
       : 1;
   const navMarginRatio = viewportWidth >= 768 ? 0.05 : 0;
-  const navTranslatePx =
-    viewportWidth === 0
-      ? 0
-      : (currentWidthValue / 2 -
-          currentWidthValue * (navMarginRatio + navWidthRatio / 2)) *
-        scrollProgress;
+  const navCenterStart = 0.05;
+  const navCenterEnd = 0.4;
+  const navCenterProgress = clamp01(
+    (scrollProgress - navCenterStart) / (navCenterEnd - navCenterStart)
+  );
+  const navWidthPx = currentWidthValue * navWidthRatio;
+  const navLeftMarginPx = currentWidthValue * navMarginRatio;
+  const navCenterOffsetPx =
+    currentWidthValue / 2 - (navLeftMarginPx + navWidthPx / 2);
+  const navLiftStart = 0.45;
+  const navLiftEnd = 0.9;
+  const navLiftProgress = clamp01(
+    (scrollProgress - navLiftStart) / (navLiftEnd - navLiftStart)
+  );
+  const navLiftMax = 110;
+  const navLiftPx = navLiftProgress * navLiftMax;
+
+  const basePaddingTop = 16 + scrollProgress * 32;
+  const optimalPadding = Math.max(
+    24,
+    (stickyFrameHeight - currentHeightValue) / 2
+  );
+  const centerBoostStart = 0.6;
+  const centerBoost = clamp01(
+    (scrollProgress - centerBoostStart) / (1 - centerBoostStart)
+  );
+  const heroPaddingTop =
+    basePaddingTop + (optimalPadding - basePaddingTop) * centerBoost;
 
   return (
     <section
@@ -96,47 +122,53 @@ export default function IntroSection() {
         className="sticky top-0 flex items-start justify-center w-full"
         style={{
           height: `${stickyFrameHeight}px`,
-          paddingTop: `${16 + scrollProgress * 32}px`,
+          paddingTop: `${heroPaddingTop}px`,
         }}
       >
         <div
-          className="relative mx-auto overflow-hidden"
+          className="relative mx-auto"
           style={{
             width: currentWidth,
             maxWidth: "95vw",
             height: currentHeight,
-            backgroundColor: "#EBE5D9",
-            borderRadius: `${borderRadius}px`,
-            boxShadow: elevation,
-            transition: "box-shadow 200ms ease",
           }}
         >
-          <img
-            src="/illustrations/monet-intro-expanded2.png"
-            alt="Monet painting"
-            className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
-            style={{
-              opacity: 0.95,
-            }}
-          />
-
           <div
-            className="absolute top-0 z-50 w-full md:w-3/4 lg:w-2/3 xl:w-[45%] px-4 sm:px-8 md:px-10 lg:px-16 ml-0 md:ml-[5%]"
+            className="absolute top-0 left-0 z-50 w-full md:w-3/4 lg:w-2/3 xl:w-[45%] px-4 sm:px-8 md:px-10 lg:px-16 ml-0 md:ml-[5%]"
             style={{
-              transform: `translateX(${navTranslatePx}px)`,
+              transform: `translate(${navCenterOffsetPx * navCenterProgress}px, -${navLiftPx}px)`,
               transition: "transform 200ms ease",
+              pointerEvents: "auto",
             }}
           >
             <NavBar />
           </div>
 
           <div
-            className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+            className="relative w-full h-full overflow-hidden"
             style={{
-              opacity: contentOpacity,
-              pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
+              backgroundColor: "#EBE5D9",
+              borderRadius: `${borderRadius}px`,
+              boxShadow: elevation,
+              transition: "box-shadow 200ms ease",
             }}
           >
+            <img
+              src="/illustrations/monet-intro-expanded2.png"
+              alt="Monet painting"
+              className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+              style={{
+                opacity: 0.95,
+              }}
+            />
+
+            <div
+              className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+              style={{
+                opacity: contentOpacity,
+                pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
+              }}
+            >
             <div className="mb-4 md:mb-5">
               <h1
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-1.5 md:mb-2 leading-tight"
@@ -305,6 +337,7 @@ export default function IntroSection() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );
