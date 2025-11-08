@@ -24,7 +24,6 @@ export default function Home() {
   useEffect(() => {
     let isAnimating = false;
     let animationFrameId: number;
-    let scrollTimeout: NodeJS.Timeout;
     let directionLock: 'up' | 'down' | null = null;
     let directionLockTimeout: NodeJS.Timeout | null = null;
     let autoRotateTriggered = false;
@@ -273,20 +272,52 @@ export default function Home() {
       if (Math.abs(deltaY) < 30) return;
 
       const direction = deltaY > 0 ? 'down' : 'up';
-      const snapPoints = getSnapPoints();
-      let targetIndex = currentSnapIndex;
+      const currentScrollY = window.scrollY;
+      const points = getSnapPoints();
 
-      if (direction === 'down') {
-        targetIndex = Math.min(currentSnapIndex + 1, snapPoints.length - 1);
-      } else {
-        targetIndex = Math.max(currentSnapIndex - 1, 0);
-      }
-
-      const targetSnap = snapPoints[targetIndex];
-
-      if (targetSnap && targetIndex !== currentSnapIndex) {
-        currentSnapIndex = targetIndex;
-        animateToPosition(targetSnap.y, 1200);
+      // Determine target position based on current scroll position and direction
+      // Similar logic to handleWheel
+      if (currentScrollY <= points.unitedCard + 50) {
+        if (direction === 'down') {
+          if (!introSequencePlayed) {
+            playIntroSequence(points);
+          } else {
+            lockDirection('down');
+            animateToPosition(points.unitedCard, 1200, () => {
+              manualScrollEnabled = true;
+            });
+          }
+        } else if (direction === 'up' && currentScrollY > points.initial + 50) {
+          manualScrollEnabled = false;
+          introSequencePlayed = false;
+          lockDirection('up');
+          animateToPosition(points.initial, 1200);
+        }
+      } else if (currentScrollY > points.unitedCard + 50 && currentScrollY < points.splitZoneEnd + 50) {
+        if (direction === 'down') {
+          manualScrollEnabled = true;
+        } else if (direction === 'up') {
+          manualScrollEnabled = false;
+          introSequencePlayed = false;
+          lockDirection('up');
+          animateToPosition(points.initial, 1200);
+        }
+      } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY < points.environments - 50) {
+        if (direction === 'down') {
+          lockDirection('down');
+          animateToPosition(points.environments, 1200);
+        } else if (direction === 'up') {
+          playReverseSequence(points);
+        }
+      } else if (currentScrollY >= points.environments - 50) {
+        if (direction === 'up') {
+          if (currentScrollY <= points.rotated + 50) {
+            playReverseSequence(points);
+          } else {
+            lockDirection('up');
+            animateToPosition(points.rotated, 1200);
+          }
+        }
       }
     };
 
@@ -302,7 +333,6 @@ export default function Home() {
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
-      clearTimeout(scrollTimeout);
       if (directionLockTimeout) {
         clearTimeout(directionLockTimeout);
       }
