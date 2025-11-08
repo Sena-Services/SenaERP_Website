@@ -46,17 +46,17 @@ export default function IntroSection() {
 
   const targetWidth = Math.min(1280, viewportWidth - 64);
   const startWidth = Math.max(viewportWidth * 0.95, targetWidth);
+  const currentWidthValue =
+    startWidth - (startWidth - targetWidth) * scrollProgress;
   const currentWidth =
-    viewportWidth === 0
-      ? "95vw"
-      : `${startWidth - (startWidth - targetWidth) * scrollProgress}px`;
+    viewportWidth === 0 ? "95vw" : `${currentWidthValue}px`;
 
   const startHeight = viewportHeight * 0.92;
   const targetHeight = Math.max(viewportHeight * 0.6, 520);
+  const currentHeightValue =
+    startHeight - (startHeight - targetHeight) * scrollProgress;
   const currentHeight =
-    viewportHeight === 0
-      ? "92vh"
-      : `${startHeight - (startHeight - targetHeight) * scrollProgress}px`;
+    viewportHeight === 0 ? "92vh" : `${currentHeightValue}px`;
 
   const borderRadius = 32 + scrollProgress * 16;
   const contentOpacity = 1 - scrollProgress * 0.65;
@@ -72,12 +72,13 @@ export default function IntroSection() {
       : viewportWidth >= 768
       ? 0.75
       : 1;
-  const navMarginPercent = viewportWidth >= 768 ? 5 : 0;
-  const navShiftPercent = Math.max(
-    0,
-    (0.5 - (navMarginPercent / 100 + navWidthRatio / 2)) * 100
-  );
-  const navTranslate = navShiftPercent * scrollProgress;
+  const navMarginRatio = viewportWidth >= 768 ? 0.05 : 0;
+  const navTranslatePx =
+    viewportWidth === 0
+      ? 0
+      : (currentWidthValue / 2 -
+          currentWidthValue * (navMarginRatio + navWidthRatio / 2)) *
+        scrollProgress;
 
   return (
     <section
@@ -118,7 +119,7 @@ export default function IntroSection() {
           <div
             className="absolute top-0 z-50 w-full md:w-3/4 lg:w-2/3 xl:w-[45%] px-4 sm:px-8 md:px-10 lg:px-16 ml-0 md:ml-[5%]"
             style={{
-              transform: `translateX(${navTranslate}%)`,
+              transform: `translateX(${navTranslatePx}px)`,
               transition: "transform 200ms ease",
             }}
           >
