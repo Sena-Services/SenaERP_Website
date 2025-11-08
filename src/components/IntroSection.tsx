@@ -367,7 +367,7 @@ export default function IntroSection() {
                 transition: "gap 300ms ease-out",
               }}
             >
-              {/* Left Card */}
+              {/* Left Card - shows LEFT 1/3 of image */}
               <div
                 className="relative overflow-hidden"
                 style={{
@@ -382,15 +382,21 @@ export default function IntroSection() {
               >
                 <img
                   src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting"
-                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  alt="Monet painting - left section"
                   style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: `${currentWidthValue}px`,
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "left center",
                     opacity: 0.95,
                   }}
                 />
               </div>
 
-              {/* Center Card */}
+              {/* Center Card - shows MIDDLE 1/3 of image */}
               <div
                 className="relative overflow-hidden"
                 style={{
@@ -405,15 +411,21 @@ export default function IntroSection() {
               >
                 <img
                   src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting"
-                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  alt="Monet painting - center section"
                   style={{
+                    position: "absolute",
+                    top: 0,
+                    left: `${-cardWidth}px`,
+                    width: `${currentWidthValue}px`,
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center center",
                     opacity: 0.95,
                   }}
                 />
               </div>
 
-              {/* Right Card */}
+              {/* Right Card - shows RIGHT 1/3 of image */}
               <div
                 className="relative overflow-hidden"
                 style={{
@@ -428,9 +440,15 @@ export default function IntroSection() {
               >
                 <img
                   src="/illustrations/monet-intro-expanded2.png"
-                  alt="Monet painting"
-                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  alt="Monet painting - right section"
                   style={{
+                    position: "absolute",
+                    top: 0,
+                    left: `${-cardWidth * 2}px`,
+                    width: `${currentWidthValue}px`,
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "right center",
                     opacity: 0.95,
                   }}
                 />
