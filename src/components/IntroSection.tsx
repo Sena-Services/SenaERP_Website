@@ -183,8 +183,8 @@ export default function IntroSection() {
           }}
         />
 
-        {/* Navbar - responsive positioning */}
-        <div className="absolute top-0 z-50 w-full md:w-3/4 lg:w-2/3 xl:w-[45%] left-0 md:left-[5%]">
+        {/* Navbar - responsive positioning - aligned with content text */}
+        <div className="absolute top-0 z-50 w-full md:w-3/4 lg:w-2/3 xl:w-[45%] px-4 sm:px-8 md:px-10 lg:px-16 ml-0 md:ml-[5%]">
           <NavBar />
         </div>
 

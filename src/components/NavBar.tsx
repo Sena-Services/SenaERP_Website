@@ -150,16 +150,16 @@ export default function NavBar() {
 
   return (
     <>
-      <header className="w-full px-4 sm:px-6 lg:px-8 pb-2 pt-8">
+      <header className="w-full pb-2 pt-8">
         <nav
-          className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} px-3 sm:px-6 lg:px-8 bg-white/10 border-2 border-white/20 backdrop-blur-md max-w-7xl mx-auto`}
+          className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2 bg-white/10 border-2 border-white/20 backdrop-blur-md max-w-7xl mx-auto`}
         style={{
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           borderRadius: '40px',
         }}
       >
         {/* LEFT SIDE - Logo */}
-        <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} px-2 sm:px-3 py-1.5`}>
+        <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} pl-2 sm:pl-3 py-1.5`}>
           <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
           <span
             className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
