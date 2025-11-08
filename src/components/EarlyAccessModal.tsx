@@ -86,6 +86,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
               src="/earlyaccess.png"
               alt="Early Access"
               fill
+              sizes="(max-width: 768px) 0vw, 50vw"
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

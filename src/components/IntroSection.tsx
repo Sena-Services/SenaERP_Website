@@ -14,12 +14,8 @@ export default function IntroSection() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [splitProgress, setSplitProgress] = useState(0);
   const [rotateProgress, setRotateProgress] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1440
-  );
-  const [viewportHeight, setViewportHeight] = useState(
-    typeof window !== "undefined" ? window.innerHeight : 900
-  );
+  const [viewportWidth, setViewportWidth] = useState(1440);
+  const [viewportHeight, setViewportHeight] = useState(900);
 
   useEffect(() => {
     const handleResize = () => {
@@ -67,7 +63,19 @@ export default function IntroSection() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const targetWidth = Math.min(1280, viewportWidth - 64);
+  // Responsive scaling: only scale up when viewport HEIGHT > 1200px
+  const getResponsiveValue = (baseValue: number) => {
+    const baseScreenHeight = 1200;
+    if (viewportHeight <= baseScreenHeight) {
+      return baseValue;
+    }
+    // Scale proportionally for screens taller than 1200px
+    const scaleFactor = viewportHeight / baseScreenHeight;
+    return baseValue * scaleFactor;
+  };
+
+  const responsiveTargetWidth = getResponsiveValue(1280);
+  const targetWidth = Math.min(responsiveTargetWidth, viewportWidth - 64);
   const startWidth = Math.max(viewportWidth * 0.95, targetWidth);
   const currentWidthValue =
     startWidth - (startWidth - targetWidth) * scrollProgress;
@@ -75,14 +83,16 @@ export default function IntroSection() {
     viewportWidth === 0 ? "95vw" : `${currentWidthValue}px`;
 
   const startHeight = viewportHeight * 0.92;
-  const targetHeight = Math.max(viewportHeight * 0.6, 520);
+  const responsiveMinHeight = getResponsiveValue(520);
+  const targetHeight = Math.max(viewportHeight * 0.6, responsiveMinHeight);
   const currentHeightValue =
     startHeight - (startHeight - targetHeight) * scrollProgress;
   const currentHeight =
     viewportHeight === 0 ? "92vh" : `${currentHeightValue}px`;
 
   const clamp01 = (n: number) => Math.min(Math.max(n, 0), 1);
-  const borderRadius = 32 + scrollProgress * 16;
+  const responsiveBorderRadius = getResponsiveValue(32) + scrollProgress * getResponsiveValue(16);
+  const borderRadius = responsiveBorderRadius;
   const contentOpacity = Math.max(0, 1 - scrollProgress * 1.2);
   const elevation =
     scrollProgress < 1
@@ -93,9 +103,11 @@ export default function IntroSection() {
   const stickyFrameHeight =
     Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
 
-  const basePaddingTop = 16 + scrollProgress * 32;
+  const responsivePaddingBase = getResponsiveValue(16);
+  const responsivePaddingIncrease = getResponsiveValue(32);
+  const basePaddingTop = responsivePaddingBase + scrollProgress * responsivePaddingIncrease;
   const optimalPadding = Math.max(
-    24,
+    getResponsiveValue(24),
     (stickyFrameHeight - currentHeightValue) / 2
   );
   const centerBoostStart = 0.6;
@@ -105,8 +117,9 @@ export default function IntroSection() {
   const heroPaddingTop =
     basePaddingTop + (optimalPadding - basePaddingTop) * centerBoost;
 
-  // Split animation calculations
-  const cardGap = splitProgress * 24; // Max 24px gap between cards
+  // Split animation calculations with responsive scaling
+  const responsiveMaxGap = getResponsiveValue(24);
+  const cardGap = splitProgress * responsiveMaxGap; // Responsive max gap between cards
   const cardWidth = (currentWidthValue - cardGap * 2) / 3; // Divide width into 3 equal parts
 
   return (
@@ -133,23 +146,22 @@ export default function IntroSection() {
             height: currentHeight,
           }}
         >
-          {/* Title that appears when cards split */}
+          {/* Title that appears when card shrinks (before split) */}
           <div
             className="absolute left-0 right-0 text-center z-10"
             style={{
-              top: "-120px",
-              opacity: splitProgress,
-              transition: "opacity 400ms ease-out",
+              top: `${-getResponsiveValue(120)}px`,
+              opacity: scrollProgress,
               pointerEvents: "none",
             }}
           >
             <h2
-              className="text-4xl md:text-5xl lg:text-6xl"
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontWeight: 400,
                 letterSpacing: "-0.02em",
                 color: "#2C1810",
+                fontSize: `${getResponsiveValue(60)}px`,
               }}
             >
               How it <span style={{ fontStyle: "italic" }}>works</span>?
@@ -161,7 +173,6 @@ export default function IntroSection() {
             className="relative w-full h-full flex justify-center items-center"
             style={{
               gap: `${cardGap}px`,
-              transition: "gap 300ms ease-out",
               filter: splitProgress === 0 ? `drop-shadow(${elevation})` : 'none',
               perspective: "2000px",
             }}

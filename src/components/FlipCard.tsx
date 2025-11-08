@@ -61,7 +61,6 @@ export default function FlipCard({
         boxShadow: splitProgress > 0 ? elevation : "none",
         transform: `rotateY(${rotateProgress * 180}deg)`,
         transformStyle: "preserve-3d",
-        transition: "width 300ms ease-out, box-shadow 200ms ease, transform 600ms ease-out",
       }}
     >
       {/* Front face - Monet image */}

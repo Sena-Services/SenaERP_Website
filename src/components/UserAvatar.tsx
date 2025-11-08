@@ -114,7 +114,6 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
               }}
               onClick={() => {
                 // Placeholder for profile action
-                console.log("Profile clicked");
               }}
             >
               <div className="flex items-center gap-3">

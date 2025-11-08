@@ -329,6 +329,7 @@ const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, re
                     src="/illustrations/starter-pricing.jpg"
                     alt={tier.plan}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
                     className="object-cover"
                   />
                   {isRecommended && isAvailable && (

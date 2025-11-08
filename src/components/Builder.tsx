@@ -5,8 +5,6 @@ import Image from "next/image";
 import {
   motion,
   AnimatePresence,
-  useScroll,
-  useTransform,
 } from "framer-motion";
 
 type ShowcaseStep = {
@@ -65,11 +63,6 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
   const leftScrollRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
 
   // Detect active step based on left scroll position
   useEffect(() => {
@@ -228,6 +221,7 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
                       src={step.image}
                       alt={`Screenshot showcasing ${step.title}`}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 900px"
                       className="object-fill"
                     />
                   </div>
@@ -334,6 +328,7 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
                   src={activeStep.image}
                   alt={`Screenshot showcasing ${activeStep.title}`}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 900px"
                   priority
                   className="object-fill"
                 />

@@ -23,33 +23,51 @@ export interface AuthResponse {
 export async function checkAuth(): Promise<AuthResponse> {
   try {
     const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || 'http://localhost:8000';
-    console.log('[Auth] Checking authentication at:', frappeUrl);
 
-    const response = await fetch(
-      `${frappeUrl}/api/method/crm.api.user_auth.get_current_user`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    // Skip auth check if explicitly disabled via env variable
+    if (process.env.NEXT_PUBLIC_SKIP_AUTH_CHECK === 'true') {
+      return { authenticated: false };
+    }
 
-    console.log('[Auth] Response status:', response.status);
+    // Temporarily suppress console errors for expected 403s and network errors
+    const originalError = console.error;
+    let response: Response;
 
+    try {
+      // Suppress console.error during fetch to hide browser's automatic 403 logging
+      console.error = () => {};
+
+      response = await fetch(
+        `${frappeUrl}/api/method/crm.api.user_auth.get_current_user`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    } finally {
+      // Restore console.error
+      console.error = originalError;
+    }
+
+    // 403 Forbidden is expected when user is not authenticated - handle silently
     if (!response.ok) {
-      console.log('[Auth] Response not OK, user not authenticated');
+      if (response.status === 403) {
+        // User is not authenticated - this is normal, don't log as error
+        return { authenticated: false };
+      }
+      // For other errors, log them
+      console.warn(`[Auth] Auth check returned ${response.status}`);
       return { authenticated: false };
     }
 
     const data = await response.json();
-    console.log('[Auth] Response data:', data);
-    console.log('[Auth] data.message:', data.message);
+
 
     // Format 1: data.message.success with data.message.user (Frappe format)
     if (data.message?.success && data.message?.user) {
-      console.log('[Auth] User authenticated (format 1 - Frappe):', data.message.user);
       return {
         authenticated: true,
         user: data.message.user,
@@ -58,7 +76,6 @@ export async function checkAuth(): Promise<AuthResponse> {
 
     // Format 2: data.message.authenticated with data.message.user
     if (data.message?.authenticated && data.message?.user) {
-      console.log('[Auth] User authenticated (format 2):', data.message.user.email);
       return {
         authenticated: true,
         user: data.message.user,
@@ -67,7 +84,6 @@ export async function checkAuth(): Promise<AuthResponse> {
 
     // Format 3: data.message is the user object itself
     if (data.message && typeof data.message === 'object' && data.message.email) {
-      console.log('[Auth] User authenticated (format 3):', data.message.email);
       return {
         authenticated: true,
         user: {
@@ -82,14 +98,12 @@ export async function checkAuth(): Promise<AuthResponse> {
 
     // Format 4: top-level authenticated field
     if (data.authenticated && data.user) {
-      console.log('[Auth] User authenticated (format 4):', data.user.email);
       return {
         authenticated: true,
         user: data.user,
       };
     }
 
-    console.log('[Auth] User not authenticated (no user in response)');
     return { authenticated: false };
   } catch (error) {
     console.error('[Auth] Auth check failed with error:', error);

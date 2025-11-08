@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import Link from "next/link";
 
 const socialLinks = [
@@ -43,29 +43,57 @@ const socialLinks = [
 ];
 
 const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref) {
+  const [viewportHeight, setViewportHeight] = useState(900);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportHeight(window.innerHeight);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Responsive scaling: only scale up when viewport HEIGHT > 1200px
+  const getResponsiveValue = (baseValue: number) => {
+    const baseScreenHeight = 1200;
+    if (viewportHeight <= baseScreenHeight) {
+      return baseValue;
+    }
+    // Scale proportionally for screens taller than 1200px
+    const scaleFactor = viewportHeight / baseScreenHeight;
+    return baseValue * scaleFactor;
+  };
+
   return (
     <section
       ref={ref}
       id="join-us"
-      className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8 pb-16 mb-8"
+      className="scroll-mt-32 px-4 sm:px-6 lg:px-8 mb-8"
+      style={{
+        marginTop: `${getResponsiveValue(64)}px`,
+        paddingBottom: `${getResponsiveValue(64)}px`,
+      }}
     >
       <div
-        className="relative max-w-7xl mx-auto rounded-[40px]"
+        className="relative max-w-7xl mx-auto"
         style={{
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundColor: '#F5F3E8',
-          minHeight: '320px',
+          minHeight: `${getResponsiveValue(320)}px`,
           height: 'auto',
-          maxHeight: '400px',
-          overflow: 'hidden'
+          maxHeight: `${getResponsiveValue(400)}px`,
+          overflow: 'hidden',
+          borderRadius: `${getResponsiveValue(40)}px`,
         }}
       >
         {/* Bottom left corner image */}
         <div
           className="absolute bottom-0 left-0 pointer-events-none"
           style={{
-            width: '360px',
-            height: '360px',
+            width: `${getResponsiveValue(360)}px`,
+            height: `${getResponsiveValue(360)}px`,
             backgroundImage: 'url(/illustrations/joinus-bottomleft.png)',
             backgroundSize: 'contain',
             backgroundPosition: 'bottom left',
@@ -78,8 +106,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
         <div
           className="absolute top-0 right-0 pointer-events-none"
           style={{
-            width: '360px',
-            height: '360px',
+            width: `${getResponsiveValue(360)}px`,
+            height: `${getResponsiveValue(360)}px`,
             backgroundImage: 'url(/illustrations/joinus-topright.png)',
             backgroundSize: 'contain',
             backgroundPosition: 'top right',
@@ -90,42 +118,67 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
 
         {/* Subtle gradient overlay for depth */}
         <div
-          className="absolute inset-0 pointer-events-none rounded-[40px]"
+          className="absolute inset-0 pointer-events-none"
           style={{
             background: 'linear-gradient(to bottom, rgba(235, 229, 217, 0.2) 0%, rgba(235, 229, 217, 0.05) 50%, rgba(235, 229, 217, 0.2) 100%)',
-            mixBlendMode: 'overlay'
+            mixBlendMode: 'overlay',
+            borderRadius: `${getResponsiveValue(40)}px`,
           }}
         />
 
         {/* Content - centered */}
-        <div className="relative h-full flex flex-col items-center justify-center py-8 px-6 sm:px-8 lg:px-12 text-center">
-          <div className="max-w-2xl space-y-4">
+        <div
+          className="relative h-full flex flex-col items-center justify-center text-center"
+          style={{
+            paddingTop: `${getResponsiveValue(32)}px`,
+            paddingBottom: `${getResponsiveValue(32)}px`,
+            paddingLeft: `${getResponsiveValue(24)}px`,
+            paddingRight: `${getResponsiveValue(24)}px`,
+          }}
+        >
+          <div style={{ maxWidth: `${getResponsiveValue(672)}px`, display: 'flex', flexDirection: 'column', gap: `${getResponsiveValue(16)}px` }}>
             {/* Main heading */}
             <div>
               <h2
-                className="text-3xl sm:text-4xl md:text-5xl mb-2 leading-tight"
                 style={{
                   fontFamily: "Georgia, 'Times New Roman', serif",
                   fontWeight: 400,
                   letterSpacing: "-0.02em",
                   color: "#2C1810",
+                  fontSize: `${getResponsiveValue(48)}px`,
+                  marginBottom: `${getResponsiveValue(8)}px`,
+                  lineHeight: "1.2",
                 }}
               >
                 Join our team
               </h2>
-              <p className="text-base sm:text-lg text-gray-700 font-futura font-medium max-w-xl mx-auto">
+              <p
+                className="font-futura font-medium mx-auto"
+                style={{
+                  fontSize: `${getResponsiveValue(18)}px`,
+                  color: '#4B5563',
+                  maxWidth: `${getResponsiveValue(576)}px`,
+                }}
+              >
                 Help us build the future of business software
               </p>
             </div>
 
             {/* Social links */}
-            <div className="flex items-center justify-center gap-4 py-2">
+            <div
+              className="flex items-center justify-center py-2"
+              style={{ gap: `${getResponsiveValue(16)}px` }}
+            >
               {socialLinks.map((social) => (
                 <Link
                   key={social.name}
                   href={social.href}
                   aria-label={social.name}
-                  className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-white/70 backdrop-blur-md border border-gray-200/50 shadow-md hover:shadow-xl hover:bg-white transition-all duration-300 hover:-translate-y-1"
+                  className="group relative flex items-center justify-center rounded-full bg-white/70 backdrop-blur-md border border-gray-200/50 shadow-md hover:shadow-xl hover:bg-white transition-all duration-300 hover:-translate-y-1"
+                  style={{
+                    width: `${getResponsiveValue(48)}px`,
+                    height: `${getResponsiveValue(48)}px`,
+                  }}
                 >
                   <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
                     {social.icon}
@@ -135,18 +188,30 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             </div>
 
             {/* CTA Button */}
-            <div className="pt-1">
+            <div style={{ paddingTop: `${getResponsiveValue(4)}px` }}>
               <Link
                 href="/careers"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-white text-gray-700 font-futura font-bold text-base shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-gray-50 transition-all duration-300 hover:-translate-y-1 border-2 border-gray-200"
+                className="inline-flex items-center rounded-full bg-white text-gray-700 font-futura font-bold shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-gray-50 transition-all duration-300 hover:-translate-y-1 border-2 border-gray-200"
+                style={{
+                  gap: `${getResponsiveValue(8)}px`,
+                  paddingLeft: `${getResponsiveValue(28)}px`,
+                  paddingRight: `${getResponsiveValue(28)}px`,
+                  paddingTop: `${getResponsiveValue(12)}px`,
+                  paddingBottom: `${getResponsiveValue(12)}px`,
+                  fontSize: `${getResponsiveValue(16)}px`,
+                }}
               >
                 <span>View open positions</span>
                 <svg
-                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                  className="group-hover:translate-x-1 transition-transform"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth={2.5}
+                  style={{
+                    width: `${getResponsiveValue(16)}px`,
+                    height: `${getResponsiveValue(16)}px`,
+                  }}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
@@ -154,7 +219,13 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             </div>
 
             {/* Optional tagline */}
-            <p className="text-xs text-gray-600 font-futura pt-1">
+            <p
+              className="font-futura text-gray-600"
+              style={{
+                fontSize: `${getResponsiveValue(12)}px`,
+                paddingTop: `${getResponsiveValue(4)}px`,
+              }}
+            >
               Remote-friendly · Competitive benefits · Growing team
             </p>
           </div>

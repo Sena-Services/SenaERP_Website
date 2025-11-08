@@ -16,98 +16,213 @@ export default function Home() {
   const introRef = useRef<HTMLDivElement>(null);
   const environmentsRef = useRef<HTMLElement>(null);
   const integrationsRef = useRef<HTMLElement>(null);
-  const builderRef = useRef<HTMLElement>(null);
+  const builderRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLElement>(null);
   const blogRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    let isSnapping = false;
-    let snapTimeout: NodeJS.Timeout;
+    let isAnimating = false;
+    let animationFrameId: number;
+    let scrollTimeout: NodeJS.Timeout;
+    let autoRotateTriggered = false;
+    let manualScrollEnabled = false;
 
-    // Define snap points in pixels from top
-    // These correspond to the visual states you described
+    // Define snap points and zones
     const getSnapPoints = () => {
       const introSection = introRef.current;
       const environmentsSection = environmentsRef.current;
 
-      if (!introSection || !environmentsSection) return [];
+      if (!introSection || !environmentsSection) return {
+        initial: 0,
+        unitedCard: 0,
+        splitZoneStart: 0,
+        splitZoneEnd: 0,
+        autoTriggerPoint: 0,
+        rotated: 0,
+        environments: 0,
+      };
 
       const introTop = introSection.offsetTop;
-      const viewportHeight = window.innerHeight;
 
-      return [
-        { y: 0, name: 'initial' },                           // Snap 1: Initial page with content
-        { y: introTop + 900, name: 'empty-card' },          // Snap 2: Empty card (after shrink)
-        { y: introTop + 900 + 400 + 400, name: 'split-flip' }, // Snap 3: Cards split and flipped
-        { y: environmentsSection.offsetTop, name: 'environments' }, // Snap 4: Environments section
-      ];
+      return {
+        initial: 0,
+        unitedCard: introTop + 900,
+        splitZoneStart: introTop + 900,
+        splitZoneEnd: introTop + 900 + 400,
+        autoTriggerPoint: introTop + 900 + 400 * 0.8, // 80% through split
+        rotated: introTop + 900 + 400 + 800,
+        environments: environmentsSection.offsetTop,
+      };
     };
 
-    const findClosestSnapPoint = (currentScroll: number, direction: 'up' | 'down') => {
-      const snapPoints = getSnapPoints();
+    const isInSplitZone = (scrollY: number) => {
+      const points = getSnapPoints();
+      return scrollY >= points.splitZoneStart && scrollY <= points.splitZoneEnd;
+    };
 
-      if (direction === 'down') {
-        // Find next snap point above current scroll
-        return snapPoints.find(point => point.y > currentScroll + 100);
-      } else {
-        // Find previous snap point below current scroll
-        const reversed = [...snapPoints].reverse();
-        return reversed.find(point => point.y < currentScroll - 100);
+    // Smooth animation to target scroll position with FIXED duration
+    const animateToPosition = (targetY: number, duration: number = 1200, onComplete?: () => void) => {
+      // Cancel any existing animation first
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
       }
+
+      // Capture start position immediately - no delay
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      const startTime = performance.now();
+
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function for smooth animation (ease-in-out)
+        const easeProgress = progress < 0.5
+          ? 2 * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+        const currentY = startY + distance * easeProgress;
+        window.scrollTo(0, currentY);
+
+        if (progress < 1) {
+          animationFrameId = requestAnimationFrame(animate);
+        } else {
+          isAnimating = false;
+          if (onComplete) onComplete();
+        }
+      };
+
+      isAnimating = true;
+      animationFrameId = requestAnimationFrame(animate);
     };
 
-    let lastScrollY = 0;
-    let scrollVelocity = 0;
-
-    const handleScroll = () => {
-      if (isSnapping) return;
-
+    const handleWheel = (e: WheelEvent) => {
       const currentScrollY = window.scrollY;
-      scrollVelocity = currentScrollY - lastScrollY;
+      const direction = e.deltaY > 0 ? 'down' : 'up';
+      const points = getSnapPoints();
 
-      // Only trigger snap if user scrolled more than 50px
-      if (Math.abs(scrollVelocity) < 50) {
-        lastScrollY = currentScrollY;
+      // Check if we're in manual scroll zone (split zone)
+      if (manualScrollEnabled && isInSplitZone(currentScrollY)) {
+        // In manual zone - allow natural scrolling
+        // Check for auto-trigger threshold
+        if (direction === 'down' && currentScrollY >= points.autoTriggerPoint && !autoRotateTriggered) {
+          e.preventDefault();
+          autoRotateTriggered = true;
+          manualScrollEnabled = false;
+          animateToPosition(points.rotated, 1200, () => {
+            autoRotateTriggered = false;
+          });
+        }
+        return; // Allow natural scroll in split zone
+      }
+
+      // Outside manual zone - prevent scroll and animate
+      e.preventDefault();
+
+      // Block during animation
+      if (isAnimating) {
         return;
       }
 
-      const direction = scrollVelocity > 0 ? 'down' : 'up';
-      lastScrollY = currentScrollY;
-
-      const targetSnap = findClosestSnapPoint(currentScrollY, direction);
-
-      if (targetSnap) {
-        isSnapping = true;
-
-        window.scrollTo({
-          top: targetSnap.y,
-          behavior: 'smooth'
-        });
-
-        snapTimeout = setTimeout(() => {
-          isSnapping = false;
-        }, 1000);
+      // Determine which zone we're in and where to go based on current position
+      if (currentScrollY <= points.unitedCard + 50) {
+        // At initial or united card position (with 50px tolerance)
+        if (direction === 'down') {
+          animateToPosition(points.unitedCard, 1200, () => {
+            manualScrollEnabled = true; // Enable manual scroll in split zone
+          });
+        } else if (direction === 'up' && currentScrollY > points.initial + 50) {
+          // Scroll up from united card to initial
+          manualScrollEnabled = false;
+          animateToPosition(points.initial, 1200);
+        }
+      } else if (currentScrollY > points.unitedCard + 50 && currentScrollY < points.splitZoneEnd + 50) {
+        // In split zone
+        if (direction === 'down') {
+          // Enable manual scrolling mode - don't auto-advance
+          manualScrollEnabled = true;
+        } else if (direction === 'up') {
+          // Scroll up from split zone goes back to initial
+          manualScrollEnabled = false;
+          animateToPosition(points.initial, 1200);
+        }
+      } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY < points.environments - 50) {
+        // At or after rotated position (anywhere between split end and environments)
+        if (direction === 'down') {
+          animateToPosition(points.environments, 1200);
+        } else if (direction === 'up') {
+          // Scroll up from rotated back to united card
+          manualScrollEnabled = false;
+          autoRotateTriggered = false;
+          animateToPosition(points.unitedCard, 1200, () => {
+            manualScrollEnabled = true; // Re-enable manual scroll
+          });
+        }
+      } else if (currentScrollY >= points.environments - 50) {
+        // At environments section
+        if (direction === 'up') {
+          animateToPosition(points.rotated, 1200);
+        }
       }
     };
 
-    // Debounced scroll handler - trigger after user stops scrolling
-    let scrollEndTimer: NodeJS.Timeout;
-    const handleScrollEnd = () => {
-      clearTimeout(scrollEndTimer);
-      scrollEndTimer = setTimeout(() => {
-        if (!isSnapping) {
-          handleScroll();
-        }
-      }, 100);
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      (window as any).touchStartY = touch.clientY;
     };
 
-    window.addEventListener('scroll', handleScrollEnd, { passive: true });
+    const handleTouchMove = (e: TouchEvent) => {
+      // Prevent default scroll on touch
+      if (isAnimating) {
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isAnimating) return;
+
+      const touch = e.changedTouches[0];
+      const touchStartY = (window as any).touchStartY || touch.clientY;
+      const deltaY = touchStartY - touch.clientY;
+
+      // Ignore tiny movements
+      if (Math.abs(deltaY) < 30) return;
+
+      const direction = deltaY > 0 ? 'down' : 'up';
+      const snapPoints = getSnapPoints();
+      let targetIndex = currentSnapIndex;
+
+      if (direction === 'down') {
+        targetIndex = Math.min(currentSnapIndex + 1, snapPoints.length - 1);
+      } else {
+        targetIndex = Math.max(currentSnapIndex - 1, 0);
+      }
+
+      const targetSnap = snapPoints[targetIndex];
+
+      if (targetSnap && targetIndex !== currentSnapIndex) {
+        currentSnapIndex = targetIndex;
+        animateToPosition(targetSnap.y, 1200);
+      }
+    };
+
+
+    // Listen to wheel events with { passive: false } to allow preventDefault
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', handleScrollEnd);
-      clearTimeout(snapTimeout);
-      clearTimeout(scrollEndTimer);
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      clearTimeout(scrollTimeout);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
   }, []);
 
@@ -130,7 +245,7 @@ export default function Home() {
 
       <div className="bg-waygent-cream w-full relative z-1">
         <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col relative">
             <LandingEnvironments ref={environmentsRef} />
             <IntegrationsSection ref={integrationsRef} />
             <Builder ref={builderRef} />

@@ -20,7 +20,6 @@ export default function LoginPage() {
     try {
       // Call Frappe login API
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
-      console.log("[Login] Attempting login to:", frappeUrl);
 
       const response = await fetch(
         `${frappeUrl}/api/method/crm.api.user_auth.login`,
@@ -37,12 +36,9 @@ export default function LoginPage() {
         }
       );
 
-      console.log("[Login] Response status:", response.status);
       const data = await response.json();
-      console.log("[Login] Response data:", data);
 
       if (data.message?.success) {
-        console.log("[Login] Login successful, redirecting to environment selector");
         // Use Next.js router for client-side navigation
         router.push("/environment-selector");
       } else {

@@ -15,18 +15,14 @@ export default function EnvironmentSelectorPage() {
   // Check authentication on mount
   useEffect(() => {
     const verifyAuth = async () => {
-      console.log('[EnvironmentSelector] Verifying authentication...');
       const authResult = await checkAuth();
-      console.log('[EnvironmentSelector] Auth result:', authResult);
 
       if (!authResult.authenticated) {
         // Not logged in - redirect to login
-        console.log('[EnvironmentSelector] Not authenticated, redirecting to login');
         router.push("/login");
         return;
       }
 
-      console.log('[EnvironmentSelector] User authenticated');
       // Don't load environment from localStorage - let user explicitly select
       setIsCheckingAuth(false);
     };
@@ -39,7 +35,6 @@ export default function EnvironmentSelectorPage() {
     saveEnvironment(environmentName);
     setCurrentEnvironment(environmentName);
 
-    console.log('[EnvironmentSelector] Environment selected and saved:', environmentName);
 
     // Redirect to Frappe site
     const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://senatest2.localhost:8080";

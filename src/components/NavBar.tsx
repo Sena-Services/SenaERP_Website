@@ -187,7 +187,7 @@ export default function NavBar() {
 
           {/* CTA Buttons or Logged In Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {!isCheckingAuth && !user && (
+            {!user && (
               <>
                 {/* Commented out Login and Sign Up buttons */}
                 {/* <Link
@@ -215,7 +215,22 @@ export default function NavBar() {
                 {/* Get Early Access Button */}
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="get-early-access-btn inline-flex items-center justify-center px-2 py-1.5 sm:px-4 sm:py-2 h-7 sm:h-8 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold border-2 border-waygent-orange text-white cursor-pointer outline-none shadow-sm leading-none font-space-grotesk hover:shadow-md focus-visible:outline-none"
+                  className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 rounded-lg transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-medium cursor-pointer outline-none leading-none focus-visible:outline-none"
+                  style={{
+                    background: 'rgba(255,255,255,0.15)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    color: '#2C1810',
+                    fontFamily: 'Georgia, serif',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
+                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
+                  }}
                 >
                   <span className="leading-none">Get Early Access</span>
                 </button>
@@ -240,7 +255,7 @@ export default function NavBar() {
               </>
             )}
 
-            {!isCheckingAuth && user && (
+            {user && (
               <>
                 {/* Environment/Home Button */}
                 <Link

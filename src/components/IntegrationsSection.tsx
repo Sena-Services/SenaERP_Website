@@ -193,6 +193,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                 src={activeIntegration.screenshot}
                 alt={`${activeIntegration.name} integration`}
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-fill rounded-[36px]"
               />
             )}
