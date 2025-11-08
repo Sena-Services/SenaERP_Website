@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import NavBar from "./NavBar";
 
 const SHRINK_SCROLL_DISTANCE = 900;
+const SPLIT_SCROLL_DISTANCE = 400; // Distance to split into 3 cards
 const EXTRA_HOLD_DISTANCE = 340;
 
 export default function IntroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [splitProgress, setSplitProgress] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1440
   );
@@ -33,11 +35,21 @@ export default function IntroSection() {
       if (!section) return;
       const sectionTop = section.offsetTop;
       const scrollY = window.scrollY;
-      const distance = Math.min(
-        Math.max(scrollY - sectionTop, 0),
+      const totalDistance = scrollY - sectionTop;
+
+      // Phase 1: Shrink animation (0-900px)
+      const shrinkDistance = Math.min(
+        Math.max(totalDistance, 0),
         SHRINK_SCROLL_DISTANCE
       );
-      setScrollProgress(distance / SHRINK_SCROLL_DISTANCE);
+      setScrollProgress(shrinkDistance / SHRINK_SCROLL_DISTANCE);
+
+      // Phase 2: Split animation (900-1300px)
+      const splitDistance = Math.min(
+        Math.max(totalDistance - SHRINK_SCROLL_DISTANCE, 0),
+        SPLIT_SCROLL_DISTANCE
+      );
+      setSplitProgress(splitDistance / SPLIT_SCROLL_DISTANCE);
     };
 
     handleScroll();
@@ -67,7 +79,7 @@ export default function IntroSection() {
       ? "0 20px 60px -12px rgba(0, 0, 0, 0.15)"
       : "0 12px 32px -10px rgba(0, 0, 0, 0.12)";
   const sectionHeight =
-    startHeight + SHRINK_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
+    startHeight + SHRINK_SCROLL_DISTANCE + SPLIT_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
   const stickyFrameHeight =
     Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
 
@@ -109,6 +121,11 @@ export default function IntroSection() {
   const heroPaddingTop =
     basePaddingTop + (optimalPadding - basePaddingTop) * centerBoost;
 
+  // Split animation calculations
+  const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max);
+  const cardGap = splitProgress * 24; // Max 24px gap between cards
+  const cardWidth = (currentWidthValue - cardGap * 2) / 3; // Divide width into 3 equal parts
+
   return (
     <section
       id="intro"
@@ -144,31 +161,33 @@ export default function IntroSection() {
             <NavBar />
           </div>
 
-          <div
-            className="relative w-full h-full overflow-hidden"
-            style={{
-              backgroundColor: "#EBE5D9",
-              borderRadius: `${borderRadius}px`,
-              boxShadow: elevation,
-              transition: "box-shadow 200ms ease",
-            }}
-          >
-            <img
-              src="/illustrations/monet-intro-expanded2.png"
-              alt="Monet painting"
-              className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
-              style={{
-                opacity: 0.95,
-              }}
-            />
-
+          {/* Original single container - visible when splitProgress = 0 */}
+          {splitProgress === 0 && (
             <div
-              className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+              className="relative w-full h-full overflow-hidden"
               style={{
-                opacity: contentOpacity,
-                pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
+                backgroundColor: "#EBE5D9",
+                borderRadius: `${borderRadius}px`,
+                boxShadow: elevation,
+                transition: "box-shadow 200ms ease",
               }}
             >
+              <img
+                src="/illustrations/monet-intro-expanded2.png"
+                alt="Monet painting"
+                className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                style={{
+                  opacity: 0.95,
+                }}
+              />
+
+              <div
+                className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+                style={{
+                  opacity: contentOpacity,
+                  pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
+                }}
+              >
             <div className="mb-4 md:mb-5">
               <h1
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-1.5 md:mb-2 leading-tight"
@@ -335,9 +354,90 @@ export default function IntroSection() {
                 </div>
               </div>
             </div>
-          </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3-card split layout - visible when splitProgress > 0 */}
+          {splitProgress > 0 && (
+            <div
+              className="relative w-full h-full flex justify-center items-center"
+              style={{
+                gap: `${cardGap}px`,
+                transition: "gap 300ms ease-out",
+              }}
+            >
+              {/* Left Card */}
+              <div
+                className="relative overflow-hidden"
+                style={{
+                  width: `${cardWidth}px`,
+                  height: "100%",
+                  backgroundColor: "#EBE5D9",
+                  borderRadius: `${borderRadius}px`,
+                  boxShadow: elevation,
+                  opacity: splitProgress,
+                  transition: "opacity 300ms ease-out, box-shadow 200ms ease",
+                }}
+              >
+                <img
+                  src="/illustrations/monet-intro-expanded2.png"
+                  alt="Monet painting"
+                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  style={{
+                    opacity: 0.95,
+                  }}
+                />
+              </div>
+
+              {/* Center Card */}
+              <div
+                className="relative overflow-hidden"
+                style={{
+                  width: `${cardWidth}px`,
+                  height: "100%",
+                  backgroundColor: "#EBE5D9",
+                  borderRadius: `${borderRadius}px`,
+                  boxShadow: elevation,
+                  opacity: splitProgress,
+                  transition: "opacity 300ms ease-out, box-shadow 200ms ease",
+                }}
+              >
+                <img
+                  src="/illustrations/monet-intro-expanded2.png"
+                  alt="Monet painting"
+                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  style={{
+                    opacity: 0.95,
+                  }}
+                />
+              </div>
+
+              {/* Right Card */}
+              <div
+                className="relative overflow-hidden"
+                style={{
+                  width: `${cardWidth}px`,
+                  height: "100%",
+                  backgroundColor: "#EBE5D9",
+                  borderRadius: `${borderRadius}px`,
+                  boxShadow: elevation,
+                  opacity: splitProgress,
+                  transition: "opacity 300ms ease-out, box-shadow 200ms ease",
+                }}
+              >
+                <img
+                  src="/illustrations/monet-intro-expanded2.png"
+                  alt="Monet painting"
+                  className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+                  style={{
+                    opacity: 0.95,
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
-      </div>
       </div>
     </section>
   );
