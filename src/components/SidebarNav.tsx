@@ -175,16 +175,21 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   };
 
   return (
-    <aside className="hidden lg:flex fixed left-0 top-1/2 z-50 w-[8.5rem] sm:w-[9rem] -translate-y-1/2 transform">
-      <div className="w-full">
+    <aside className="hidden lg:flex fixed left-0 top-1/2 z-50 -translate-y-1/2 transform group">
+      <div className="w-auto">
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-white/40 border border-white/60 border-l-0 px-3 py-3 backdrop-blur-lg shadow-[0_10px_40px_-20px_rgba(28,24,18,0.65)] scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto border-2 border-white/20 border-l-0 pl-0.5 pr-2 py-2 backdrop-blur-md scrollbar-thin scrollbar-thumb-waygent-blue/20 scrollbar-track-transparent transition-all duration-300 ease-out bg-white/10 w-auto group-hover:pr-3"
+            style={{
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+              borderTopRightRadius: '40px',
+              borderBottomRightRadius: '40px',
+            }}
           >
             {/* Smooth sliding indicator */}
             <div
-              className="absolute left-3 right-3 rounded-xl bg-waygent-blue/15 border border-waygent-blue/40 shadow-[0_8px_30px_-20px_rgba(18,73,115,0.8)] pointer-events-none transition-all duration-500 ease-out"
+              className="absolute left-1 right-2 pointer-events-none transition-all duration-500 ease-out bg-waygent-blue/15 border border-waygent-blue/40 shadow-[0_8px_30px_-20px_rgba(18,73,115,0.8)] rounded-xl"
               style={{
                 top: indicator.top,
                 height: indicator.height,
@@ -208,12 +213,12 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2.5 py-[9px] text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer ${
-                        !isActive && 'hover:bg-white/60 hover:shadow-sm'
+                      className={`group/item relative flex items-center gap-2 px-2 py-2 text-left transition-all duration-200 ease-out focus-visible:outline-none cursor-pointer rounded-xl hover:bg-white/40 hover:shadow-sm hover:scale-[1.02] ${
+                        isActive ? '' : 'hover:border hover:border-white/30'
                       }`}
                     >
                       <span
-                        className="text-[9px] font-semibold tracking-wider transition-colors duration-300 w-5 flex-shrink-0 flex items-center justify-center"
+                        className="text-[9px] font-semibold tracking-wider transition-all duration-300 w-5 flex-shrink-0 flex items-center justify-center font-space-grotesk"
                         style={{
                           color: isActive ? '#1F2937' : 'rgb(107, 114, 128)',
                           transitionDelay: isActive ? '500ms' : '0ms',
@@ -223,8 +228,8 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                         {step}
                       </span>
                       <span
-                        className={`flex-1 text-[10.5px] sm:text-[11px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap ${
-                          !isActive && 'group-hover:text-waygent-orange'
+                        className={`text-[10px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk ${
+                          !isActive && 'group-hover/item:text-waygent-orange'
                         }`}
                         style={{
                           color: isActive ? '#1F2937' : 'rgb(31, 41, 55)',

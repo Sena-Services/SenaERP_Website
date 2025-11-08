@@ -394,10 +394,9 @@ export default function Home() {
     <main className="relative bg-waygent-cream text-waygent-text-primary">
       {/* Fixed NavBar at top */}
       <div
-        className="fixed top-0 left-1/2 -translate-x-1/2 z-[200] px-4 sm:px-8"
+        className="fixed top-0 left-1/2 -translate-x-1/2 z-[200]"
         style={{
           width: "min(640px, 90vw)",
-          paddingTop: "4px",
         }}
       >
         <NavBar />

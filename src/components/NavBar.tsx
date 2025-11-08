@@ -150,12 +150,13 @@ export default function NavBar() {
 
   return (
     <>
-      <header className="w-full pb-2 pt-8">
+      <header className="w-full">
         <nav
-          className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2 bg-white/10 border-2 border-white/20 backdrop-blur-md max-w-7xl mx-auto`}
+          className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2 bg-white/10 border-2 border-white/20 border-t-0 backdrop-blur-md max-w-7xl mx-auto`}
         style={{
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          borderRadius: '40px',
+          borderBottomLeftRadius: '40px',
+          borderBottomRightRadius: '40px',
         }}
       >
         {/* LEFT SIDE - Logo */}
