@@ -114,11 +114,11 @@ export default function IntroSection() {
     setPaused(false);
   };
 
-  // Track scroll progress for scaling animation
+  // Track scroll progress for multi-stage animation
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const maxScroll = window.innerHeight * 0.5; // Scale over first 50vh of scroll
+      const maxScroll = window.innerHeight * 1.5; // Total animation over 1.5 viewports
       const progress = Math.min(scrollY / maxScroll, 1);
       setScrollProgress(progress);
     };
@@ -127,37 +127,59 @@ export default function IntroSection() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calculate dynamic styles based on scroll
-  const scale = 1 - (scrollProgress * 0.6); // Scale from 100% to 40%
-  const borderRadius = 32 + (scrollProgress * 8); // Increase border radius
-  const containerHeight = scrollProgress < 1
-    ? `calc(100vh - ${6 + (scrollProgress * 74)}rem)` // Shrink from full to small
-    : '200px';
+  // Multi-stage scroll animation
+  // Stage 1 (0-0.5): Content disappears bottom-to-top via clip-path, container shrinks
+  // Stage 2 (0.5-1.0): Container collapses to thin header bar, image clips
+  const stage1Progress = Math.min(scrollProgress / 0.5, 1);
+  const stage2Progress = Math.max((scrollProgress - 0.5) / 0.5, 0);
+
+  // Content clips from BOTTOM to TOP (disappears upward)
+  const contentClipBottom = stage1Progress * 100;
+
+  // Height shrinks throughout
+  const heightVh = scrollProgress < 0.5
+    ? 94 - (stage1Progress * 50) // 94vh -> 44vh
+    : 44 - (stage2Progress * 37); // 44vh -> 7vh
+  const containerHeight = `${heightVh}vh`;
+
+  // Border radius
+  const borderRadius = 32 + (scrollProgress * 8);
+
+  // Image clips from bottom in stage 2
+  const imageClipBottom = stage2Progress * 70;
 
   return (
     <section
       id="intro"
-      className="relative w-full h-screen flex items-start justify-center px-4 sm:px-6 lg:px-8 pt-4"
+      className="relative w-full flex items-start justify-center px-4 sm:px-6 lg:px-8 pt-4"
+      style={{
+        height: '250vh', // Tall section for scrolling
+      }}
     >
-      {/* Hero container with scroll-based scaling */}
+      {/* Hero container - FIXED POSITION, stays at top */}
       <div
-        className="relative w-full mx-auto overflow-hidden transition-all duration-300"
+        className="w-full mx-auto overflow-hidden"
         style={{
+          position: 'fixed',
+          top: '1rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
           backgroundColor: '#EBE5D9',
           height: containerHeight,
           maxWidth: '95vw',
           borderRadius: `${borderRadius}px`,
           boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15)',
-          transform: `scale(${scale})`,
+          zIndex: 50,
         }}
       >
-        {/* Expanded painting image - fills full container */}
+        {/* Expanded painting image - clips from bottom as it shrinks */}
         <img
           src="/illustrations/monet-intro-expanded2.png"
           alt="Monet painting"
           className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
           style={{
             opacity: 0.95,
+            clipPath: `inset(0 0 ${imageClipBottom}% 0)`,
           }}
         />
 
@@ -166,9 +188,13 @@ export default function IntroSection() {
           <NavBar />
         </div>
 
-        {/* Content - responsive width and positioning */}
+        {/* Content - responsive width and positioning - CLIPS from bottom to top */}
         <div
           className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+          style={{
+            clipPath: `inset(0 0 ${contentClipBottom}% 0)`,
+            pointerEvents: contentClipBottom > 90 ? 'none' : 'auto',
+          }}
         >
           {/* Main heading */}
           <div className="mb-4 md:mb-5">
