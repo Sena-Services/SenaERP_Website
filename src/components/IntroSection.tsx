@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Keyword } from "./Keyword";
+import NavBar from "./NavBar";
 
 const tokens = [
   {
@@ -48,6 +49,7 @@ export default function IntroSection() {
   const [paused, setPaused] = useState(false);
   const [definitionMaxHeight, setDefinitionMaxHeight] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const hiddenRefs = useRef<Array<HTMLDivElement | null>>([]);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -112,41 +114,70 @@ export default function IntroSection() {
     setPaused(false);
   };
 
+  // Track scroll progress for scaling animation
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const maxScroll = window.innerHeight * 0.5; // Scale over first 50vh of scroll
+      const progress = Math.min(scrollY / maxScroll, 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Calculate dynamic styles based on scroll
+  const scale = 1 - (scrollProgress * 0.6); // Scale from 100% to 40%
+  const borderRadius = 32 + (scrollProgress * 8); // Increase border radius
+  const containerHeight = scrollProgress < 1
+    ? `calc(100vh - ${6 + (scrollProgress * 74)}rem)` // Shrink from full to small
+    : '200px';
+
   return (
     <section
       id="intro"
-      className="pt-4 sm:pt-6 pb-2 sm:pb-3 px-4 sm:px-6 lg:px-8"
+      className="relative w-full h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8"
+      style={{
+        paddingTop: '3rem',
+      }}
     >
-      {/* Compact, rounded container */}
+      {/* Hero container with scroll-based scaling */}
       <div
-        className="relative max-w-7xl mx-auto rounded-[40px]"
+        className="relative w-full mx-auto overflow-hidden transition-all duration-300"
         style={{
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          backgroundImage: 'url(/illustrations/monet-intro.png), url(/illustrations/monet-left-edge.png)',
-          backgroundSize: 'auto 100%, auto 100%',
-          backgroundPosition: 'right center, left center',
-          backgroundRepeat: 'no-repeat, repeat-x',
           backgroundColor: '#EBE5D9',
-          minHeight: '500px',
-          height: '80vh',
-          maxHeight: '650px',
-          overflow: 'hidden'
+          height: containerHeight,
+          maxWidth: scrollProgress < 1 ? '95vw' : '100%',
+          borderRadius: scrollProgress < 1 ? `${borderRadius}px` : '0px',
+          boxShadow: scrollProgress < 1 ? '0 20px 60px -12px rgba(0, 0, 0, 0.15)' : 'none',
+          transform: `scale(${scale})`,
         }}
       >
-        {/* Gradient overlay to smooth repeating edges */}
-        <div
-          className="absolute inset-0 pointer-events-none"
+        {/* Expanded painting image - fills full container */}
+        <img
+          src="/illustrations/monet-intro-expanded2.png"
+          alt="Monet painting"
+          className="absolute inset-0 w-full h-full object-cover object-right"
           style={{
-            background: 'linear-gradient(to right, transparent 0%, rgba(250, 249, 245, 0.05) 30%, rgba(250, 249, 245, 0.05) 70%, transparent 100%)',
-            backgroundSize: '200px 100%',
-            backgroundRepeat: 'repeat-x',
-            mixBlendMode: 'overlay'
+            opacity: 0.95,
           }}
         />
 
-        {/* Content positioned on the left (on top of cream area of image) */}
-        <div className="relative h-full flex items-center py-8 sm:py-10 px-6 sm:px-8 lg:px-12">
-          <div className="max-w-xl space-y-5">
+        {/* Navbar overlay on top of image */}
+        <div className="absolute top-0 left-0 right-0 z-50 w-full">
+          <NavBar />
+        </div>
+
+        {/* Content - moves left proportionally as width decreases */}
+        <div
+          className="relative z-10 h-full w-full flex items-center py-8 sm:py-10 px-6 sm:px-8 lg:px-12"
+          style={{
+            justifyContent: 'flex-start',
+            paddingLeft: 'max(1.5rem, calc(50vw - 600px))',
+          }}
+        >
+          <div className="max-w-2xl space-y-6 text-center">
           {/* Main heading */}
           <div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2 font-futura leading-tight">

@@ -134,19 +134,19 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-waygent-cream text-waygent-text-primary">
-      <SidebarNav sections={sections} />
+      {/* Full-screen intro section (no sidebar, no navbar) */}
+      <div className="relative w-screen h-screen overflow-hidden">
+        <IntroSection />
+      </div>
 
-      <div className="relative z-10 flex min-h-screen w-full flex-col">
-        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream pl-0 lg:pl-[9rem]">
-          <NavBar />
+      {/* Rest of the page without sidebar */}
+      <div className="relative z-10">
+        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
           <div className="flex-1 flex flex-col">
-            <section id="intro" className="scroll-mt-32">
-              <IntroSection />
-            </section>
             <HowItWorksSection />
             <LandingEnvironments />
             <IntegrationsSection />
-            <Builder /> 
+            <Builder />
           </div>
 
           {/* <div className="mt-24 space-y-24 px-4 pb-20 sm:px-6 lg:px-10 xl:px-14">
