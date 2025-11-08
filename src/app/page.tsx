@@ -3,13 +3,13 @@
 import React, { useEffect, useRef } from "react";
 import IntroSection from "@/components/IntroSection";
 import Builder from "@/components/Builder";
-import HowItWorksSection from "@/components/HowItWorksSection";
 import LandingEnvironments from "@/components/LandingEnvironments";
 import IntegrationsSection from "@/components/IntegrationsSection";
 import PricingSection from "@/components/PricingSection";
 import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
 import NavBar from "@/components/NavBar";
+import SidebarNav from "@/components/SidebarNav";
 
 
 export default function Home() {
@@ -20,6 +20,16 @@ export default function Home() {
   const pricingRef = useRef<HTMLElement>(null);
   const blogRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
+  const sidebarSections = [
+    { id: "intro", label: "Home" },
+    { id: "how-it-works", label: "How it works" },
+    { id: "environments", label: "Environments" },
+    { id: "integrations", label: "Integrations" },
+    { id: "builder", label: "Builder" },
+    { id: "pricing", label: "Pricing" },
+    { id: "blogs", label: "Blogs" },
+    { id: "join-us", label: "Join Our Team" },
+  ];
 
   useEffect(() => {
     let isAnimating = false;
@@ -109,8 +119,8 @@ export default function Home() {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    const playIntroSequence = (points: ReturnType<typeof getSnapPoints>) => {
-      if (introSequencePlayed || isAnimating) return;
+    const playIntroSequence = (points: ReturnType<typeof getSnapPoints>, force = false) => {
+      if (!force && (introSequencePlayed || isAnimating)) return;
 
       introSequencePlayed = true;
       manualScrollEnabled = false;
@@ -350,11 +360,27 @@ export default function Home() {
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
     window.addEventListener('touchend', handleTouchEnd, { passive: true });
 
+    // Listen for custom event from sidebar to jump directly to "how it works" (rotated cards)
+    const handleTriggerIntro = () => {
+      const points = getSnapPoints();
+      // Set state as if sequence was already played
+      introSequencePlayed = true;
+      manualScrollEnabled = true;
+      autoRotateTriggered = false;
+      // Jump directly to the rotated position (where 3 cards are visible)
+      window.scrollTo({ top: points.rotated, behavior: 'auto' });
+      // Trigger scroll event to update sidebar
+      window.dispatchEvent(new Event('scroll'));
+    };
+
+    window.addEventListener('triggerIntroSequence', handleTriggerIntro);
+
     return () => {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('triggerIntroSequence', handleTriggerIntro);
       if (directionLockTimeout) {
         clearTimeout(directionLockTimeout);
       }
@@ -377,6 +403,8 @@ export default function Home() {
         <NavBar />
       </div>
 
+      <SidebarNav sections={sidebarSections} />
+
       <div ref={introRef}>
         <IntroSection />
       </div>
@@ -384,14 +412,26 @@ export default function Home() {
       <div className="bg-waygent-cream w-full relative z-1">
         <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
           <div className="flex-1 flex flex-col relative">
-            <LandingEnvironments ref={environmentsRef} />
-            <IntegrationsSection ref={integrationsRef} />
-            <Builder ref={builderRef} />
+            <div id="environments">
+              <LandingEnvironments ref={environmentsRef} />
+            </div>
+            <div id="integrations">
+              <IntegrationsSection ref={integrationsRef} />
+            </div>
+            <div id="builder">
+              <Builder ref={builderRef} />
+            </div>
           </div>
 
-          <PricingSection ref={pricingRef} />
-          <BlogSection ref={blogRef} />
-          <JoinUsSection ref={joinUsRef} />
+          <div id="pricing">
+            <PricingSection ref={pricingRef} />
+          </div>
+          <div id="blogs">
+            <BlogSection ref={blogRef} />
+          </div>
+          <div id="join-us">
+            <JoinUsSection ref={joinUsRef} />
+          </div>
         </div>
       </div>
     </main>

@@ -146,6 +146,9 @@ export default function IntroSection() {
             height: currentHeight,
           }}
         >
+          {/* Anchor for "how-it-works" section at the rotated position */}
+          <div id="how-it-works" className="absolute" style={{ top: 0 }} />
+
           {/* Title that appears when card shrinks (before split) */}
           <div
             className="absolute left-0 right-0 text-center z-10"

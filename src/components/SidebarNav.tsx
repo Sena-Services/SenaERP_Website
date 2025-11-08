@@ -148,21 +148,30 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   }, [activeSection, updateIndicator]);
 
   const handleClick = (id: string) => {
+    // Special handling for "how-it-works" - trigger the intro sequence
+    if (id === "how-it-works") {
+      // Dispatch a custom event that the main page can listen to
+      window.dispatchEvent(new CustomEvent("triggerIntroSequence"));
+      return;
+    }
+
     const target = document.getElementById(id);
     if (!target) return;
-
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
 
     // Calculate the position accounting for the top navbar
     const navbarHeight = 80; // Adjust this value based on your navbar height
     const targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
 
+    // Instant navigation - no smooth scrolling
     window.scrollTo({
       top: targetPosition,
-      behavior: prefersReducedMotion ? "auto" : "smooth",
+      behavior: "auto",
     });
+
+    // Force update of sidebar highlighting after scroll
+    setTimeout(() => {
+      window.dispatchEvent(new Event('scroll'));
+    }, 50);
   };
 
   return (
@@ -171,14 +180,11 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-waygent-light-blue border-2 border-waygent-light-blue border-l-0 px-2.5 py-2.5 backdrop-blur-sm scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
-            style={{
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-            }}
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto rounded-r-3xl bg-white/40 border border-white/60 border-l-0 px-3 py-3 backdrop-blur-lg shadow-[0_10px_40px_-20px_rgba(28,24,18,0.65)] scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent"
           >
             {/* Smooth sliding indicator */}
             <div
-              className="absolute left-2.5 right-2.5 rounded-lg bg-gradient-to-r from-waygent-orange to-waygent-orange/90 shadow-md pointer-events-none transition-all duration-500 ease-out"
+              className="absolute left-3 right-3 rounded-xl bg-waygent-blue/15 border border-waygent-blue/40 shadow-[0_8px_30px_-20px_rgba(18,73,115,0.8)] pointer-events-none transition-all duration-500 ease-out"
               style={{
                 top: indicator.top,
                 height: indicator.height,
@@ -209,7 +215,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       <span
                         className="text-[9px] font-semibold tracking-wider transition-colors duration-300 w-5 flex-shrink-0 flex items-center justify-center"
                         style={{
-                          color: isActive ? 'white' : 'rgb(107, 114, 128)',
+                          color: isActive ? '#1F2937' : 'rgb(107, 114, 128)',
                           transitionDelay: isActive ? '500ms' : '0ms',
                           lineHeight: '1',
                         }}
@@ -221,7 +227,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                           !isActive && 'group-hover:text-waygent-orange'
                         }`}
                         style={{
-                          color: isActive ? 'white' : 'rgb(31, 41, 55)',
+                          color: isActive ? '#1F2937' : 'rgb(31, 41, 55)',
                           transform: isActive ? 'translateX(2px)' : 'translateX(0)',
                           transitionDelay: isActive ? '500ms' : '0ms',
                           lineHeight: '1.3',
