@@ -59,11 +59,14 @@ export default function IntroSection() {
     viewportHeight === 0 ? "92vh" : `${currentHeightValue}px`;
 
   const borderRadius = 32 + scrollProgress * 16;
-  const contentOpacity = 1 - scrollProgress * 0.65;
+  const contentOpacity = Math.max(0, 1 - scrollProgress * 1.2);
   const elevation =
     scrollProgress < 1
       ? "0 20px 60px -12px rgba(0, 0, 0, 0.15)"
       : "0 12px 32px -10px rgba(0, 0, 0, 0.12)";
+  const sectionHeight = targetHeight + SHRINK_SCROLL_DISTANCE;
+  const stickyFrameHeight = currentHeightValue;
+
   const navWidthRatio =
     viewportWidth >= 1280
       ? 0.45
@@ -86,12 +89,13 @@ export default function IntroSection() {
       ref={sectionRef}
       className="relative w-full bg-waygent-cream"
       style={{
-        minHeight: "calc(100vh + 900px)",
+        height: `${sectionHeight}px`,
       }}
     >
       <div
         className="sticky top-0 flex items-start justify-center w-full"
         style={{
+          height: `${stickyFrameHeight}px`,
           paddingTop: `${16 + scrollProgress * 32}px`,
         }}
       >
