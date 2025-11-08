@@ -152,6 +152,13 @@ export default function Home() {
       const direction = e.deltaY > 0 ? 'down' : 'up';
       const points = getSnapPoints();
       const inSplitZone = isInSplitZone(currentScrollY);
+      let blocked = false;
+      const blockScroll = () => {
+        if (!blocked) {
+          e.preventDefault();
+          blocked = true;
+        }
+      };
 
       if (directionLock && direction !== directionLock) {
         if (!isAnimating) {
@@ -161,7 +168,7 @@ export default function Home() {
             directionLockTimeout = null;
           }
         } else {
-          e.preventDefault();
+          blockScroll();
           return;
         }
       }
@@ -169,7 +176,7 @@ export default function Home() {
       // Manual split zone handling
       if (inSplitZone) {
         if (direction === 'up') {
-          e.preventDefault();
+          blockScroll();
           playReverseSequence(points);
           return;
         }
@@ -177,7 +184,7 @@ export default function Home() {
         if (manualScrollEnabled) {
           // Allow natural downward scroll until we hit the trigger
           if (direction === 'down' && currentScrollY >= points.autoTriggerPoint && !autoRotateTriggered) {
-            e.preventDefault();
+            blockScroll();
             autoRotateTriggered = true;
             manualScrollEnabled = false;
             lockDirection('down');
@@ -189,11 +196,9 @@ export default function Home() {
         }
       }
 
-      // Outside manual zone - prevent scroll and animate
-      e.preventDefault();
-
       // Block during animation
       if (isAnimating) {
+        blockScroll();
         return;
       }
 
@@ -202,8 +207,10 @@ export default function Home() {
         // At initial or united card position (with 50px tolerance)
         if (direction === 'down') {
           if (!introSequencePlayed) {
+            blockScroll();
             playIntroSequence(points);
           } else {
+            blockScroll();
             lockDirection('down');
             animateToPosition(points.unitedCard, 1200, () => {
               manualScrollEnabled = true; // Enable manual scroll in split zone
@@ -211,6 +218,7 @@ export default function Home() {
           }
         } else if (direction === 'up' && currentScrollY > points.initial + 50) {
           // Scroll up from united card to initial
+          blockScroll();
           manualScrollEnabled = false;
           introSequencePlayed = false;
           lockDirection('up');
@@ -223,6 +231,7 @@ export default function Home() {
           manualScrollEnabled = true;
         } else if (direction === 'up') {
           // Scroll up from split zone goes back to initial
+          blockScroll();
           manualScrollEnabled = false;
           introSequencePlayed = false;
           lockDirection('up');
@@ -231,17 +240,30 @@ export default function Home() {
       } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY < points.environments - 50) {
         // At or after rotated position (anywhere between split end and environments)
         if (direction === 'down') {
+          blockScroll();
           lockDirection('down');
           animateToPosition(points.environments, 1200);
         } else if (direction === 'up') {
+          blockScroll();
           playReverseSequence(points);
         }
       } else if (currentScrollY >= points.environments - 50) {
         // Either at environments section or beyond
-        if (direction === 'up') {
+        if (direction === 'down') {
+          if (currentScrollY < points.environments + 50) {
+            blockScroll();
+            lockDirection('down');
+            animateToPosition(points.environments, 1200);
+          } else {
+            // allow natural scrolling past environments
+            return;
+          }
+        } else if (direction === 'up') {
           if (currentScrollY <= points.rotated + 50) {
+            blockScroll();
             playReverseSequence(points);
           } else {
+            blockScroll();
             lockDirection('up');
             animateToPosition(points.rotated, 1200);
           }
