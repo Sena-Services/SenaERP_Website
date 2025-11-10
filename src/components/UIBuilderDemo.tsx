@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import UIPreview from "./UIPreview";
 
 export default function UIBuilderDemo() {
+  const [currentExample, setCurrentExample] = useState(0);
   const [showUserMessage, setShowUserMessage] = useState(false);
   const [buildingStage, setBuildingStage] = useState(0);
   const [showFinalResponse, setShowFinalResponse] = useState(false);
@@ -12,15 +13,46 @@ export default function UIBuilderDemo() {
   const [showCursor, setShowCursor] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
-  const userMessage = "Create a revenue dashboard with metric cards and weekly chart";
-  const buildingSteps = [
-    "Analyzing requirements...",
-    "Creating dashboard layout...",
-    "Building metric cards...",
-    "Generating chart components...",
-    "Finalizing design..."
+  const examples = [
+    {
+      userMessage: "Create a revenue dashboard with metric cards and weekly chart",
+      buildingSteps: [
+        "Analyzing requirements...",
+        "Creating dashboard layout...",
+        "Building metric cards...",
+        "Generating chart components...",
+        "Finalizing design..."
+      ],
+      aiResponse: "I've created your revenue dashboard! It includes three metric cards showing Revenue ($45.2K), Orders (1,234), and Users (892), each with growth percentages. Below that is an interactive weekly revenue chart showing your performance across the week.",
+      type: "dashboard"
+    },
+    {
+      userMessage: "Build a customer list table with name, email, and status columns",
+      buildingSteps: [
+        "Setting up table structure...",
+        "Creating column headers...",
+        "Adding customer data rows...",
+        "Styling table cells...",
+        "Adding status badges..."
+      ],
+      aiResponse: "Your customer list table is ready! I've created a clean table with Name, Email, Company, and Status columns. Each row shows customer data with color-coded status badges (Active/Inactive) for easy scanning.",
+      type: "table"
+    },
+    {
+      userMessage: "Create a contact form with name, email, phone, and message fields",
+      buildingSteps: [
+        "Designing form layout...",
+        "Adding input fields...",
+        "Creating field labels...",
+        "Styling form elements...",
+        "Adding submit button..."
+      ],
+      aiResponse: "I've built your contact form! It includes clean input fields for Name, Email, Phone Number, and a larger text area for the message. The form has a professional layout with proper spacing and a submit button.",
+      type: "form"
+    }
   ];
-  const aiResponse = "I've created your revenue dashboard! It includes three metric cards showing Revenue ($45.2K), Orders (1,234), and Users (892), each with growth percentages. Below that is an interactive weekly revenue chart showing your performance across the week.";
+
+  const currentExampleData = examples[currentExample];
 
   useEffect(() => {
     const runBuildingSequence = () => {
@@ -42,7 +74,7 @@ export default function UIBuilderDemo() {
       let currentStage = 0;
 
       const progressStages = () => {
-        if (currentStage < buildingSteps.length) {
+        if (currentStage < currentExampleData.buildingSteps.length) {
           setTimeout(() => {
             currentStage++;
             setBuildingStage(currentStage);
@@ -56,9 +88,9 @@ export default function UIBuilderDemo() {
             setTimeout(() => {
               // Fade out smoothly
               setFadeOut(true);
-              // After fade out animation, restart
+              // After fade out animation, move to next example
               setTimeout(() => {
-                runBuildingSequence();
+                setCurrentExample((prev) => (prev + 1) % examples.length);
               }, 600);
             }, 6000);
           }, 500);
@@ -72,7 +104,7 @@ export default function UIBuilderDemo() {
     };
 
     runBuildingSequence();
-  }, []);
+  }, [currentExample]);
 
   useEffect(() => {
     if (showFinalResponse) {
@@ -80,9 +112,9 @@ export default function UIBuilderDemo() {
       let currentIndex = 0;
       const typingInterval = setInterval(() => {
         currentIndex += 2; // Skip 2 characters at a time for faster streaming
-        setAiResponseText(aiResponse.slice(0, currentIndex));
+        setAiResponseText(currentExampleData.aiResponse.slice(0, currentIndex));
 
-        if (currentIndex >= aiResponse.length) {
+        if (currentIndex >= currentExampleData.aiResponse.length) {
           clearInterval(typingInterval);
           setShowCursor(false);
         }
@@ -97,7 +129,7 @@ export default function UIBuilderDemo() {
         clearInterval(cursorInterval);
       };
     }
-  }, [showFinalResponse]);
+  }, [showFinalResponse, currentExampleData]);
 
   return (
     <div className="flex h-[600px] bg-white overflow-hidden">
@@ -125,7 +157,7 @@ export default function UIBuilderDemo() {
               className="flex flex-col items-end"
             >
               <div className="bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-2xl max-w-[90%] text-sm font-futura shadow-sm">
-                {userMessage}
+                {currentExampleData.userMessage}
               </div>
               <div className="flex items-center gap-2 mt-2 text-xs text-gray-400 font-futura">
                 <span>Oct 21, 10:00 AM</span>
@@ -139,7 +171,7 @@ export default function UIBuilderDemo() {
           {/* Building Progress Steps - always show when building stage > 0 */}
           {buildingStage > 0 && (
             <div className="space-y-2 mt-4">
-              {buildingSteps.slice(0, buildingStage).map((step, index) => (
+              {currentExampleData.buildingSteps.slice(0, buildingStage).map((step, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: -10 }}
@@ -176,7 +208,7 @@ export default function UIBuilderDemo() {
               className="text-sm font-futura text-gray-700 leading-relaxed mt-3"
             >
               {aiResponseText}
-              {showCursor && aiResponseText.length < aiResponse.length && (
+              {showCursor && aiResponseText.length < currentExampleData.aiResponse.length && (
                 <span className="inline-block w-0.5 h-4 bg-gray-900 ml-1 animate-pulse" />
               )}
             </motion.div>
@@ -205,7 +237,7 @@ export default function UIBuilderDemo() {
         transition={{ duration: 0.5 }}
       >
         {buildingStage > 0 ? (
-          <UIPreview buildingStage={buildingStage} />
+          <UIPreview buildingStage={buildingStage} exampleType={currentExampleData.type} />
         ) : (
           <div className="text-center">
             <div className="text-gray-400 font-futura text-sm">
