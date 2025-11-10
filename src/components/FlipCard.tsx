@@ -95,7 +95,7 @@ export default function FlipCard({
   const isOtherExpanded = expandedCard !== null && expandedCard !== position;
   const canClick = rotateProgress === 1; // Only clickable when fully flipped
 
-  // Don't render the card at all if another card is expanded
+  // Don't render cards that aren't expanded
   if (isOtherExpanded) {
     return null;
   }
@@ -106,8 +106,14 @@ export default function FlipCard({
       style={{
         width: `${cardWidth}px`,
         height: "100%",
-        transform: `rotateY(${rotateProgress * 180}deg)`,
+        transform: `rotateY(${rotateProgress * 180}deg) ${
+          isExpanded
+            ? 'scale(1.05) translateY(0) translateX(0)'
+            : 'scale(1) translateY(0) translateX(0)'
+        }`,
         transformStyle: "preserve-3d",
+        boxShadow: isExpanded ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : 'none',
+        zIndex: isExpanded ? 10 : 1,
       }}
     >
       {/* Front face - Monet image */}

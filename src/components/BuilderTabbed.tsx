@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import UIBuilderDemo from "./UIBuilderDemo";
+import DataBuilderDemo from "./DataBuilderDemo";
 
 type Tab = {
   id: string;
@@ -270,9 +271,11 @@ export default function BuilderTabbed() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              {/* Two Column Layout - Special unified layout for UI tab */}
+              {/* Special layouts for different tabs */}
               {activeTab.id === "ui" ? (
                 <UIBuilderDemo />
+              ) : activeTab.id === "data" ? (
+                <DataBuilderDemo />
               ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[500px]">
                 {/* Left Section - Workflow */}

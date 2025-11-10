@@ -12,6 +12,24 @@ const EXTRA_HOLD_DISTANCE = 340;
 type ExpandedCard = "left" | "center" | "right" | null;
 
 export default function IntroSection() {
+  // Add keyframe animation for content
+  if (typeof document !== 'undefined' && !document.getElementById('intro-animations')) {
+    const style = document.createElement('style');
+    style.id = 'intro-animations';
+    style.textContent = `
+      @keyframes slideInContent {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
   const sectionRef = useRef<HTMLElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [splitProgress, setSplitProgress] = useState(0);
@@ -155,37 +173,39 @@ export default function IntroSection() {
           {/* Anchor for "how-it-works" section at the rotated position */}
           <div id="how-it-works" className="absolute" style={{ top: 0 }} />
 
+          {/* Back button - positioned at the very left, above the card */}
+          {expandedCard && (
+            <button
+              onClick={() => setExpandedCard(null)}
+              className="absolute flex items-center gap-2 text-gray-900 hover:text-gray-600 transition-all group bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg"
+              style={{
+                left: '0',
+                top: `${-getResponsiveValue(100)}px`,
+                zIndex: 1000,
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="font-medium">Back</span>
+            </button>
+          )}
+
           {/* Title that appears when card shrinks (before split) */}
           <div
-            className="absolute left-0 right-0 flex items-center justify-center z-10"
+            className="absolute left-0 right-0 text-center z-10"
             style={{
               top: `${-getResponsiveValue(100)}px`,
               opacity: scrollProgress,
-              pointerEvents: expandedCard ? "auto" : "none",
+              pointerEvents: "none",
             }}
           >
-            {/* Back button - always on the left of "How it works" when card is expanded */}
-            {expandedCard && (
-              <button
-                onClick={() => setExpandedCard(null)}
-                className="flex items-center gap-2 text-gray-900 hover:text-gray-600 transition-all group bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg mr-4"
-                style={{
-                  zIndex: 1000,
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
-                  <path
-                    d="M15 18L9 12L15 6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span className="font-medium">Back</span>
-              </button>
-            )}
-
             <h2
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
@@ -277,7 +297,7 @@ export default function IntroSection() {
             <div
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{
-                transition: 'opacity 500ms ease-out',
+                transition: 'opacity 600ms ease-out',
                 opacity: expandedCard ? 1 : 0,
               }}
             >
@@ -289,12 +309,18 @@ export default function IntroSection() {
                 style={{
                   width: '45%',
                   transform: expandedCard
-                    ? 'translateX(0)'
-                    : expandedCard === 'right' ? 'translateX(-20px)' : 'translateX(20px)',
-                  transition: 'transform 500ms ease-out',
+                    ? 'translateX(0) scale(1)'
+                    : expandedCard === 'right' ? 'translateX(-40px) scale(0.95)' : 'translateX(40px) scale(0.95)',
+                  transition: 'all 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  opacity: expandedCard ? 1 : 0,
                 }}
               >
-                <div className="w-full max-w-xl">
+                <div
+                  className="w-full max-w-xl"
+                  style={{
+                    animation: expandedCard ? 'slideInContent 700ms cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+                  }}
+                >
 
                   {/* Content based on which card is expanded */}
                   {expandedCard === "left" && (
