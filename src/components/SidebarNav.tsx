@@ -180,21 +180,25 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto border-2 border-white/20 border-l-0 pl-0.5 pr-2 py-2 backdrop-blur-md scrollbar-thin scrollbar-thumb-waygent-blue/20 scrollbar-track-transparent transition-all duration-300 ease-out bg-white/10 w-auto group-hover:pr-3"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto pl-1.5 pr-1.5 py-2 backdrop-blur-xl scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent transition-all duration-300 ease-out w-auto group-hover:pr-2"
             style={{
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-              borderTopRightRadius: '40px',
-              borderBottomRightRadius: '40px',
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%)',
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              borderLeft: 'none',
+              borderTopRightRadius: '20px',
+              borderBottomRightRadius: '20px',
             }}
           >
             {/* Smooth sliding indicator */}
             <div
-              className="absolute left-1 right-2 pointer-events-none transition-all duration-500 ease-out bg-waygent-blue/15 border border-waygent-blue/40 shadow-[0_8px_30px_-20px_rgba(18,73,115,0.8)] rounded-xl"
+              className="absolute left-1 right-1 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
               style={{
                 top: indicator.top,
                 height: indicator.height,
                 opacity: indicator.height > 0 ? 1 : 0,
-                transform: indicator.height > 0 ? 'scale(1)' : 'scale(0.95)',
+                background: 'rgba(18, 73, 115, 0.35)',
+                borderRadius: '14px',
               }}
             />
 
@@ -213,29 +217,36 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className={`group/item relative flex items-center gap-2 px-2 py-2 text-left transition-all duration-200 ease-out focus-visible:outline-none cursor-pointer rounded-xl hover:bg-white/40 hover:shadow-sm hover:scale-[1.02] ${
-                        isActive ? '' : 'hover:border hover:border-white/30'
-                      }`}
+                      className="group/item relative flex items-center gap-2 px-2 py-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer w-full rounded-xl"
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                          e.currentTarget.style.transform = 'translateX(2px)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.transform = 'translateX(0)';
+                        }
+                      }}
                     >
+                      {/* Step number */}
                       <span
-                        className="text-[9px] font-semibold tracking-wider transition-all duration-300 w-5 flex-shrink-0 flex items-center justify-center font-space-grotesk"
+                        className="text-[9px] font-bold tracking-wider transition-all duration-300 w-5 h-5 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-full"
                         style={{
-                          color: isActive ? '#1F2937' : 'rgb(107, 114, 128)',
-                          transitionDelay: isActive ? '500ms' : '0ms',
-                          lineHeight: '1',
+                          color: isActive ? '#1F2937' : 'rgba(107, 114, 128, 0.8)',
                         }}
                       >
                         {step}
                       </span>
+
+                      {/* Label text */}
                       <span
-                        className={`text-[10px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk ${
-                          !isActive && 'group-hover/item:text-waygent-orange'
-                        }`}
+                        className="text-[10px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk"
                         style={{
-                          color: isActive ? '#1F2937' : 'rgb(31, 41, 55)',
-                          transform: isActive ? 'translateX(2px)' : 'translateX(0)',
-                          transitionDelay: isActive ? '500ms' : '0ms',
-                          lineHeight: '1.3',
+                          color: isActive ? '#1F2937' : 'rgb(55, 65, 81)',
+                          fontWeight: isActive ? '700' : '600',
                         }}
                       >
                         {section.label}

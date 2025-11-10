@@ -120,11 +120,17 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
       if (isSticky) {
         // Calculate scroll progress through the section
         const scrollStart = containerRef.current.offsetTop - NAVBAR_HEIGHT;
+        const scrollEnd = scrollStart + containerRef.current.offsetHeight - windowHeight - NAVBAR_HEIGHT;
         const currentScroll = window.scrollY;
         const scrollProgress = currentScroll - scrollStart;
 
+        // Total scrollable distance in the Builder section
+        const totalScrollDistance = scrollEnd - scrollStart;
+
+        // Map the scroll progress to the left content height
         const leftScrollHeight = leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight;
-        const targetScroll = Math.max(0, Math.min(scrollProgress, leftScrollHeight));
+        const scrollRatio = scrollProgress / totalScrollDistance;
+        const targetScroll = Math.max(0, Math.min(scrollRatio * leftScrollHeight, leftScrollHeight));
 
         leftScrollRef.current.scrollTop = targetScroll;
       }

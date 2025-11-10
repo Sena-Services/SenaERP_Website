@@ -23,9 +23,9 @@ export default function Home() {
   const sidebarSections = [
     { id: "intro", label: "Home" },
     { id: "how-it-works", label: "How it works" },
-    { id: "environments", label: "Environments" },
-    { id: "integrations", label: "Integrations" },
     { id: "builder", label: "Builder" },
+    { id: "integrations", label: "Integrations" },
+    { id: "environments", label: "Environments" },
     { id: "pricing", label: "Pricing" },
     { id: "blogs", label: "Blogs" },
     { id: "join-us", label: "Join Our Team" },
@@ -170,6 +170,20 @@ export default function Home() {
         }
       };
 
+      // IMPORTANT: Allow normal scrolling after rotated position, but handle upward scroll
+      if (currentScrollY > points.rotated + 100) {
+        if (direction === 'down') {
+          // Normal scrolling down
+          return;
+        } else if (direction === 'up') {
+          // When scrolling up from below, stop at rotated position first
+          blockScroll();
+          lockDirection('up');
+          animateToPosition(points.rotated, 800);
+          return;
+        }
+      }
+
       if (directionLock && direction !== directionLock) {
         if (!isAnimating) {
           directionLock = null;
@@ -247,36 +261,14 @@ export default function Home() {
           lockDirection('up');
           animateToPosition(points.initial, 1200);
         }
-      } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY < points.environments - 50) {
-        // At or after rotated position (anywhere between split end and environments)
+      } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY <= points.rotated + 100) {
+        // At rotated position (How It Works with 3 flipped cards)
         if (direction === 'down') {
-          blockScroll();
-          lockDirection('down');
-          animateToPosition(points.environments, 1200);
+          // Allow natural scroll to continue to the rest of the page
+          return;
         } else if (direction === 'up') {
           blockScroll();
           playReverseSequence(points);
-        }
-      } else if (currentScrollY >= points.environments - 50) {
-        // Either at environments section or beyond
-        if (direction === 'down') {
-          if (currentScrollY < points.environments + 50) {
-            blockScroll();
-            lockDirection('down');
-            animateToPosition(points.environments, 1200);
-          } else {
-            // allow natural scrolling past environments
-            return;
-          }
-        } else if (direction === 'up') {
-          if (currentScrollY <= points.rotated + 50) {
-            blockScroll();
-            playReverseSequence(points);
-          } else {
-            blockScroll();
-            lockDirection('up');
-            animateToPosition(points.rotated, 1200);
-          }
         }
       }
     };
@@ -307,6 +299,19 @@ export default function Home() {
       const currentScrollY = window.scrollY;
       const points = getSnapPoints();
 
+      // IMPORTANT: Allow normal scrolling after rotated position, but handle upward scroll
+      if (currentScrollY > points.rotated + 100) {
+        if (direction === 'down') {
+          // Normal scrolling down
+          return;
+        } else if (direction === 'up') {
+          // When scrolling up from below, stop at rotated position first
+          lockDirection('up');
+          animateToPosition(points.rotated, 800);
+          return;
+        }
+      }
+
       // Determine target position based on current scroll position and direction
       // Similar logic to handleWheel
       if (currentScrollY <= points.unitedCard + 50) {
@@ -334,21 +339,12 @@ export default function Home() {
           lockDirection('up');
           animateToPosition(points.initial, 1200);
         }
-      } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY < points.environments - 50) {
+      } else if (currentScrollY >= points.splitZoneEnd + 50 && currentScrollY <= points.rotated + 100) {
         if (direction === 'down') {
-          lockDirection('down');
-          animateToPosition(points.environments, 1200);
+          // Allow natural scroll to continue to the rest of the page
+          return;
         } else if (direction === 'up') {
           playReverseSequence(points);
-        }
-      } else if (currentScrollY >= points.environments - 50) {
-        if (direction === 'up') {
-          if (currentScrollY <= points.rotated + 50) {
-            playReverseSequence(points);
-          } else {
-            lockDirection('up');
-            animateToPosition(points.rotated, 1200);
-          }
         }
       }
     };
@@ -411,14 +407,14 @@ export default function Home() {
       <div className="bg-waygent-cream w-full relative z-1">
         <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
           <div className="flex-1 flex flex-col relative">
-            <div id="environments">
-              <LandingEnvironments ref={environmentsRef} />
+            <div id="builder">
+              <Builder ref={builderRef} />
             </div>
             <div id="integrations">
               <IntegrationsSection ref={integrationsRef} />
             </div>
-            <div id="builder">
-              <Builder ref={builderRef} />
+            <div id="environments">
+              <LandingEnvironments ref={environmentsRef} />
             </div>
           </div>
 
