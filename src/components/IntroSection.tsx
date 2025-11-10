@@ -9,6 +9,8 @@ const SPLIT_SCROLL_DISTANCE = 400; // Distance to split into 3 cards
 const ROTATE_SCROLL_DISTANCE = 800; // Distance to flip cards 180 degrees
 const EXTRA_HOLD_DISTANCE = 340;
 
+type ExpandedCard = "left" | "center" | "right" | null;
+
 export default function IntroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -16,6 +18,7 @@ export default function IntroSection() {
   const [rotateProgress, setRotateProgress] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(1440);
   const [viewportHeight, setViewportHeight] = useState(900);
+  const [expandedCard, setExpandedCard] = useState<ExpandedCard>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -176,11 +179,13 @@ export default function IntroSection() {
 
           {/* Always show 3 cards, but when splitProgress = 0, they're flush together with no gap */}
           <div
-            className="relative w-full h-full flex justify-center items-center"
+            className="relative w-full h-full flex items-center transition-all duration-700 ease-out"
             style={{
               gap: `${cardGap}px`,
               filter: splitProgress === 0 ? `drop-shadow(${elevation})` : 'none',
               perspective: "2000px",
+              justifyContent: expandedCard ? 'flex-start' : 'center',
+              paddingLeft: expandedCard ? '40px' : '0',
             }}
           >
             <FlipCard
@@ -199,6 +204,8 @@ export default function IntroSection() {
               cardNumber={1}
               cardTitle="Talk to Sena"
               cardDescription="Share your workflows, challenges, and goals. Sena asks the right questions to understand exactly what you need—no technical jargon required."
+              expandedCard={expandedCard}
+              onCardClick={() => setExpandedCard(expandedCard === "left" ? null : "left")}
             />
 
             <FlipCard
@@ -217,6 +224,8 @@ export default function IntroSection() {
               cardNumber={2}
               cardTitle="Review & Refine"
               cardDescription="Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and ensure it's exactly right."
+              expandedCard={expandedCard}
+              onCardClick={() => setExpandedCard(expandedCard === "center" ? null : "center")}
             />
 
             <FlipCard
@@ -235,8 +244,164 @@ export default function IntroSection() {
               cardNumber={3}
               cardTitle="Go Live"
               cardDescription="One click and your custom ERP is live. Your team can start using it immediately—no setup, no installation, no complexity."
+              expandedCard={expandedCard}
+              onCardClick={() => setExpandedCard(expandedCard === "right" ? null : "right")}
             />
           </div>
+
+          {/* Expanded content panel - slides in from right */}
+          {expandedCard && (
+            <div
+              className="absolute top-0 right-0 h-full bg-white shadow-2xl overflow-y-auto transition-all duration-700 ease-out"
+              style={{
+                width: expandedCard ? '55%' : '0%',
+                opacity: expandedCard ? 1 : 0,
+                borderRadius: `${borderRadius}px`,
+              }}
+            >
+              <div className="p-8">
+                {/* Back button */}
+                <button
+                  onClick={() => setExpandedCard(null)}
+                  className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-6 group"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="transition-transform group-hover:-translate-x-1">
+                    <path
+                      d="M12.5 15L7.5 10L12.5 5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="font-medium text-sm">Back</span>
+                </button>
+
+                {/* Content based on which card is expanded */}
+                {expandedCard === "left" && (
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Talk to Sena</h2>
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      Sena is your AI co-founder who helps you build custom ERP systems through natural conversation.
+                      Choose between Discovery Mode for collaborative exploration or Express Mode for direct control.
+                    </p>
+
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-xl font-bold text-blue-700 mb-3">Discovery Mode (Voice)</h3>
+                        <p className="text-gray-600 mb-3">
+                          Have a natural conversation with Sena in your preferred language. She'll ask insightful questions
+                          like a co-founder or analyst to deeply understand your operations.
+                        </p>
+                        <ul className="space-y-2">
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Multilingual voice conversations in 50+ languages</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Proactive questioning to uncover hidden requirements</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Deep understanding of your business processes</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Collaborative requirement building</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h3 className="text-xl font-bold text-blue-700 mb-3">Express Mode (Text)</h3>
+                        <p className="text-gray-600 mb-3">
+                          Know exactly what you want? Use Express Mode to tell Sena your requirements directly
+                          and get instant results without back-and-forth.
+                        </p>
+                        <ul className="space-y-2">
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Direct text-based interface for precise control</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Specify exact requirements and features</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Instant system generation</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span className="text-gray-700">Zero unnecessary conversation</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {expandedCard === "center" && (
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Review & Refine</h2>
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      Walk through every detail of your system before going live. Make changes, ask questions,
+                      and iterate in real-time until everything is exactly right.
+                    </p>
+
+                    <div className="space-y-4">
+                      <div className="border-l-4 border-blue-500 pl-4 py-2">
+                        <h4 className="font-bold text-gray-900 mb-1">Visual Preview</h4>
+                        <p className="text-gray-600 text-sm">See exactly how your system looks and works before deployment</p>
+                      </div>
+                      <div className="border-l-4 border-blue-500 pl-4 py-2">
+                        <h4 className="font-bold text-gray-900 mb-1">Interactive Editing</h4>
+                        <p className="text-gray-600 text-sm">Click to edit any table, workflow, or interface element</p>
+                      </div>
+                      <div className="border-l-4 border-blue-500 pl-4 py-2">
+                        <h4 className="font-bold text-gray-900 mb-1">Real-Time Updates</h4>
+                        <p className="text-gray-600 text-sm">See changes instantly as you make modifications</p>
+                      </div>
+                      <div className="border-l-4 border-blue-500 pl-4 py-2">
+                        <h4 className="font-bold text-gray-900 mb-1">Unlimited Iterations</h4>
+                        <p className="text-gray-600 text-sm">Refine and perfect your system with no limits</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {expandedCard === "right" && (
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Go Live</h2>
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      One click and your custom ERP is live. Your team can start using it immediately
+                      with no setup, installation, or technical complexity.
+                    </p>
+
+                    <div className="space-y-4">
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <h4 className="font-bold text-gray-900 mb-2">Instant Deployment</h4>
+                        <p className="text-gray-700 text-sm">Deploy to production with a single click - no DevOps required</p>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <h4 className="font-bold text-gray-900 mb-2">Immediate Access</h4>
+                        <p className="text-gray-700 text-sm">Your team gets instant access - just share the link</p>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <h4 className="font-bold text-gray-900 mb-2">Cloud Infrastructure</h4>
+                        <p className="text-gray-700 text-sm">Fully managed, scalable cloud hosting included</p>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <h4 className="font-bold text-gray-900 mb-2">Enterprise Security</h4>
+                        <p className="text-gray-700 text-sm">Bank-level security, compliance, and data protection</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Content overlay - only visible during shrink phase */}
           <div

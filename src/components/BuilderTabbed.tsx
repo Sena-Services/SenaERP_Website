@@ -33,7 +33,7 @@ const tabs: Tab[] = [
     label: "UI",
     subtitle: "Build beautiful interfaces.",
     agentTitle: "UI Builder",
-    agentDescription: "Create responsive, accessible user interfaces with drag-and-drop simplicity.",
+    agentDescription: "Build complete user interfaces through conversation. From dashboards and data tables to forms and custom layouts—just describe what you need, and watch it build in real-time with live previews, responsive design, and beautiful animations built in.",
     workflowSteps: [
       { id: "understand", label: "Understand request", status: "complete" },
       { id: "generate", label: "Generate layout", status: "complete" },
@@ -52,7 +52,7 @@ const tabs: Tab[] = [
     label: "Data",
     subtitle: "Connect and transform data.",
     agentTitle: "Data Connector",
-    agentDescription: "Integrate data sources, transform data, and build real-time pipelines.",
+    agentDescription: "Connect any data source to your ERP—databases, APIs, spreadsheets, or third-party tools. Automatically map schemas, transform data on the fly, and set up real-time sync pipelines. No coding required, just tell us what data you need and where it should go.",
     workflowSteps: [
       { id: "connect", label: "Connect data source", status: "complete" },
       { id: "schema", label: "Map data schema", status: "complete" },
@@ -71,7 +71,7 @@ const tabs: Tab[] = [
     label: "Workflows",
     subtitle: "Automate complex processes.",
     agentTitle: "Workflow Engine",
-    agentDescription: "Build multi-step automations with triggers, actions, and conditions.",
+    agentDescription: "Automate your entire business process from lead to cash. Design multi-step workflows with triggers, conditional logic, and actions across your tools. From simple notifications to complex approval chains—describe the process in plain language and we'll build the automation.",
     workflowSteps: [
       { id: "trigger", label: "Set up trigger", status: "complete" },
       { id: "condition", label: "Add conditions", status: "complete" },
@@ -90,7 +90,7 @@ const tabs: Tab[] = [
     label: "Agents",
     subtitle: "Deploy AI-powered agents.",
     agentTitle: "Agent Builder",
-    agentDescription: "Create intelligent agents that understand, reason, and take action.",
+    agentDescription: "Deploy AI agents that work alongside your team. Train them on your docs, processes, and data to handle customer support, data entry, analysis, or custom tasks. They understand context, make decisions, and take actions across your systems—24/7, with full transparency into their reasoning.",
     workflowSteps: [
       { id: "define", label: "Define agent purpose", status: "complete" },
       { id: "train", label: "Train on your data", status: "complete" },
@@ -187,75 +187,79 @@ export default function BuilderTabbed() {
         <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-200/50" style={{
           boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.08), 0 10px 30px -8px rgba(0, 0, 0, 0.04)'
         }}>
-          {/* Tabs at Top */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-4 pt-4 pb-4 bg-waygent-cream/50 border-b border-gray-200/50">
-            {tabs.map((tab, index) => (
-              <motion.button
-                key={tab.id}
-                onClick={() => setActiveTab(tab)}
-                className={`relative px-4 py-3 text-left rounded-xl cursor-pointer overflow-hidden ${
-                  activeTab.id === tab.id
-                    ? ""
-                    : "bg-white hover:bg-waygent-cream border border-gray-200/50"
-                }`}
-                style={activeTab.id === tab.id ? {
-                  boxShadow: '0 6px 15px -3px rgba(59, 130, 246, 0.25), 0 3px 8px -2px rgba(59, 130, 246, 0.12)'
-                } : {}}
-                whileHover={{ scale: activeTab.id === tab.id ? 1 : 1.02, boxShadow: activeTab.id !== tab.id ? '0 6px 15px -3px rgba(0, 0, 0, 0.08)' : undefined }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              >
-                {activeTab.id === tab.id && (
-                  <motion.div
-                    className="absolute inset-0 rounded-xl bg-waygent-blue"
-                    layoutId="activeTabBackground"
-                    initial={false}
-                    transition={{
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 35,
-                      mass: 0.8
-                    }}
-                  />
-                )}
-                <div className="relative z-10 flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div
-                      className={`font-futura font-bold text-xl mb-2 ${
-                        activeTab.id === tab.id ? "text-white" : "text-waygent-text-primary"
-                      }`}
-                      style={{ letterSpacing: "-0.02em" }}
-                    >
-                      {tab.label}
-                    </div>
-                    <div
-                      className={`text-base font-futura ${
-                        activeTab.id === tab.id ? "text-white/90" : "text-waygent-text-secondary"
-                      }`}
-                      style={{ letterSpacing: "-0.01em" }}
-                    >
-                      {tab.subtitle}
+          {/* Tabs at Top with Description - All in same container */}
+          <div className="bg-waygent-cream/50 px-4 pt-4 pb-6 border-b border-gray-200">
+            {/* Tabs Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+              {tabs.map((tab, index) => (
+                <motion.button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative px-4 py-3 text-left rounded-xl cursor-pointer overflow-hidden ${
+                    activeTab.id === tab.id
+                      ? ""
+                      : "bg-white hover:bg-waygent-cream border border-gray-200/50"
+                  }`}
+                  style={activeTab.id === tab.id ? {
+                    boxShadow: '0 6px 15px -3px rgba(59, 130, 246, 0.25), 0 3px 8px -2px rgba(59, 130, 246, 0.12)'
+                  } : {}}
+                  whileHover={{ scale: activeTab.id === tab.id ? 1 : 1.02, boxShadow: activeTab.id !== tab.id ? '0 6px 15px -3px rgba(0, 0, 0, 0.08)' : undefined }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  {activeTab.id === tab.id && (
+                    <motion.div
+                      className="absolute inset-0 rounded-xl bg-waygent-blue"
+                      layoutId="activeTabBackground"
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 35,
+                        mass: 0.8
+                      }}
+                    />
+                  )}
+                  <div className="relative z-10 flex items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className={`font-futura font-bold text-xl mb-2 ${
+                          activeTab.id === tab.id ? "text-white" : "text-waygent-text-primary"
+                        }`}
+                        style={{ letterSpacing: "-0.02em" }}
+                      >
+                        {tab.label}
+                      </div>
+                      <div
+                        className={`text-base font-futura ${
+                          activeTab.id === tab.id ? "text-white/90" : "text-waygent-text-secondary"
+                        }`}
+                        style={{ letterSpacing: "-0.01em" }}
+                      >
+                        {tab.subtitle}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.button>
-            ))}
-          </div>
+                </motion.button>
+              ))}
+            </div>
 
-          {/* Tab Description - Below Tabs */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab.id}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="px-8 py-6 bg-gradient-to-r from-waygent-cream/30 to-transparent border-b border-gray-200/30"
-            >
-              <h3 className="text-lg font-bold text-gray-900 font-futura mb-2">{activeTab.agentTitle}</h3>
-              <p className="text-sm text-gray-600 font-futura leading-relaxed">{activeTab.agentDescription}</p>
-            </motion.div>
-          </AnimatePresence>
+            {/* Tab Description - Within same cream container */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab.id}
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.25 }}
+                className="px-4"
+              >
+                <p className="text-base text-gray-700 font-futura leading-relaxed max-w-4xl">
+                  {activeTab.agentDescription}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           {/* Content Area */}
           <AnimatePresence mode="wait">

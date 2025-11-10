@@ -25,7 +25,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
   function renderDashboard() {
     return (
       <motion.div
-        className="flex-1 flex items-center justify-center p-6"
+        className="w-full h-full flex items-start justify-center pt-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -182,7 +182,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
 
     return (
       <motion.div
-        className="flex-1 flex items-center justify-center p-6"
+        className="w-full h-full flex items-start justify-center pt-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -285,7 +285,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
   function renderForm() {
     return (
       <motion.div
-        className="flex-1 flex items-center justify-center p-6 overflow-hidden"
+        className="w-full h-full flex items-start justify-center pt-6 overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}

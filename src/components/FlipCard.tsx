@@ -8,6 +8,8 @@ import { useRef } from "react";
 const VIDEO_HEIGHT_PERCENTAGE = 55;
 // =========================================================================
 
+type ExpandedCard = "left" | "center" | "right" | null;
+
 type FlipCardProps = {
   cardWidth: number;
   currentWidthValue: number;
@@ -24,6 +26,8 @@ type FlipCardProps = {
   cardNumber: number;
   cardTitle: string;
   cardDescription: string;
+  expandedCard: ExpandedCard;
+  onCardClick: () => void;
 };
 
 export default function FlipCard({
@@ -42,6 +46,8 @@ export default function FlipCard({
   cardNumber,
   cardTitle,
   cardDescription,
+  expandedCard,
+  onCardClick,
 }: FlipCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -85,14 +91,20 @@ export default function FlipCard({
         }
       : { borderRadius: 0 };
 
+  const isExpanded = expandedCard === position;
+  const isOtherExpanded = expandedCard !== null && expandedCard !== position;
+  const canClick = rotateProgress === 1; // Only clickable when fully flipped
+
   return (
     <div
-      className="relative"
+      className="relative transition-all duration-500 ease-out"
       style={{
         width: `${cardWidth}px`,
         height: "100%",
         transform: `rotateY(${rotateProgress * 180}deg)`,
         transformStyle: "preserve-3d",
+        opacity: isOtherExpanded ? 0 : 1,
+        pointerEvents: isOtherExpanded ? 'none' : 'auto',
       }}
     >
       {/* Front face - Monet image */}
@@ -125,15 +137,27 @@ export default function FlipCard({
 
       {/* Back face - How It Works card */}
       <div
-        className="absolute inset-0 overflow-hidden flex flex-col shadow-lg bg-white"
+        className="absolute inset-0 overflow-hidden flex flex-col shadow-lg bg-white group cursor-pointer transition-all duration-300"
         style={{
           backfaceVisibility: "hidden",
           transform: "rotateY(180deg)",
           ...borderRadiusStyle,
+          cursor: canClick ? 'pointer' : 'default',
+          boxShadow: canClick ? '0 4px 20px rgba(0, 0, 0, 0.08)' : '0 4px 12px rgba(0, 0, 0, 0.05)',
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onClick={() => canClick && onCardClick()}
       >
+        {/* Hover overlay for better feedback */}
+        {canClick && !isExpanded && (
+          <div
+            className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10"
+            style={{
+              mixBlendMode: 'multiply',
+            }}
+          />
+        )}
         {/* Video section */}
         <div
           className="relative w-full overflow-hidden"
@@ -471,11 +495,30 @@ export default function FlipCard({
 
           {/* Footer section */}
           <div className="mt-auto pt-2 border-t border-blue-200/40 relative z-10">
-            <p className="text-gray-500 text-[10px]">
-              {position === "left" && "Start building in minutes"}
-              {position === "center" && "Perfect your system"}
-              {position === "right" && "Launch instantly"}
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-gray-500 text-[10px]">
+                {position === "left" && "Start building in minutes"}
+                {position === "center" && "Perfect your system"}
+                {position === "right" && "Launch instantly"}
+              </p>
+              {canClick && !isExpanded && (
+                <div className="flex items-center gap-1.5 transition-all duration-300 group-hover:gap-2">
+                  <span className="text-blue-600 font-medium text-[10px] group-hover:text-blue-700">
+                    Learn more
+                  </span>
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5">
+                    <path
+                      d="M6 12L10 8L6 4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-blue-600 group-hover:text-blue-700"
+                    />
+                  </svg>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

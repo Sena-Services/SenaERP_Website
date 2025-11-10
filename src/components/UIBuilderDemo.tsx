@@ -137,21 +137,25 @@ export default function UIBuilderDemo() {
   }, [showFinalResponse]);
 
   return (
-    <div className="flex h-[600px] bg-white overflow-hidden">
-      {/* Left Side - Chat (35%) */}
+    <div className="flex h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden">
+      {/* Left Side - Chat Container (35%) */}
       <motion.div
-        className="w-[35%] border-r border-gray-200 flex flex-col p-6"
+        className="w-[35%] flex items-stretch p-6"
         animate={{ opacity: fadeOut ? 0 : 1 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Chat Header */}
-        <div className="mb-6">
-          <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">BUILDER CHAT</h3>
-          <p className="text-xs text-gray-500 font-futura mt-1">Build anything with just conversation</p>
-        </div>
+        {/* Builder Chat Box - Elevated white card - Full height */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full flex flex-col overflow-hidden h-full" style={{
+          boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
+        }}>
+          {/* Chat Header */}
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">BUILDER CHAT</h3>
+            <p className="text-xs text-gray-500 font-futura mt-1">Build anything with just conversation</p>
+          </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 space-y-3 overflow-hidden">
+          {/* Messages Area */}
+          <div className="flex-1 space-y-3 overflow-hidden p-6">
           {/* User Message - Animates in */}
           {showUserMessage && (
             <motion.div
@@ -218,26 +222,27 @@ export default function UIBuilderDemo() {
               )}
             </motion.div>
           )}
-        </div>
+          </div>
 
-        {/* Input Area - Disabled/Empty state */}
-        <div className="relative mt-4">
-          <input
-            type="text"
-            placeholder="Describe your business or ask questions..."
-            className="w-full px-4 py-3 pr-12 rounded-xl bg-white border border-gray-200 text-sm text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
-          />
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-waygent-blue transition-colors">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-            </svg>
-          </button>
+          {/* Input Area - Disabled/Empty state */}
+          <div className="relative p-6 pt-0">
+            <input
+              type="text"
+              placeholder="Describe your business or ask questions..."
+              className="w-full px-4 py-3 pr-12 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
+            />
+            <button className="absolute right-9 top-3 text-gray-400 hover:text-waygent-blue transition-colors">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+            </button>
+          </div>
         </div>
       </motion.div>
 
       {/* Right Side - Preview (65%) */}
       <motion.div
-        className="w-[65%] bg-gradient-to-br from-gray-50 to-gray-100/50 flex items-center justify-center"
+        className="w-[65%] flex items-center justify-center p-6"
         animate={{ opacity: fadeOut ? 0 : 1 }}
         transition={{ duration: 0.3 }}
       >
