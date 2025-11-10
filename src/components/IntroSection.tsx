@@ -83,8 +83,8 @@ export default function IntroSection() {
     viewportWidth === 0 ? "95vw" : `${currentWidthValue}px`;
 
   const startHeight = viewportHeight * 0.92;
-  const responsiveMinHeight = getResponsiveValue(520);
-  const targetHeight = Math.max(viewportHeight * 0.6, responsiveMinHeight);
+  const responsiveMinHeight = getResponsiveValue(600);
+  const targetHeight = Math.max(viewportHeight * 0.75, responsiveMinHeight);
   const currentHeightValue =
     startHeight - (startHeight - targetHeight) * scrollProgress;
   const currentHeight =
@@ -103,11 +103,11 @@ export default function IntroSection() {
   const stickyFrameHeight =
     Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
 
-  const responsivePaddingBase = getResponsiveValue(16);
+  const responsivePaddingBase = getResponsiveValue(8);
   const responsivePaddingIncrease = getResponsiveValue(32);
   const basePaddingTop = responsivePaddingBase + scrollProgress * responsivePaddingIncrease;
   const optimalPadding = Math.max(
-    getResponsiveValue(24),
+    getResponsiveValue(16),
     (stickyFrameHeight - currentHeightValue) / 2
   );
   const centerBoostStart = 0.6;
@@ -132,8 +132,9 @@ export default function IntroSection() {
       }}
     >
       <div
-        className="sticky top-0 flex items-start justify-center w-full"
+        className="sticky flex items-start justify-center w-full"
         style={{
+          top: '-40px',
           height: `${stickyFrameHeight}px`,
           paddingTop: `${heroPaddingTop}px`,
         }}
@@ -153,7 +154,7 @@ export default function IntroSection() {
           <div
             className="absolute left-0 right-0 text-center z-10"
             style={{
-              top: `${-getResponsiveValue(120)}px`,
+              top: `${-getResponsiveValue(100)}px`,
               opacity: scrollProgress,
               pointerEvents: "none",
             }}

@@ -150,6 +150,8 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   const handleClick = (id: string) => {
     // Special handling for "how-it-works" - trigger the intro sequence
     if (id === "how-it-works") {
+      activeSectionRef.current = id;
+      setActiveSection(id);
       // Dispatch a custom event that the main page can listen to
       window.dispatchEvent(new CustomEvent("triggerIntroSequence"));
       return;
