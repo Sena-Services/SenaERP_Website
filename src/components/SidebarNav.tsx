@@ -180,14 +180,9 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto pl-1.5 pr-1.5 py-2 backdrop-blur-xl scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent transition-all duration-300 ease-out w-auto group-hover:pr-2"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto pl-1.5 pr-1.5 py-2 scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent transition-all duration-300 ease-out w-auto group-hover:pr-2"
             style={{
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%)',
-              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              borderLeft: 'none',
-              borderTopRightRadius: '20px',
-              borderBottomRightRadius: '20px',
+              background: 'transparent',
             }}
           >
             {/* Smooth sliding indicator */}
@@ -197,8 +192,9 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                 top: indicator.top,
                 height: indicator.height,
                 opacity: indicator.height > 0 ? 1 : 0,
-                background: 'rgba(18, 73, 115, 0.35)',
-                borderRadius: '14px',
+                background: '#8FB7C5',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(143, 183, 197, 0.4)',
               }}
             />
 
@@ -217,23 +213,27 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className="group/item relative flex items-center gap-2 px-2 py-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer w-full rounded-xl"
+                      className="group/item relative flex items-center gap-2 px-2 py-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer w-full rounded-lg"
                       onMouseEnter={(e) => {
                         if (!isActive) {
-                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                          e.currentTarget.style.backdropFilter = 'blur(10px)';
+                          e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.15)';
                           e.currentTarget.style.transform = 'translateX(2px)';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!isActive) {
                           e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.backdropFilter = 'none';
+                          e.currentTarget.style.border = '1px solid transparent';
                           e.currentTarget.style.transform = 'translateX(0)';
                         }
                       }}
                     >
                       {/* Step number */}
                       <span
-                        className="text-[9px] font-bold tracking-wider transition-all duration-300 w-5 h-5 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-full"
+                        className="text-[9px] font-bold tracking-wider transition-all duration-300 w-5 h-5 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-full group-hover/item:scale-110"
                         style={{
                           color: isActive ? '#1F2937' : 'rgba(107, 114, 128, 0.8)',
                         }}
@@ -243,7 +243,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
 
                       {/* Label text */}
                       <span
-                        className="text-[10px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk"
+                        className="text-[10px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk group-hover/item:text-waygent-blue"
                         style={{
                           color: isActive ? '#1F2937' : 'rgb(55, 65, 81)',
                           fontWeight: isActive ? '700' : '600',
