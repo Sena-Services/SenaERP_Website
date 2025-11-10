@@ -104,13 +104,15 @@ export default function IntroSection() {
     Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
 
   const responsivePaddingBase = getResponsiveValue(8);
-  const responsivePaddingIncrease = getResponsiveValue(32);
-  const basePaddingTop = responsivePaddingBase + scrollProgress * responsivePaddingIncrease;
+  const responsivePaddingIncrease = getResponsiveValue(24);
+  // Keep padding constant during initial shrink to prevent upward movement
+  const basePaddingTop = responsivePaddingBase;
   const optimalPadding = Math.max(
     getResponsiveValue(16),
     (stickyFrameHeight - currentHeightValue) / 2
   );
-  const centerBoostStart = 0.6;
+  // Only start centering after shrink is complete
+  const centerBoostStart = 0.8;
   const centerBoost = clamp01(
     (scrollProgress - centerBoostStart) / (1 - centerBoostStart)
   );

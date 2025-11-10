@@ -10,6 +10,7 @@ export default function UIBuilderDemo() {
   const [showFinalResponse, setShowFinalResponse] = useState(false);
   const [aiResponseText, setAiResponseText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
 
   const userMessage = "Create a revenue dashboard with metric cards and weekly chart";
   const buildingSteps = [
@@ -24,6 +25,7 @@ export default function UIBuilderDemo() {
   useEffect(() => {
     const runBuildingSequence = () => {
       // Reset state
+      setFadeOut(false);
       setShowUserMessage(false);
       setBuildingStage(0);
       setShowFinalResponse(false);
@@ -50,10 +52,15 @@ export default function UIBuilderDemo() {
           // Building complete, show final response
           setTimeout(() => {
             setShowFinalResponse(true);
-            // After showing final response for 3 seconds, restart loop
+            // After AI response finishes typing (around 2-3 seconds) + 3 more seconds to read
             setTimeout(() => {
-              runBuildingSequence();
-            }, 5000);
+              // Fade out smoothly
+              setFadeOut(true);
+              // After fade out animation, restart
+              setTimeout(() => {
+                runBuildingSequence();
+              }, 600);
+            }, 6000);
           }, 500);
         }
       };
@@ -69,17 +76,17 @@ export default function UIBuilderDemo() {
 
   useEffect(() => {
     if (showFinalResponse) {
-      // Stream AI final response
+      // Stream AI final response - much faster
       let currentIndex = 0;
       const typingInterval = setInterval(() => {
-        currentIndex++;
+        currentIndex += 2; // Skip 2 characters at a time for faster streaming
         setAiResponseText(aiResponse.slice(0, currentIndex));
 
-        if (currentIndex > aiResponse.length) {
+        if (currentIndex >= aiResponse.length) {
           clearInterval(typingInterval);
           setShowCursor(false);
         }
-      }, 20);
+      }, 15); // Faster interval
 
       const cursorInterval = setInterval(() => {
         setShowCursor(prev => !prev);
@@ -95,7 +102,11 @@ export default function UIBuilderDemo() {
   return (
     <div className="flex h-[600px] bg-white overflow-hidden">
       {/* Left Side - Chat (35%) */}
-      <div className="w-[35%] border-r border-gray-200 flex flex-col p-6">
+      <motion.div
+        className="w-[35%] border-r border-gray-200 flex flex-col p-6"
+        animate={{ opacity: fadeOut ? 0 : 1 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Chat Header */}
         <div className="mb-6">
           <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">BUILDER CHAT</h3>
@@ -125,8 +136,8 @@ export default function UIBuilderDemo() {
             </motion.div>
           )}
 
-          {/* Building Progress Steps - show during building */}
-          {!showFinalResponse && buildingStage > 0 && (
+          {/* Building Progress Steps - always show when building stage > 0 */}
+          {buildingStage > 0 && (
             <div className="space-y-2 mt-4">
               {buildingSteps.slice(0, buildingStage).map((step, index) => (
                 <motion.div
@@ -136,7 +147,7 @@ export default function UIBuilderDemo() {
                   transition={{ duration: 0.3 }}
                   className="flex items-center gap-2 text-xs font-futura"
                 >
-                  {index === buildingStage - 1 ? (
+                  {!showFinalResponse && index === buildingStage - 1 ? (
                     <>
                       <div className="flex gap-1">
                         <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -156,13 +167,13 @@ export default function UIBuilderDemo() {
             </div>
           )}
 
-          {/* AI Final Response - show after building complete */}
+          {/* AI Final Response - show below thinking steps */}
           {showFinalResponse && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="text-sm font-futura text-gray-700 leading-relaxed"
+              className="text-sm font-futura text-gray-700 leading-relaxed mt-3"
             >
               {aiResponseText}
               {showCursor && aiResponseText.length < aiResponse.length && (
@@ -185,10 +196,14 @@ export default function UIBuilderDemo() {
             </svg>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Right Side - Preview (65%) */}
-      <div className="w-[65%] bg-gradient-to-br from-gray-50 to-gray-100/50 flex items-center justify-center">
+      <motion.div
+        className="w-[65%] bg-gradient-to-br from-gray-50 to-gray-100/50 flex items-center justify-center"
+        animate={{ opacity: fadeOut ? 0 : 1 }}
+        transition={{ duration: 0.5 }}
+      >
         {buildingStage > 0 ? (
           <UIPreview buildingStage={buildingStage} />
         ) : (
@@ -198,7 +213,7 @@ export default function UIBuilderDemo() {
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
