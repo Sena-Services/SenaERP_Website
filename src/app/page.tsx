@@ -54,6 +54,7 @@ export default function Home() {
     const getSnapPoints = () => {
       const introSection = introRef.current;
       const environmentsSection = environmentsRef.current;
+      const builderSection = builderRef.current;
 
       if (!introSection || !environmentsSection) return {
         initial: 0,
@@ -63,6 +64,7 @@ export default function Home() {
         autoTriggerPoint: 0,
         rotated: 0,
         environments: 0,
+        builder: 0,
       };
 
       const introTop = introSection.offsetTop;
@@ -75,6 +77,7 @@ export default function Home() {
         autoTriggerPoint: introTop + 900 + 400 * 0.8, // 80% through split
         rotated: introTop + 900 + 400 + 800,
         environments: environmentsSection.offsetTop,
+        builder: builderSection?.offsetTop || 0,
       };
     };
 
@@ -170,17 +173,24 @@ export default function Home() {
         }
       };
 
-      // IMPORTANT: Allow normal scrolling after rotated position, but handle upward scroll
+      // IMPORTANT: Allow normal scrolling after rotated position, but handle upward scroll from nearby
       if (currentScrollY > points.rotated + 100) {
         if (direction === 'down') {
           // Normal scrolling down
           return;
         } else if (direction === 'up') {
-          // When scrolling up from below, stop at rotated position first
-          blockScroll();
-          lockDirection('up');
-          animateToPosition(points.rotated, 800);
-          return;
+          // Only snap to How It Works if we're within a reasonable distance (e.g., within 2000px)
+          const distanceFromRotated = currentScrollY - points.rotated;
+          if (distanceFromRotated < 2000) {
+            // Close to How It Works - snap to it
+            blockScroll();
+            lockDirection('up');
+            animateToPosition(points.rotated, 800);
+            return;
+          } else {
+            // Far away - allow normal scrolling
+            return;
+          }
         }
       }
 
@@ -299,16 +309,23 @@ export default function Home() {
       const currentScrollY = window.scrollY;
       const points = getSnapPoints();
 
-      // IMPORTANT: Allow normal scrolling after rotated position, but handle upward scroll
+      // IMPORTANT: Allow normal scrolling after rotated position, but handle upward scroll from nearby
       if (currentScrollY > points.rotated + 100) {
         if (direction === 'down') {
           // Normal scrolling down
           return;
         } else if (direction === 'up') {
-          // When scrolling up from below, stop at rotated position first
-          lockDirection('up');
-          animateToPosition(points.rotated, 800);
-          return;
+          // Only snap to How It Works if we're within a reasonable distance (e.g., within 2000px)
+          const distanceFromRotated = currentScrollY - points.rotated;
+          if (distanceFromRotated < 2000) {
+            // Close to How It Works - snap to it
+            lockDirection('up');
+            animateToPosition(points.rotated, 800);
+            return;
+          } else {
+            // Far away - allow normal scrolling
+            return;
+          }
         }
       }
 
