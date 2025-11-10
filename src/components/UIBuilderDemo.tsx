@@ -149,7 +149,7 @@ export default function UIBuilderDemo() {
           boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
         }}>
           {/* Chat Header */}
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
             <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">BUILDER CHAT</h3>
             <p className="text-xs text-gray-500 font-futura mt-1">Build anything with just conversation</p>
           </div>
@@ -249,11 +249,29 @@ export default function UIBuilderDemo() {
         {buildingStage > 0 ? (
           <UIPreview buildingStage={buildingStage} exampleType={currentExampleData.type} />
         ) : (
-          <div className="text-center">
-            <div className="text-gray-400 font-futura text-sm">
-              Preview will appear here...
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center text-center max-w-md"
+          >
+            {/* Empty State Icon */}
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center border border-gray-200">
+                <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                </svg>
+              </div>
             </div>
-          </div>
+
+            {/* Empty State Text */}
+            <h4 className="text-base font-semibold text-gray-900 font-futura mb-2">
+              Your UI will appear here
+            </h4>
+            <p className="text-sm text-gray-500 font-futura leading-relaxed">
+              Watch as your interface builds in real-time based on the conversation on the left
+            </p>
+          </motion.div>
         )}
       </motion.div>
     </div>

@@ -157,13 +157,35 @@ export default function IntroSection() {
 
           {/* Title that appears when card shrinks (before split) */}
           <div
-            className="absolute left-0 right-0 text-center z-10"
+            className="absolute left-0 right-0 flex items-center justify-center z-10"
             style={{
               top: `${-getResponsiveValue(100)}px`,
               opacity: scrollProgress,
-              pointerEvents: "none",
+              pointerEvents: expandedCard ? "auto" : "none",
             }}
           >
+            {/* Back button - always on the left of "How it works" when card is expanded */}
+            {expandedCard && (
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="flex items-center gap-2 text-gray-900 hover:text-gray-600 transition-all group bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg mr-4"
+                style={{
+                  zIndex: 1000,
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
+                  <path
+                    d="M15 18L9 12L15 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="font-medium">Back</span>
+              </button>
+            )}
+
             <h2
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
@@ -184,8 +206,9 @@ export default function IntroSection() {
               gap: `${cardGap}px`,
               filter: splitProgress === 0 ? `drop-shadow(${elevation})` : 'none',
               perspective: "2000px",
-              justifyContent: expandedCard ? 'flex-start' : 'center',
-              paddingLeft: expandedCard ? '40px' : '0',
+              justifyContent: expandedCard === 'right' ? 'flex-end' : (expandedCard ? 'flex-start' : 'center'),
+              paddingLeft: expandedCard && expandedCard !== 'right' ? '80px' : '0',
+              paddingRight: expandedCard === 'right' ? '80px' : '0',
             }}
           >
             <FlipCard
@@ -249,156 +272,159 @@ export default function IntroSection() {
             />
           </div>
 
-          {/* Expanded content panel - slides in from right */}
+          {/* Expanded content - displayed in background */}
           {expandedCard && (
             <div
-              className="absolute top-0 right-0 h-full bg-white shadow-2xl overflow-y-auto transition-all duration-700 ease-out"
+              className="absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{
-                width: expandedCard ? '55%' : '0%',
+                transition: 'opacity 500ms ease-out',
                 opacity: expandedCard ? 1 : 0,
-                borderRadius: `${borderRadius}px`,
               }}
             >
-              <div className="p-8">
-                {/* Back button */}
-                <button
-                  onClick={() => setExpandedCard(null)}
-                  className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-6 group"
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="transition-transform group-hover:-translate-x-1">
-                    <path
-                      d="M12.5 15L7.5 10L12.5 5"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span className="font-medium text-sm">Back</span>
-                </button>
+              {/* Content area positioned to the right or left depending on which card is expanded */}
+              <div
+                className={`absolute h-full flex items-center px-12 pointer-events-auto ${
+                  expandedCard === 'right' ? 'left-0' : 'right-0'
+                }`}
+                style={{
+                  width: '45%',
+                  transform: expandedCard
+                    ? 'translateX(0)'
+                    : expandedCard === 'right' ? 'translateX(-20px)' : 'translateX(20px)',
+                  transition: 'transform 500ms ease-out',
+                }}
+              >
+                <div className="w-full max-w-xl">
 
-                {/* Content based on which card is expanded */}
-                {expandedCard === "left" && (
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Talk to Sena</h2>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
-                      Sena is your AI co-founder who helps you build custom ERP systems through natural conversation.
-                      Choose between Discovery Mode for collaborative exploration or Express Mode for direct control.
-                    </p>
+                  {/* Content based on which card is expanded */}
+                  {expandedCard === "left" && (
+                    <div>
+                      <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        Talk to Sena
+                      </h2>
+                      <p className="text-gray-600 mb-8 leading-relaxed text-lg">
+                        Sena is your AI co-founder who helps you build custom ERP systems through natural conversation.
+                        Choose between Discovery Mode for collaborative exploration or Express Mode for direct control.
+                      </p>
 
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="text-xl font-bold text-blue-700 mb-3">Discovery Mode (Voice)</h3>
-                        <p className="text-gray-600 mb-3">
-                          Have a natural conversation with Sena in your preferred language. She'll ask insightful questions
-                          like a co-founder or analyst to deeply understand your operations.
-                        </p>
-                        <ul className="space-y-2">
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Multilingual voice conversations in 50+ languages</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Proactive questioning to uncover hidden requirements</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Deep understanding of your business processes</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Collaborative requirement building</span>
-                          </li>
-                        </ul>
-                      </div>
+                      <div className="space-y-8">
+                        <div>
+                          <h3 className="text-2xl font-bold text-blue-700 mb-3">Discovery Mode (Voice)</h3>
+                          <p className="text-gray-600 mb-4 leading-relaxed">
+                            Have a natural conversation with Sena in your preferred language. She'll ask insightful questions
+                            like a co-founder or analyst to deeply understand your operations.
+                          </p>
+                          <ul className="space-y-3">
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Multilingual voice conversations in 50+ languages</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Proactive questioning to uncover hidden requirements</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Deep understanding of your business processes</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Collaborative requirement building</span>
+                            </li>
+                          </ul>
+                        </div>
 
-                      <div>
-                        <h3 className="text-xl font-bold text-blue-700 mb-3">Express Mode (Text)</h3>
-                        <p className="text-gray-600 mb-3">
-                          Know exactly what you want? Use Express Mode to tell Sena your requirements directly
-                          and get instant results without back-and-forth.
-                        </p>
-                        <ul className="space-y-2">
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Direct text-based interface for precise control</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Specify exact requirements and features</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Instant system generation</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                            <span className="text-gray-700">Zero unnecessary conversation</span>
-                          </li>
-                        </ul>
+                        <div>
+                          <h3 className="text-2xl font-bold text-blue-700 mb-3">Express Mode (Text)</h3>
+                          <p className="text-gray-600 mb-4 leading-relaxed">
+                            Know exactly what you want? Use Express Mode to tell Sena your requirements directly
+                            and get instant results without back-and-forth.
+                          </p>
+                          <ul className="space-y-3">
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Direct text-based interface for precise control</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Specify exact requirements and features</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Instant system generation</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <span className="text-gray-700">Zero unnecessary conversation</span>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {expandedCard === "center" && (
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Review & Refine</h2>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
-                      Walk through every detail of your system before going live. Make changes, ask questions,
-                      and iterate in real-time until everything is exactly right.
-                    </p>
+                  {expandedCard === "center" && (
+                    <div>
+                      <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        Review & Refine
+                      </h2>
+                      <p className="text-gray-600 mb-8 leading-relaxed text-lg">
+                        Walk through every detail of your system before going live. Make changes, ask questions,
+                        and iterate in real-time until everything is exactly right.
+                      </p>
 
-                    <div className="space-y-4">
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <h4 className="font-bold text-gray-900 mb-1">Visual Preview</h4>
-                        <p className="text-gray-600 text-sm">See exactly how your system looks and works before deployment</p>
-                      </div>
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <h4 className="font-bold text-gray-900 mb-1">Interactive Editing</h4>
-                        <p className="text-gray-600 text-sm">Click to edit any table, workflow, or interface element</p>
-                      </div>
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <h4 className="font-bold text-gray-900 mb-1">Real-Time Updates</h4>
-                        <p className="text-gray-600 text-sm">See changes instantly as you make modifications</p>
-                      </div>
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <h4 className="font-bold text-gray-900 mb-1">Unlimited Iterations</h4>
-                        <p className="text-gray-600 text-sm">Refine and perfect your system with no limits</p>
+                      <div className="space-y-5">
+                        <div className="border-l-4 border-blue-500 pl-5 py-3">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Visual Preview</h4>
+                          <p className="text-gray-600">See exactly how your system looks and works before deployment</p>
+                        </div>
+                        <div className="border-l-4 border-blue-500 pl-5 py-3">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Interactive Editing</h4>
+                          <p className="text-gray-600">Click to edit any table, workflow, or interface element</p>
+                        </div>
+                        <div className="border-l-4 border-blue-500 pl-5 py-3">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Real-Time Updates</h4>
+                          <p className="text-gray-600">See changes instantly as you make modifications</p>
+                        </div>
+                        <div className="border-l-4 border-blue-500 pl-5 py-3">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Unlimited Iterations</h4>
+                          <p className="text-gray-600">Refine and perfect your system with no limits</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {expandedCard === "right" && (
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Go Live</h2>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
-                      One click and your custom ERP is live. Your team can start using it immediately
-                      with no setup, installation, or technical complexity.
-                    </p>
+                  {expandedCard === "right" && (
+                    <div>
+                      <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        Go Live
+                      </h2>
+                      <p className="text-gray-600 mb-8 leading-relaxed text-lg">
+                        One click and your custom ERP is live. Your team can start using it immediately
+                        with no setup, installation, or technical complexity.
+                      </p>
 
-                    <div className="space-y-4">
-                      <div className="bg-blue-50 rounded-lg p-4">
-                        <h4 className="font-bold text-gray-900 mb-2">Instant Deployment</h4>
-                        <p className="text-gray-700 text-sm">Deploy to production with a single click - no DevOps required</p>
-                      </div>
-                      <div className="bg-blue-50 rounded-lg p-4">
-                        <h4 className="font-bold text-gray-900 mb-2">Immediate Access</h4>
-                        <p className="text-gray-700 text-sm">Your team gets instant access - just share the link</p>
-                      </div>
-                      <div className="bg-blue-50 rounded-lg p-4">
-                        <h4 className="font-bold text-gray-900 mb-2">Cloud Infrastructure</h4>
-                        <p className="text-gray-700 text-sm">Fully managed, scalable cloud hosting included</p>
-                      </div>
-                      <div className="bg-blue-50 rounded-lg p-4">
-                        <h4 className="font-bold text-gray-900 mb-2">Enterprise Security</h4>
-                        <p className="text-gray-700 text-sm">Bank-level security, compliance, and data protection</p>
+                      <div className="space-y-5">
+                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Instant Deployment</h4>
+                          <p className="text-gray-700">Deploy to production with a single click - no DevOps required</p>
+                        </div>
+                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Immediate Access</h4>
+                          <p className="text-gray-700">Your team gets instant access - just share the link</p>
+                        </div>
+                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Cloud Infrastructure</h4>
+                          <p className="text-gray-700">Fully managed, scalable cloud hosting included</p>
+                        </div>
+                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Enterprise Security</h4>
+                          <p className="text-gray-700">Bank-level security, compliance, and data protection</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -95,16 +95,19 @@ export default function FlipCard({
   const isOtherExpanded = expandedCard !== null && expandedCard !== position;
   const canClick = rotateProgress === 1; // Only clickable when fully flipped
 
+  // Don't render the card at all if another card is expanded
+  if (isOtherExpanded) {
+    return null;
+  }
+
   return (
     <div
-      className="relative transition-all duration-500 ease-out"
+      className="relative transition-all duration-700 ease-out"
       style={{
         width: `${cardWidth}px`,
         height: "100%",
         transform: `rotateY(${rotateProgress * 180}deg)`,
         transformStyle: "preserve-3d",
-        opacity: isOtherExpanded ? 0 : 1,
-        pointerEvents: isOtherExpanded ? 'none' : 'auto',
       }}
     >
       {/* Front face - Monet image */}

@@ -227,40 +227,75 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                 ))}
               </div>
 
-              {/* Table Rows */}
+              {/* Table Rows - Render progressively */}
               <div className="divide-y divide-gray-100">
-                {customers.map((customer, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: showData ? 0.4 + i * 0.1 : 0.2 }}
-                    className="grid grid-cols-4 gap-4 px-4 py-3 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="text-sm font-futura text-gray-900">
-                      {showData ? customer.name : <div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />}
-                    </div>
-                    <div className="text-sm font-futura text-gray-600">
-                      {showData ? customer.email : <div className="h-4 bg-gray-100 rounded w-24 animate-pulse" />}
-                    </div>
-                    <div className="text-sm font-futura text-gray-600">
-                      {showData ? customer.company : <div className="h-4 bg-gray-100 rounded w-20 animate-pulse" />}
-                    </div>
-                    <div>
-                      {showDetails ? (
-                        <span className={`inline-block px-2 py-1 text-xs font-semibold font-futura rounded-full ${
-                          customer.status === "Active"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-600"
-                        }`}>
-                          {customer.status}
-                        </span>
-                      ) : (
-                        <div className="h-5 bg-gray-100 rounded-full w-16 animate-pulse" />
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
+                {customers.map((customer, i) => {
+                  // Show skeleton first, then data row by row
+                  const shouldShowRow = showLayout;
+                  const shouldShowData = showData && i < buildingStage - 1;
+                  const shouldShowStatus = showDetails;
+
+                  return shouldShowRow ? (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      transition={{
+                        duration: 0.3,
+                        delay: 0.3 + i * 0.15,
+                        height: { type: "spring", stiffness: 300, damping: 30 }
+                      }}
+                      className="grid grid-cols-4 gap-4 px-4 py-3 hover:bg-gray-50 transition-colors overflow-hidden"
+                    >
+                      <motion.div
+                        className="text-sm font-futura text-gray-900"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 + i * 0.15 }}
+                      >
+                        {shouldShowData ? customer.name : <div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />}
+                      </motion.div>
+                      <motion.div
+                        className="text-sm font-futura text-gray-600"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 + i * 0.15 }}
+                      >
+                        {shouldShowData ? customer.email : <div className="h-4 bg-gray-100 rounded w-24 animate-pulse" />}
+                      </motion.div>
+                      <motion.div
+                        className="text-sm font-futura text-gray-600"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.7 + i * 0.15 }}
+                      >
+                        {shouldShowData ? customer.company : <div className="h-4 bg-gray-100 rounded w-20 animate-pulse" />}
+                      </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8 + i * 0.15 }}
+                      >
+                        {shouldShowStatus && shouldShowData ? (
+                          <motion.span
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                            className={`inline-block px-2 py-1 text-xs font-semibold font-futura rounded-full ${
+                              customer.status === "Active"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-100 text-gray-600"
+                            }`}
+                          >
+                            {customer.status}
+                          </motion.span>
+                        ) : (
+                          <div className="h-5 bg-gray-100 rounded-full w-16 animate-pulse" />
+                        )}
+                      </motion.div>
+                    </motion.div>
+                  ) : null;
+                })}
               </div>
             </motion.div>
           )}
