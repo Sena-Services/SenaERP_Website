@@ -285,29 +285,29 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
   function renderForm() {
     return (
       <motion.div
-        className="flex-1 flex items-center justify-center p-6"
+        className="flex-1 flex items-center justify-center p-6 overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md max-h-full overflow-hidden">
           {/* Form Header */}
           {showLayout && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="mb-6"
+              className="mb-3"
             >
               {showData ? (
                 <>
-                  <h3 className="text-lg font-bold text-gray-900 font-futura mb-1">Contact Form</h3>
+                  <h3 className="text-base font-bold text-gray-900 font-futura mb-1">Contact Form</h3>
                   <p className="text-xs text-gray-500 font-futura">Get in touch with us</p>
                 </>
               ) : (
                 <>
-                  <div className="h-6 bg-gray-200 rounded w-32 mb-2 animate-pulse" />
-                  <div className="h-3 bg-gray-100 rounded w-40 animate-pulse" />
+                  <div className="h-5 bg-gray-200 rounded w-28 mb-1 animate-pulse" />
+                  <div className="h-3 bg-gray-100 rounded w-32 animate-pulse" />
                 </>
               )}
             </motion.div>
@@ -319,7 +319,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 space-y-2.5"
             >
               {/* Name Field */}
               <div>
@@ -388,7 +388,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                   <label className="block text-sm font-semibold text-gray-700 font-futura mb-2">Message</label>
                   <textarea
                     placeholder="Type your message here..."
-                    rows={4}
+                    rows={2}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm font-futura focus:outline-none focus:border-waygent-blue resize-none"
                     disabled
                   />
@@ -401,7 +401,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="w-full bg-waygent-blue text-white py-3 rounded-lg font-semibold font-futura hover:bg-blue-600 transition-colors"
+                  className="w-full bg-waygent-blue text-white py-2.5 rounded-lg font-semibold font-futura hover:bg-blue-600 transition-colors"
                 >
                   Submit
                 </motion.button>
@@ -415,7 +415,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, type: "spring", stiffness: 300, delay: 0.3 }}
-              className="flex items-center justify-center gap-2 py-4 mt-4"
+              className="flex items-center justify-center gap-2 py-2 mt-2"
             >
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span className="text-xs text-green-600 font-semibold font-futura">Form Complete ✓</span>

@@ -242,6 +242,21 @@ export default function BuilderTabbed() {
             ))}
           </div>
 
+          {/* Tab Description - Below Tabs */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab.id}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="px-8 py-6 bg-gradient-to-r from-waygent-cream/30 to-transparent border-b border-gray-200/30"
+            >
+              <h3 className="text-lg font-bold text-gray-900 font-futura mb-2">{activeTab.agentTitle}</h3>
+              <p className="text-sm text-gray-600 font-futura leading-relaxed">{activeTab.agentDescription}</p>
+            </motion.div>
+          </AnimatePresence>
+
           {/* Content Area */}
           <AnimatePresence mode="wait">
             <motion.div

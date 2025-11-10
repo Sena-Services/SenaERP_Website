@@ -67,10 +67,10 @@ export default function UIBuilderDemo() {
       // Show user message first with delay
       setTimeout(() => {
         setShowUserMessage(true);
-      }, 500);
+      }, 300);
 
-      // Progress through building stages
-      const stageIntervals = [2000, 2000, 2000, 2000, 1500];
+      // Progress through building stages - much faster
+      const stageIntervals = [1000, 1000, 1000, 1000, 800];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -79,28 +79,28 @@ export default function UIBuilderDemo() {
             currentStage++;
             setBuildingStage(currentStage);
             progressStages();
-          }, stageIntervals[currentStage] || 1500);
+          }, stageIntervals[currentStage] || 1000);
         } else {
           // Building complete, show final response
           setTimeout(() => {
             setShowFinalResponse(true);
-            // After AI response finishes typing (around 2-3 seconds) + 3 more seconds to read
+            // After AI response finishes typing (around 1.5s) + 2 seconds to read
             setTimeout(() => {
               // Fade out smoothly
               setFadeOut(true);
               // After fade out animation, move to next example
               setTimeout(() => {
                 setCurrentExample((prev) => (prev + 1) % examples.length);
-              }, 600);
-            }, 6000);
-          }, 500);
+              }, 400);
+            }, 3500);
+          }, 300);
         }
       };
 
       // Start building stages after user message appears
       setTimeout(() => {
         progressStages();
-      }, 1500);
+      }, 800);
     };
 
     runBuildingSequence();
@@ -108,16 +108,17 @@ export default function UIBuilderDemo() {
 
   useEffect(() => {
     if (showFinalResponse) {
-      // Stream AI final response - much faster
+      // Stream AI final response - even faster
       let currentIndex = 0;
       const typingInterval = setInterval(() => {
-        currentIndex += 2; // Skip 2 characters at a time for faster streaming
-        setAiResponseText(currentExampleData.aiResponse.slice(0, currentIndex));
-
         if (currentIndex >= currentExampleData.aiResponse.length) {
           clearInterval(typingInterval);
           setShowCursor(false);
+          return;
         }
+
+        currentIndex += 4; // Skip 4 characters at a time for much faster streaming
+        setAiResponseText(currentExampleData.aiResponse.slice(0, currentIndex));
       }, 15); // Faster interval
 
       const cursorInterval = setInterval(() => {
@@ -128,8 +129,12 @@ export default function UIBuilderDemo() {
         clearInterval(typingInterval);
         clearInterval(cursorInterval);
       };
+    } else {
+      // Reset when not showing final response
+      setAiResponseText("");
+      setShowCursor(true);
     }
-  }, [showFinalResponse, currentExampleData]);
+  }, [showFinalResponse]);
 
   return (
     <div className="flex h-[600px] bg-white overflow-hidden">
@@ -137,7 +142,7 @@ export default function UIBuilderDemo() {
       <motion.div
         className="w-[35%] border-r border-gray-200 flex flex-col p-6"
         animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.3 }}
       >
         {/* Chat Header */}
         <div className="mb-6">
@@ -234,7 +239,7 @@ export default function UIBuilderDemo() {
       <motion.div
         className="w-[65%] bg-gradient-to-br from-gray-50 to-gray-100/50 flex items-center justify-center"
         animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.3 }}
       >
         {buildingStage > 0 ? (
           <UIPreview buildingStage={buildingStage} exampleType={currentExampleData.type} />

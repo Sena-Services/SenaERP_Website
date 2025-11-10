@@ -5,7 +5,7 @@ import { useRef } from "react";
 // ===== ADJUST THIS VALUE TO CHANGE VIDEO/CONTENT RATIO FOR ALL CARDS =====
 // Video takes this percentage, content takes the remainder
 // Example: 60 = 60% video, 40% content
-const VIDEO_HEIGHT_PERCENTAGE = 60;
+const VIDEO_HEIGHT_PERCENTAGE = 55;
 // =========================================================================
 
 type FlipCardProps = {
@@ -214,21 +214,21 @@ export default function FlipCard({
             <div
               className="flex items-center justify-center rounded-full"
               style={{
-                width: '30px',
-                height: '30px',
+                width: '32px',
+                height: '32px',
                 flexShrink: 0,
                 background: '#3B82F6',
                 boxShadow: 'none',
               }}
             >
-              <span className="text-white font-semibold" style={{ fontSize: '14px' }}>
+              <span className="text-white font-semibold" style={{ fontSize: '15px' }}>
                 {cardNumber}
               </span>
             </div>
             <h3
               className="font-bold leading-tight"
               style={{
-                fontSize: '17px',
+                fontSize: '18px',
                 letterSpacing: '-0.01em',
                 color: '#1E40AF',
               }}
@@ -241,7 +241,7 @@ export default function FlipCard({
           <p
             className="leading-relaxed mb-3 relative z-10"
             style={{
-              fontSize: '12px',
+              fontSize: '13px',
               lineHeight: '1.6',
               fontWeight: 400,
               color: '#4B5563',
@@ -249,7 +249,7 @@ export default function FlipCard({
           >
             {position === "left" && (
               <>
-                Share your workflows, challenges, and goals in plain language. Sena asks the right questions to understand exactly what you need—<span style={{ color: '#2563EB' }}>no technical jargon</span> required.
+                Choose your path: have a conversation with Sena or tell her exactly what you need. Either way, it's <span style={{ color: '#2563EB' }}>always business-friendly</span> with zero technical jargon.
               </>
             )}
             {position === "center" && (
@@ -268,53 +268,96 @@ export default function FlipCard({
           <div className="space-y-2 relative z-10 mb-3">
             {position === "left" && (
               <>
-                <div className="flex items-start gap-2.5">
-                  <div
-                    className="rounded-full mt-1"
-                    style={{
-                      width: '5px',
-                      height: '5px',
-                      flexShrink: 0,
-                      background: '#60A5FA',
-                    }}
-                  />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Natural conversation interface</span>
+                {/* Discovery Mode */}
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-blue-700 font-semibold" style={{ fontSize: '12px', letterSpacing: '0.02em' }}>DISCOVERY MODE</span>
+                    <span className="text-gray-500" style={{ fontSize: '11px' }}>• Voice</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-start gap-2.5">
+                      <div
+                        className="rounded-full mt-1"
+                        style={{
+                          width: '5px',
+                          height: '5px',
+                          flexShrink: 0,
+                          background: '#60A5FA',
+                        }}
+                      />
+                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Multilingual voice conversations</span>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <div
+                        className="rounded-full mt-1"
+                        style={{
+                          width: '5px',
+                          height: '5px',
+                          flexShrink: 0,
+                          background: '#60A5FA',
+                        }}
+                      />
+                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Asks questions like a co-founder</span>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <div
+                        className="rounded-full mt-1"
+                        style={{
+                          width: '5px',
+                          height: '5px',
+                          flexShrink: 0,
+                          background: '#60A5FA',
+                        }}
+                      />
+                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Deeply understands your operations</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <div
-                    className="rounded-full mt-1"
-                    style={{
-                      width: '5px',
-                      height: '5px',
-                      flexShrink: 0,
-                      background: '#60A5FA',
-                    }}
-                  />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Context-aware recommendations</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <div
-                    className="rounded-full mt-1"
-                    style={{
-                      width: '5px',
-                      height: '5px',
-                      flexShrink: 0,
-                      background: '#60A5FA',
-                    }}
-                  />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Zero technical knowledge needed</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <div
-                    className="rounded-full mt-1"
-                    style={{
-                      width: '5px',
-                      height: '5px',
-                      flexShrink: 0,
-                      background: '#60A5FA',
-                    }}
-                  />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Guided setup process</span>
+
+                {/* Express Mode */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-blue-700 font-semibold" style={{ fontSize: '12px', letterSpacing: '0.02em' }}>EXPRESS MODE</span>
+                    <span className="text-gray-500" style={{ fontSize: '11px' }}>• Text</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-start gap-2.5">
+                      <div
+                        className="rounded-full mt-1"
+                        style={{
+                          width: '5px',
+                          height: '5px',
+                          flexShrink: 0,
+                          background: '#60A5FA',
+                        }}
+                      />
+                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Direct text-based control</span>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <div
+                        className="rounded-full mt-1"
+                        style={{
+                          width: '5px',
+                          height: '5px',
+                          flexShrink: 0,
+                          background: '#60A5FA',
+                        }}
+                      />
+                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Tell Sena exactly what you want</span>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <div
+                        className="rounded-full mt-1"
+                        style={{
+                          width: '5px',
+                          height: '5px',
+                          flexShrink: 0,
+                          background: '#60A5FA',
+                        }}
+                      />
+                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Get instant results, zero back-and-forth</span>
+                    </div>
+                  </div>
                 </div>
               </>
             )}
