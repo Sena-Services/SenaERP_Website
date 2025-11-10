@@ -181,147 +181,258 @@ export default function FlipCard({
               mixBlendMode: 'saturation',
             }}
           />
+          {/* Subtle multi-layer blend effect */}
+          <div
+            className="absolute bottom-0 left-0 right-0 pointer-events-none"
+            style={{
+              height: '5%',
+              background: 'linear-gradient(to bottom, rgba(239, 246, 255, 0) 0%, rgba(239, 246, 255, 0.4) 50%, #EFF6FF 100%)',
+              filter: 'blur(1px)',
+            }}
+          />
+          {/* Secondary sharper gradient on top */}
+          <div
+            className="absolute bottom-0 left-0 right-0 pointer-events-none"
+            style={{
+              height: '3%',
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(239, 246, 255, 0.7) 50%, #EFF6FF 100%)',
+            }}
+          />
         </div>
 
-        {/* Content section */}
+        {/* Content section - all blue now */}
         <div
-          className="flex flex-col px-6 py-5"
+          className="flex flex-col px-6 pt-3 pb-4 relative"
           style={{
             height: `${100 - VIDEO_HEIGHT_PERCENTAGE}%`,
+            background: '#EFF6FF',
           }}
         >
+
           {/* Step number and title */}
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center gap-2.5 mb-2 relative z-10">
             <div
-              className="flex items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-blue-700 shadow-md"
+              className="flex items-center justify-center rounded-full"
               style={{
-                width: '32px',
-                height: '32px',
+                width: '30px',
+                height: '30px',
                 flexShrink: 0,
+                background: '#3B82F6',
+                boxShadow: 'none',
               }}
             >
-              <span className="text-white font-bold" style={{ fontSize: '14px' }}>
+              <span className="text-white font-semibold" style={{ fontSize: '14px' }}>
                 {cardNumber}
               </span>
             </div>
             <h3
-              className="font-bold text-gray-900 leading-tight"
+              className="font-bold leading-tight"
               style={{
-                fontSize: '18px',
-                letterSpacing: '-0.02em',
+                fontSize: '17px',
+                letterSpacing: '-0.01em',
+                color: '#1E40AF',
               }}
             >
               {cardTitle}
             </h3>
           </div>
 
-          {/* Main description */}
+          {/* Main description with styled keywords */}
           <p
-            className="text-gray-700 leading-relaxed mb-4"
+            className="leading-relaxed mb-3 relative z-10"
             style={{
-              fontSize: '13px',
+              fontSize: '12px',
               lineHeight: '1.6',
-              fontWeight: 500,
+              fontWeight: 400,
+              color: '#4B5563',
             }}
           >
-            {cardDescription}
-          </p>
-
-          {/* Feature highlights */}
-          <div className="space-y-2.5">
             {position === "left" && (
               <>
-                <div className="flex items-center gap-3 group">
-                  <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Natural language conversation</span>
-                </div>
-                <div className="flex items-center gap-3 group">
-                  <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Understands your business context</span>
-                </div>
-                <div className="flex items-center gap-3 group">
-                  <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>No technical knowledge required</span>
-                </div>
+                Share your workflows, challenges, and goals in plain language. Sena asks the right questions to understand exactly what you need—<span style={{ color: '#2563EB' }}>no technical jargon</span> required.
               </>
             )}
             {position === "center" && (
               <>
-                <div className="flex items-center gap-3 group">
-                  <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Visual preview of your system</span>
-                </div>
-                <div className="flex items-center gap-3 group">
-                  <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Real-time modifications</span>
-                </div>
-                <div className="flex items-center gap-3 group">
-                  <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Iterate until perfect</span>
-                </div>
+                Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and <span style={{ color: '#2563EB' }}>iterate in real-time</span> until it's exactly right.
               </>
             )}
             {position === "right" && (
               <>
-                <div className="flex items-center gap-3 group">
+                One click and your custom ERP is live. Your team can start using it immediately—<span style={{ color: '#2563EB' }}>no setup, no installation</span>, no complexity.
+              </>
+            )}
+          </p>
+
+          {/* Feature highlights - matte style */}
+          <div className="space-y-2 relative z-10 mb-3">
+            {position === "left" && (
+              <>
+                <div className="flex items-start gap-2.5">
                   <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Instant deployment</span>
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Natural conversation interface</span>
                 </div>
-                <div className="flex items-center gap-3 group">
+                <div className="flex items-start gap-2.5">
                   <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Team access from day one</span>
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Context-aware recommendations</span>
                 </div>
-                <div className="flex items-center gap-3 group">
+                <div className="flex items-start gap-2.5">
                   <div
-                    className="rounded-full bg-blue-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-600"
-                    style={{ width: '6px', height: '6px', flexShrink: 0 }}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 group-hover:bg-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium" style={{ fontSize: '12px' }}>Cloud-hosted and secure</span>
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Zero technical knowledge needed</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Guided setup process</span>
                 </div>
               </>
             )}
+
+            {position === "center" && (
+              <>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Live preview of all changes</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Interactive workflow builder</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Unlimited iterations</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Full customization control</span>
+                </div>
+              </>
+            )}
+
+            {position === "right" && (
+              <>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>One-click deployment</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Instant team access</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Cloud-hosted infrastructure</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: '#60A5FA',
+                    }}
+                  />
+                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Enterprise-grade security</span>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Footer section */}
+          <div className="mt-auto pt-2 border-t border-blue-200/40 relative z-10">
+            <p className="text-gray-500 text-[10px]">
+              {position === "left" && "Start building in minutes"}
+              {position === "center" && "Perfect your system"}
+              {position === "right" && "Launch instantly"}
+            </p>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import UIPreview from "./UIPreview";
+import UIBuilderDemo from "./UIBuilderDemo";
 
 type Tab = {
   id: string;
@@ -251,99 +251,13 @@ export default function BuilderTabbed() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              {/* Two Column Layout */}
+              {/* Two Column Layout - Special unified layout for UI tab */}
+              {activeTab.id === "ui" ? (
+                <UIBuilderDemo />
+              ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[500px]">
-                {/* Left Section - Chat Interface for UI tab, Workflow for others */}
+                {/* Left Section - Workflow */}
                 <div className="relative bg-gradient-to-br from-indigo-50/50 to-purple-50/50 p-8 lg:p-10 overflow-hidden lg:border-r border-gray-200/50">
-                  {activeTab.id === "ui" ? (
-                    // Chat Interface for UI Builder
-                    <div className="relative z-10 h-full flex flex-col">
-                      <div className="mb-4">
-                        <h3 className="text-sm font-bold text-gray-900 font-futura mb-1">UI Builder Chat</h3>
-                        <p className="text-xs text-gray-600 font-futura">Describe what you want to build</p>
-                      </div>
-
-                      {/* Chat Messages */}
-                      <div className="flex-1 space-y-3 mb-4 overflow-y-auto">
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className="flex justify-end"
-                        >
-                          <div className="px-4 py-2 rounded-2xl rounded-tr-sm bg-waygent-blue text-white text-sm font-futura max-w-[80%]">
-                            Create a revenue dashboard with metric cards and a chart
-                          </div>
-                        </motion.div>
-
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5 }}
-                          className="flex justify-start"
-                        >
-                          <div className="px-4 py-2 rounded-2xl rounded-tl-sm bg-white text-gray-800 text-sm font-futura shadow-sm border border-gray-100 max-w-[85%]">
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                              <span className="text-xs font-semibold text-gray-600">Building your dashboard...</span>
-                            </div>
-                            <p>I'm creating a dashboard with:</p>
-                            <ul className="mt-2 space-y-1 text-xs">
-                              <motion.li
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.8 }}
-                                className="flex items-center gap-2"
-                              >
-                                <span className="text-green-600">✓</span> 3 metric cards (Revenue, Orders, Users)
-                              </motion.li>
-                              <motion.li
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 1.0 }}
-                                className="flex items-center gap-2"
-                              >
-                                <span className="text-green-600">✓</span> Weekly revenue chart
-                              </motion.li>
-                              <motion.li
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 1.2 }}
-                                className="flex items-center gap-2"
-                              >
-                                <span className="text-green-600">✓</span> Responsive layout
-                              </motion.li>
-                            </ul>
-                          </div>
-                        </motion.div>
-
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 2.7 }}
-                          className="flex justify-start"
-                        >
-                          <div className="px-4 py-2 rounded-2xl rounded-tl-sm bg-white text-gray-800 text-sm font-futura shadow-sm border border-gray-100">
-                            Dashboard is ready! Check the preview →
-                          </div>
-                        </motion.div>
-                      </div>
-
-                      {/* Input Area */}
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Describe your UI..."
-                          className="w-full px-4 py-3 pr-12 rounded-xl bg-white border border-gray-200 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-waygent-blue transition-all font-futura shadow-sm"
-                        />
-                        <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-waygent-blue transition-colors">
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
                     <>
                       {/* Dotted Background Pattern */}
                       <div
@@ -455,11 +369,8 @@ export default function BuilderTabbed() {
                   )}
                 </div>
 
-                {/* Right Section - UI Preview for UI tab, Chat Interface for others */}
+                {/* Right Section - Chat Interface */}
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 p-8 lg:p-10 flex flex-col">
-                  {activeTab.id === "ui" ? (
-                    <UIPreview />
-                  ) : (
                   <div className="flex-1 flex flex-col">
                     {/* Chat Header */}
                     <motion.div
@@ -565,9 +476,9 @@ export default function BuilderTabbed() {
                       </button>
                     </motion.div>
                   </div>
-                  )}
                 </div>
               </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
