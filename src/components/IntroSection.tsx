@@ -62,12 +62,22 @@ export default function IntroSection() {
       if (!contentEl) return;
 
       const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
+      const atTop = contentEl.scrollTop <= 1;
       const scrollingDown = e.deltaY > 0;
+      const scrollingUp = e.deltaY < 0;
 
-      // If scrolling down and content is not at bottom, prevent page scroll
-      if (scrollingDown && !atBottom && scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
-        e.preventDefault();
-        contentEl.scrollTop += e.deltaY;
+      // If in intro section (all animations at 0)
+      if (scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
+        // Scrolling down: prevent page scroll if content not at bottom
+        if (scrollingDown && !atBottom) {
+          e.preventDefault();
+          contentEl.scrollTop += e.deltaY;
+        }
+        // Scrolling up: prevent page scroll if content not at top
+        else if (scrollingUp && !atTop) {
+          e.preventDefault();
+          contentEl.scrollTop += e.deltaY;
+        }
       }
     };
 
@@ -82,11 +92,20 @@ export default function IntroSection() {
       const touchCurrentY = e.touches[0].clientY;
       const touchDeltaY = touchStartY - touchCurrentY;
       const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
+      const atTop = contentEl.scrollTop <= 1;
       const scrollingDown = touchDeltaY > 0;
+      const scrollingUp = touchDeltaY < 0;
 
-      // If scrolling down and content is not at bottom, prevent page scroll
-      if (scrollingDown && !atBottom && scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
-        e.preventDefault();
+      // If in intro section (all animations at 0)
+      if (scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
+        // Scrolling down: prevent page scroll if content not at bottom
+        if (scrollingDown && !atBottom) {
+          e.preventDefault();
+        }
+        // Scrolling up: prevent page scroll if content not at top
+        else if (scrollingUp && !atTop) {
+          e.preventDefault();
+        }
       }
     };
 

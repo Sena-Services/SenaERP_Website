@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import IntroSection from "@/components/IntroSection";
+import MobileHowItWorks from "@/components/MobileHowItWorks";
 import BuilderTabbed from "@/components/BuilderTabbed";
 import LandingEnvironments from "@/components/LandingEnvironments";
 import IntegrationsSection from "@/components/IntegrationsSection";
@@ -38,9 +39,31 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Disable all scroll locking and animations on mobile
+    // On mobile, show navbar when scrolled 70% through intro
     const isMobile = window.innerWidth < 768;
-    if (isMobile) return;
+    if (isMobile) {
+      const handleMobileScroll = () => {
+        const introSection = introRef.current;
+        if (!introSection) return;
+
+        const introTop = introSection.offsetTop;
+        const introHeight = introSection.offsetHeight;
+        const scrollY = window.scrollY;
+
+        // Show navbar when scrolled 70% through the intro section
+        const seventyPercentPoint = introTop + (introHeight * 0.7);
+
+        if (scrollY > seventyPercentPoint) {
+          setShowNavigation(true);
+        } else {
+          setShowNavigation(false);
+        }
+      };
+
+      handleMobileScroll();
+      window.addEventListener('scroll', handleMobileScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleMobileScroll);
+    }
 
     let isAnimating = false;
     let animationFrameId: number;
@@ -489,6 +512,9 @@ export default function Home() {
       <div ref={introRef}>
         <IntroSection />
       </div>
+
+      {/* Mobile How It Works - only shows on mobile */}
+      <MobileHowItWorks />
 
       <div className="bg-waygent-cream w-full relative z-1">
         <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
