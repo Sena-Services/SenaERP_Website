@@ -31,6 +31,7 @@ export default function IntroSection() {
     document.head.appendChild(style);
   }
   const sectionRef = useRef<HTMLElement | null>(null);
+  const contentScrollRef = useRef<HTMLDivElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [splitProgress, setSplitProgress] = useState(0);
   const [rotateProgress, setRotateProgress] = useState(0);
@@ -49,6 +50,58 @@ export default function IntroSection() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Prevent page scroll on mobile when content is not fully scrolled
+  useEffect(() => {
+    if (viewportWidth >= 768) return; // Only for mobile
+
+    let touchStartY = 0;
+
+    const preventPageScroll = (e: WheelEvent) => {
+      const contentEl = contentScrollRef.current;
+      if (!contentEl) return;
+
+      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
+      const scrollingDown = e.deltaY > 0;
+
+      // If scrolling down and content is not at bottom, prevent page scroll
+      if (scrollingDown && !atBottom && scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
+        e.preventDefault();
+        contentEl.scrollTop += e.deltaY;
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const contentEl = contentScrollRef.current;
+      if (!contentEl) return;
+
+      const touchCurrentY = e.touches[0].clientY;
+      const touchDeltaY = touchStartY - touchCurrentY;
+      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
+      const scrollingDown = touchDeltaY > 0;
+
+      // If scrolling down and content is not at bottom, prevent page scroll
+      if (scrollingDown && !atBottom && scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
+        e.preventDefault();
+      }
+    };
+
+    const section = sectionRef.current;
+    if (section) {
+      section.addEventListener('wheel', preventPageScroll, { passive: false });
+      section.addEventListener('touchstart', handleTouchStart, { passive: true });
+      section.addEventListener('touchmove', handleTouchMove, { passive: false });
+      return () => {
+        section.removeEventListener('wheel', preventPageScroll);
+        section.removeEventListener('touchstart', handleTouchStart);
+        section.removeEventListener('touchmove', handleTouchMove);
+      };
+    }
+  }, [viewportWidth, scrollProgress, splitProgress, rotateProgress]);
 
   // Listen for homeLeft event to lock animations
   useEffect(() => {
@@ -261,7 +314,7 @@ export default function IntroSection() {
                 className="w-full h-full object-cover"
                 style={{
                   objectPosition: '88% 50%',
-                  opacity: 1,
+                  opacity: 0.80,
                 }}
               />
             </div>
@@ -614,7 +667,7 @@ export default function IntroSection() {
               zIndex: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? 10 : -1,
             }}
           >
-            <IntroContent contentOpacity={1} />
+            <IntroContent contentOpacity={1} scrollRef={contentScrollRef} />
           </div>
         </div>
       </div>

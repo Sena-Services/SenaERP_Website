@@ -1,20 +1,75 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type IntroContentProps = {
   contentOpacity: number;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
 };
 
-export default function IntroContent({ contentOpacity }: IntroContentProps) {
+export default function IntroContent({ contentOpacity, scrollRef }: IntroContentProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const localContentRef = useRef<HTMLDivElement>(null);
+  const contentRef = scrollRef || localContentRef;
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
 
+  useEffect(() => {
+    if (!isMobile || !contentRef.current) return;
+
+    const contentEl = contentRef.current;
+
+    const handleWheel = (e: WheelEvent) => {
+      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
+      const atTop = contentEl.scrollTop <= 0;
+      const scrollingDown = e.deltaY > 0;
+      const scrollingUp = e.deltaY < 0;
+
+      // If scrolling down and not at bottom, or scrolling up and not at top
+      // then scroll the content and prevent page scroll
+      if ((scrollingDown && !atBottom) || (scrollingUp && !atTop)) {
+        e.preventDefault();
+        e.stopPropagation();
+        contentEl.scrollTop += e.deltaY;
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      contentEl.dataset.touchStartY = touch.clientY.toString();
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const startY = parseFloat(contentEl.dataset.touchStartY || '0');
+      const deltaY = startY - touch.clientY;
+
+      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
+      const atTop = contentEl.scrollTop <= 0;
+      const scrollingDown = deltaY > 0;
+      const scrollingUp = deltaY < 0;
+
+      if ((scrollingDown && !atBottom) || (scrollingUp && !atTop)) {
+        e.preventDefault();
+      }
+    };
+
+    contentEl.addEventListener('wheel', handleWheel, { passive: false });
+    contentEl.addEventListener('touchstart', handleTouchStart, { passive: true });
+    contentEl.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      contentEl.removeEventListener('wheel', handleWheel);
+      contentEl.removeEventListener('touchstart', handleTouchStart);
+      contentEl.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [isMobile]);
+
   return (
     <div
+      ref={contentRef}
       className="relative flex flex-col w-full md:w-[85%] xl:w-[60%] px-6 sm:px-8 md:px-10 lg:px-16 md:pt-16 lg:pt-18 pb-6 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
       style={{
         opacity: contentOpacity,
