@@ -55,8 +55,15 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
   };
 
   return (
-    <section ref={ref} id="integrations" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="relative mx-auto w-full max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
+    <section ref={ref} id="integrations" className="scroll-mt-24 mt-32 sm:mt-48 pb-16">
+      <div
+        className="relative mx-auto w-full"
+        style={{
+          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          paddingLeft: 'max(16px, min(32px, 2vw))',
+          paddingRight: 'max(16px, min(32px, 2vw))'
+        }}
+      >
         <div className="mb-12 text-center">
           <h2
             style={{

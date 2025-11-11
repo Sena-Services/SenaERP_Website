@@ -70,14 +70,17 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
     <section
       ref={ref}
       id="join-us"
-      className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 pb-16"
+      className="scroll-mt-24 mt-32 sm:mt-48 pb-16"
       style={{
         paddingBottom: `${getResponsiveValue(64)}px`,
       }}
     >
       <div
-        className="relative max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto"
+        className="relative mx-auto"
         style={{
+          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          paddingLeft: 'max(16px, min(32px, 2vw))',
+          paddingRight: 'max(16px, min(32px, 2vw))',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundColor: '#F5F3E8',
           minHeight: `${getResponsiveValue(320)}px`,

@@ -130,10 +130,13 @@ export default function IntroSection() {
     return baseValue * scaleFactor;
   };
 
-  // Match BuilderTabbed and other components: max-w-7xl (1280px) with viewport padding
-  const maxContainerWidth = 1280;
-  const viewportPadding = 64; // 32px on each side, matching other components
-  const responsiveTargetWidth = Math.min(maxContainerWidth, viewportWidth - viewportPadding);
+  // Match BuilderTabbed and other components: min(1600px, calc(100vw - 200px))
+  const maxContainerWidth = 1600;
+  const viewportPadding = 200; // Matching Builder's calc(100vw - 200px)
+
+  // Account for card gaps - subtract the max gap width from target to match Builder exactly
+  const maxCardGapTotal = 12; // responsiveMaxGap (6) * 2 gaps
+  const responsiveTargetWidth = Math.min(maxContainerWidth, viewportWidth - viewportPadding) - maxCardGapTotal;
   const targetWidth = responsiveTargetWidth;
   const startWidth = Math.max(viewportWidth * 0.95, targetWidth);
   const currentWidthValue =

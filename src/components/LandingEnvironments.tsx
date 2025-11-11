@@ -241,8 +241,15 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="relative mx-auto w-full max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
+    <section ref={ref} id="environments" className="scroll-mt-24 mt-32 sm:mt-48 pb-16">
+      <div
+        className="relative mx-auto w-full"
+        style={{
+          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          paddingLeft: 'max(16px, min(32px, 2vw))',
+          paddingRight: 'max(16px, min(32px, 2vw))'
+        }}
+      >
         <div className="mb-12 text-center">
           <h2
             style={{
@@ -266,13 +273,21 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
-        <div className="hidden lg:grid lg:grid-cols-[800px_1fr] gap-8 lg:gap-12">
+      <div
+        className="mx-auto"
+        style={{
+          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          paddingLeft: 'max(16px, min(32px, 2vw))',
+          paddingRight: 'max(16px, min(32px, 2vw))'
+        }}
+      >
+        <div className="hidden lg:grid lg:grid-cols-[minmax(600px,800px)_minmax(400px,1fr)] gap-8 xl:gap-12">
           {/* Left side - EnvironmentSelector */}
           <div className="relative h-[640px] rounded-[36px] bg-white group transition-all duration-300" style={{
             overflow: 'clip',
             border: '2px solid #9CA3AF',
-            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
+            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
+            minWidth: '600px'
           }}>
             {/* Interactive indicator badge */}
             <div className="absolute top-6 right-6 z-10 px-4 py-2.5 bg-gray-800 text-white text-sm font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 pointer-events-none">

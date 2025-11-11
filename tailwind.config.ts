@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        'mid': '1440px',
+      },
       fontFamily: {
         rockwell: ["Rockwell", "serif"],
         "space-grotesk": ["SpaceGrotesk", "sans-serif"],

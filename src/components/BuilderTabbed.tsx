@@ -162,7 +162,14 @@ export default function BuilderTabbed() {
 
   return (
     <div className="w-full bg-waygent-cream scroll-mt-24 mt-32 sm:mt-48 pb-16">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
+      <div
+        className="mx-auto"
+        style={{
+          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          paddingLeft: 'max(16px, min(32px, 2vw))',
+          paddingRight: 'max(16px, min(32px, 2vw))'
+        }}
+      >
         {/* Section Title */}
         <div className="mb-12 text-center">
           <h2
@@ -268,7 +275,7 @@ export default function BuilderTabbed() {
           </div>
 
           {/* Content Area */}
-          <div className="h-[600px] overflow-hidden">
+          <div className="h-[560px] xl:h-[580px] 2xl:h-[600px] overflow-hidden">
             <AnimatePresence mode="sync">
               <motion.div
                 key={activeTab.id}
