@@ -160,23 +160,23 @@ export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
-    <div className="w-full bg-waygent-cream px-4 sm:px-6 lg:px-8 py-16">
-      <div className="mx-auto max-w-7xl">
+    <div className="w-full bg-waygent-cream py-16">
+      <div className="mx-auto" style={{ maxWidth: '1280px', width: 'calc(100vw - 64px)' }}>
         {/* Section Title */}
-        <div className="mb-12 text-left">
+        <div className="mb-12 text-center">
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl mb-4"
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               color: "#2C1810",
+              fontSize: '60px',
             }}
           >
             Builder
           </h2>
           <p
-            className="text-xl md:text-2xl text-gray-700 max-w-3xl font-futura"
+            className="text-xl md:text-2xl text-gray-700 mt-4 mx-auto max-w-3xl font-futura"
             style={{
               letterSpacing: "-0.01em",
             }}

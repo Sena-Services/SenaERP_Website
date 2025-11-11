@@ -108,6 +108,16 @@ export default function FlipCard({
         ? cardGap * splitProgress // Move right
         : 0; // Center stays in place
 
+  // Set z-index based on position - each card needs its own layer when split
+  const getZIndex = () => {
+    if (isExpanded) return 10;
+    // When cards are split, give each a unique z-index so they don't overlap
+    if (position === "left") return 3;
+    if (position === "center") return 2;
+    if (position === "right") return 1;
+    return 1;
+  };
+
   return (
     <div
       className="relative transition-all duration-700 ease-out"
@@ -121,12 +131,8 @@ export default function FlipCard({
         }`,
         transformStyle: "preserve-3d",
         // Add shadow during split to emphasize separation
-        boxShadow: isExpanded
-          ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          : splitProgress > 0
-            ? elevation
-            : 'none',
-        zIndex: isExpanded ? 10 : 1,
+        boxShadow: 'none',
+        zIndex: getZIndex(),
       }}
     >
       {/* Front face - Monet image */}
@@ -159,13 +165,12 @@ export default function FlipCard({
 
       {/* Back face - How It Works card */}
       <div
-        className="absolute inset-0 overflow-hidden flex flex-col shadow-lg bg-white group cursor-pointer transition-all duration-300"
+        className="absolute inset-0 overflow-hidden flex flex-col bg-white group cursor-pointer transition-all duration-300"
         style={{
           backfaceVisibility: "hidden",
           transform: "rotateY(180deg)",
           ...borderRadiusStyle,
           cursor: canClick ? 'pointer' : 'default',
-          boxShadow: canClick ? '0 4px 20px rgba(0, 0, 0, 0.08)' : '0 4px 12px rgba(0, 0, 0, 0.05)',
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

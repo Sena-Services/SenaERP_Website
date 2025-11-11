@@ -31,6 +31,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   const activeSectionRef = useRef(activeSection);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const isNavigatingRef = useRef(false);
 
   useEffect(() => {
     activeSectionRef.current = activeSection;
@@ -45,6 +46,11 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
 
   const updateActiveSection = useCallback(() => {
     if (sectionIds.length === 0) return;
+
+    // Skip detection if we're actively navigating
+    if (isNavigatingRef.current) {
+      return;
+    }
 
     // Check if we're at the bottom of the page
     const scrollHeight = document.documentElement.scrollHeight;
@@ -62,34 +68,38 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       return;
     }
 
-    // Otherwise, use center-based detection
-    const viewportHeight = window.innerHeight || 1;
-    const viewportCenter = window.scrollY + viewportHeight / 2;
-    let bestId = sectionIds[0]!;
-    let bestScore = Number.NEGATIVE_INFINITY;
+    // Use top-based detection: find which section's anchor is currently past the top of viewport
+    const navbarOffset = 200; // Account for navbar + padding
+    const scrollPosition = window.scrollY + navbarOffset;
 
-    sectionIds.forEach((id) => {
-      const element = document.getElementById(id);
-      if (!element) return;
+    let activeId = sectionIds[0]!;
 
-      const rect = element.getBoundingClientRect();
-      const sectionTop = window.scrollY + rect.top;
-      const sectionHeight = Math.max(rect.height, 1);
-      const sectionCenter = sectionTop + sectionHeight / 2;
+    // Special case: if we're very near the top, always select first section
+    if (window.scrollY < 100) {
+      activeId = sectionIds[0]!;
+    } else {
+      // Go through sections in order and find the last one whose top is above scroll position
+      for (let i = 0; i < sectionIds.length; i++) {
+        const id = sectionIds[i]!;
+        const element = document.getElementById(id);
+        if (!element) continue;
 
-      const distance = Math.abs(sectionCenter - viewportCenter);
-      const normalized =
-        1 - distance / (viewportHeight / 2 + sectionHeight / 2);
+        const rect = element.getBoundingClientRect();
+        const elementTop = window.scrollY + rect.top;
 
-      if (normalized > bestScore) {
-        bestScore = normalized;
-        bestId = id;
+        // If this section's top is above our scroll position, it's the active one
+        if (elementTop <= scrollPosition) {
+          activeId = id;
+        } else {
+          // Once we find a section below our scroll position, stop
+          break;
+        }
       }
-    });
+    }
 
-    if (bestId !== activeSectionRef.current) {
-      activeSectionRef.current = bestId;
-      setActiveSection(bestId);
+    if (activeId !== activeSectionRef.current) {
+      activeSectionRef.current = activeId;
+      setActiveSection(activeId);
     }
   }, [sectionIds]);
 
@@ -148,32 +158,50 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   }, [activeSection, updateIndicator]);
 
   const handleClick = (id: string) => {
-    // Special handling for "how-it-works" - trigger the intro sequence
+    // Set navigating flag to prevent detection from overriding
+    isNavigatingRef.current = true;
+
+    // Force set the active section BEFORE scrolling
+    activeSectionRef.current = id;
+    setActiveSection(id);
+    updateIndicator();
+
+    let targetPosition = 0;
+
+    // Special handling for how-it-works - scroll to the intro section position
     if (id === "how-it-works") {
-      activeSectionRef.current = id;
-      setActiveSection(id);
-      // Dispatch a custom event that the main page can listen to
-      window.dispatchEvent(new CustomEvent("triggerIntroSequence"));
-      return;
+      // The "how-it-works" cards should be fully split and rotated
+      // 900 (shrink) + 400 (split) + 800 (rotate) = 2100px
+      const introSection = document.getElementById("intro");
+      if (introSection) {
+        targetPosition = introSection.offsetTop + 2100; // Full animation complete
+      }
+    } else {
+      const target = document.getElementById(id);
+      if (!target) {
+        console.warn(`Section not found: ${id}`);
+        isNavigatingRef.current = false;
+        return;
+      }
+      const navbarHeight = 90;
+      targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
     }
 
-    const target = document.getElementById(id);
-    if (!target) return;
+    console.log(`Clicking ${id}, current scrollY: ${window.scrollY}, target: ${targetPosition}`);
 
-    // Calculate the position accounting for the top navbar
-    const navbarHeight = 80; // Adjust this value based on your navbar height
-    const targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
-
-    // Instant navigation - no smooth scrolling
+    // Instant jump - no animations
     window.scrollTo({
       top: targetPosition,
       behavior: "auto",
     });
 
-    // Force update of sidebar highlighting after scroll
+    console.log(`After scroll, scrollY: ${window.scrollY}, isNavigating: ${isNavigatingRef.current}`);
+
+    // Re-enable detection after navigation completes
     setTimeout(() => {
-      window.dispatchEvent(new Event('scroll'));
-    }, 50);
+      console.log(`Re-enabling detection, current scrollY: ${window.scrollY}`);
+      isNavigatingRef.current = false;
+    }, 1000);
   };
 
   return (

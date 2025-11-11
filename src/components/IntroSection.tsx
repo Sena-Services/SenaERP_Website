@@ -180,7 +180,7 @@ export default function IntroSection() {
           }}
         >
           {/* Anchor for "how-it-works" section at the rotated position */}
-          <div id="how-it-works" className="absolute" style={{ top: 0 }} />
+          <div id="how-it-works" className="absolute" style={{ top: `-${getResponsiveValue(100)}px` }} />
 
           {/* Back button - positioned at the very left, above the card */}
           {expandedCard && (
@@ -233,7 +233,7 @@ export default function IntroSection() {
             className="relative w-full h-full flex items-center transition-all duration-700 ease-out"
             style={{
               gap: `${cardGap}px`,
-              filter: splitProgress === 0 ? `drop-shadow(${elevation})` : 'none',
+              filter: 'none',
               perspective: "2000px",
               justifyContent: expandedCard === 'right' ? 'flex-end' : (expandedCard ? 'flex-start' : 'center'),
               paddingLeft: expandedCard && expandedCard !== 'right' ? '80px' : '0',
@@ -466,12 +466,16 @@ export default function IntroSection() {
 
           {/* Content overlay - only visible when fully back in intro state */}
           <div
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-0"
             style={{
-              // Only show content when: cards are joined (splitProgress=0), rotation done (rotateProgress=0),
-              // AND cards are almost fully expanded (scrollProgress < 0.3)
-              opacity: splitProgress > 0 || rotateProgress > 0 || scrollProgress > 0.3 ? 0 : contentOpacity,
-              transition: "opacity 300ms ease-out",
+              // Only show content when ALL animations are complete:
+              // - cards are joined (splitProgress === 0)
+              // - rotation done (rotateProgress === 0)
+              // - cards fully expanded back (scrollProgress === 0)
+              opacity: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? contentOpacity : 0,
+              transition: "opacity 600ms ease-out 200ms",
+              pointerEvents: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? "auto" : "none",
+              zIndex: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? 10 : -1,
             }}
           >
             <IntroContent contentOpacity={1} />

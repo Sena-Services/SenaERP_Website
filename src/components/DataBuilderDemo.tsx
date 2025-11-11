@@ -172,17 +172,16 @@ export default function DataBuilderDemo() {
       setFadeOut(false);
 
       // Stage 0: Show user query only (500ms)
-      // Stage 1: Show skeleton tables (600ms)
-      // Stage 2: Tables fill with color (600ms)
-      // Stage 3: Columns appear (1000ms)
-      // Stage 4: Relationship lines draw (800ms) - THE STAR! (faster)
-      // Stage 5: Validations appear (400ms) - faster
-      // Stage 6: Endpoints appear (400ms) - faster
-      // Stage 7: Permissions appear (600ms)
-      // Stage 8: Hold (3500ms) - Same as UI builder hold time
-      // Stage 9: Fade out (800ms) - SLOWER FADE
+      // Stage 1: Show white tables with gray content placeholders (600ms)
+      // Stage 2: Columns fill in with actual data (800ms)
+      // Stage 3: Relationship lines draw (800ms) - THE STAR! (faster)
+      // Stage 4: Validations appear (400ms) - faster
+      // Stage 5: Endpoints appear (400ms) - faster
+      // Stage 6: Permissions appear (600ms)
+      // Stage 7: Hold (3500ms) - Same as UI builder hold time
+      // Stage 8: Fade out (800ms) - SLOWER FADE
 
-      const stages = [500, 600, 600, 1000, 800, 400, 400, 600, 3500];
+      const stages = [500, 600, 800, 800, 400, 400, 600, 3500];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -193,22 +192,21 @@ export default function DataBuilderDemo() {
             progressStages();
           }, stages[currentStage] || 500);
         } else {
-          // Hold completed, now reset and fade out
-          // First reset stage to 0 (skeleton state)
-          setStage(0);
-          // Then fade out
+          // Hold completed, now fade out and switch
           setTimeout(() => {
             setFadeOut(true);
-            // Finally switch example after fade
+            // After fade completes, switch example (which will reset stage to 0)
             setTimeout(() => {
               setCurrentExample((prev) => (prev + 1) % examples.length);
             }, 600);
-          }, 200);
+          }, 100);
         }
       };
 
-      // Start the sequence
-      progressStages();
+      // Start the sequence after a brief delay to let stage 0 render
+      setTimeout(() => {
+        progressStages();
+      }, 100);
     };
 
     runSequence();
@@ -261,13 +259,13 @@ export default function DataBuilderDemo() {
   return (
     <div className="flex flex-col h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden p-8">
       {/* Request badge - appears first in stage 0 */}
-      {stage >= 0 && (
+      {stage >= 0 && !fadeOut && (
         <div className="text-center mb-8 flex-shrink-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentExample}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: fadeOut ? 0 : 1, y: fadeOut ? 20 : 0 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 20 }}
               className="inline-block bg-white px-6 py-3 rounded-full shadow-md border border-gray-200"
@@ -281,49 +279,31 @@ export default function DataBuilderDemo() {
       )}
 
       {/* Main content area */}
-      <motion.div
-        animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.6 }}
-        className="flex-1 flex flex-col space-y-6"
-      >
-        {/* Tables row with SVG overlay for relationship lines */}
-        <div ref={containerRef} className="relative flex-shrink-0">
-          <div className="flex justify-center gap-12 relative">
-            {currentData.tables.map((table, tableIdx) => (
-              <motion.div
-                key={tableIdx}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{
-                  opacity: stage >= 1 ? 1 : 0,
-                  scale: stage >= 1 ? 1 : 0.9
-                }}
-                transition={{ delay: tableIdx * 0.12, duration: 0.4, type: "spring", stiffness: 200 }}
-                className={`rounded-lg shadow-md border p-4 w-56 relative transition-all duration-500 ${
-                  stage >= 2
-                    ? "bg-white border-gray-200"
-                    : "bg-gray-100 border-gray-300"
-                }`}
-              >
+      {!fadeOut && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="flex-1 flex flex-col space-y-6"
+        >
+          {/* Tables row with SVG overlay for relationship lines */}
+          {stage >= 1 && (
+          <div ref={containerRef} className="relative flex-shrink-0">
+            <div className="flex justify-center gap-12 relative">
+              {currentData.tables.map((table, tableIdx) => (
+                <motion.div
+                  key={tableIdx}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: tableIdx * 0.12, duration: 0.4, type: "spring", stiffness: 200 }}
+                  className="rounded-lg shadow-md border border-gray-200 bg-white p-4 w-56 relative"
+                >
                 {/* Table name */}
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b transition-colors duration-500" style={{
-                  borderColor: stage >= 2 ? "rgb(229, 231, 235)" : "rgb(209, 213, 219)"
-                }}>
-                  <motion.div
-                    animate={{
-                      backgroundColor: stage >= 2 ? "#3b82f6" : "#9ca3af"
-                    }}
-                    transition={{ duration: 0.5 }}
-                    className="w-2 h-2 rounded-full"
-                  />
-                  <motion.h4
-                    animate={{
-                      color: stage >= 2 ? "#111827" : "#6b7280"
-                    }}
-                    transition={{ duration: 0.5 }}
-                    className="font-futura font-bold text-sm"
-                  >
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200">
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <h4 className="font-futura font-bold text-sm text-gray-900">
                     {table.name}
-                  </motion.h4>
+                  </h4>
                 </div>
 
                 {/* Columns */}
@@ -332,20 +312,23 @@ export default function DataBuilderDemo() {
                     <motion.div
                       key={colIdx}
                       ref={(el) => { columnRefs.current[`${tableIdx}-${colIdx}`] = el; }}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{
-                        opacity: stage >= 3 ? 1 : 0,
-                        x: stage >= 3 ? 0 : -10
-                      }}
-                      transition={{ delay: 0.1 + colIdx * 0.06, duration: 0.3 }}
                       className="flex items-center gap-2"
                     >
                       <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      <span className={`text-xs font-futura ${col.includes('FK') ? 'text-blue-600 font-semibold' : 'text-gray-600'}`}>
-                        {col}
-                      </span>
+                      {stage >= 2 ? (
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: colIdx * 0.06, duration: 0.3 }}
+                          className={`text-xs font-futura ${col.includes('FK') ? 'text-blue-600 font-semibold' : 'text-gray-600'}`}
+                        >
+                          {col}
+                        </motion.span>
+                      ) : (
+                        <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
+                      )}
                     </motion.div>
                   ))}
                 </div>
@@ -354,7 +337,7 @@ export default function DataBuilderDemo() {
           </div>
 
           {/* SVG overlay for relationship lines - THE STAR OF THE SHOW */}
-          {stage >= 4 && containerRef.current && (
+          {stage >= 3 && containerRef.current && (
             <svg
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -469,12 +452,13 @@ export default function DataBuilderDemo() {
               })}
             </svg>
           )}
-        </div>
+          </div>
+        )}
 
         {/* Bottom row: Validations, Endpoints, Permissions */}
         <div className="grid grid-cols-3 gap-4">
           {/* Validations */}
-          {stage >= 5 && (
+          {stage >= 4 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -507,7 +491,7 @@ export default function DataBuilderDemo() {
           )}
 
           {/* API Endpoints */}
-          {stage >= 6 && (
+          {stage >= 5 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -539,7 +523,7 @@ export default function DataBuilderDemo() {
           )}
 
           {/* Permissions */}
-          {stage >= 7 && (
+          {stage >= 6 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -571,7 +555,8 @@ export default function DataBuilderDemo() {
             </motion.div>
           )}
         </div>
-      </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

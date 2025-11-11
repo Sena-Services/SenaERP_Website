@@ -13,7 +13,12 @@ export default function UIBuilderDemo() {
   const [showCursor, setShowCursor] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
-  const examples = [
+  const examples: Array<{
+    userMessage: string;
+    buildingSteps: string[];
+    aiResponse: string;
+    type: "dashboard" | "table" | "form";
+  }> = [
     {
       userMessage: "Create a revenue dashboard with metric cards and weekly chart",
       buildingSteps: [
