@@ -170,8 +170,8 @@ export default function BuilderTabbed() {
           paddingRight: 'max(16px, min(32px, 2vw))'
         }}
       >
-        {/* Section Title */}
-        <div className="mb-12 text-center">
+        {/* Section Title - Hidden on mobile */}
+        <div className="mb-12 text-center hidden md:block">
           <h2
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",

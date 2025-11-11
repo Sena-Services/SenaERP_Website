@@ -38,8 +38,10 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'other'>('how-it-works');
+
   useEffect(() => {
-    // On mobile, show navbar when scrolled 70% through intro
+    // On mobile, show navbar when scrolled 70% through intro AND detect current section
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
       const handleMobileScroll = () => {
@@ -57,6 +59,31 @@ export default function Home() {
           setShowNavigation(true);
         } else {
           setShowNavigation(false);
+        }
+
+        // Detect which section we're in based on scroll position
+        const howItWorksEl = document.getElementById('how-it-works');
+        const builderEl = document.getElementById('builder');
+
+        // Get the scroll position relative to each section
+        const scrollPosition = scrollY + 150; // Offset for navbar height
+
+        if (howItWorksEl && builderEl) {
+          const howItWorksStart = howItWorksEl.offsetTop;
+          const builderStart = builderEl.offsetTop;
+
+          if (scrollPosition >= builderStart) {
+            setCurrentSection('builder');
+          } else if (scrollPosition >= howItWorksStart) {
+            setCurrentSection('how-it-works');
+          } else {
+            setCurrentSection('other');
+          }
+        } else if (howItWorksEl) {
+          const howItWorksStart = howItWorksEl.offsetTop;
+          if (scrollPosition >= howItWorksStart) {
+            setCurrentSection('how-it-works');
+          }
         }
       };
 
@@ -498,7 +525,10 @@ export default function Home() {
             opacity: showNavigation ? 1 : 0,
           }}
         >
-          <NavBar showHowItWorks={true} />
+          <NavBar
+            showHowItWorks={currentSection === 'how-it-works'}
+            showBuilder={currentSection === 'builder'}
+          />
         </div>
       )}
 

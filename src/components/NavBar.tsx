@@ -28,9 +28,10 @@ const sections = [
 
 type NavBarProps = {
   showHowItWorks?: boolean;
+  showBuilder?: boolean;
 };
 
-export default function NavBar({ showHowItWorks = false }: NavBarProps) {
+export default function NavBar({ showHowItWorks = false, showBuilder = false }: NavBarProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -40,8 +41,16 @@ export default function NavBar({ showHowItWorks = false }: NavBarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [navbarHeight, setNavbarHeight] = useState(60);
+  const [activeBuilderTab, setActiveBuilderTab] = useState<string>("ui");
 
   const isOnEnvironmentSelector = pathname === "/environment-selector";
+
+  const builderTabs = [
+    { id: "ui", label: "UI", subtitle: "Build beautiful interfaces" },
+    { id: "data", label: "Data", subtitle: "Connect and transform" },
+    { id: "workflows", label: "Workflows", subtitle: "Automate processes" },
+    { id: "agents", label: "Agents", subtitle: "Deploy AI agents" },
+  ];
 
   const handleWaitlistSuccess = (message: string) => {
     setToastMessage(message);
@@ -321,8 +330,8 @@ export default function NavBar({ showHowItWorks = false }: NavBarProps) {
         </div>
         </div>
 
-        {/* How it Works Section - Hide when menu is open */}
-        {showHowItWorks && !isMobileMenuOpen && (
+        {/* How it Works Section - Hide when menu is open or when Builder is shown */}
+        {showHowItWorks && !isMobileMenuOpen && !showBuilder && (
           <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
             <h2
               style={{
@@ -347,6 +356,60 @@ export default function NavBar({ showHowItWorks = false }: NavBarProps) {
             >
               Three simple steps
             </p>
+          </div>
+        )}
+
+        {/* Builder Tabs - Show when in builder section, hide when menu is open */}
+        {showBuilder && !isMobileMenuOpen && (
+          <div className="md:hidden w-full border-t border-white/20">
+            {/* Builder Title */}
+            <div className="text-center px-4 pt-3 pb-2">
+              <h2
+                style={{
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  fontWeight: 400,
+                  letterSpacing: "-0.02em",
+                  color: "#2C1810",
+                  fontSize: "20px",
+                }}
+              >
+                Builder
+              </h2>
+            </div>
+
+            {/* Horizontal Scrollable Tabs */}
+            <div className="overflow-x-auto scrollbar-hide px-3 pb-3">
+              <div className="flex gap-2 min-w-min">
+                {builderTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveBuilderTab(tab.id)}
+                    className={`flex-shrink-0 px-4 py-2.5 rounded-xl transition-all duration-200 ${
+                      activeBuilderTab === tab.id
+                        ? 'bg-waygent-blue shadow-md'
+                        : 'bg-white/30 hover:bg-white/50'
+                    }`}
+                  >
+                    <div className="text-left">
+                      <div
+                        className={`text-sm font-bold mb-0.5 ${
+                          activeBuilderTab === tab.id ? 'text-white' : 'text-gray-900'
+                        }`}
+                      >
+                        {tab.label}
+                      </div>
+                      <div
+                        className={`text-[10px] ${
+                          activeBuilderTab === tab.id ? 'text-white/80' : 'text-gray-600'
+                        }`}
+                      >
+                        {tab.subtitle}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
