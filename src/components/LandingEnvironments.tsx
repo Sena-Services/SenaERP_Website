@@ -163,6 +163,7 @@ function useEnvironmentCardTransform(
 
 const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments(props, ref) {
   const [activeId, setActiveId] = useState<string | undefined>(undefined);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const selectorEnvironments = useMemo<SelectorEnvironment[]>(() => {
     return environments.map((environment) => {
@@ -209,6 +210,8 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
     if (!board) return;
 
     const measure = () => {
+      setIsMobile(window.innerWidth < 1024);
+
       const host = board.querySelector<HTMLElement>(
         "[data-environment-selector-preview]",
       );
@@ -241,37 +244,40 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-24 mt-32 sm:mt-48 pb-16">
-      <div
-        className="relative mx-auto w-full"
-        style={{
-          maxWidth: 'min(1600px, calc(100vw - 200px))',
-          paddingLeft: 'max(16px, min(32px, 2vw))',
-          paddingRight: 'max(16px, min(32px, 2vw))'
-        }}
-      >
-        <div className="mb-12 text-center">
-          <h2
-            style={{
-              fontFamily: "Georgia, 'Times New Roman', serif",
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-              color: "#2C1810",
-              fontSize: '60px',
-            }}
-          >
-            Environments
-          </h2>
-          <p
-            className="text-xl md:text-2xl text-gray-700 mt-4 mx-auto max-w-3xl font-futura"
-            style={{
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Click any environment to see what's included, or launch the selector to customize one for your business.
-          </p>
+    <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ marginTop: isMobile ? '64px' : '192px' }}>
+      {!isMobile && (
+        <div
+          className="relative mx-auto w-full"
+          style={{
+            maxWidth: 'min(1600px, calc(100vw - 200px))',
+            paddingLeft: 'max(16px, min(32px, 2vw))',
+            paddingRight: 'max(16px, min(32px, 2vw))'
+          }}
+        >
+          <div className="mb-12 text-center">
+            <h2
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontWeight: 400,
+                letterSpacing: "-0.02em",
+                color: "#2C1810",
+                fontSize: '60px',
+              }}
+            >
+              Environments
+            </h2>
+            <p
+              className="font-futura text-gray-700 mt-4 mx-auto max-w-3xl"
+              style={{
+                letterSpacing: "-0.01em",
+                fontSize: '24px',
+              }}
+            >
+              Click any environment to see what's included, or launch the selector to customize one for your business.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div
         className="mx-auto"
@@ -410,56 +416,141 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
       </div>
       </div>
 
-      <div className="mx-auto mt-12 max-w-4xl space-y-10 lg:hidden">
-        {environments.map((environment) => {
-          const isActive = environment.id === activeId;
-          return (
-            <div
-              key={environment.id}
-              className={clsx(
-                "rounded-3xl border p-6 transition",
-                isActive
-                  ? "border-waygent-blue bg-white shadow-lg"
-                  : "border-white/40 bg-white/70",
-              )}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveId(environment.id);
-                }}
-                className="flex w-full flex-col gap-3 text-left"
-              >
-                <span className="text-xs uppercase tracking-[0.35em] text-waygent-blue">
-                  {environment.label}
-                </span>
-                <h3 className="text-2xl font-semibold text-waygent-text-primary">
-                  {environment.persona}
-                </h3>
-                <p className="text-sm text-waygent-text-secondary">
-                  {environment.summary}
-                </p>
-              </button>
-              {isActive && (
-                <div className="mt-5 space-y-3 text-sm text-waygent-text-secondary">
-                  {environment.bullets.map((bullet) => (
-                    <div key={bullet} className="flex items-start gap-3">
-                      <span className="mt-1 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
-                      <span>{bullet}</span>
-                    </div>
-                  ))}
-                  <Link
-                    href="/environment-selector"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-waygent-blue"
+      {/* Mobile: Horizontal scrolling carousel */}
+      <div className="lg:hidden mt-12">
+        <div className="overflow-x-auto hide-scrollbar px-4 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
+          <div className="flex gap-4" style={{ width: 'max-content' }}>
+            {environments.map((environment, index) => {
+              const isActive = environment.id === activeId;
+              return (
+                <motion.div
+                  key={environment.id}
+                  className={clsx(
+                    "rounded-3xl border transition-all duration-300 flex-shrink-0",
+                    isActive
+                      ? "border-waygent-blue bg-white shadow-xl"
+                      : "border-white/40 bg-white/80 shadow-md",
+                  )}
+                  style={{
+                    width: 'calc(100vw - 64px)',
+                    maxWidth: '400px',
+                    scrollSnapAlign: 'center',
+                  }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveId(isActive ? undefined : environment.id);
+                    }}
+                    className="flex w-full flex-col p-6 text-left"
                   >
-                    Launch this environment →
-                  </Link>
-                </div>
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <span className="text-xs uppercase tracking-[0.35em] text-waygent-blue font-semibold">
+                        {environment.label}
+                      </span>
+                      <motion.svg
+                        className="w-5 h-5 text-waygent-blue flex-shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                        animate={{ rotate: isActive ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </motion.svg>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-2xl font-semibold text-waygent-text-primary mb-3 leading-tight">
+                      {environment.persona}
+                    </h3>
+
+                    {/* Metrics row */}
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      {environment.metrics.map((metric) => (
+                        <div key={metric.id} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+                          <span className="text-lg">{metric.icon}</span>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-semibold text-gray-900">{metric.value}</span>
+                            <span className="text-[10px] text-gray-600">{metric.label}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Summary - always visible */}
+                    <p className="text-sm text-waygent-text-secondary leading-relaxed">
+                      {environment.summary}
+                    </p>
+                  </button>
+
+                  {/* Expanded content */}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden px-6 pb-6"
+                      >
+                        <div className="pt-4 border-t border-gray-200 space-y-3 text-sm text-waygent-text-secondary">
+                          {environment.bullets.map((bullet) => (
+                            <div key={bullet} className="flex items-start gap-3">
+                              <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
+                              <span>{bullet}</span>
+                            </div>
+                          ))}
+                          <Link
+                            href="/environment-selector"
+                            className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-waygent-blue text-white text-sm font-semibold rounded-full shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover"
+                          >
+                            Launch this environment
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </Link>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="flex justify-center gap-2 mt-6">
+          {environments.map((env, index) => (
+            <button
+              key={env.id}
+              onClick={() => setActiveId(env.id)}
+              className={clsx(
+                "h-2 rounded-full transition-all duration-300",
+                env.id === activeId ? "bg-waygent-blue w-8" : "bg-gray-300 w-2"
               )}
-            </div>
-          );
-        })}
+              aria-label={`View ${env.label}`}
+            />
+          ))}
+        </div>
       </div>
+
+      {/* Add CSS to hide scrollbar */}
+      <style jsx>{`
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 });
