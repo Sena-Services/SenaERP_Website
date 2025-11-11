@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import IntroSection from "@/components/IntroSection";
 import BuilderTabbed from "@/components/BuilderTabbed";
 import LandingEnvironments from "@/components/LandingEnvironments";
@@ -20,6 +20,7 @@ export default function Home() {
   // const pricingRef = useRef<HTMLElement>(null);
   // const blogRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
+  const [showNavigation, setShowNavigation] = useState(false);
   const sidebarSections = [
     { id: "intro", label: "Home" },
     { id: "how-it-works", label: "How it works" },
@@ -141,6 +142,7 @@ export default function Home() {
           manualScrollEnabled = true;
           autoRotateTriggered = false;
           hasLeftHome = true; // Mark that user has left home section
+          setShowNavigation(true); // Show navigation after leaving home
           // Dispatch event so sidebar knows home is locked
           window.dispatchEvent(new CustomEvent('homeLeft'));
         });
@@ -393,14 +395,36 @@ export default function Home() {
 
     window.addEventListener('triggerIntroSequence', handleTriggerIntro);
 
-    // Listen for resetHome event from sidebar to unlock home
+    // Listen for resetHome event from sidebar/button to unlock home
     const handleResetHome = () => {
+      // Unlock the animations first
       hasLeftHome = false;
-      introSequencePlayed = false;
+      setShowNavigation(false); // Hide navigation when going back to home
+      window.dispatchEvent(new CustomEvent('homeUnlocked'));
+
+      // Get current position
+      const points = getSnapPoints();
+
+      // Play the reverse sequence animation
+      if (isAnimating) return;
+
       manualScrollEnabled = false;
       autoRotateTriggered = false;
-      // Dispatch event to unlock animations
-      window.dispatchEvent(new CustomEvent('homeUnlocked'));
+      lockDirection('up', 1800);
+
+      const finishToIntro = () => {
+        animateToPosition(points.initial, 1200, () => {
+          introSequencePlayed = false;
+          manualScrollEnabled = false;
+          autoRotateTriggered = false;
+        });
+      };
+
+      if (window.scrollY > points.unitedCard + 10) {
+        animateToPosition(points.unitedCard, 600, finishToIntro);
+      } else {
+        finishToIntro();
+      }
     };
 
     window.addEventListener('resetHome', handleResetHome);
@@ -438,17 +462,25 @@ export default function Home() {
 
   return (
     <main className="relative bg-waygent-cream text-waygent-text-primary">
-      {/* Fixed NavBar at top */}
-      <div
-        className="fixed top-0 left-1/2 -translate-x-1/2 z-[200]"
-        style={{
-          width: "min(640px, 90vw)",
-        }}
-      >
-        <NavBar />
-      </div>
+      {/* Fixed NavBar at top - only show when not on home */}
+      {showNavigation && (
+        <div
+          className="fixed top-0 left-1/2 -translate-x-1/2 z-[200] transition-opacity duration-500"
+          style={{
+            width: "min(640px, 90vw)",
+            opacity: showNavigation ? 1 : 0,
+          }}
+        >
+          <NavBar />
+        </div>
+      )}
 
-      <SidebarNav sections={sidebarSections} />
+      {/* Sidebar - only show when not on home */}
+      {showNavigation && (
+        <div className="transition-opacity duration-500" style={{ opacity: showNavigation ? 1 : 0 }}>
+          <SidebarNav sections={sidebarSections} />
+        </div>
+      )}
 
       <div ref={introRef}>
         <IntroSection />

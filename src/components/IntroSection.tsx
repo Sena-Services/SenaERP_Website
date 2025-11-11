@@ -246,36 +246,70 @@ export default function IntroSection() {
 
           {/* Title that appears when card shrinks (before split) */}
           <div
-            className="absolute left-0 right-0 text-center z-10"
+            className="absolute left-0 right-0 z-10"
             style={{
               top: `${-getResponsiveValue(140)}px`,
               opacity: scrollProgress,
-              pointerEvents: "none",
+              pointerEvents: scrollProgress > 0.9 ? "auto" : "none",
             }}
           >
-            <h2
-              style={{
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                fontWeight: 400,
-                letterSpacing: "-0.02em",
-                color: "#2C1810",
-                fontSize: `${getResponsiveValue(60)}px`,
-                marginBottom: `${getResponsiveValue(4)}px`,
-              }}
-            >
-              How it <span style={{ fontStyle: "italic" }}>works</span>?
-            </h2>
-            <p
-              style={{
-                fontFamily: "system-ui, -apple-system, sans-serif",
-                fontWeight: 500,
-                fontSize: `${getResponsiveValue(16)}px`,
-                color: "#4B5563",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Three simple steps. Click each card to explore.
-            </p>
+            {/* Home button - positioned at the very left */}
+            {rotateProgress === 1 && (
+              <button
+                onClick={() => {
+                  // Trigger reverse animation back to intro
+                  window.dispatchEvent(new CustomEvent('resetHome'));
+                }}
+                className="absolute flex items-center justify-center gap-2 text-gray-900 hover:text-gray-600 transition-all group bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl"
+                style={{
+                  left: '0',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 1000,
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  border: '2px solid #E5E7EB',
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:scale-110">
+                  <path
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
+
+            {/* Heading - centered */}
+            <div className="text-center">
+              <h2
+                style={{
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  fontWeight: 400,
+                  letterSpacing: "-0.02em",
+                  color: "#2C1810",
+                  fontSize: `${getResponsiveValue(60)}px`,
+                  marginBottom: `${getResponsiveValue(4)}px`,
+                }}
+              >
+                How it <span style={{ fontStyle: "italic" }}>works</span>?
+              </h2>
+              <p
+                style={{
+                  fontFamily: "system-ui, -apple-system, sans-serif",
+                  fontWeight: 500,
+                  fontSize: `${getResponsiveValue(16)}px`,
+                  color: "#4B5563",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                Three simple steps. Click each card to explore.
+              </p>
+            </div>
           </div>
 
           {/* Always show 3 cards, but when splitProgress = 0, they're flush together with no gap */}
