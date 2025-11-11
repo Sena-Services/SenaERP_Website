@@ -5,8 +5,8 @@ import IntroSection from "@/components/IntroSection";
 import BuilderTabbed from "@/components/BuilderTabbed";
 import LandingEnvironments from "@/components/LandingEnvironments";
 import IntegrationsSection from "@/components/IntegrationsSection";
-import PricingSection from "@/components/PricingSection";
-import BlogSection from "@/components/BlogSection";
+// import PricingSection from "@/components/PricingSection";
+// import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
 import NavBar from "@/components/NavBar";
 import SidebarNav from "@/components/SidebarNav";
@@ -17,8 +17,8 @@ export default function Home() {
   const environmentsRef = useRef<HTMLElement>(null);
   const integrationsRef = useRef<HTMLElement>(null);
   const builderRef = useRef<HTMLDivElement>(null);
-  const pricingRef = useRef<HTMLElement>(null);
-  const blogRef = useRef<HTMLElement>(null);
+  // const pricingRef = useRef<HTMLElement>(null);
+  // const blogRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
   const sidebarSections = [
     { id: "intro", label: "Home" },
@@ -26,8 +26,8 @@ export default function Home() {
     { id: "builder", label: "Builder" },
     { id: "integrations", label: "Integrations" },
     { id: "environments", label: "Environments" },
-    { id: "pricing", label: "Pricing" },
-    { id: "blogs", label: "Blogs" },
+    // { id: "pricing", label: "Pricing" },
+    // { id: "blogs", label: "Blogs" },
     { id: "join-us", label: "Join Our Team" },
   ];
 
@@ -406,12 +406,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div id="pricing">
+          {/* <div id="pricing">
             <PricingSection ref={pricingRef} />
           </div>
           <div id="blogs">
             <BlogSection ref={blogRef} />
-          </div>
+          </div> */}
           <div id="join-us">
             <JoinUsSection ref={joinUsRef} />
           </div>

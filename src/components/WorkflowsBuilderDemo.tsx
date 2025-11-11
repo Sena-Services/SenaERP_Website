@@ -162,21 +162,22 @@ export default function WorkflowsBuilderDemo() {
 
   useEffect(() => {
     const runSequence = () => {
+      // Reset state
+      setFadeOut(false);
       setShowUserMessage(false);
       setVisibleSteps(0);
       setBuildingStage(0);
       setShowFinalResponse(false);
       setAiResponseText("");
       setShowCursor(true);
-      setFadeOut(false);
 
-      // Show user message first
+      // Show user message first with delay (matching UI builder)
       setTimeout(() => {
         setShowUserMessage(true);
       }, 200);
 
       // Show steps one by one with building messages
-      const stepInterval = 800; // 0.8s per step
+      const stepInterval = 600; // 0.6s per step (faster, matching UI builder pace)
       let currentStep = 0;
 
       const showNextStep = () => {
@@ -188,24 +189,24 @@ export default function WorkflowsBuilderDemo() {
             currentStep++;
             setVisibleSteps(currentStep);
             setTimeout(showNextStep, stepInterval);
-          }, 200);
+          }, 100);
         } else {
           // All steps shown, show final response
           setTimeout(() => {
             setShowFinalResponse(true);
-            // Hold for 3.5 seconds after AI response finishes
+            // Hold for 3.5 seconds after AI response finishes (matching UI builder)
             setTimeout(() => {
               setFadeOut(true);
               setTimeout(() => {
                 setCurrentExample((prev) => (prev + 1) % examples.length);
-              }, 600);
+              }, 400);
             }, 3500);
-          }, 200);
+          }, 150);
         }
       };
 
-      // Start showing steps after user message appears
-      setTimeout(showNextStep, 600);
+      // Start showing steps after user message appears (matching UI builder timing)
+      setTimeout(showNextStep, 400);
     };
 
     runSequence();
@@ -243,13 +244,11 @@ export default function WorkflowsBuilderDemo() {
   return (
     <div className="flex h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden">
       {/* Left Side - Chat Container (35%) */}
-      {!fadeOut && (
-        <motion.div
-          className="w-[35%] flex items-stretch p-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
+      <motion.div
+        className="w-[35%] flex items-stretch p-6"
+        animate={{ opacity: fadeOut ? 0 : 1 }}
+        transition={{ duration: 0.3 }}
+      >
           {/* Builder Chat Box - Full height */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full flex flex-col overflow-hidden h-full" style={{
             boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
@@ -345,16 +344,13 @@ export default function WorkflowsBuilderDemo() {
             </div>
           </div>
         </motion.div>
-      )}
 
       {/* Right Side - Workflow Nodes (65%) */}
-      {!fadeOut && (
-        <motion.div
-          className="w-[65%] flex items-center justify-center p-6 pl-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
+      <motion.div
+        className="w-[65%] flex items-center justify-center p-6 pl-0"
+        animate={{ opacity: fadeOut ? 0 : 1 }}
+        transition={{ duration: 0.3 }}
+      >
           <div className="relative max-w-2xl w-full h-full flex items-center justify-center">
             {visibleSteps > 0 ? (
               <div className="w-full relative">
@@ -461,7 +457,6 @@ export default function WorkflowsBuilderDemo() {
             )}
           </div>
         </motion.div>
-      )}
     </div>
   );
 }

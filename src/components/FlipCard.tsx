@@ -5,7 +5,17 @@ import { useRef } from "react";
 // ===== ADJUST THIS VALUE TO CHANGE VIDEO/CONTENT RATIO FOR ALL CARDS =====
 // Video takes this percentage, content takes the remainder
 // Example: 60 = 60% video, 40% content
-const VIDEO_HEIGHT_PERCENTAGE = 55;
+// Responsive: smaller screens need more space for content
+const getVideoHeightPercentage = () => {
+  if (typeof window === 'undefined') return 50;
+  const height = window.innerHeight;
+  // Smaller screens (laptops): give more space to content
+  if (height < 800) return 45;
+  // Medium screens: balanced
+  if (height < 1000) return 50;
+  // Large screens: more space for video
+  return 55;
+};
 // =========================================================================
 
 type ExpandedCard = "left" | "center" | "right" | null;
@@ -51,6 +61,7 @@ export default function FlipCard({
 }: FlipCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const VIDEO_HEIGHT_PERCENTAGE = getVideoHeightPercentage();
 
   const handleMouseEnter = () => {
     if (videoRef.current) {
@@ -171,6 +182,8 @@ export default function FlipCard({
           transform: "rotateY(180deg)",
           ...borderRadiusStyle,
           cursor: canClick ? 'pointer' : 'default',
+          border: '2px solid #9CA3AF',
+          boxSizing: 'border-box',
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -190,8 +203,8 @@ export default function FlipCard({
           className="relative w-full overflow-hidden"
           style={{
             height: `${VIDEO_HEIGHT_PERCENTAGE}%`,
-            borderTopLeftRadius: position === "left" ? `${borderRadius}px` : 0,
-            borderTopRightRadius: position === "right" ? `${borderRadius}px` : 0,
+            borderTopLeftRadius: position === "left" ? `${borderRadius - 2}px` : 0,
+            borderTopRightRadius: position === "right" ? `${borderRadius - 2}px` : 0,
           }}
         >
           <video
@@ -253,7 +266,7 @@ export default function FlipCard({
 
         {/* Content section - all blue now */}
         <div
-          className="flex flex-col px-6 pt-3 pb-4 relative"
+          className="flex flex-col px-4 sm:px-6 pt-2 sm:pt-3 pb-3 sm:pb-4 relative overflow-y-auto"
           style={{
             height: `${100 - VIDEO_HEIGHT_PERCENTAGE}%`,
             background: '#EFF6FF',
@@ -261,25 +274,24 @@ export default function FlipCard({
         >
 
           {/* Step number and title */}
-          <div className="flex items-center gap-2.5 mb-2 relative z-10">
+          <div className="flex items-center gap-2 sm:gap-2.5 mb-1.5 sm:mb-2 relative z-10 flex-shrink-0">
             <div
               className="flex items-center justify-center rounded-full"
               style={{
-                width: '32px',
-                height: '32px',
+                width: '28px',
+                height: '28px',
                 flexShrink: 0,
                 background: '#3B82F6',
                 boxShadow: 'none',
               }}
             >
-              <span className="text-white font-semibold" style={{ fontSize: '15px' }}>
+              <span className="text-white font-semibold text-sm sm:text-base">
                 {cardNumber}
               </span>
             </div>
             <h3
-              className="font-bold leading-tight"
+              className="font-bold leading-tight text-base sm:text-lg"
               style={{
-                fontSize: '18px',
                 letterSpacing: '-0.01em',
                 color: '#1E40AF',
               }}
@@ -290,10 +302,9 @@ export default function FlipCard({
 
           {/* Main description with styled keywords */}
           <p
-            className="leading-relaxed mb-3 relative z-10"
+            className="leading-relaxed mb-2 sm:mb-3 relative z-10 text-xs sm:text-sm flex-shrink-0"
             style={{
-              fontSize: '13px',
-              lineHeight: '1.6',
+              lineHeight: '1.5',
               fontWeight: 400,
               color: '#4B5563',
             }}
@@ -316,97 +327,97 @@ export default function FlipCard({
           </p>
 
           {/* Feature highlights - matte style */}
-          <div className="space-y-2 relative z-10 mb-3">
+          <div className="space-y-1.5 sm:space-y-2 relative z-10 mb-2 sm:mb-3 flex-1 overflow-y-auto">
             {position === "left" && (
               <>
                 {/* Discovery Mode */}
-                <div className="mb-3">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-blue-700 font-semibold" style={{ fontSize: '12px', letterSpacing: '0.02em' }}>DISCOVERY MODE</span>
-                    <span className="text-gray-500" style={{ fontSize: '11px' }}>• Voice</span>
+                <div className="mb-2 sm:mb-3">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
+                    <span className="text-blue-700 font-semibold text-[10px] sm:text-xs" style={{ letterSpacing: '0.02em' }}>DISCOVERY MODE</span>
+                    <span className="text-gray-500 text-[9px] sm:text-[11px]">• Voice</span>
                   </div>
-                  <div className="space-y-1.5">
-                    <div className="flex items-start gap-2.5">
+                  <div className="space-y-1">
+                    <div className="flex items-start gap-2">
                       <div
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-0.5 sm:mt-1"
                         style={{
-                          width: '5px',
-                          height: '5px',
+                          width: '4px',
+                          height: '4px',
                           flexShrink: 0,
                           background: '#60A5FA',
                         }}
                       />
-                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Multilingual voice conversations</span>
+                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Multilingual voice conversations</span>
                     </div>
-                    <div className="flex items-start gap-2.5">
+                    <div className="flex items-start gap-2">
                       <div
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-0.5 sm:mt-1"
                         style={{
-                          width: '5px',
-                          height: '5px',
+                          width: '4px',
+                          height: '4px',
                           flexShrink: 0,
                           background: '#60A5FA',
                         }}
                       />
-                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Asks questions like a co-founder</span>
+                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Asks questions like a co-founder</span>
                     </div>
-                    <div className="flex items-start gap-2.5">
+                    <div className="flex items-start gap-2">
                       <div
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-0.5 sm:mt-1"
                         style={{
-                          width: '5px',
-                          height: '5px',
+                          width: '4px',
+                          height: '4px',
                           flexShrink: 0,
                           background: '#60A5FA',
                         }}
                       />
-                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Deeply understands your operations</span>
+                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Deeply understands your operations</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Express Mode */}
                 <div>
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-blue-700 font-semibold" style={{ fontSize: '12px', letterSpacing: '0.02em' }}>EXPRESS MODE</span>
-                    <span className="text-gray-500" style={{ fontSize: '11px' }}>• Text</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
+                    <span className="text-blue-700 font-semibold text-[10px] sm:text-xs" style={{ letterSpacing: '0.02em' }}>EXPRESS MODE</span>
+                    <span className="text-gray-500 text-[9px] sm:text-[11px]">• Text</span>
                   </div>
-                  <div className="space-y-1.5">
-                    <div className="flex items-start gap-2.5">
+                  <div className="space-y-1">
+                    <div className="flex items-start gap-2">
                       <div
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-0.5 sm:mt-1"
                         style={{
-                          width: '5px',
-                          height: '5px',
+                          width: '4px',
+                          height: '4px',
                           flexShrink: 0,
                           background: '#60A5FA',
                         }}
                       />
-                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Direct text-based control</span>
+                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Direct text-based control</span>
                     </div>
-                    <div className="flex items-start gap-2.5">
+                    <div className="flex items-start gap-2">
                       <div
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-0.5 sm:mt-1"
                         style={{
-                          width: '5px',
-                          height: '5px',
+                          width: '4px',
+                          height: '4px',
                           flexShrink: 0,
                           background: '#60A5FA',
                         }}
                       />
-                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Tell Sena exactly what you want</span>
+                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Tell Sena exactly what you want</span>
                     </div>
-                    <div className="flex items-start gap-2.5">
+                    <div className="flex items-start gap-2">
                       <div
-                        className="rounded-full mt-1"
+                        className="rounded-full mt-0.5 sm:mt-1"
                         style={{
-                          width: '5px',
-                          height: '5px',
+                          width: '4px',
+                          height: '4px',
                           flexShrink: 0,
                           background: '#60A5FA',
                         }}
                       />
-                      <span className="text-gray-600" style={{ fontSize: '12px', lineHeight: '1.5' }}>Get instant results, zero back-and-forth</span>
+                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Get instant results, zero back-and-forth</span>
                     </div>
                   </div>
                 </div>
@@ -415,125 +426,125 @@ export default function FlipCard({
 
             {position === "center" && (
               <>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Live preview of all changes</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Live preview of all changes</span>
                 </div>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Interactive workflow builder</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Interactive workflow builder</span>
                 </div>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Unlimited iterations</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Unlimited iterations</span>
                 </div>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Full customization control</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Full customization control</span>
                 </div>
               </>
             )}
 
             {position === "right" && (
               <>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>One-click deployment</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">One-click deployment</span>
                 </div>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Instant team access</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Instant team access</span>
                 </div>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Cloud-hosted infrastructure</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Cloud-hosted infrastructure</span>
                 </div>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full mt-0.5 sm:mt-1"
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       flexShrink: 0,
                       background: '#60A5FA',
                     }}
                   />
-                  <span className="text-gray-600" style={{ fontSize: '11px', lineHeight: '1.5' }}>Enterprise-grade security</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Enterprise-grade security</span>
                 </div>
               </>
             )}
           </div>
 
           {/* Footer section */}
-          <div className="mt-auto pt-2 border-t border-blue-200/40 relative z-10">
+          <div className="mt-auto pt-1.5 sm:pt-2 border-t border-blue-200/40 relative z-10 flex-shrink-0">
             <div className="flex items-center justify-between">
-              <p className="text-gray-500 text-[10px]">
+              <p className="text-gray-500 text-[9px] sm:text-[10px]">
                 {position === "left" && "Start building in minutes"}
                 {position === "center" && "Perfect your system"}
                 {position === "right" && "Launch instantly"}
               </p>
               {canClick && !isExpanded && (
-                <div className="flex items-center gap-1.5 transition-all duration-300 group-hover:gap-2">
-                  <span className="text-blue-600 font-medium text-[10px] group-hover:text-blue-700">
+                <div className="flex items-center gap-1 sm:gap-1.5 transition-all duration-300 group-hover:gap-2">
+                  <span className="text-blue-600 font-medium text-[9px] sm:text-[10px] group-hover:text-blue-700">
                     Learn more
                   </span>
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5">
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5">
                     <path
                       d="M6 12L10 8L6 4"
                       stroke="currentColor"

@@ -134,7 +134,7 @@ export default function IntroSection() {
   // During initial phase (scrollProgress < 1), center the card
   // After shrinking is done (scrollProgress >= 1), add extra top padding for "How it works" title and navbar
   const navbarHeight = getResponsiveValue(90); // Space for navbar
-  const titleHeight = getResponsiveValue(80); // Space for "How it works?" title
+  const titleHeight = getResponsiveValue(120); // Space for "How it works?" title + subtitle
   const topSpaceNeeded = navbarHeight + titleHeight;
 
   const centeredPadding = Math.max(
@@ -180,7 +180,7 @@ export default function IntroSection() {
           }}
         >
           {/* Anchor for "how-it-works" section at the rotated position */}
-          <div id="how-it-works" className="absolute" style={{ top: `-${getResponsiveValue(100)}px` }} />
+          <div id="how-it-works" className="absolute" style={{ top: `-${getResponsiveValue(140)}px` }} />
 
           {/* Back button - positioned at the very left, above the card */}
           {expandedCard && (
@@ -189,7 +189,7 @@ export default function IntroSection() {
               className="absolute flex items-center gap-2 text-gray-900 hover:text-gray-600 transition-all group bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg"
               style={{
                 left: '0',
-                top: `${-getResponsiveValue(100)}px`,
+                top: `${-getResponsiveValue(140)}px`,
                 zIndex: 1000,
               }}
             >
@@ -210,7 +210,7 @@ export default function IntroSection() {
           <div
             className="absolute left-0 right-0 text-center z-10"
             style={{
-              top: `${-getResponsiveValue(100)}px`,
+              top: `${-getResponsiveValue(140)}px`,
               opacity: scrollProgress,
               pointerEvents: "none",
             }}
@@ -222,10 +222,22 @@ export default function IntroSection() {
                 letterSpacing: "-0.02em",
                 color: "#2C1810",
                 fontSize: `${getResponsiveValue(60)}px`,
+                marginBottom: `${getResponsiveValue(4)}px`,
               }}
             >
               How it <span style={{ fontStyle: "italic" }}>works</span>?
             </h2>
+            <p
+              style={{
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontWeight: 500,
+                fontSize: `${getResponsiveValue(16)}px`,
+                color: "#4B5563",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Three simple steps. Click each card to explore.
+            </p>
           </div>
 
           {/* Always show 3 cards, but when splitProgress = 0, they're flush together with no gap */}

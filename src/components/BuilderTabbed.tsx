@@ -205,8 +205,10 @@ export default function BuilderTabbed() {
                   }`}
                   style={activeTab.id === tab.id ? {
                     boxShadow: '0 6px 15px -3px rgba(59, 130, 246, 0.25), 0 3px 8px -2px rgba(59, 130, 246, 0.12)'
-                  } : {}}
-                  whileHover={{ scale: activeTab.id === tab.id ? 1 : 1.02, boxShadow: activeTab.id !== tab.id ? '0 6px 15px -3px rgba(0, 0, 0, 0.08)' : undefined }}
+                  } : {
+                    boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04)'
+                  }}
+                  whileHover={{ scale: activeTab.id === tab.id ? 1 : 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
@@ -265,25 +267,27 @@ export default function BuilderTabbed() {
           </div>
 
           {/* Content Area */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {/* Special layouts for different tabs */}
-              {activeTab.id === "ui" ? (
-                <UIBuilderDemo />
-              ) : activeTab.id === "data" ? (
-                <DataBuilderDemo />
-              ) : activeTab.id === "workflows" ? (
-                <WorkflowsBuilderDemo />
-              ) : activeTab.id === "agents" ? (
-                <AgentsBuilderDemo />
-              ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[500px]">
+          <div className="h-[600px] overflow-hidden">
+            <AnimatePresence mode="sync">
+              <motion.div
+                key={activeTab.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="h-full"
+              >
+                {/* Special layouts for different tabs */}
+                {activeTab.id === "ui" ? (
+                  <UIBuilderDemo />
+                ) : activeTab.id === "data" ? (
+                  <DataBuilderDemo />
+                ) : activeTab.id === "workflows" ? (
+                  <WorkflowsBuilderDemo />
+                ) : activeTab.id === "agents" ? (
+                  <AgentsBuilderDemo />
+                ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 h-full">
                 {/* Left Section - Workflow */}
                 <div className="relative bg-gradient-to-br from-indigo-50/50 to-purple-50/50 p-8 lg:p-10 overflow-hidden lg:border-r border-gray-200/50">
                     <>
@@ -507,8 +511,9 @@ export default function BuilderTabbed() {
                 </div>
               </div>
               )}
-            </motion.div>
-          </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>

@@ -15,6 +15,7 @@ export default function AgentsBuilderDemo() {
   const examples = [
     {
       userMessage: "Create a sales agent that handles product questions and pricing",
+      agentName: "Sales Assistant",
       buildingSteps: [
         "Configuring agent personality...",
         "Setting response style and length...",
@@ -33,6 +34,7 @@ export default function AgentsBuilderDemo() {
     },
     {
       userMessage: "Build a support agent for technical troubleshooting",
+      agentName: "Support Agent",
       buildingSteps: [
         "Setting technical tone...",
         "Configuring response format...",
@@ -47,6 +49,25 @@ export default function AgentsBuilderDemo() {
         creativity: "Low",
         knowledge: ["Tech Docs", "Common Issues", "API Guides"],
         style: "Step-by-step"
+      }
+    },
+    {
+      userMessage: "Create a customer onboarding agent to guide new users",
+      agentName: "Onboarding Guide",
+      buildingSteps: [
+        "Setting welcoming tone...",
+        "Configuring onboarding flow...",
+        "Adding training materials...",
+        "Testing user interactions...",
+        "Agent ready!"
+      ],
+      aiResponse: "Your onboarding agent is live! It greets new users warmly and guides them through setup with interactive tutorials. The agent has access to training materials and best practices, ensuring every user gets started on the right foot.",
+      agentConfig: {
+        personality: "Welcoming & Supportive",
+        responseLength: "Concise",
+        creativity: "Medium",
+        knowledge: ["Onboarding Guide", "Training Videos", "Best Practices"],
+        style: "Interactive"
       }
     }
   ];
@@ -63,13 +84,13 @@ export default function AgentsBuilderDemo() {
       setAiResponseText("");
       setShowCursor(true);
 
-      // Show user message first
+      // Show user message first with delay (matching UI builder)
       setTimeout(() => {
         setShowUserMessage(true);
       }, 200);
 
-      // Progress through building stages
-      const stageIntervals = [600, 500, 500, 500, 400];
+      // Progress through building stages - matching UI builder pace
+      const stageIntervals = [600, 600, 600, 600, 500];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -78,12 +99,12 @@ export default function AgentsBuilderDemo() {
             currentStage++;
             setBuildingStage(currentStage);
             progressStages();
-          }, stageIntervals[currentStage] || 500);
+          }, stageIntervals[currentStage] || 600);
         } else {
           // Building complete, show final response
           setTimeout(() => {
             setShowFinalResponse(true);
-            // After AI response finishes typing + hold time
+            // After AI response finishes typing + hold time (matching UI builder)
             setTimeout(() => {
               setFadeOut(true);
               setTimeout(() => {
@@ -94,7 +115,7 @@ export default function AgentsBuilderDemo() {
         }
       };
 
-      // Start building stages after user message appears
+      // Start building stages after user message appears (matching UI builder timing)
       setTimeout(() => {
         progressStages();
       }, 400);
@@ -254,7 +275,7 @@ export default function AgentsBuilderDemo() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-futura font-bold text-base text-gray-900">Sales Assistant</h3>
+                  <h3 className="font-futura font-bold text-base text-gray-900">{currentExampleData.agentName}</h3>
                   <p className="text-xs text-gray-500 font-futura">AI Agent • Active</p>
                 </div>
                 <div className="px-2.5 py-1 bg-green-50 border border-green-200 rounded-md">
