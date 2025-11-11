@@ -178,10 +178,10 @@ export default function DataBuilderDemo() {
       // Stage 4: Validations appear (600ms)
       // Stage 5: Endpoints appear (600ms)
       // Stage 6: Permissions appear (600ms)
-      // Stage 7: Hold (3500ms) - LONGER HOLD
+      // Stage 7: Hold (4500ms) - MUCH LONGER HOLD to see final result
       // Stage 8: Fade out (800ms) - SLOWER FADE
 
-      const stages = [800, 600, 1000, 1500, 600, 600, 600, 3500];
+      const stages = [800, 600, 1000, 1500, 600, 600, 600, 4500];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -192,11 +192,16 @@ export default function DataBuilderDemo() {
             progressStages();
           }, stages[currentStage - 1] || 500);
         } else {
-          // Fade out and move to next
-          setFadeOut(true);
+          // First reset stage to 0 (skeleton state)
+          setStage(0);
+          // Then fade out
           setTimeout(() => {
-            setCurrentExample((prev) => (prev + 1) % examples.length);
-          }, 800); // Slower fade out
+            setFadeOut(true);
+            // Finally switch example after fade
+            setTimeout(() => {
+              setCurrentExample((prev) => (prev + 1) % examples.length);
+            }, 600);
+          }, 200);
         }
       };
 
@@ -234,12 +239,16 @@ export default function DataBuilderDemo() {
     const toX = toRect.left - containerRect.left;
     const toY = toRect.top - containerRect.top + toRect.height / 2;
 
-    // Create smooth bezier curve
+    // Create smooth bezier curve that arcs above or below to avoid middle tables
     const controlPointOffset = Math.abs(toX - fromX) * 0.5;
-    const controlX1 = fromX + controlPointOffset;
-    const controlY1 = fromY;
-    const controlX2 = toX - controlPointOffset;
-    const controlY2 = toY;
+
+    // Arc upward if line goes left to right, downward if going backwards
+    const verticalOffset = fromX < toX ? -50 : 50; // Negative = up, Positive = down
+
+    const controlX1 = fromX + controlPointOffset * 0.4;
+    const controlY1 = fromY + verticalOffset;
+    const controlX2 = toX - controlPointOffset * 0.4;
+    const controlY2 = toY + verticalOffset;
 
     const path = `M ${fromX} ${fromY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${toX} ${toY}`;
     const midX = (fromX + toX) / 2;

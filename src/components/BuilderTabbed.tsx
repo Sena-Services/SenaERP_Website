@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import UIBuilderDemo from "./UIBuilderDemo";
 import DataBuilderDemo from "./DataBuilderDemo";
+import WorkflowsBuilderDemo from "./WorkflowsBuilderDemo";
 
 type Tab = {
   id: string;
@@ -276,6 +277,8 @@ export default function BuilderTabbed() {
                 <UIBuilderDemo />
               ) : activeTab.id === "data" ? (
                 <DataBuilderDemo />
+              ) : activeTab.id === "workflows" ? (
+                <WorkflowsBuilderDemo />
               ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[500px]">
                 {/* Left Section - Workflow */}
