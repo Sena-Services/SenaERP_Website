@@ -245,7 +245,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
       <div
         className="relative mx-auto w-full"
         style={{
-          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          maxWidth: 'clamp(calc(100vw - 32px), calc(100vw - 200px), 1600px)',
           paddingLeft: 'max(16px, min(32px, 2vw))',
           paddingRight: 'max(16px, min(32px, 2vw))'
         }}
@@ -276,7 +276,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
       <div
         className="mx-auto"
         style={{
-          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          maxWidth: 'clamp(calc(100vw - 32px), calc(100vw - 200px), 1600px)',
           paddingLeft: 'max(16px, min(32px, 2vw))',
           paddingRight: 'max(16px, min(32px, 2vw))'
         }}

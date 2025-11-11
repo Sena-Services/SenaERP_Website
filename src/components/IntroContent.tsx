@@ -7,7 +7,7 @@ type IntroContentProps = {
 export default function IntroContent({ contentOpacity }: IntroContentProps) {
   return (
     <div
-      className="relative z-10 h-full flex flex-col w-full md:w-[85%] lg:w-[70%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+      className="relative z-10 h-full flex flex-col w-full md:w-[85%] xl:w-[60%] px-4 sm:px-8 md:px-10 lg:px-16 pt-12 sm:pt-14 md:pt-16 lg:pt-18 pb-40 sm:pb-44 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
       style={{
         opacity: contentOpacity,
         pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
@@ -117,7 +117,10 @@ export default function IntroContent({ contentOpacity }: IntroContentProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 left-4 sm:left-8 md:left-10 lg:left-16 right-4 sm:right-auto w-auto sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%]">
+      <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 left-4 right-4 sm:left-8 sm:right-8 md:left-10 md:right-auto lg:left-16" style={{
+        width: 'auto',
+        maxWidth: 'min(800px, 85%)',
+      }}>
         <div
           className="space-y-2 md:space-y-2.5 p-3 sm:p-4 md:p-5 rounded-lg md:rounded-xl"
           style={{
