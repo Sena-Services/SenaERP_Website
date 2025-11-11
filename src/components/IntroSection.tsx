@@ -124,13 +124,20 @@ export default function IntroSection() {
   const stickyFrameHeight = viewportHeight;
 
   // Calculate proper centering to place card perfectly in viewport
-  // Use actual viewport height for centering, not the inflated stickyFrameHeight
-  const optimalPadding = Math.max(
+  // During initial phase (scrollProgress < 1), center the card
+  // After shrinking is done (scrollProgress >= 1), add extra top padding for "How it works" title and navbar
+  const navbarHeight = getResponsiveValue(90); // Space for navbar
+  const titleHeight = getResponsiveValue(80); // Space for "How it works?" title
+  const topSpaceNeeded = navbarHeight + titleHeight;
+
+  const centeredPadding = Math.max(
     getResponsiveValue(16),
     (viewportHeight - currentHeightValue) / 2
   );
-  // Always center the card vertically
-  const heroPaddingTop = optimalPadding;
+
+  // Gradually shift down as we complete the shrink phase
+  const shiftProgress = Math.max(0, scrollProgress - 0.7) / 0.3; // Start shifting at 70% shrink
+  const heroPaddingTop = centeredPadding + (topSpaceNeeded - centeredPadding) * shiftProgress;
 
   // Split animation calculations with responsive scaling
   const responsiveMaxGap = getResponsiveValue(24);
