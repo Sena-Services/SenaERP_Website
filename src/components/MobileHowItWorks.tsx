@@ -62,9 +62,6 @@ export default function MobileHowItWorks() {
     };
   }, [isMobile]);
 
-  // Don't render on desktop
-  if (!isMobile) return null;
-
   const cards = [
     {
       number: 1,
@@ -159,18 +156,21 @@ export default function MobileHowItWorks() {
     }
   ];
 
+  // Don't render on desktop
+  if (!isMobile) return null;
+
   return (
-    <div className="w-full bg-waygent-cream" id="how-it-works">
-      {/* Title Section */}
-      <div className="w-full py-12 px-6 text-center">
+    <div className="w-full bg-gradient-to-b from-waygent-cream to-gray-50 relative" id="how-it-works">
+      {/* Title Section - Compact */}
+      <div className="w-full py-8 px-6 text-center sticky top-0 z-50 bg-waygent-cream/80 backdrop-blur-md border-b border-gray-200/50">
         <h2
           style={{
             fontFamily: "Georgia, 'Times New Roman', serif",
             fontWeight: 400,
             letterSpacing: "-0.02em",
             color: "#2C1810",
-            fontSize: "48px",
-            marginBottom: "8px",
+            fontSize: "36px",
+            marginBottom: "4px",
           }}
         >
           How it <span style={{ fontStyle: "italic" }}>works</span>?
@@ -179,173 +179,235 @@ export default function MobileHowItWorks() {
           style={{
             fontFamily: "system-ui, -apple-system, sans-serif",
             fontWeight: 500,
-            fontSize: "16px",
-            color: "#4B5563",
+            fontSize: "14px",
+            color: "#6B7280",
             letterSpacing: "-0.01em",
           }}
         >
-          Three simple steps to build your custom ERP
+          Three simple steps
         </p>
       </div>
 
-      {/* Cards */}
-      {cards.map((card, index) => (
+      {/* Cards Container with Padding */}
+      <div className="relative px-4 py-6">
+        {cards.map((card, index) => (
         <div
           key={card.number}
-          className="w-full min-h-screen flex flex-col"
+          className="relative mb-6 last:mb-0"
           style={{
-            background: card.bg,
+            marginTop: index > 0 ? '-60px' : '0', // Overlapping effect
           }}
         >
-          {/* Video Section - Top 50% */}
-          <div className="w-full h-[50vh] relative overflow-hidden flex items-center justify-center">
-            <video
-              ref={(el) => {
-                videoRefs.current[index] = el;
-              }}
-              src={card.videoSrc}
-              loop
-              muted
-              playsInline
-              preload="auto"
-              className="w-full h-full object-cover"
-              style={{
-                objectPosition: 'center 50%',
-                filter: 'grayscale(90%) brightness(0.85) contrast(0.7)',
-              }}
-            />
-
-            {/* Overlay to further desaturate - matching desktop */}
-            <div
-              className="absolute inset-0 bg-gray-400/20 pointer-events-none"
-              style={{
-                mixBlendMode: 'saturation',
-              }}
-            />
-
-            {/* Card number badge */}
-            <div
-              className="absolute top-6 left-6 w-12 h-12 rounded-full flex items-center justify-center"
-              style={{
-                background: 'rgba(255, 255, 255, 0.9)',
-                border: '2px solid rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              <span
+          {/* Card Container with modern styling */}
+          <div
+            className="relative rounded-3xl overflow-hidden shadow-2xl"
+            style={{
+              minHeight: 'calc(100vh - 120px)',
+              transform: `scale(${1 - index * 0.02})`, // Slight scale for depth
+            }}
+          >
+            {/* Video Section - Compact with gradient overlay */}
+            <div className="w-full h-[45vh] relative overflow-hidden">
+              <video
+                ref={(el) => {
+                  videoRefs.current[index] = el;
+                }}
+                src={card.videoSrc}
+                loop
+                muted
+                playsInline
+                preload="auto"
+                className="w-full h-full object-cover"
                 style={{
-                  fontFamily: "Georgia, serif",
-                  fontSize: "20px",
-                  fontWeight: 700,
-                  color: "#2C1810",
+                  objectPosition: 'center 50%',
+                  filter: 'grayscale(90%) brightness(0.85) contrast(0.7)',
+                }}
+              />
+
+              {/* Overlay to further desaturate - matching desktop */}
+              <div
+                className="absolute inset-0 bg-gray-400/20 pointer-events-none"
+                style={{
+                  mixBlendMode: 'saturation',
+                }}
+              />
+
+              {/* Colored gradient overlay for each card */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: index === 0
+                    ? 'linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)'
+                    : index === 1
+                    ? 'linear-gradient(180deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 100%)'
+                    : 'linear-gradient(180deg, rgba(236, 72, 153, 0.15) 0%, rgba(236, 72, 153, 0.05) 50%, transparent 100%)',
+                }}
+              />
+
+              {/* Floating card number badge with shadow */}
+              <div
+                className="absolute top-4 left-4 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(10px)',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  transform: 'translateZ(20px)',
                 }}
               >
-                {card.number}
-              </span>
+                <span
+                  style={{
+                    fontFamily: "Georgia, serif",
+                    fontSize: "24px",
+                    fontWeight: 700,
+                    color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                  }}
+                >
+                  {card.number}
+                </span>
+              </div>
             </div>
-          </div>
 
-          {/* Content Section - Bottom 50% */}
-          <div className="w-full h-[50vh] overflow-y-auto px-6 py-8">
-            <h3
-              className="text-3xl font-bold mb-4"
+            {/* Content Section with glassmorphism */}
+            <div
+              className="relative overflow-y-auto px-5 py-6"
               style={{
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                color: "#2C1810",
+                minHeight: '55vh',
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(20px)',
               }}
             >
-              {card.details.heading}
-            </h3>
-            <p
-              className="text-base leading-relaxed mb-6"
-              style={{
-                fontFamily: "system-ui, -apple-system, sans-serif",
-                color: "#4B5563",
-              }}
-            >
-              {card.details.intro}
-            </p>
-
-            {/* Mode-specific content for Card 1 */}
-            {card.details.modes && (
-              <div className="space-y-6">
-                {card.details.modes.map((mode, modeIndex) => (
-                  <div key={modeIndex}>
-                    <h4
-                      className="text-xl font-bold mb-2"
-                      style={{
-                        fontFamily: "Georgia, serif",
-                        color: "#1E40AF",
-                      }}
-                    >
-                      {mode.title}
-                    </h4>
-                    <p
-                      className="text-sm leading-relaxed mb-3"
-                      style={{
-                        fontFamily: "system-ui, -apple-system, sans-serif",
-                        color: "#4B5563",
-                      }}
-                    >
-                      {mode.description}
-                    </p>
-                    <ul className="space-y-2">
-                      {mode.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                          <span
-                            className="text-sm"
-                            style={{
-                              fontFamily: "system-ui, -apple-system, sans-serif",
-                              color: "#374151",
-                            }}
-                          >
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+              {/* Compact Title with accent */}
+              <div className="mb-4">
+                <div
+                  className="inline-block px-3 py-1 rounded-full mb-2 text-xs font-bold tracking-wider"
+                  style={{
+                    background: index === 0
+                      ? 'rgba(59, 130, 246, 0.1)'
+                      : index === 1
+                      ? 'rgba(139, 92, 246, 0.1)'
+                      : 'rgba(236, 72, 153, 0.1)',
+                    color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                  }}
+                >
+                  STEP {card.number}
+                </div>
+                <h3
+                  className="text-2xl font-bold leading-tight"
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    color: "#1F2937",
+                  }}
+                >
+                  {card.details.heading}
+                </h3>
               </div>
-            )}
 
-            {/* Feature list for Cards 2 & 3 */}
-            {card.details.features && !card.details.modes && (
-              <div className="space-y-4">
-                {card.details.features.map((feature, featureIndex) => (
-                  <div
-                    key={featureIndex}
-                    className="p-4 rounded-lg"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.6)',
-                      border: '1px solid rgba(0, 0, 0, 0.1)',
-                    }}
-                  >
-                    <h4
-                      className="font-bold mb-1 text-base"
+              <p
+                className="text-sm leading-relaxed mb-4"
+                style={{
+                  fontFamily: "system-ui, -apple-system, sans-serif",
+                  color: "#6B7280",
+                  lineHeight: "1.6",
+                }}
+              >
+                {card.details.intro}
+              </p>
+
+              {/* Mode-specific content for Card 1 - Compact cards */}
+              {card.details.modes && (
+                <div className="space-y-3">
+                  {card.details.modes.map((mode, modeIndex) => (
+                    <div
+                      key={modeIndex}
+                      className="rounded-2xl p-4"
                       style={{
-                        fontFamily: "system-ui, -apple-system, sans-serif",
-                        color: "#1F2937",
+                        background: 'rgba(255, 255, 255, 0.6)',
+                        border: '1px solid rgba(0, 0, 0, 0.05)',
                       }}
                     >
-                      {feature.title}
-                    </h4>
-                    <p
-                      className="text-sm"
+                      <h4
+                        className="text-base font-bold mb-1 flex items-center gap-2"
+                        style={{
+                          fontFamily: "system-ui, sans-serif",
+                          color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                        }}
+                      >
+                        <span>{mode.title}</span>
+                      </h4>
+                      <p
+                        className="text-xs leading-relaxed mb-2"
+                        style={{
+                          fontFamily: "system-ui, -apple-system, sans-serif",
+                          color: "#6B7280",
+                        }}
+                      >
+                        {mode.description}
+                      </p>
+                      <ul className="space-y-1.5">
+                        {mode.features.map((feature, featureIndex) => (
+                          <li key={featureIndex} className="flex items-start gap-2">
+                            <div
+                              className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
+                              style={{
+                                background: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                              }}
+                            />
+                            <span
+                              className="text-xs"
+                              style={{
+                                fontFamily: "system-ui, -apple-system, sans-serif",
+                                color: "#4B5563",
+                              }}
+                            >
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Feature list for Cards 2 & 3 - Grid layout */}
+              {card.details.features && !card.details.modes && (
+                <div className="grid grid-cols-2 gap-3">
+                  {card.details.features.map((feature, featureIndex) => (
+                    <div
+                      key={featureIndex}
+                      className="p-3 rounded-xl"
                       style={{
-                        fontFamily: "system-ui, -apple-system, sans-serif",
-                        color: "#4B5563",
+                        background: 'rgba(255, 255, 255, 0.6)',
+                        border: '1px solid rgba(0, 0, 0, 0.05)',
                       }}
                     >
-                      {feature.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+                      <h4
+                        className="font-bold mb-1 text-xs"
+                        style={{
+                          fontFamily: "system-ui, -apple-system, sans-serif",
+                          color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                        }}
+                      >
+                        {feature.title}
+                      </h4>
+                      <p
+                        className="text-[11px] leading-tight"
+                        style={{
+                          fontFamily: "system-ui, -apple-system, sans-serif",
+                          color: "#6B7280",
+                        }}
+                      >
+                        {feature.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }
