@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState, forwardRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, forwardRef } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import EnvironmentSelector, {
@@ -163,8 +163,15 @@ function useEnvironmentCardTransform(
 
 const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments(props, ref) {
   const [activeId, setActiveId] = useState<string | undefined>(undefined);
-  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Handle initial mount
+  useEffect(() => {
+    setMounted(true);
+    setIsMobile(window.innerWidth < 1024);
+  }, []);
   const selectorEnvironments = useMemo<SelectorEnvironment[]>(() => {
     return environments.map((environment) => {
       const active_blueprints =
@@ -244,8 +251,8 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ marginTop: isMobile ? '64px' : '192px' }}>
-      {!isMobile && (
+    <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ marginTop: mounted && isMobile ? '64px' : '192px' }}>
+      {(!mounted || !isMobile) && (
         <div
           className="relative mx-auto w-full"
           style={{
