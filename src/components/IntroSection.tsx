@@ -121,24 +121,16 @@ export default function IntroSection() {
       : "0 12px 32px -10px rgba(0, 0, 0, 0.12)";
   const sectionHeight =
     startHeight + SHRINK_SCROLL_DISTANCE + SPLIT_SCROLL_DISTANCE + ROTATE_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
-  const stickyFrameHeight =
-    Math.max(viewportHeight, startHeight) + EXTRA_HOLD_DISTANCE / 2;
+  const stickyFrameHeight = viewportHeight;
 
-  const responsivePaddingBase = getResponsiveValue(8);
-  const responsivePaddingIncrease = getResponsiveValue(24);
-  // Keep padding constant during initial shrink to prevent upward movement
-  const basePaddingTop = responsivePaddingBase;
+  // Calculate proper centering to place card perfectly in viewport
+  // Use actual viewport height for centering, not the inflated stickyFrameHeight
   const optimalPadding = Math.max(
     getResponsiveValue(16),
-    (stickyFrameHeight - currentHeightValue) / 2
+    (viewportHeight - currentHeightValue) / 2
   );
-  // Only start centering after shrink is complete
-  const centerBoostStart = 0.8;
-  const centerBoost = clamp01(
-    (scrollProgress - centerBoostStart) / (1 - centerBoostStart)
-  );
-  const heroPaddingTop =
-    basePaddingTop + (optimalPadding - basePaddingTop) * centerBoost;
+  // Always center the card vertically
+  const heroPaddingTop = optimalPadding;
 
   // Split animation calculations with responsive scaling
   const responsiveMaxGap = getResponsiveValue(24);
@@ -157,7 +149,7 @@ export default function IntroSection() {
       <div
         className="sticky flex items-start justify-center w-full"
         style={{
-          top: '-40px',
+          top: '0px',
           height: `${stickyFrameHeight}px`,
           paddingTop: `${heroPaddingTop}px`,
         }}
