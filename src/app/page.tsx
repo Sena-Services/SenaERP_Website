@@ -38,7 +38,7 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'other'>('how-it-works');
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'other'>('other');
 
   useEffect(() => {
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
@@ -65,25 +65,20 @@ export default function Home() {
         const howItWorksEl = document.getElementById('how-it-works');
         const builderEl = document.getElementById('builder');
 
-        // Get the scroll position relative to each section
-        const scrollPosition = scrollY + 150; // Offset for navbar height
+        if (builderEl && howItWorksEl) {
+          const builderRect = builderEl.getBoundingClientRect();
+          const builderTop = scrollY + builderRect.top;
 
-        if (howItWorksEl && builderEl) {
-          const howItWorksStart = howItWorksEl.offsetTop;
-          const builderStart = builderEl.offsetTop;
-
-          if (scrollPosition >= builderStart) {
+          // If we've scrolled past the start of builder section, show builder
+          if (scrollY >= builderTop - 300) {
             setCurrentSection('builder');
-          } else if (scrollPosition >= howItWorksStart) {
-            setCurrentSection('how-it-works');
           } else {
-            setCurrentSection('other');
-          }
-        } else if (howItWorksEl) {
-          const howItWorksStart = howItWorksEl.offsetTop;
-          if (scrollPosition >= howItWorksStart) {
+            // Otherwise show how-it-works
             setCurrentSection('how-it-works');
           }
+        } else {
+          // Default to how-it-works if sections not found
+          setCurrentSection('how-it-works');
         }
       };
 
