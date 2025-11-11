@@ -38,7 +38,7 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'other'>('other');
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'environments' | 'join-us' | 'other'>('other');
 
   useEffect(() => {
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
@@ -64,22 +64,35 @@ export default function Home() {
         // Detect which section we're in based on scroll position
         const howItWorksEl = document.getElementById('how-it-works');
         const builderEl = document.getElementById('builder');
+        const integrationsEl = document.getElementById('integrations');
+        const environmentsEl = document.getElementById('environments');
+        const joinUsEl = document.getElementById('join-us');
 
-        if (builderEl && howItWorksEl) {
-          const builderRect = builderEl.getBoundingClientRect();
-          const builderTop = scrollY + builderRect.top;
+        // Get all section positions
+        const sections = [
+          { id: 'join-us', el: joinUsEl },
+          { id: 'environments', el: environmentsEl },
+          { id: 'integrations', el: integrationsEl },
+          { id: 'builder', el: builderEl },
+          { id: 'how-it-works', el: howItWorksEl },
+        ];
 
-          // If we've scrolled past the start of builder section, show builder
-          if (scrollY >= builderTop - 300) {
-            setCurrentSection('builder');
-          } else {
-            // Otherwise show how-it-works
-            setCurrentSection('how-it-works');
+        // Find which section we're in (check from bottom to top)
+        let foundSection = 'how-it-works';
+        for (const section of sections) {
+          if (section.el) {
+            const rect = section.el.getBoundingClientRect();
+            const sectionTop = scrollY + rect.top;
+
+            // If we've scrolled past this section (with 300px threshold)
+            if (scrollY >= sectionTop - 300) {
+              foundSection = section.id;
+              break;
+            }
           }
-        } else {
-          // Default to how-it-works if sections not found
-          setCurrentSection('how-it-works');
         }
+
+        setCurrentSection(foundSection as typeof currentSection);
       };
 
       handleMobileScroll();
@@ -523,6 +536,9 @@ export default function Home() {
           <NavBar
             showHowItWorks={currentSection === 'how-it-works'}
             showBuilder={currentSection === 'builder'}
+            showIntegrations={currentSection === 'integrations'}
+            showEnvironments={currentSection === 'environments'}
+            showJoinUs={currentSection === 'join-us'}
           />
         </div>
       )}

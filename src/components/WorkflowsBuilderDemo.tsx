@@ -19,6 +19,15 @@ export default function WorkflowsBuilderDemo() {
   const [aiResponseText, setAiResponseText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const examples = [
     {
@@ -170,6 +179,7 @@ export default function WorkflowsBuilderDemo() {
       setShowFinalResponse(false);
       setAiResponseText("");
       setShowCursor(true);
+      setShowPreview(false);
 
       // Show user message first with delay (matching UI builder)
       setTimeout(() => {
@@ -194,13 +204,28 @@ export default function WorkflowsBuilderDemo() {
           // All steps shown, show final response
           setTimeout(() => {
             setShowFinalResponse(true);
-            // Hold for 3.5 seconds after AI response finishes (matching UI builder)
+            // After AI response finishes typing, wait then transition
             setTimeout(() => {
-              setFadeOut(true);
-              setTimeout(() => {
-                setCurrentExample((prev) => (prev + 1) % examples.length);
-              }, 400);
-            }, 3500);
+              // On mobile: switch to preview automatically with smooth fade
+              if (isMobile) {
+                setTimeout(() => {
+                  setShowPreview(true);
+                }, 500);
+                // After showing preview for 4 seconds, fade out and move to next
+                setTimeout(() => {
+                  setFadeOut(true);
+                  setTimeout(() => {
+                    setCurrentExample((prev) => (prev + 1) % examples.length);
+                  }, 500);
+                }, 4500);
+              } else {
+                // Desktop: fade out and move to next example
+                setFadeOut(true);
+                setTimeout(() => {
+                  setCurrentExample((prev) => (prev + 1) % examples.length);
+                }, 400);
+              }
+            }, 2500);
           }, 150);
         }
       };
@@ -242,12 +267,14 @@ export default function WorkflowsBuilderDemo() {
   }, [showFinalResponse, currentData.steps.length]);
 
   return (
-    <div className="flex h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden">
-      {/* Left Side - Chat Container (35%) */}
+    <div className="flex flex-col md:flex-row h-[600px] max-h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
+      {/* Left Side - Chat Container */}
       <motion.div
-        className="w-[35%] flex items-stretch p-6"
-        animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
+        className={`w-full md:w-[35%] flex items-stretch p-4 md:p-6 h-full max-h-full ${
+          isMobile && showPreview ? 'hidden' : ''
+        }`}
+        animate={{ opacity: isMobile && showPreview ? 0 : (fadeOut ? 0 : 1) }}
+        transition={{ duration: 0.5 }}
       >
           {/* Builder Chat Box - Full height */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full flex flex-col overflow-hidden h-full" style={{
@@ -345,15 +372,18 @@ export default function WorkflowsBuilderDemo() {
           </div>
         </motion.div>
 
-      {/* Right Side - Workflow Nodes (65%) */}
+      {/* Right Side - Workflow Nodes */}
       <motion.div
-        className="w-[65%] flex items-center justify-center p-6 pl-0"
-        animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
+        className={`w-full md:w-[65%] flex items-center justify-center p-4 md:p-6 md:pl-0 h-full max-h-full ${
+          isMobile && !showPreview ? 'hidden' : ''
+        }`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: (isMobile && showPreview) || !isMobile ? (fadeOut ? 0 : 1) : 0 }}
+        transition={{ duration: 0.5 }}
       >
-          <div className="relative max-w-2xl w-full h-full flex items-center justify-center">
+          <div className="relative max-w-2xl w-full h-full flex items-center justify-center overflow-y-auto">
             {visibleSteps > 0 ? (
-              <div className="w-full relative">
+              <div className="w-full relative py-4">
                 {/* Vertical connecting line - starts FROM first dot, connects to last dot */}
                 {visibleSteps > 1 && (
                   <motion.div

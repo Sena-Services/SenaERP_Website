@@ -29,9 +29,12 @@ const sections = [
 type NavBarProps = {
   showHowItWorks?: boolean;
   showBuilder?: boolean;
+  showIntegrations?: boolean;
+  showEnvironments?: boolean;
+  showJoinUs?: boolean;
 };
 
-export default function NavBar({ showHowItWorks = false, showBuilder = false }: NavBarProps) {
+export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showEnvironments = false, showJoinUs = false }: NavBarProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -42,6 +45,16 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false }: 
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [navbarHeight, setNavbarHeight] = useState(60);
   const [activeBuilderTab, setActiveBuilderTab] = useState<string>("ui");
+
+  // Listen for scroll-based tab updates from BuilderTabbed
+  useEffect(() => {
+    const handleUpdateBuilderTab = (e: CustomEvent) => {
+      setActiveBuilderTab(e.detail.tabId);
+    };
+
+    window.addEventListener('updateBuilderTab' as any, handleUpdateBuilderTab);
+    return () => window.removeEventListener('updateBuilderTab' as any, handleUpdateBuilderTab);
+  }, []);
 
   const isOnEnvironmentSelector = pathname === "/environment-selector";
 
@@ -330,10 +343,10 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false }: 
         </div>
         </div>
 
-        {/* Mobile Section Header - Show How it Works OR Builder */}
+        {/* Mobile Section Header - Show different sections based on scroll */}
         {!isMobileMenuOpen && (
           <>
-            {showHowItWorks && !showBuilder && (
+            {showHowItWorks && (
               <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
                 <h2
                   style={{
@@ -378,29 +391,42 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false }: 
                   </h2>
                 </div>
 
-                {/* Horizontal Scrollable Tabs */}
-                <div className="overflow-x-auto scrollbar-hide px-3 pb-3">
-                  <div className="flex gap-2 min-w-min">
-                    {builderTabs.map((tab) => (
+                {/* Unified Tab Selector - Single Component with Curved Borders */}
+                <div className="px-3 pb-3">
+                  <div
+                    className="grid grid-cols-4 rounded-2xl overflow-hidden"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.4)',
+                      border: '1px solid rgba(0, 0, 0, 0.08)',
+                    }}
+                  >
+                    {builderTabs.map((tab, index) => (
                       <button
                         key={tab.id}
-                        onClick={() => setActiveBuilderTab(tab.id)}
-                        className={`flex-shrink-0 px-4 py-2.5 rounded-xl transition-all duration-200 ${
-                          activeBuilderTab === tab.id
-                            ? 'bg-waygent-blue shadow-md'
-                            : 'bg-white/30 hover:bg-white/50'
+                        onClick={() => {
+                          setActiveBuilderTab(tab.id);
+                          // Dispatch event for BuilderTabbed component to listen
+                          window.dispatchEvent(new CustomEvent('builderTabChange', { detail: { tabId: tab.id } }));
+                        }}
+                        className={`px-2 py-2.5 transition-all duration-200 relative ${
+                          index !== builderTabs.length - 1 ? 'border-r border-white/40' : ''
                         }`}
+                        style={{
+                          background: activeBuilderTab === tab.id
+                            ? '#3B82F6'
+                            : 'transparent',
+                        }}
                       >
-                        <div className="text-left">
+                        <div className="text-center">
                           <div
-                            className={`text-sm font-bold mb-0.5 ${
+                            className={`text-[11px] font-bold mb-0.5 transition-colors ${
                               activeBuilderTab === tab.id ? 'text-white' : 'text-gray-900'
                             }`}
                           >
                             {tab.label}
                           </div>
                           <div
-                            className={`text-[10px] ${
+                            className={`text-[8px] leading-tight transition-colors ${
                               activeBuilderTab === tab.id ? 'text-white/80' : 'text-gray-600'
                             }`}
                           >
@@ -411,6 +437,90 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false }: 
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {showIntegrations && (
+              <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "20px",
+                    marginBottom: "2px",
+                  }}
+                >
+                  Integrations
+                </h2>
+                <p
+                  style={{
+                    fontFamily: "system-ui, -apple-system, sans-serif",
+                    fontWeight: 500,
+                    fontSize: "11px",
+                    color: "#6B7280",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Connect with your tools
+                </p>
+              </div>
+            )}
+
+            {showEnvironments && (
+              <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "20px",
+                    marginBottom: "2px",
+                  }}
+                >
+                  Environments
+                </h2>
+                <p
+                  style={{
+                    fontFamily: "system-ui, -apple-system, sans-serif",
+                    fontWeight: 500,
+                    fontSize: "11px",
+                    color: "#6B7280",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Manage your workspaces
+                </p>
+              </div>
+            )}
+
+            {showJoinUs && (
+              <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "20px",
+                    marginBottom: "2px",
+                  }}
+                >
+                  Join Our Team
+                </h2>
+                <p
+                  style={{
+                    fontFamily: "system-ui, -apple-system, sans-serif",
+                    fontWeight: 500,
+                    fontSize: "11px",
+                    color: "#6B7280",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Build the future with us
+                </p>
               </div>
             )}
           </>

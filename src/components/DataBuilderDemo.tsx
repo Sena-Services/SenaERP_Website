@@ -10,6 +10,17 @@ interface ColumnRef {
 }
 
 export default function DataBuilderDemo() {
+  // Add style to hide scrollbars
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
   const [currentExample, setCurrentExample] = useState(0);
   const [stage, setStage] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
@@ -257,10 +268,13 @@ export default function DataBuilderDemo() {
   };
 
   return (
-    <div className="flex flex-col h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden p-8">
+    <div className="flex flex-col h-[600px] max-h-[600px] bg-gradient-to-br from-emerald-50/50 to-green-50/30 overflow-hidden p-3 md:p-8" style={{
+      scrollbarWidth: 'none',
+      msOverflowStyle: 'none'
+    }}>
       {/* Request badge - appears first in stage 0 */}
       {stage >= 0 && !fadeOut && (
-        <div className="text-center mb-8 flex-shrink-0">
+        <div className="text-center mb-4 md:mb-8 flex-shrink-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentExample}
@@ -268,9 +282,9 @@ export default function DataBuilderDemo() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 20 }}
-              className="inline-block bg-white px-6 py-3 rounded-full shadow-md border border-gray-200"
+              className="inline-block bg-white px-4 md:px-6 py-2 md:py-3 rounded-full shadow-md border border-gray-200"
             >
-              <p className="text-sm font-futura text-gray-700">
+              <p className="text-xs md:text-sm font-futura text-gray-700">
                 "{currentData.request}"
               </p>
             </motion.div>
@@ -284,50 +298,59 @@ export default function DataBuilderDemo() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="flex-1 flex flex-col space-y-6"
+          className="flex-1 flex flex-col space-y-3 md:space-y-6 overflow-y-auto hide-scrollbar"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
         >
           {/* Tables row with SVG overlay for relationship lines */}
           {stage >= 1 && (
           <div ref={containerRef} className="relative flex-shrink-0">
-            <div className="flex justify-center gap-12 relative">
+            <div className="flex justify-start md:justify-center gap-2 md:gap-12 relative overflow-x-auto hide-scrollbar pb-2 px-2 md:px-0" style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch'
+            }}>
               {currentData.tables.map((table, tableIdx) => (
                 <motion.div
                   key={tableIdx}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: tableIdx * 0.12, duration: 0.4, type: "spring", stiffness: 200 }}
-                  className="rounded-lg shadow-md border border-gray-200 bg-white p-4 w-56 relative"
+                  className="rounded-lg shadow-md border-2 border-emerald-200 bg-white p-2 md:p-4 w-32 md:w-56 relative flex-shrink-0"
                 >
                 {/* Table name */}
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  <h4 className="font-futura font-bold text-sm text-gray-900">
+                <div className="flex items-center gap-1.5 mb-2 pb-1.5 border-b border-gray-200">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500" />
+                  <h4 className="font-futura font-bold text-xs md:text-sm text-gray-900 truncate">
                     {table.name}
                   </h4>
                 </div>
 
                 {/* Columns */}
-                <div className="space-y-1.5">
+                <div className="space-y-1 md:space-y-1.5">
                   {table.columns.map((col, colIdx) => (
                     <motion.div
                       key={colIdx}
                       ref={(el) => { columnRefs.current[`${tableIdx}-${colIdx}`] = el; }}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-1 md:gap-2"
                     >
-                      <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="hidden md:block w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
+                      <div className="w-1 h-1 rounded-full bg-emerald-400 md:hidden flex-shrink-0" />
                       {stage >= 2 ? (
                         <motion.span
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: colIdx * 0.06, duration: 0.3 }}
-                          className={`text-xs font-futura ${col.includes('FK') ? 'text-blue-600 font-semibold' : 'text-gray-600'}`}
+                          className={`text-[10px] md:text-xs font-futura truncate ${col.includes('FK') ? 'text-emerald-600 font-semibold' : 'text-gray-600'}`}
                         >
                           {col}
                         </motion.span>
                       ) : (
-                        <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
+                        <div className="h-2 md:h-3 w-16 md:w-20 bg-gray-200 rounded animate-pulse" />
                       )}
                     </motion.div>
                   ))}
@@ -456,34 +479,34 @@ export default function DataBuilderDemo() {
         )}
 
         {/* Bottom row: Validations, Endpoints, Permissions */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4">
           {/* Validations */}
           {stage >= 4 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border border-gray-200 p-4"
+              className="bg-white rounded-lg shadow-md border-2 border-green-200 p-3 md:p-4"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h5 className="font-futura font-bold text-xs text-gray-900 uppercase tracking-wide">
-                  Validation Rules
+                <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">
+                  Validations
                 </h5>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1 md:space-y-2">
                 {currentData.validations.map((validation, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1, duration: 0.3 }}
-                    className="flex items-start gap-2"
+                    className="flex items-start gap-1.5 md:gap-2"
                   >
-                    <span className="text-green-600 text-xs mt-0.5">✓</span>
-                    <span className="text-xs font-futura text-gray-600">{validation}</span>
+                    <span className="text-green-600 text-[10px] md:text-xs mt-0.5 flex-shrink-0">✓</span>
+                    <span className="text-[10px] md:text-xs font-futura text-gray-600 leading-tight">{validation}</span>
                   </motion.div>
                 ))}
               </div>
@@ -496,24 +519,24 @@ export default function DataBuilderDemo() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border border-gray-200 p-4"
+              className="bg-white rounded-lg shadow-md border-2 border-blue-200 p-3 md:p-4"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <svg className="w-4 h-4 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <h5 className="font-futura font-bold text-xs text-gray-900 uppercase tracking-wide">
-                  API Endpoints
+                <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">
+                  Endpoints
                 </h5>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1 md:space-y-2">
                 {currentData.endpoints.map((endpoint, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1, duration: 0.3 }}
-                    className="font-mono text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded"
+                    className="font-mono text-[9px] md:text-xs text-gray-600 bg-gray-50 px-1.5 md:px-2 py-1 rounded truncate"
                   >
                     {endpoint}
                   </motion.div>
@@ -528,27 +551,27 @@ export default function DataBuilderDemo() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border border-gray-200 p-4"
+              className="bg-white rounded-lg shadow-md border-2 border-purple-200 p-3 md:p-4"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <svg className="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <h5 className="font-futura font-bold text-xs text-gray-900 uppercase tracking-wide">
+                <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">
                   Permissions
                 </h5>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1 md:space-y-2">
                 {currentData.permissions.map((permission, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1, duration: 0.3 }}
-                    className="flex items-start gap-2"
+                    className="flex items-start gap-1.5 md:gap-2"
                   >
-                    <span className="text-purple-600 text-xs mt-0.5">🔒</span>
-                    <span className="text-xs font-futura text-gray-600">{permission}</span>
+                    <span className="text-purple-600 text-[10px] md:text-xs mt-0.5 flex-shrink-0">🔒</span>
+                    <span className="text-[10px] md:text-xs font-futura text-gray-600 leading-tight">{permission}</span>
                   </motion.div>
                 ))}
               </div>

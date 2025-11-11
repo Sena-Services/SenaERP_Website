@@ -12,6 +12,15 @@ export default function UIBuilderDemo() {
   const [aiResponseText, setAiResponseText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const examples: Array<{
     userMessage: string;
@@ -68,6 +77,7 @@ export default function UIBuilderDemo() {
       setShowFinalResponse(false);
       setAiResponseText("");
       setShowCursor(true);
+      setShowPreview(false);
 
       // Show user message first with delay
       setTimeout(() => {
@@ -89,15 +99,28 @@ export default function UIBuilderDemo() {
           // Building complete, show final response
           setTimeout(() => {
             setShowFinalResponse(true);
-            // After AI response finishes typing (around 1.5s) + 2 seconds to read
+            // After AI response finishes typing, wait then transition
             setTimeout(() => {
-              // Fade out smoothly
-              setFadeOut(true);
-              // After fade out animation, move to next example
-              setTimeout(() => {
-                setCurrentExample((prev) => (prev + 1) % examples.length);
-              }, 400);
-            }, 3500);
+              // On mobile: switch to preview automatically with smooth fade
+              if (isMobile) {
+                setTimeout(() => {
+                  setShowPreview(true);
+                }, 500);
+                // After showing preview for 4 seconds, fade out and move to next
+                setTimeout(() => {
+                  setFadeOut(true);
+                  setTimeout(() => {
+                    setCurrentExample((prev) => (prev + 1) % examples.length);
+                  }, 500);
+                }, 4500);
+              } else {
+                // Desktop: fade out and move to next example
+                setFadeOut(true);
+                setTimeout(() => {
+                  setCurrentExample((prev) => (prev + 1) % examples.length);
+                }, 400);
+              }
+            }, 2500);
           }, 150);
         }
       };
@@ -142,25 +165,27 @@ export default function UIBuilderDemo() {
   }, [showFinalResponse]);
 
   return (
-    <div className="flex h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden">
-      {/* Left Side - Chat Container (35%) */}
+    <div className="flex flex-col md:flex-row h-[600px] max-h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
+      {/* Left Side - Chat Container */}
       <motion.div
-        className="w-[35%] flex items-stretch p-6"
-        animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
+        className={`w-full md:w-[35%] flex items-stretch p-4 md:p-6 h-full max-h-full ${
+          isMobile && showPreview ? 'hidden' : ''
+        }`}
+        animate={{ opacity: isMobile && showPreview ? 0 : (fadeOut ? 0 : 1) }}
+        transition={{ duration: 0.5 }}
       >
-        {/* Builder Chat Box - Elevated white card - Full height */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full flex flex-col overflow-hidden h-full" style={{
+        {/* Builder Chat Box - Elevated white card - Fixed height */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full flex flex-col h-full" style={{
           boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
         }}>
-          {/* Chat Header */}
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+          {/* Chat Header - Fixed */}
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex-shrink-0">
             <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">BUILDER CHAT</h3>
             <p className="text-xs text-gray-500 font-futura mt-1">Build anything with just conversation</p>
           </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 space-y-3 overflow-hidden p-6">
+          {/* Messages Area - Scrollable */}
+          <div className="flex-1 space-y-3 overflow-y-auto p-6">
           {/* User Message - Animates in */}
           {showUserMessage && (
             <motion.div
@@ -215,22 +240,25 @@ export default function UIBuilderDemo() {
 
           {/* AI Final Response - show below thinking steps */}
           {showFinalResponse && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="text-sm font-futura text-gray-700 leading-relaxed mt-3"
-            >
-              {aiResponseText}
-              {showCursor && aiResponseText.length < currentExampleData.aiResponse.length && (
-                <span className="inline-block w-0.5 h-4 bg-gray-900 ml-1 animate-pulse" />
-              )}
-            </motion.div>
+            <>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="text-sm font-futura text-gray-700 leading-relaxed mt-3"
+              >
+                {aiResponseText}
+                {showCursor && aiResponseText.length < currentExampleData.aiResponse.length && (
+                  <span className="inline-block w-0.5 h-4 bg-gray-900 ml-1 animate-pulse" />
+                )}
+              </motion.div>
+
+            </>
           )}
           </div>
 
-          {/* Input Area - Disabled/Empty state */}
-          <div className="relative p-6 pt-0">
+          {/* Input Area - Fixed at bottom */}
+          <div className="relative p-6 pt-0 flex-shrink-0">
             <input
               type="text"
               placeholder="Describe your business or ask questions..."
@@ -245,11 +273,14 @@ export default function UIBuilderDemo() {
         </div>
       </motion.div>
 
-      {/* Right Side - Preview (65%) */}
+      {/* Right Side - Preview */}
       <motion.div
-        className="w-[65%] flex items-center justify-center p-6"
-        animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
+        className={`w-full md:w-[65%] flex flex-col items-center justify-center p-4 md:p-6 h-full max-h-full ${
+          isMobile && !showPreview ? 'hidden' : ''
+        }`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: (isMobile && showPreview) || !isMobile ? (fadeOut ? 0 : 1) : 0 }}
+        transition={{ duration: 0.5 }}
       >
         {buildingStage > 0 ? (
           <UIPreview buildingStage={buildingStage} exampleType={currentExampleData.type} />

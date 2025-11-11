@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import UIBuilderDemo from "./UIBuilderDemo";
 import DataBuilderDemo from "./DataBuilderDemo";
@@ -159,15 +159,80 @@ const chatMessageVariants = {
 
 export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile and sync with navbar tab selection
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Listen for mobile navbar tab changes and scroll detection
+  useEffect(() => {
+    const handleNavbarTabChange = (e: CustomEvent) => {
+      const tabId = e.detail.tabId;
+      const tab = tabs.find(t => t.id === tabId);
+      if (tab) {
+        setActiveTab(tab);
+        // Scroll to the corresponding section
+        if (isMobile) {
+          const sectionEl = document.getElementById(`mobile-builder-${tabId}`);
+          if (sectionEl) {
+            sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }
+    };
+
+    window.addEventListener('builderTabChange' as any, handleNavbarTabChange);
+    return () => window.removeEventListener('builderTabChange' as any, handleNavbarTabChange);
+  }, [isMobile]);
+
+  // Auto-update navbar tabs based on scroll position (mobile only)
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleScroll = () => {
+      const sections = ['ui', 'data', 'workflows', 'agents'];
+      const scrollPosition = window.scrollY + window.innerHeight / 2; // Use middle of viewport
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const sectionEl = document.getElementById(`mobile-builder-${sections[i]}`);
+        if (sectionEl) {
+          const rect = sectionEl.getBoundingClientRect();
+          const sectionTop = window.scrollY + rect.top;
+          const sectionBottom = sectionTop + rect.height;
+
+          // Check if viewport middle is within this section
+          if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+            const tab = tabs.find(t => t.id === sections[i]);
+            if (tab && activeTab.id !== tab.id) {
+              setActiveTab(tab);
+              // Update navbar without scrolling
+              window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: tab.id } }));
+            }
+            break;
+          }
+        }
+      }
+    };
+
+    // Run immediately and on scroll
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile, activeTab, tabs]);
 
   return (
     <div className="w-full bg-waygent-cream scroll-mt-24 mt-32 sm:mt-48 pb-16">
       <div
         className="mx-auto"
         style={{
-          maxWidth: 'min(1600px, calc(100vw - 200px))',
-          paddingLeft: 'max(16px, min(32px, 2vw))',
-          paddingRight: 'max(16px, min(32px, 2vw))'
+          maxWidth: isMobile ? '100%' : 'min(1600px, calc(100vw - 200px))',
+          paddingLeft: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
+          paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))'
         }}
       >
         {/* Section Title - Hidden on mobile */}
@@ -193,8 +258,8 @@ export default function BuilderTabbed() {
           </p>
         </div>
 
-        {/* White Container with Tabs and Content */}
-        <div className="bg-white rounded-[2rem] overflow-hidden" style={{
+        {/* Desktop White Container with Tabs and Content */}
+        <div className="hidden md:block bg-white rounded-[2rem] overflow-hidden" style={{
           border: '2px solid #9CA3AF',
           boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
         }}>
@@ -523,6 +588,50 @@ export default function BuilderTabbed() {
             </AnimatePresence>
           </div>
         </div>
+
+        {/* Mobile Builder - Show all tabs stacked vertically with separators */}
+        {isMobile && (
+          <div className="md:hidden w-full">
+            {/* UI Builder */}
+            <div id="mobile-builder-ui" className="w-full relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500"></div>
+              <UIBuilderDemo />
+            </div>
+
+            {/* Separator */}
+            <div className="h-16 bg-gradient-to-b from-gray-50 to-waygent-cream flex items-center justify-center">
+              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+
+            {/* Data Builder */}
+            <div id="mobile-builder-data" className="w-full relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-400 to-green-500"></div>
+              <DataBuilderDemo />
+            </div>
+
+            {/* Separator */}
+            <div className="h-16 bg-gradient-to-b from-gray-50 to-waygent-cream flex items-center justify-center">
+              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+
+            {/* Workflows Builder */}
+            <div id="mobile-builder-workflows" className="w-full relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-violet-400 to-purple-500"></div>
+              <WorkflowsBuilderDemo />
+            </div>
+
+            {/* Separator */}
+            <div className="h-16 bg-gradient-to-b from-gray-50 to-waygent-cream flex items-center justify-center">
+              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+
+            {/* Agents Builder */}
+            <div id="mobile-builder-agents" className="w-full relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 via-rose-400 to-pink-500"></div>
+              <AgentsBuilderDemo />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

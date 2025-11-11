@@ -11,6 +11,15 @@ export default function AgentsBuilderDemo() {
   const [aiResponseText, setAiResponseText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const examples = [
     {
@@ -83,6 +92,7 @@ export default function AgentsBuilderDemo() {
       setShowFinalResponse(false);
       setAiResponseText("");
       setShowCursor(true);
+      setShowPreview(false);
 
       // Show user message first with delay (matching UI builder)
       setTimeout(() => {
@@ -104,13 +114,28 @@ export default function AgentsBuilderDemo() {
           // Building complete, show final response
           setTimeout(() => {
             setShowFinalResponse(true);
-            // After AI response finishes typing + hold time (matching UI builder)
+            // After AI response finishes typing, wait then transition
             setTimeout(() => {
-              setFadeOut(true);
-              setTimeout(() => {
-                setCurrentExample((prev) => (prev + 1) % examples.length);
-              }, 400);
-            }, 3500);
+              // On mobile: switch to preview automatically with smooth fade
+              if (isMobile) {
+                setTimeout(() => {
+                  setShowPreview(true);
+                }, 500);
+                // After showing preview for 4 seconds, fade out and move to next
+                setTimeout(() => {
+                  setFadeOut(true);
+                  setTimeout(() => {
+                    setCurrentExample((prev) => (prev + 1) % examples.length);
+                  }, 500);
+                }, 4500);
+              } else {
+                // Desktop: fade out and move to next example
+                setFadeOut(true);
+                setTimeout(() => {
+                  setCurrentExample((prev) => (prev + 1) % examples.length);
+                }, 400);
+              }
+            }, 2500);
           }, 150);
         }
       };
@@ -154,12 +179,14 @@ export default function AgentsBuilderDemo() {
   }, [showFinalResponse]);
 
   return (
-    <div className="flex h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden">
-      {/* Left Side - Chat Container (35%) */}
+    <div className="flex flex-col md:flex-row h-[600px] max-h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
+      {/* Left Side - Chat Container */}
       <motion.div
-        className="w-[35%] flex items-stretch p-6"
-        animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
+        className={`w-full md:w-[35%] flex items-stretch p-4 md:p-6 h-full max-h-full ${
+          isMobile && showPreview ? 'hidden' : ''
+        }`}
+        animate={{ opacity: isMobile && showPreview ? 0 : (fadeOut ? 0 : 1) }}
+        transition={{ duration: 0.5 }}
       >
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full flex flex-col overflow-hidden h-full" style={{
           boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
@@ -253,14 +280,17 @@ export default function AgentsBuilderDemo() {
         </div>
       </motion.div>
 
-      {/* Right Side - Agent Configuration Preview (65%) */}
+      {/* Right Side - Agent Configuration Preview */}
       <motion.div
-        className="w-[65%] flex items-center justify-center p-6 pl-0"
-        animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
+        className={`w-full md:w-[65%] flex items-center justify-center p-4 md:p-6 md:pl-0 h-full max-h-full overflow-y-auto ${
+          isMobile && !showPreview ? 'hidden' : ''
+        }`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: (isMobile && showPreview) || !isMobile ? (fadeOut ? 0 : 1) : 0 }}
+        transition={{ duration: 0.5 }}
       >
         {buildingStage > 0 ? (
-          <div className="w-full max-w-2xl space-y-3">
+          <div className="w-full max-w-2xl space-y-3 py-4">
             {/* Agent Card Header */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
