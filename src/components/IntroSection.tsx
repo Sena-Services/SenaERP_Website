@@ -37,6 +37,7 @@ export default function IntroSection() {
   const [viewportWidth, setViewportWidth] = useState(1440);
   const [viewportHeight, setViewportHeight] = useState(900);
   const [expandedCard, setExpandedCard] = useState<ExpandedCard>(null);
+  const [animationLocked, setAnimationLocked] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,10 +50,37 @@ export default function IntroSection() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Listen for homeLeft event to lock animations
+  useEffect(() => {
+    const handleHomeLocked = () => {
+      setAnimationLocked(true);
+    };
+
+    const handleHomeUnlocked = () => {
+      setAnimationLocked(false);
+    };
+
+    window.addEventListener('homeLeft', handleHomeLocked);
+    window.addEventListener('homeUnlocked', handleHomeUnlocked);
+    return () => {
+      window.removeEventListener('homeLeft', handleHomeLocked);
+      window.removeEventListener('homeUnlocked', handleHomeUnlocked);
+    };
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       const section = sectionRef.current;
       if (!section) return;
+
+      // If animation is locked, keep everything at final state
+      if (animationLocked) {
+        setScrollProgress(1);
+        setSplitProgress(1);
+        setRotateProgress(1);
+        return;
+      }
+
       const sectionTop = section.offsetTop;
       const scrollY = window.scrollY;
       const totalDistance = scrollY - sectionTop;
@@ -89,7 +117,7 @@ export default function IntroSection() {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [animationLocked]);
 
   // Responsive scaling: only scale up when viewport HEIGHT > 1200px
   const getResponsiveValue = (baseValue: number) => {

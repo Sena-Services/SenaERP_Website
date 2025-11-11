@@ -180,8 +180,15 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
 
     let targetPosition = 0;
 
+    // Special handling for intro (home) - reset to top and notify to unlock animations
+    const isHomeSection = sections.findIndex(s => s.id === id) === 0;
+    if (isHomeSection) {
+      targetPosition = 0;
+      // Dispatch event to reset the home lock
+      window.dispatchEvent(new CustomEvent('resetHome'));
+    }
     // Special handling for how-it-works - scroll to the intro section position
-    if (id === "how-it-works") {
+    else if (id === "how-it-works") {
       // The "how-it-works" cards should be fully split and rotated
       // 900 (shrink) + 400 (split) + 800 (rotate) = 2100px
       const introSection = document.getElementById("intro");

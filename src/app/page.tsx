@@ -44,6 +44,7 @@ export default function Home() {
     let autoRotateTriggered = false;
     let manualScrollEnabled = false;
     let introSequencePlayed = false;
+    let hasLeftHome = false; // Track if user has scrolled past home
     const lockDirection = (direction: 'up' | 'down', duration = 600) => {
       directionLock = direction;
       if (directionLockTimeout) {
@@ -139,11 +140,16 @@ export default function Home() {
         animateToPosition(points.rotated, 1200, () => {
           manualScrollEnabled = true;
           autoRotateTriggered = false;
+          hasLeftHome = true; // Mark that user has left home section
+          // Dispatch event so sidebar knows home is locked
+          window.dispatchEvent(new CustomEvent('homeLeft'));
         });
       });
     };
 
     const playReverseSequence = (points: ReturnType<typeof getSnapPoints>) => {
+      // BLOCK: Once user has left home, they cannot go back
+      if (hasLeftHome) return;
       if (isAnimating) return;
 
       manualScrollEnabled = false;
@@ -178,6 +184,17 @@ export default function Home() {
         }
       };
 
+      // BLOCK ALL UPWARD SCROLL if user has left home AND anywhere near intro section
+      if (hasLeftHome && direction === 'up' && currentScrollY <= points.rotated + 200) {
+        blockScroll();
+        // Force scroll position to stay at minimum threshold
+        const minScroll = points.rotated;
+        if (window.scrollY < minScroll) {
+          window.scrollTo(0, minScroll);
+        }
+        return;
+      }
+
       // IMPORTANT: Allow completely normal scrolling after rotated position (How It Works)
       if (currentScrollY > points.rotated + 50) {
         // Everything after How It Works is completely normal scrolling - no snapping at all
@@ -200,8 +217,11 @@ export default function Home() {
       // Manual split zone handling
       if (inSplitZone) {
         if (direction === 'up') {
-          blockScroll();
-          playReverseSequence(points);
+          // Already blocked at top if hasLeftHome is true
+          if (!hasLeftHome) {
+            blockScroll();
+            playReverseSequence(points);
+          }
           return;
         }
 
@@ -240,8 +260,8 @@ export default function Home() {
               manualScrollEnabled = true; // Enable manual scroll in split zone
             });
           }
-        } else if (direction === 'up' && currentScrollY > points.initial + 50) {
-          // Scroll up from united card to initial
+        } else if (direction === 'up' && currentScrollY > points.initial + 50 && !hasLeftHome) {
+          // Scroll up from united card to initial (only if haven't left home yet)
           blockScroll();
           manualScrollEnabled = false;
           introSequencePlayed = false;
@@ -253,8 +273,8 @@ export default function Home() {
         if (direction === 'down') {
           // Enable manual scrolling mode - don't auto-advance
           manualScrollEnabled = true;
-        } else if (direction === 'up') {
-          // Scroll up from split zone goes back to initial
+        } else if (direction === 'up' && !hasLeftHome) {
+          // Scroll up from split zone goes back to initial (only if haven't left home yet)
           blockScroll();
           manualScrollEnabled = false;
           introSequencePlayed = false;
@@ -266,7 +286,8 @@ export default function Home() {
         if (direction === 'down') {
           // Allow completely normal scroll to continue to the rest of the page
           return;
-        } else if (direction === 'up') {
+        } else if (direction === 'up' && !hasLeftHome) {
+          // Only allow reverse if haven't left home yet
           blockScroll();
           playReverseSequence(points);
         }
@@ -299,6 +320,11 @@ export default function Home() {
       const currentScrollY = window.scrollY;
       const points = getSnapPoints();
 
+      // BLOCK ALL UPWARD SCROLL if user has left home AND anywhere near intro section
+      if (hasLeftHome && direction === 'up' && currentScrollY <= points.rotated + 200) {
+        return;
+      }
+
       // IMPORTANT: Allow completely normal scrolling after rotated position (How It Works)
       if (currentScrollY > points.rotated + 50) {
         // Everything after How It Works is completely normal scrolling - no snapping at all
@@ -317,7 +343,8 @@ export default function Home() {
               manualScrollEnabled = true;
             });
           }
-        } else if (direction === 'up' && currentScrollY > points.initial + 50) {
+        } else if (direction === 'up' && currentScrollY > points.initial + 50 && !hasLeftHome) {
+          // Only allow going back if haven't left home yet
           manualScrollEnabled = false;
           introSequencePlayed = false;
           lockDirection('up');
@@ -326,7 +353,8 @@ export default function Home() {
       } else if (currentScrollY > points.unitedCard + 50 && currentScrollY < points.splitZoneEnd + 50) {
         if (direction === 'down') {
           manualScrollEnabled = true;
-        } else if (direction === 'up') {
+        } else if (direction === 'up' && !hasLeftHome) {
+          // Only allow going back if haven't left home yet
           manualScrollEnabled = false;
           introSequencePlayed = false;
           lockDirection('up');
@@ -336,7 +364,8 @@ export default function Home() {
         if (direction === 'down') {
           // Allow completely normal scroll to continue to the rest of the page
           return;
-        } else if (direction === 'up') {
+        } else if (direction === 'up' && !hasLeftHome) {
+          // Only allow reverse if haven't left home yet
           playReverseSequence(points);
         }
       }
@@ -364,12 +393,40 @@ export default function Home() {
 
     window.addEventListener('triggerIntroSequence', handleTriggerIntro);
 
+    // Listen for resetHome event from sidebar to unlock home
+    const handleResetHome = () => {
+      hasLeftHome = false;
+      introSequencePlayed = false;
+      manualScrollEnabled = false;
+      autoRotateTriggered = false;
+      // Dispatch event to unlock animations
+      window.dispatchEvent(new CustomEvent('homeUnlocked'));
+    };
+
+    window.addEventListener('resetHome', handleResetHome);
+
+    // Continuous scroll position monitoring to prevent going above threshold
+    const monitorScrollPosition = () => {
+      if (hasLeftHome) {
+        const points = getSnapPoints();
+        const minScroll = points.rotated;
+        if (window.scrollY < minScroll) {
+          window.scrollTo(0, minScroll);
+        }
+      }
+    };
+
+    // Monitor scroll position continuously
+    const scrollMonitorId = setInterval(monitorScrollPosition, 16); // ~60fps
+
     return () => {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('triggerIntroSequence', handleTriggerIntro);
+      window.removeEventListener('resetHome', handleResetHome);
+      clearInterval(scrollMonitorId);
       if (directionLockTimeout) {
         clearTimeout(directionLockTimeout);
       }
