@@ -264,9 +264,13 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
       <div className="mx-auto max-w-7xl">
         <div className="hidden lg:grid lg:grid-cols-[800px_1fr] gap-8 lg:gap-12">
           {/* Left side - EnvironmentSelector */}
-          <div className="relative h-[640px] rounded-[36px] border-2 border-[#d4ddfa] bg-white/85 shadow-2xl backdrop-blur group hover:shadow-[0_25px_60px_-15px_rgba(59,130,246,0.3)] transition-all duration-300 hover:border-waygent-blue/40" style={{ overflow: 'clip' }}>
+          <div className="relative h-[640px] rounded-[36px] bg-white group transition-all duration-300" style={{
+            overflow: 'clip',
+            border: '2px solid #9CA3AF',
+            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
+          }}>
             {/* Interactive indicator badge */}
-            <div className="absolute top-6 right-6 z-10 px-4 py-2.5 bg-gradient-to-r from-waygent-blue to-blue-600 text-white text-sm font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 pointer-events-none">
+            <div className="absolute top-6 right-6 z-10 px-4 py-2.5 bg-gray-800 text-white text-sm font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 pointer-events-none">
               <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z" />
               </svg>

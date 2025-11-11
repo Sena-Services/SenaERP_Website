@@ -187,8 +187,9 @@ export default function BuilderTabbed() {
         </div>
 
         {/* White Container with Tabs and Content */}
-        <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-200/50" style={{
-          boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.08), 0 10px 30px -8px rgba(0, 0, 0, 0.04)'
+        <div className="bg-white rounded-[2rem] overflow-hidden" style={{
+          border: '2px solid #9CA3AF',
+          boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
         }}>
           {/* Tabs at Top with Description - All in same container */}
           <div className="bg-waygent-cream/50 px-4 pt-4 pb-6 border-b border-gray-200">

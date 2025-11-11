@@ -31,6 +31,11 @@ export default function Home() {
     { id: "join-us", label: "Join Our Team" },
   ];
 
+  // Scroll to top on page load/refresh
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     let isAnimating = false;
     let animationFrameId: number;

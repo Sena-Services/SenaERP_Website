@@ -184,7 +184,10 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           </div>
 
           {/* Bottom - Full width screenshot preview */}
-          <div className="relative w-full overflow-hidden rounded-[24px] lg:rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur flex items-center justify-center mt-4">
+          <div className="relative w-full overflow-hidden rounded-[24px] lg:rounded-[36px] bg-white flex items-center justify-center mt-4" style={{
+            border: '2px solid #9CA3AF',
+            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
+          }}>
             {activeIntegration && (
               <img
                 src={activeIntegration.screenshot}
