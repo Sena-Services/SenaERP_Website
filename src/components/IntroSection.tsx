@@ -64,19 +64,26 @@ export default function IntroSection() {
       );
       setScrollProgress(shrinkDistance / SHRINK_SCROLL_DISTANCE);
 
-      // Phase 2: Split animation (900-1300px)
-      const splitDistance = Math.min(
-        Math.max(totalDistance - SHRINK_SCROLL_DISTANCE, 0),
-        SPLIT_SCROLL_DISTANCE
-      );
-      setSplitProgress(splitDistance / SPLIT_SCROLL_DISTANCE);
-
-      // Phase 3: Rotate animation (1300-1800px)
+      // Phase 3: Rotate animation (1300-2100px)
       const rotateDistance = Math.min(
         Math.max(totalDistance - SHRINK_SCROLL_DISTANCE - SPLIT_SCROLL_DISTANCE, 0),
         ROTATE_SCROLL_DISTANCE
       );
-      setRotateProgress(rotateDistance / ROTATE_SCROLL_DISTANCE);
+      const rawRotateProgress = rotateDistance / ROTATE_SCROLL_DISTANCE;
+      setRotateProgress(rawRotateProgress);
+
+      // Phase 2: Split animation (900-1300px)
+      // IMPORTANT: When going reverse, only join cards AFTER rotation completes (rotateProgress = 0)
+      const splitDistance = Math.min(
+        Math.max(totalDistance - SHRINK_SCROLL_DISTANCE, 0),
+        SPLIT_SCROLL_DISTANCE
+      );
+      const rawSplitProgress = splitDistance / SPLIT_SCROLL_DISTANCE;
+
+      // If we're in the rotate phase (rawRotateProgress > 0), keep cards fully split
+      // Only allow join when rotation is done
+      const actualSplitProgress = rawRotateProgress > 0 ? 1 : rawSplitProgress;
+      setSplitProgress(actualSplitProgress);
     };
 
     handleScroll();
@@ -457,15 +464,17 @@ export default function IntroSection() {
             </div>
           )}
 
-          {/* Content overlay - only visible during shrink phase */}
+          {/* Content overlay - only visible when fully back in intro state */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              opacity: splitProgress > 0 ? 0 : 1,
-              transition: "opacity 200ms ease-out",
+              // Only show content when: cards are joined (splitProgress=0), rotation done (rotateProgress=0),
+              // AND cards are almost fully expanded (scrollProgress < 0.3)
+              opacity: splitProgress > 0 || rotateProgress > 0 || scrollProgress > 0.3 ? 0 : contentOpacity,
+              transition: "opacity 300ms ease-out",
             }}
           >
-            <IntroContent contentOpacity={contentOpacity} />
+            <IntroContent contentOpacity={1} />
           </div>
         </div>
       </div>

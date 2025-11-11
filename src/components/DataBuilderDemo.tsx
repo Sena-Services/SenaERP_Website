@@ -171,17 +171,18 @@ export default function DataBuilderDemo() {
       setStage(0);
       setFadeOut(false);
 
-      // Stage 0: Show request + skeleton tables (800ms)
-      // Stage 1: Tables fill with color (600ms)
-      // Stage 2: Columns appear (1000ms)
-      // Stage 3: Relationship lines draw (800ms) - THE STAR! (faster)
-      // Stage 4: Validations appear (400ms) - faster
-      // Stage 5: Endpoints appear (400ms) - faster
-      // Stage 6: Permissions appear (600ms)
-      // Stage 7: Hold (5500ms) - MUCH LONGER HOLD to see final result before next example
-      // Stage 8: Fade out (800ms) - SLOWER FADE
+      // Stage 0: Show user query only (500ms)
+      // Stage 1: Show skeleton tables (600ms)
+      // Stage 2: Tables fill with color (600ms)
+      // Stage 3: Columns appear (1000ms)
+      // Stage 4: Relationship lines draw (800ms) - THE STAR! (faster)
+      // Stage 5: Validations appear (400ms) - faster
+      // Stage 6: Endpoints appear (400ms) - faster
+      // Stage 7: Permissions appear (600ms)
+      // Stage 8: Hold (3500ms) - Same as UI builder hold time
+      // Stage 9: Fade out (800ms) - SLOWER FADE
 
-      const stages = [800, 600, 1000, 800, 400, 400, 600, 5500];
+      const stages = [500, 600, 600, 1000, 800, 400, 400, 600, 3500];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -259,23 +260,25 @@ export default function DataBuilderDemo() {
 
   return (
     <div className="flex flex-col h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden p-8">
-      {/* Request badge - always at top, no animation movement */}
-      <div className="text-center mb-8 flex-shrink-0">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentExample}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: fadeOut ? 0 : 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="inline-block bg-white px-6 py-3 rounded-full shadow-md border border-gray-200"
-          >
-            <p className="text-sm font-futura text-gray-700">
-              "{currentData.request}"
-            </p>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+      {/* Request badge - appears first in stage 0 */}
+      {stage >= 0 && (
+        <div className="text-center mb-8 flex-shrink-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentExample}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: fadeOut ? 0 : 1, y: fadeOut ? 20 : 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 20 }}
+              className="inline-block bg-white px-6 py-3 rounded-full shadow-md border border-gray-200"
+            >
+              <p className="text-sm font-futura text-gray-700">
+                "{currentData.request}"
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
 
       {/* Main content area */}
       <motion.div
@@ -291,30 +294,30 @@ export default function DataBuilderDemo() {
                 key={tableIdx}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{
-                  opacity: stage >= 0 ? 1 : 0,
-                  scale: stage >= 0 ? 1 : 0.9
+                  opacity: stage >= 1 ? 1 : 0,
+                  scale: stage >= 1 ? 1 : 0.9
                 }}
                 transition={{ delay: tableIdx * 0.12, duration: 0.4, type: "spring", stiffness: 200 }}
                 className={`rounded-lg shadow-md border p-4 w-56 relative transition-all duration-500 ${
-                  stage >= 1
+                  stage >= 2
                     ? "bg-white border-gray-200"
                     : "bg-gray-100 border-gray-300"
                 }`}
               >
                 {/* Table name */}
                 <div className="flex items-center gap-2 mb-3 pb-2 border-b transition-colors duration-500" style={{
-                  borderColor: stage >= 1 ? "rgb(229, 231, 235)" : "rgb(209, 213, 219)"
+                  borderColor: stage >= 2 ? "rgb(229, 231, 235)" : "rgb(209, 213, 219)"
                 }}>
                   <motion.div
                     animate={{
-                      backgroundColor: stage >= 1 ? "#3b82f6" : "#9ca3af"
+                      backgroundColor: stage >= 2 ? "#3b82f6" : "#9ca3af"
                     }}
                     transition={{ duration: 0.5 }}
                     className="w-2 h-2 rounded-full"
                   />
                   <motion.h4
                     animate={{
-                      color: stage >= 1 ? "#111827" : "#6b7280"
+                      color: stage >= 2 ? "#111827" : "#6b7280"
                     }}
                     transition={{ duration: 0.5 }}
                     className="font-futura font-bold text-sm"
@@ -331,8 +334,8 @@ export default function DataBuilderDemo() {
                       ref={(el) => { columnRefs.current[`${tableIdx}-${colIdx}`] = el; }}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{
-                        opacity: stage >= 2 ? 1 : 0,
-                        x: stage >= 2 ? 0 : -10
+                        opacity: stage >= 3 ? 1 : 0,
+                        x: stage >= 3 ? 0 : -10
                       }}
                       transition={{ delay: 0.1 + colIdx * 0.06, duration: 0.3 }}
                       className="flex items-center gap-2"
@@ -351,7 +354,7 @@ export default function DataBuilderDemo() {
           </div>
 
           {/* SVG overlay for relationship lines - THE STAR OF THE SHOW */}
-          {stage >= 3 && containerRef.current && (
+          {stage >= 4 && containerRef.current && (
             <svg
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -471,7 +474,7 @@ export default function DataBuilderDemo() {
         {/* Bottom row: Validations, Endpoints, Permissions */}
         <div className="grid grid-cols-3 gap-4">
           {/* Validations */}
-          {stage >= 4 && (
+          {stage >= 5 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -504,7 +507,7 @@ export default function DataBuilderDemo() {
           )}
 
           {/* API Endpoints */}
-          {stage >= 5 && (
+          {stage >= 6 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -536,7 +539,7 @@ export default function DataBuilderDemo() {
           )}
 
           {/* Permissions */}
-          {stage >= 6 && (
+          {stage >= 7 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
