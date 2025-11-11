@@ -67,10 +67,10 @@ export default function UIBuilderDemo() {
       // Show user message first with delay
       setTimeout(() => {
         setShowUserMessage(true);
-      }, 300);
+      }, 200);
 
       // Progress through building stages - much faster
-      const stageIntervals = [1000, 1000, 1000, 1000, 800];
+      const stageIntervals = [600, 600, 600, 600, 500];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -79,7 +79,7 @@ export default function UIBuilderDemo() {
             currentStage++;
             setBuildingStage(currentStage);
             progressStages();
-          }, stageIntervals[currentStage] || 1000);
+          }, stageIntervals[currentStage] || 600);
         } else {
           // Building complete, show final response
           setTimeout(() => {
@@ -93,14 +93,14 @@ export default function UIBuilderDemo() {
                 setCurrentExample((prev) => (prev + 1) % examples.length);
               }, 400);
             }, 3500);
-          }, 300);
+          }, 150);
         }
       };
 
       // Start building stages after user message appears
       setTimeout(() => {
         progressStages();
-      }, 800);
+      }, 400);
     };
 
     runBuildingSequence();

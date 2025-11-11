@@ -140,9 +140,12 @@ export default function IntroSection() {
   const heroPaddingTop = centeredPadding + (topSpaceNeeded - centeredPadding) * shiftProgress;
 
   // Split animation calculations with responsive scaling
-  const responsiveMaxGap = getResponsiveValue(24);
+  const responsiveMaxGap = getResponsiveValue(48); // Increased gap for clear separation
   const cardGap = splitProgress * responsiveMaxGap; // Responsive max gap between cards
   const cardWidth = (currentWidthValue - cardGap * 2) / 3; // Divide width into 3 equal parts
+
+  // Calculate image offsets based on ZERO gap so painting doesn't shift
+  const baseCardWidth = currentWidthValue / 3; // Card width when gap = 0
 
   return (
     <section
@@ -259,7 +262,7 @@ export default function IntroSection() {
               splitProgress={splitProgress}
               rotateProgress={rotateProgress}
               position="center"
-              imageOffset={-(cardWidth + cardGap)}
+              imageOffset={-baseCardWidth}
               videoSrc="/videos/card2.mp4"
               videoBg="bg-[#f5f2e9]"
               videoPosition="center 45%"
@@ -279,7 +282,7 @@ export default function IntroSection() {
               splitProgress={splitProgress}
               rotateProgress={rotateProgress}
               position="right"
-              imageOffset={-(cardWidth * 2 + cardGap * 2)}
+              imageOffset={-baseCardWidth * 2}
               videoSrc="/videos/card3.mp4"
               videoBg="bg-[#f6f2fb]"
               videoPosition="center 80%"

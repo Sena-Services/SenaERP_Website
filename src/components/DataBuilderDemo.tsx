@@ -174,14 +174,14 @@ export default function DataBuilderDemo() {
       // Stage 0: Show request + skeleton tables (800ms)
       // Stage 1: Tables fill with color (600ms)
       // Stage 2: Columns appear (1000ms)
-      // Stage 3: Relationship lines draw (1500ms) - THE STAR!
-      // Stage 4: Validations appear (600ms)
-      // Stage 5: Endpoints appear (600ms)
+      // Stage 3: Relationship lines draw (800ms) - THE STAR! (faster)
+      // Stage 4: Validations appear (400ms) - faster
+      // Stage 5: Endpoints appear (400ms) - faster
       // Stage 6: Permissions appear (600ms)
-      // Stage 7: Hold (4500ms) - MUCH LONGER HOLD to see final result
+      // Stage 7: Hold (5500ms) - MUCH LONGER HOLD to see final result before next example
       // Stage 8: Fade out (800ms) - SLOWER FADE
 
-      const stages = [800, 600, 1000, 1500, 600, 600, 600, 4500];
+      const stages = [800, 600, 1000, 800, 400, 400, 600, 5500];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -190,8 +190,9 @@ export default function DataBuilderDemo() {
             currentStage++;
             setStage(currentStage);
             progressStages();
-          }, stages[currentStage - 1] || 500);
+          }, stages[currentStage] || 500);
         } else {
+          // Hold completed, now reset and fade out
           // First reset stage to 0 (skeleton state)
           setStage(0);
           // Then fade out
@@ -205,9 +206,8 @@ export default function DataBuilderDemo() {
         }
       };
 
-      setTimeout(() => {
-        progressStages();
-      }, 100);
+      // Start the sequence
+      progressStages();
     };
 
     runSequence();

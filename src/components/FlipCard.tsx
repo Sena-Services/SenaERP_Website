@@ -100,19 +100,32 @@ export default function FlipCard({
     return null;
   }
 
+  // Calculate physical movement during split
+  const translateX =
+    position === "left"
+      ? -cardGap * splitProgress // Move left
+      : position === "right"
+        ? cardGap * splitProgress // Move right
+        : 0; // Center stays in place
+
   return (
     <div
       className="relative transition-all duration-700 ease-out"
       style={{
         width: `${cardWidth}px`,
         height: "100%",
-        transform: `rotateY(${rotateProgress * 180}deg) ${
+        transform: `translateX(${translateX}px) rotateY(${rotateProgress * 180}deg) ${
           isExpanded
-            ? 'scale(1.05) translateY(0) translateX(0)'
-            : 'scale(1) translateY(0) translateX(0)'
+            ? 'scale(1.05) translateY(0)'
+            : 'scale(1) translateY(0)'
         }`,
         transformStyle: "preserve-3d",
-        boxShadow: isExpanded ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : 'none',
+        // Add shadow during split to emphasize separation
+        boxShadow: isExpanded
+          ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          : splitProgress > 0
+            ? elevation
+            : 'none',
         zIndex: isExpanded ? 10 : 1,
       }}
     >
