@@ -239,7 +239,8 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
             <ul className="relative flex flex-col gap-1 text-waygent-text-secondary font-space-grotesk">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
-                const step = (index + 1).toString().padStart(2, "0");
+                const isFirstSection = index === 0;
+                const step = index.toString().padStart(2, "0");
 
                 return (
                   <li key={section.id}>
@@ -280,7 +281,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                         }
                       }}
                     >
-                      {/* Step number */}
+                      {/* Home icon for first section, step number for rest */}
                       <span
                         className="text-[11px] font-bold tracking-wider transition-all duration-200 w-6 h-6 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-full"
                         style={{
@@ -288,7 +289,23 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                           background: isActive ? '#6A94A3' : 'rgba(143, 183, 197, 0.15)',
                         }}
                       >
-                        {step}
+                        {isFirstSection ? (
+                          <svg
+                            className="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2.5}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                            />
+                          </svg>
+                        ) : (
+                          step
+                        )}
                       </span>
 
                       {/* Label text */}

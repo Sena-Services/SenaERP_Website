@@ -102,8 +102,11 @@ export default function IntroSection() {
     return baseValue * scaleFactor;
   };
 
-  const responsiveTargetWidth = getResponsiveValue(1280);
-  const targetWidth = Math.min(responsiveTargetWidth, viewportWidth - 64);
+  // Match BuilderTabbed and other components: max-w-7xl (1280px) with viewport padding
+  const maxContainerWidth = 1280;
+  const viewportPadding = 64; // 32px on each side, matching other components
+  const responsiveTargetWidth = Math.min(maxContainerWidth, viewportWidth - viewportPadding);
+  const targetWidth = responsiveTargetWidth;
   const startWidth = Math.max(viewportWidth * 0.95, targetWidth);
   const currentWidthValue =
     startWidth - (startWidth - targetWidth) * scrollProgress;
@@ -147,9 +150,16 @@ export default function IntroSection() {
   const heroPaddingTop = centeredPadding + (topSpaceNeeded - centeredPadding) * shiftProgress;
 
   // Split animation calculations with responsive scaling
-  const responsiveMaxGap = getResponsiveValue(48); // Increased gap for clear separation
+  const responsiveMaxGap = getResponsiveValue(6); // Further reduced gap to bring cards closer together
   const cardGap = splitProgress * responsiveMaxGap; // Responsive max gap between cards
-  const cardWidth = (currentWidthValue - cardGap * 2) / 3; // Divide width into 3 equal parts
+
+  // IMPORTANT: When split, constrain to max-w-7xl (1280px) like other sections
+  // The cards container should never exceed 1280px when split
+  // Use full width when not split (splitProgress === 0), constrained width when split
+  const widthForCardCalculation = splitProgress > 0
+    ? Math.min(currentWidthValue, maxContainerWidth)
+    : currentWidthValue;
+  const cardWidth = (widthForCardCalculation - cardGap * 2) / 3; // Divide width into 3 equal parts
 
   // Calculate image offsets based on ZERO gap so painting doesn't shift
   const baseCardWidth = currentWidthValue / 3; // Card width when gap = 0
@@ -175,7 +185,7 @@ export default function IntroSection() {
           className="relative mx-auto"
           style={{
             width: currentWidth,
-            maxWidth: "95vw",
+            maxWidth: splitProgress > 0 ? `${maxContainerWidth}px` : "95vw",
             height: currentHeight,
           }}
         >

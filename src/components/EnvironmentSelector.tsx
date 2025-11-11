@@ -568,13 +568,13 @@ export default function EnvironmentSelector({
               style={{ maxHeight: "calc(100vh - 4rem)" }}
             >
               {/* Hero Section */}
-              <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-6' : 'mb-8'}`}>
-                <div className={`inline-flex items-center justify-center ${previewMode ? 'mb-1' : 'mb-2'}`}>
-                  <img src="/waygent.png" alt="Sena ERP" className={previewMode ? 'w-12 h-12' : 'w-20 h-20'} />
+              <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-8' : 'mb-8'}`}>
+                <div className={`inline-flex items-center justify-center ${previewMode ? 'mb-2' : 'mb-2'}`}>
+                  <img src="/waygent.png" alt="Sena ERP" className={previewMode ? 'w-16 h-16' : 'w-20 h-20'} />
                 </div>
-                <h1 className={`font-bold text-gray-800 ${previewMode ? 'text-4xl mb-2' : 'text-7xl mb-3'}`}>Sena ERP</h1>
+                <h1 className={`font-bold text-gray-800 ${previewMode ? 'text-5xl mb-3' : 'text-7xl mb-3'}`}>Sena ERP</h1>
                 <div className="tagline-container">
-                  <p className={`tagline ${previewMode ? 'text-sm' : ''}`}>
+                  <p className={`tagline ${previewMode ? 'text-base' : ''}`}>
                     <span className="tagline-text">
                       {animatedTagline.map((item, index) => (
                         <span
@@ -592,10 +592,10 @@ export default function EnvironmentSelector({
 
               {/* Search Bar */}
               {activeEnvironments.length >= 4 && (
-                <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-4' : 'mb-6'}`}>
-                  <div className={`relative ${previewMode ? 'w-2/3' : 'w-1/2'}`}>
+                <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-6' : 'mb-6'}`}>
+                  <div className={`relative ${previewMode ? 'w-3/4' : 'w-1/2'}`}>
                     <svg
-                      className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 pointer-events-none ${previewMode ? 'w-4 h-4' : 'w-5 h-5'}`}
+                      className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 pointer-events-none ${previewMode ? 'w-5 h-5' : 'w-5 h-5'}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -626,21 +626,28 @@ export default function EnvironmentSelector({
                       ? "overflow-visible"
                       : "overflow-y-auto custom-scrollbar"
                   }`}
+                  style={{ pointerEvents: 'auto' }}
                 >
                   <div
                     className={`grid gap-3 md:grid-cols-2 ${
                       activeEnvironments.length === 1 ? "single-env-grid" : ""
                     }`}
+                    style={{ pointerEvents: 'auto' }}
                   >
                     {filteredEnvironments.map((env) => (
                       <div
                         key={env.name}
                         data-environment-card={env.name}
+                        onClick={() => {
+                          console.log('Card clicked:', env.name);
+                          selectEnvironment(env.name);
+                        }}
                         className={`group cursor-pointer environment-card ${
                           env.name === currentEnvironment ? "environment-card-selected" : ""
                         } ${
                           activeEnvironments.length === 1 ? "single-environment-card" : ""
                         }`}
+                        style={{ pointerEvents: 'auto' }}
                       >
                         {/* Edit Icon */}
                         {!readOnly && !previewMode && (
@@ -670,7 +677,6 @@ export default function EnvironmentSelector({
 
                         {/* Card Content */}
                         <div
-                          onClick={() => selectEnvironment(env.name)}
                           className={previewMode ? "environment-card-clickable cursor-pointer" : "environment-card-clickable"}
                         >
                           <div className="flex items-start gap-3 environment-card-inner">
@@ -887,18 +893,21 @@ export default function EnvironmentSelector({
           flex-direction: column;
           background-color: transparent;
           overflow-y: auto;
+          pointer-events: auto;
         }
 
         .environment-selector.preview-zoom {
-          overflow: hidden;
-          transform: scale(0.68) translate(-23.5%, -30%);
+          overflow: visible;
+          transform: scale(0.85) translate(-8.8%, -11%);
           transform-origin: center;
-          width: 147%;
-          height: 147%;
+          width: 118%;
+          height: 118%;
+          pointer-events: auto;
         }
 
         .environment-selector.preview-zoom .selector-content {
-          overflow: hidden;
+          overflow: visible;
+          pointer-events: auto;
         }
 
         .selector-content {
@@ -906,6 +915,8 @@ export default function EnvironmentSelector({
           flex-direction: column;
           width: 100%;
           height: 100%;
+          position: relative;
+          z-index: 1;
         }
 
         /* Tagline Animation */
@@ -958,9 +969,22 @@ export default function EnvironmentSelector({
           outline: none;
         }
 
+        .preview-zoom .search-input {
+          padding: 0.625rem 1.25rem 0.625rem 3.25rem;
+          font-size: 1rem;
+          border-radius: 1rem;
+          border: 1.5px solid rgba(15, 23, 42, 0.2) !important;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 4px 12px -4px rgba(15, 23, 42, 0.2);
+        }
+
         .search-input:focus {
           border-color: rgba(59, 130, 246, 0.4) !important;
           box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+        }
+
+        .preview-zoom .search-input:focus {
+          border-color: rgba(59, 130, 246, 0.5) !important;
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
         }
 
         /* Environment card styling */
@@ -976,40 +1000,58 @@ export default function EnvironmentSelector({
 
         /* Bigger cards only in preview mode */
         .preview-zoom .environment-card {
-          padding: 20px;
-          min-height: 140px;
+          padding: 24px;
+          min-height: 160px;
+          cursor: pointer;
+          position: relative;
+        }
+
+        .preview-zoom .environment-card::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 0.75rem;
+          background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03), transparent);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .preview-zoom .environment-card:hover::after {
+          opacity: 1;
         }
 
         /* Bigger content in preview mode cards */
         .preview-zoom .environment-card h3 {
-          font-size: 1rem;
+          font-size: 1.125rem;
           line-height: 1.4;
+          font-weight: 600;
         }
 
         .preview-zoom .env-description {
-          font-size: 0.8rem;
+          font-size: 0.875rem;
           line-height: 1.5;
-          margin-bottom: 0.75rem;
+          margin-bottom: 0.875rem;
         }
 
         .preview-zoom .environment-card svg {
-          width: 1.75rem;
-          height: 1.75rem;
+          width: 2rem;
+          height: 2rem;
         }
 
         .preview-zoom .component-badge {
-          height: 24px;
-          padding: 0 8px;
-          gap: 5px;
+          height: 28px;
+          padding: 0 10px;
+          gap: 6px;
         }
 
         .preview-zoom .component-badge svg {
-          width: 14px;
-          height: 14px;
+          width: 16px;
+          height: 16px;
         }
 
         .preview-zoom .component-badge span {
-          font-size: 11px;
+          font-size: 12px;
+          font-weight: 600;
         }
 
         /* Edit Icon Button */
@@ -1069,8 +1111,17 @@ export default function EnvironmentSelector({
           pointer-events: none;
         }
 
+        .preview-zoom .environment-card-selected .environment-card-clickable {
+          cursor: pointer !important;
+          pointer-events: auto !important;
+        }
+
         .preview-zoom .environment-card-clickable {
           cursor: pointer !important;
+          pointer-events: auto !important;
+        }
+
+        .preview-zoom .environment-card {
           pointer-events: auto !important;
         }
 
@@ -1127,6 +1178,13 @@ export default function EnvironmentSelector({
           border-color: rgba(15, 23, 42, 0.24);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 18px -14px rgba(245, 158, 11, 0.35);
           transform: translateY(-2px);
+        }
+
+        .preview-zoom .environment-card:not(.environment-card-selected):hover {
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.04));
+          border-color: rgba(59, 130, 246, 0.3);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 12px 24px -14px rgba(59, 130, 246, 0.4);
+          transform: translateY(-3px) scale(1.01);
         }
 
         .environment-card:not(.environment-card-selected):active {

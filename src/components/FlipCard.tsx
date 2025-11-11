@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 // ===== ADJUST THIS VALUE TO CHANGE VIDEO/CONTENT RATIO FOR ALL CARDS =====
 // Video takes this percentage, content takes the remainder
@@ -9,7 +9,7 @@ import { useRef } from "react";
 const getVideoHeightPercentage = () => {
   if (typeof window === 'undefined') return 50;
   const height = window.innerHeight;
-  // Smaller screens (laptops): give more space to content
+  // Smaller screens (laptops): give more space for content
   if (height < 800) return 45;
   // Medium screens: balanced
   if (height < 1000) return 50;
@@ -61,7 +61,21 @@ export default function FlipCard({
 }: FlipCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const VIDEO_HEIGHT_PERCENTAGE = getVideoHeightPercentage();
+
+  // Use state to avoid hydration mismatch - always start with default value
+  const [videoHeightPercentage, setVideoHeightPercentage] = useState(50);
+
+  // Update on client side only after hydration
+  useEffect(() => {
+    setVideoHeightPercentage(getVideoHeightPercentage());
+
+    const handleResize = () => {
+      setVideoHeightPercentage(getVideoHeightPercentage());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleMouseEnter = () => {
     if (videoRef.current) {
@@ -202,7 +216,7 @@ export default function FlipCard({
         <div
           className="relative w-full overflow-hidden"
           style={{
-            height: `${VIDEO_HEIGHT_PERCENTAGE}%`,
+            height: `${videoHeightPercentage}%`,
             borderTopLeftRadius: position === "left" ? `${borderRadius - 2}px` : 0,
             borderTopRightRadius: position === "right" ? `${borderRadius - 2}px` : 0,
           }}
@@ -268,7 +282,7 @@ export default function FlipCard({
         <div
           className="flex flex-col px-4 sm:px-6 pt-2 sm:pt-3 pb-3 sm:pb-4 relative overflow-y-auto"
           style={{
-            height: `${100 - VIDEO_HEIGHT_PERCENTAGE}%`,
+            height: `${100 - videoHeightPercentage}%`,
             background: '#EFF6FF',
           }}
         >

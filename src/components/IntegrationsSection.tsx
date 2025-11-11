@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, forwardRef } from "react";
-import Image from "next/image";
 
 type Integration = {
   id: string;
@@ -13,9 +12,9 @@ type Integration = {
 };
 
 const nativeIntegrations: Integration[] = [
-  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/whatsapp_integrations.png" },
-  { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true, screenshot: "/instagram_integrations.png" },
-  { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true, screenshot: "/Email_Integrations.png" },
+  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/images/whatsapp-img.png" },
+  { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true, screenshot: "/images/instagram-img.png" },
+  { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true, screenshot: "/images/email-img.png" },
   { id: "tally", name: "Tally", iconUrl: "/icons/Tally.png", useColor: true, screenshot: "/screenshots/preview.png", disabled: true },
 ];
 
@@ -70,17 +69,20 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           >
             Integrations
           </h2>
+          <p className="text-sm text-waygent-text-secondary font-futura mt-3">
+            Connect your favorite tools and platforms. Native integrations built-in, or bring your own via API.
+          </p>
         </div>
 
-        <div className="flex flex-col lg:grid lg:grid-cols-[auto_1fr] gap-8 lg:gap-12">
-          {/* Left side - Integrations grid */}
-          <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8">
+          {/* Top - Integrations grid */}
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 justify-center items-start lg:items-center">
             {/* Native Integrations */}
-            <div className="flex flex-col gap-4">
-              <h3 className="text-sm font-semibold text-waygent-text-primary font-futura">
-                Native Integration
+            <div className="flex flex-col gap-4 lg:pr-8 lg:border-r-2 lg:border-gray-200">
+              <h3 className="text-sm font-semibold text-waygent-text-primary font-futura text-center lg:text-left uppercase tracking-wider">
+                Native Integrations
               </h3>
-              <div className="flex flex-wrap gap-4 max-w-md">
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                 {nativeIntegrations.map((integration) => {
                   const isActive = activeId === integration.id;
                   const isDisabled = integration.disabled;
@@ -150,10 +152,10 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
 
             {/* 3rd Party Integrations */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-sm font-semibold text-waygent-text-primary font-futura">
+              <h3 className="text-sm font-semibold text-waygent-text-primary font-futura text-center lg:text-left uppercase tracking-wider">
                 3rd Party Integrations
               </h3>
-              <div className="flex flex-wrap gap-4 max-w-md">
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                 {thirdPartyIntegrations.map((integration) => {
                   return (
                     <div key={integration.id} className="relative flex flex-col items-center gap-1.5">
@@ -179,22 +181,16 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
               </div>
             </div>
 
-            <div>
-              <p className="text-sm text-waygent-text-secondary/80 font-medium">
-                and much more on the way
-              </p>
-            </div>
           </div>
 
-          {/* Right side - Screenshot preview */}
-          <div className="relative h-[300px] lg:h-[460px] overflow-hidden rounded-[24px] lg:rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur flex items-center justify-center">
+          {/* Bottom - Full width screenshot preview */}
+          <div className="relative w-full overflow-hidden rounded-[24px] lg:rounded-[36px] border border-[#d4ddfa] bg-white/85 shadow-xl backdrop-blur flex items-center justify-center mt-4">
             {activeIntegration && (
-              <Image
+              <img
                 src={activeIntegration.screenshot}
                 alt={`${activeIntegration.name} integration`}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-fill rounded-[36px]"
+                className="w-full h-auto rounded-[36px]"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
               />
             )}
           </div>
