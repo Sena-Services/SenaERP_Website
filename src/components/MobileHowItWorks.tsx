@@ -160,50 +160,19 @@ export default function MobileHowItWorks() {
   if (!isMobile) return null;
 
   return (
-    <div className="w-full bg-gradient-to-b from-waygent-cream to-gray-50 relative" id="how-it-works">
-      {/* Title Section - Compact */}
-      <div className="w-full py-8 px-6 text-center sticky top-0 z-50 bg-waygent-cream/80 backdrop-blur-md border-b border-gray-200/50">
-        <h2
-          style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontWeight: 400,
-            letterSpacing: "-0.02em",
-            color: "#2C1810",
-            fontSize: "36px",
-            marginBottom: "4px",
-          }}
-        >
-          How it <span style={{ fontStyle: "italic" }}>works</span>?
-        </h2>
-        <p
-          style={{
-            fontFamily: "system-ui, -apple-system, sans-serif",
-            fontWeight: 500,
-            fontSize: "14px",
-            color: "#6B7280",
-            letterSpacing: "-0.01em",
-          }}
-        >
-          Three simple steps
-        </p>
-      </div>
-
+    <div className="w-full bg-gradient-to-b from-waygent-cream to-gray-50 relative pt-10" id="how-it-works">
       {/* Cards Container with Padding */}
-      <div className="relative px-4 py-6">
+      <div className="relative px-4 pb-6">
         {cards.map((card, index) => (
         <div
           key={card.number}
-          className="relative mb-6 last:mb-0"
-          style={{
-            marginTop: index > 0 ? '-60px' : '0', // Overlapping effect
-          }}
+          className="relative mb-8 last:mb-0"
         >
           {/* Card Container with modern styling */}
           <div
             className="relative rounded-3xl overflow-hidden shadow-2xl"
             style={{
               minHeight: 'calc(100vh - 120px)',
-              transform: `scale(${1 - index * 0.02})`, // Slight scale for depth
             }}
           >
             {/* Video Section - Compact with gradient overlay */}
@@ -271,7 +240,6 @@ export default function MobileHowItWorks() {
             <div
               className="relative overflow-y-auto px-5 py-6"
               style={{
-                minHeight: '55vh',
                 background: 'rgba(255, 255, 255, 0.85)',
                 backdropFilter: 'blur(20px)',
               }}

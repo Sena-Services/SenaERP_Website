@@ -26,7 +26,11 @@ const sections = [
   { id: "join-us", label: "Join Us" },
 ];
 
-export default function NavBar() {
+type NavBarProps = {
+  showHowItWorks?: boolean;
+};
+
+export default function NavBar({ showHowItWorks = false }: NavBarProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -152,13 +156,15 @@ export default function NavBar() {
     <>
       <header className="w-full">
         <nav
-          className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2 bg-white/10 border-2 border-white/20 border-t-0 backdrop-blur-md max-w-7xl mx-auto`}
+          className={`flex flex-col bg-white/10 border-2 border-white/20 border-t-0 backdrop-blur-md max-w-7xl mx-auto overflow-hidden`}
         style={{
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           borderBottomLeftRadius: '40px',
           borderBottomRightRadius: '40px',
         }}
       >
+        {/* Top Row - Logo and Buttons */}
+        <div className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2`}>
         {/* LEFT SIDE - Logo */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} pl-2 sm:pl-3 py-1.5`}>
           <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
@@ -313,33 +319,41 @@ export default function NavBar() {
             )}
           </div>
         </div>
-        </nav>
+        </div>
 
-        {/* Backdrop when menu is open */}
-        {isMobileMenuOpen && (
-          <div
-            className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={{ top: `${navbarHeight}px` }}
-          />
-        )}
-
-        {/* Mobile Dropdown Menu - Overlay */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden fixed left-0 right-0 z-40 px-4 sm:px-6 lg:px-8"
-            style={{
-              top: `${navbarHeight - 15}px`,
-            }}
-          >
-            <div className="bg-waygent-light-blue border-2 border-waygent-light-blue border-t-0 backdrop-blur-sm max-w-xs mx-auto px-4 sm:px-6 relative animate-slideDown"
+        {/* How it Works Section - Hide when menu is open */}
+        {showHowItWorks && !isMobileMenuOpen && (
+          <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+            <h2
               style={{
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                borderBottomLeftRadius: '40px',
-                borderBottomRightRadius: '40px',
-                paddingTop: '20px',
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontWeight: 400,
+                letterSpacing: "-0.02em",
+                color: "#2C1810",
+                fontSize: "20px",
+                marginBottom: "2px",
               }}
             >
-              <ul className="py-2 space-y-0.5">
+              How it <span style={{ fontStyle: "italic" }}>works</span>?
+            </h2>
+            <p
+              style={{
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontWeight: 500,
+                fontSize: "11px",
+                color: "#6B7280",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Three simple steps
+            </p>
+          </div>
+        )}
+
+        {/* Mobile Dropdown Menu - INSIDE THE NAV - PART OF THE SAME COMPONENT */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden w-full px-4 pt-3 pb-3 border-t border-white/20">
+            <ul className="space-y-1.5">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const step = (index + 1).toString().padStart(2, "0");
@@ -348,31 +362,30 @@ export default function NavBar() {
                   <li key={section.id}>
                     <button
                       onClick={() => handleSectionClick(section.id)}
-                      className={`group relative flex w-full items-center gap-2 rounded-lg px-2.5 py-[9px] text-left transition-all duration-300 ease-out cursor-pointer ${
-                        !isActive && 'hover:bg-white/60 hover:shadow-sm'
+                      className={`group relative flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ease-out cursor-pointer border ${
+                        !isActive && 'hover:bg-white/50 hover:border-white/40'
                       } ${
-                        isActive ? 'bg-waygent-orange' : ''
+                        isActive ? 'bg-waygent-orange shadow-lg border-waygent-orange' : 'bg-white/30 backdrop-blur-sm border-white/30'
                       }`}
                     >
                       <span
-                        className="text-[9px] font-semibold tracking-wider transition-colors duration-300 w-5 flex-shrink-0 flex items-center justify-center font-space-grotesk"
+                        className="text-xs font-bold tracking-wide transition-colors duration-200 w-7 h-7 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-lg"
                         style={{
-                          color: isActive ? 'white' : 'rgb(107, 114, 128)',
-                          transitionDelay: isActive ? '500ms' : '0ms',
+                          color: isActive ? 'white' : '#1F2937',
+                          background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.6)',
                           lineHeight: '1',
                         }}
                       >
                         {step}
                       </span>
                       <span
-                        className={`flex-1 text-[10.5px] sm:text-[11px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap font-space-grotesk ${
+                        className={`flex-1 text-sm font-bold transition-all duration-200 flex items-center whitespace-nowrap font-space-grotesk ${
                           !isActive && 'group-hover:text-waygent-orange'
                         }`}
                         style={{
-                          color: isActive ? 'white' : 'rgb(31, 41, 55)',
+                          color: isActive ? 'white' : '#1F2937',
                           transform: isActive ? 'translateX(2px)' : 'translateX(0)',
-                          transitionDelay: isActive ? '500ms' : '0ms',
-                          lineHeight: '1.3',
+                          lineHeight: '1.4',
                         }}
                       >
                         {section.label}
@@ -381,9 +394,18 @@ export default function NavBar() {
                   </li>
                 );
               })}
-              </ul>
-            </div>
+            </ul>
           </div>
+        )}
+        </nav>
+
+        {/* Backdrop when menu is open */}
+        {isMobileMenuOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ top: `${navbarHeight}px`, zIndex: -1 }}
+          />
         )}
 
         {/* Early Access Modal */}

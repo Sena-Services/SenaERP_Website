@@ -498,7 +498,7 @@ export default function Home() {
             opacity: showNavigation ? 1 : 0,
           }}
         >
-          <NavBar />
+          <NavBar showHowItWorks={true} />
         </div>
       )}
 
