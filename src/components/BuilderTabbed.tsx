@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import UIBuilderDemo from "./UIBuilderDemo";
 import DataBuilderDemo from "./DataBuilderDemo";
 import WorkflowsBuilderDemo from "./WorkflowsBuilderDemo";
+import AgentsBuilderDemo from "./AgentsBuilderDemo";
 
 type Tab = {
   id: string;
@@ -160,7 +161,7 @@ export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
-    <div className="w-full bg-waygent-cream py-16">
+    <div className="w-full bg-waygent-cream py-16 scroll-mt-24">
       <div className="mx-auto" style={{ maxWidth: '1280px', width: 'calc(100vw - 64px)' }}>
         {/* Section Title */}
         <div className="mb-12 text-center">
@@ -279,6 +280,8 @@ export default function BuilderTabbed() {
                 <DataBuilderDemo />
               ) : activeTab.id === "workflows" ? (
                 <WorkflowsBuilderDemo />
+              ) : activeTab.id === "agents" ? (
+                <AgentsBuilderDemo />
               ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[500px]">
                 {/* Left Section - Workflow */}

@@ -70,7 +70,7 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
     <section
       ref={ref}
       id="join-us"
-      className="scroll-mt-32 px-4 sm:px-6 lg:px-8 mb-8"
+      className="scroll-mt-24 px-4 sm:px-6 lg:px-8 mb-8"
       style={{
         marginTop: `${getResponsiveValue(64)}px`,
         paddingBottom: `${getResponsiveValue(64)}px`,

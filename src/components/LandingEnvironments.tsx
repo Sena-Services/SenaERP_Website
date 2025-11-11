@@ -241,7 +241,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-32 mt-8 sm:mt-8 px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="environments" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl px-0">
         <div className="mb-12 text-center">
           <h2

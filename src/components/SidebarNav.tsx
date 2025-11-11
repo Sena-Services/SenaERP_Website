@@ -157,6 +157,18 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
     return () => window.clearTimeout(timer);
   }, [activeSection, updateIndicator]);
 
+  // Reset all button styles when active section changes
+  useEffect(() => {
+    Object.entries(itemRefs.current).forEach(([id, button]) => {
+      if (button && id !== activeSection) {
+        button.style.background = 'transparent';
+        button.style.border = '1px solid transparent';
+        button.style.transform = 'translateX(0)';
+        button.style.boxShadow = 'none';
+      }
+    });
+  }, [activeSection]);
+
   const handleClick = (id: string) => {
     // Set navigating flag to prevent detection from overriding
     isNavigatingRef.current = true;
@@ -183,7 +195,8 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         isNavigatingRef.current = false;
         return;
       }
-      const navbarHeight = 90;
+      // Builder section has py-16 (64px) padding, so we need less offset
+      const navbarHeight = id === "builder" ? 20 : 90;
       targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
     }
 
@@ -210,25 +223,20 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto pl-1.5 pr-1.5 py-2 scrollbar-thin scrollbar-thumb-waygent-blue/30 scrollbar-track-transparent transition-all duration-300 ease-out w-auto group-hover:pr-2"
+            className="relative flex max-h-[72vh] flex-col overflow-y-auto pl-1.5 pr-1.5 py-2 transition-all duration-300 ease-out w-auto group-hover:pr-2"
             style={{
               background: 'transparent',
+              scrollbarWidth: 'none', // Firefox
+              msOverflowStyle: 'none', // IE/Edge
             }}
           >
-            {/* Smooth sliding indicator */}
-            <div
-              className="absolute left-1 right-1 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-              style={{
-                top: indicator.top,
-                height: indicator.height,
-                opacity: indicator.height > 0 ? 1 : 0,
-                background: '#8FB7C5',
-                borderRadius: '8px',
-                boxShadow: '0 2px 8px rgba(143, 183, 197, 0.4)',
-              }}
-            />
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
 
-            <ul className="relative flex flex-col gap-0.5 text-waygent-text-secondary font-space-grotesk">
+            <ul className="relative flex flex-col gap-1 text-waygent-text-secondary font-space-grotesk">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const step = (index + 1).toString().padStart(2, "0");
@@ -243,29 +251,41 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className="group/item relative flex items-center gap-2 px-2 py-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer w-full rounded-lg"
+                      className="group/item relative flex items-center gap-3 px-3 py-2.5 text-left transition-all duration-200 ease-out focus-visible:outline-none cursor-pointer w-full rounded-xl"
+                      style={{
+                        background: isActive
+                          ? '#8FB7C5'
+                          : 'transparent',
+                        border: isActive
+                          ? '1px solid #7AA5B5'
+                          : '1px solid transparent',
+                        boxShadow: isActive
+                          ? '0 2px 8px rgba(143, 183, 197, 0.3)'
+                          : 'none',
+                      }}
                       onMouseEnter={(e) => {
                         if (!isActive) {
-                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-                          e.currentTarget.style.backdropFilter = 'blur(10px)';
-                          e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.15)';
-                          e.currentTarget.style.transform = 'translateX(2px)';
+                          e.currentTarget.style.background = 'rgba(143, 183, 197, 0.12)';
+                          e.currentTarget.style.border = '1px solid rgba(143, 183, 197, 0.25)';
+                          e.currentTarget.style.transform = 'translateX(4px)';
+                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.2)';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!isActive) {
                           e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.backdropFilter = 'none';
                           e.currentTarget.style.border = '1px solid transparent';
                           e.currentTarget.style.transform = 'translateX(0)';
+                          e.currentTarget.style.boxShadow = 'none';
                         }
                       }}
                     >
                       {/* Step number */}
                       <span
-                        className="text-[9px] font-bold tracking-wider transition-all duration-300 w-5 h-5 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-full group-hover/item:scale-110"
+                        className="text-[11px] font-bold tracking-wider transition-all duration-200 w-6 h-6 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-full"
                         style={{
-                          color: isActive ? '#1F2937' : 'rgba(107, 114, 128, 0.8)',
+                          color: isActive ? '#FFFFFF' : '#6B7280',
+                          background: isActive ? '#6A94A3' : 'rgba(143, 183, 197, 0.15)',
                         }}
                       >
                         {step}
@@ -273,9 +293,9 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
 
                       {/* Label text */}
                       <span
-                        className="text-[10px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk group-hover/item:text-waygent-blue"
+                        className="text-[11px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk"
                         style={{
-                          color: isActive ? '#1F2937' : 'rgb(55, 65, 81)',
+                          color: isActive ? '#FFFFFF' : '#374151',
                           fontWeight: isActive ? '700' : '600',
                         }}
                       >

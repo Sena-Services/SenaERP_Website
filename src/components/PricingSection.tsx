@@ -85,7 +85,7 @@ const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, re
   };
 
   return (
-    <section ref={ref} id="pricing" className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="pricing" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl">
         <div className="mb-12 text-center">
           <h2

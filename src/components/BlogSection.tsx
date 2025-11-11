@@ -237,7 +237,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
     <section
       ref={ref}
       id="blog"
-      className="scroll-mt-32 mt-16 sm:mt-16 px-4 sm:px-6 lg:px-8 overflow-visible"
+      className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 overflow-visible"
     >
       <style jsx>{`
         .blog-carousel::-webkit-scrollbar {
