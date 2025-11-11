@@ -38,6 +38,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    // Disable all scroll locking and animations on mobile
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) return;
+
     let isAnimating = false;
     let animationFrameId: number;
     let directionLock: 'up' | 'down' | null = null;

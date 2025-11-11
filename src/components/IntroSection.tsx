@@ -73,6 +73,14 @@ export default function IntroSection() {
       const section = sectionRef.current;
       if (!section) return;
 
+      // On mobile, disable all scroll animations
+      if (viewportWidth < 768) {
+        setScrollProgress(0);
+        setSplitProgress(0);
+        setRotateProgress(0);
+        return;
+      }
+
       // If animation is locked, keep everything at final state
       if (animationLocked) {
         setScrollProgress(1);
@@ -117,7 +125,7 @@ export default function IntroSection() {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [animationLocked]);
+  }, [animationLocked, viewportWidth]);
 
   // Responsive scaling: only scale up when viewport HEIGHT > 1200px
   const getResponsiveValue = (baseValue: number) => {
@@ -138,30 +146,37 @@ export default function IntroSection() {
   const maxCardGapTotal = 12; // responsiveMaxGap (6) * 2 gaps
   const responsiveTargetWidth = Math.min(maxContainerWidth, viewportWidth - viewportPadding) - maxCardGapTotal;
   const targetWidth = responsiveTargetWidth;
-  const startWidth = Math.max(viewportWidth * 0.95, targetWidth);
+
+  // On mobile, make it full width with no margins
+  const startWidth = viewportWidth < 768 ? viewportWidth : Math.max(viewportWidth * 0.95, targetWidth);
   const currentWidthValue =
     startWidth - (startWidth - targetWidth) * scrollProgress;
   const currentWidth =
     viewportWidth === 0 ? "95vw" : `${currentWidthValue}px`;
 
-  const startHeight = viewportHeight * 0.92;
+  // On mobile, make the card full height to fill the entire screen
+  const startHeight = viewportWidth < 768 ? viewportHeight : viewportHeight * 0.92;
   const responsiveMinHeight = getResponsiveValue(600);
   const targetHeight = Math.max(viewportHeight * 0.75, responsiveMinHeight);
   const currentHeightValue =
     startHeight - (startHeight - targetHeight) * scrollProgress;
   const currentHeight =
-    viewportHeight === 0 ? "92vh" : `${currentHeightValue}px`;
+    viewportHeight === 0 ? (viewportWidth < 768 ? "100vh" : "92vh") : `${currentHeightValue}px`;
 
   const clamp01 = (n: number) => Math.min(Math.max(n, 0), 1);
   const responsiveBorderRadius = getResponsiveValue(32) + scrollProgress * getResponsiveValue(16);
-  const borderRadius = responsiveBorderRadius;
+  // On mobile, no border radius for full-screen effect
+  const borderRadius = viewportWidth < 768 ? 0 : responsiveBorderRadius;
   const contentOpacity = Math.max(0, 1 - scrollProgress * 1.2);
   const elevation =
     scrollProgress < 1
       ? "0 20px 60px -12px rgba(0, 0, 0, 0.15)"
       : "0 12px 32px -10px rgba(0, 0, 0, 0.12)";
-  const sectionHeight =
-    startHeight + SHRINK_SCROLL_DISTANCE + SPLIT_SCROLL_DISTANCE + ROTATE_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
+
+  // On mobile, use normal height instead of extended scrolling height
+  const sectionHeight = viewportWidth < 768
+    ? 'auto'
+    : startHeight + SHRINK_SCROLL_DISTANCE + SPLIT_SCROLL_DISTANCE + ROTATE_SCROLL_DISTANCE + EXTRA_HOLD_DISTANCE;
   const stickyFrameHeight = viewportHeight;
 
   // Calculate proper centering to place card perfectly in viewport
@@ -171,10 +186,13 @@ export default function IntroSection() {
   const titleHeight = getResponsiveValue(120); // Space for "How it works?" title + subtitle
   const topSpaceNeeded = navbarHeight + titleHeight;
 
-  const centeredPadding = Math.max(
-    getResponsiveValue(16),
-    (viewportHeight - currentHeightValue) / 2
-  );
+  // On mobile, use NO padding for true full-screen effect
+  const centeredPadding = viewportWidth < 768
+    ? 0 // ZERO padding on mobile for full-screen
+    : Math.max(
+        getResponsiveValue(16),
+        (viewportHeight - currentHeightValue) / 2
+      );
 
   // Gradually shift down as we complete the shrink phase
   const shiftProgress = Math.max(0, scrollProgress - 0.7) / 0.3; // Start shifting at 70% shrink
@@ -201,25 +219,54 @@ export default function IntroSection() {
       ref={sectionRef}
       className="relative w-full bg-waygent-cream"
       style={{
-        height: `${sectionHeight}px`,
+        height: viewportWidth < 768 ? sectionHeight : `${sectionHeight}px`,
       }}
     >
       <div
-        className="sticky flex items-start justify-center w-full"
+        className="flex items-start justify-center w-full"
         style={{
-          top: '0px',
-          height: `${stickyFrameHeight}px`,
-          paddingTop: `${heroPaddingTop}px`,
+          position: viewportWidth < 768 ? 'relative' : 'sticky',
+          top: viewportWidth < 768 ? undefined : '0px',
+          height: viewportWidth < 768 ? 'auto' : `${stickyFrameHeight}px`,
+          paddingTop: viewportWidth < 768 ? '0' : `${heroPaddingTop}px`,
+          paddingLeft: viewportWidth < 768 ? '0' : undefined,
+          paddingRight: viewportWidth < 768 ? '0' : undefined,
         }}
       >
         <div
-          className="relative mx-auto"
+          className={viewportWidth < 768 ? "relative" : "relative mx-auto"}
           style={{
             width: currentWidth,
-            maxWidth: splitProgress > 0 ? `${maxContainerWidth}px` : "95vw",
-            height: currentHeight,
+            maxWidth: splitProgress > 0 ? `${maxContainerWidth}px` : (viewportWidth < 768 ? "100vw" : "95vw"),
+            height: viewportWidth < 768 ? 'auto' : currentHeight,
+            minHeight: viewportWidth < 768 ? '100vh' : undefined,
+            background: viewportWidth < 768 ? '#F5F0E6' : undefined,
           }}
         >
+          {/* Mobile painting at the top */}
+          {viewportWidth < 768 && splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 && (
+            <div
+              className="w-full overflow-hidden"
+              style={{
+                height: '100vh',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+              }}
+            >
+              <img
+                src="/illustrations/monet-intro.png"
+                alt="Monet painting background"
+                className="w-full h-full object-cover"
+                style={{
+                  objectPosition: '88% 50%',
+                  opacity: 1,
+                }}
+              />
+            </div>
+          )}
+
           {/* Anchor for "how-it-works" section at the rotated position */}
           <div id="how-it-works" className="absolute" style={{ top: `-${getResponsiveValue(140)}px` }} />
 
