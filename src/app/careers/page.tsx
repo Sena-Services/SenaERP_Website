@@ -9,7 +9,7 @@ export default function CareersPage() {
     <>
       <NavBar />
       <div className="bg-waygent-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+        <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk transition mb-4"

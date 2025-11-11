@@ -260,7 +260,7 @@ export default function IntroSection() {
                   // Trigger reverse animation back to intro
                   window.dispatchEvent(new CustomEvent('resetHome'));
                 }}
-                className="absolute flex items-center justify-center gap-2 text-gray-900 hover:text-gray-600 transition-all group bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl"
+                className="absolute flex items-center justify-center gap-2 text-gray-700 hover:text-gray-900 transition-all group cursor-pointer hover:bg-gray-100/50"
                 style={{
                   left: '0',
                   top: '50%',
@@ -269,10 +269,12 @@ export default function IntroSection() {
                   width: '48px',
                   height: '48px',
                   borderRadius: '50%',
-                  border: '2px solid #E5E7EB',
+                  background: 'rgba(255, 255, 255, 0.3)',
+                  border: '2px solid rgba(156, 163, 175, 0.3)',
+                  backdropFilter: 'blur(8px)',
                 }}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:scale-110">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
                   <path
                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                     stroke="currentColor"

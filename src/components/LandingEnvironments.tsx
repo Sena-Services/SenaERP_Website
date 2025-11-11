@@ -241,27 +241,32 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8">
-      <div className="relative mx-auto w-full max-w-7xl px-0">
+    <section ref={ref} id="environments" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="relative mx-auto w-full max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
         <div className="mb-12 text-center">
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl"
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               color: "#2C1810",
+              fontSize: '60px',
             }}
           >
             Environments
           </h2>
-          <p className="text-sm text-waygent-text-secondary font-futura mt-3">
+          <p
+            className="text-xl md:text-2xl text-gray-700 mt-4 mx-auto max-w-3xl font-futura"
+            style={{
+              letterSpacing: "-0.01em",
+            }}
+          >
             Click any environment to see what's included, or launch the selector to customize one for your business.
           </p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
         <div className="hidden lg:grid lg:grid-cols-[800px_1fr] gap-8 lg:gap-12">
           {/* Left side - EnvironmentSelector */}
           <div className="relative h-[640px] rounded-[36px] bg-white group transition-all duration-300" style={{

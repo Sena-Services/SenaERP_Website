@@ -55,51 +55,56 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
   };
 
   return (
-    <section ref={ref} id="integrations" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8">
-      <div className="relative mx-auto w-full max-w-7xl">
+    <section ref={ref} id="integrations" className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="relative mx-auto w-full max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
         <div className="mb-12 text-center">
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl"
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               color: "#2C1810",
+              fontSize: '60px',
             }}
           >
             Integrations
           </h2>
-          <p className="text-sm text-waygent-text-secondary font-futura mt-3">
+          <p
+            className="text-xl md:text-2xl text-gray-700 mt-4 mx-auto max-w-3xl font-futura"
+            style={{
+              letterSpacing: "-0.01em",
+            }}
+          >
             Connect your favorite tools and platforms. Native integrations built-in, or bring your own via API.
           </p>
         </div>
 
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-12">
           {/* Top - Integrations grid */}
-          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 justify-center items-start lg:items-center">
+          <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 justify-center items-start lg:items-center">
             {/* Native Integrations */}
-            <div className="flex flex-col gap-4 lg:pr-8 lg:border-r-2 lg:border-gray-200">
-              <h3 className="text-sm font-semibold text-waygent-text-primary font-futura text-center lg:text-left uppercase tracking-wider">
+            <div className="flex flex-col gap-6 lg:pr-12 lg:border-r-2 lg:border-gray-200">
+              <h3 className="text-lg font-semibold text-waygent-text-primary font-futura text-center lg:text-left uppercase tracking-wider">
                 Native Integrations
               </h3>
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
                 {nativeIntegrations.map((integration) => {
                   const isActive = activeId === integration.id;
                   const isDisabled = integration.disabled;
                   return (
-                    <div key={integration.id} className="relative flex flex-col items-center gap-1.5">
+                    <div key={integration.id} className="relative flex flex-col items-center gap-2">
                       <button
                         onClick={() => !isDisabled && handleIntegrationClick(integration.id)}
-                        className={`group flex flex-col items-center gap-1.5 ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                        className={`group flex flex-col items-center gap-2 ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
                         disabled={isDisabled}
                       >
                         <div
-                          className={`relative flex items-center justify-center w-14 h-14 rounded-[14px] backdrop-blur-sm border transition-all duration-200 ease-out ${
+                          className={`relative flex items-center justify-center w-20 h-20 rounded-[18px] backdrop-blur-sm border-2 transition-all duration-200 ease-out ${
                             isDisabled
                               ? 'bg-transparent border-gray-300/20'
                               : isActive
-                              ? 'bg-white/20 border-waygent-blue shadow-md scale-105'
-                              : 'bg-transparent border-gray-300/40 hover:bg-white/10 hover:border-waygent-blue/40 hover:-translate-y-0.5 hover:scale-105 hover:shadow-md'
+                              ? 'bg-white/20 border-waygent-blue shadow-lg scale-105'
+                              : 'bg-transparent border-gray-300/40 hover:bg-white/10 hover:border-waygent-blue/40 hover:-translate-y-0.5 hover:scale-105 hover:shadow-lg'
                           }`}
                         >
                           <img
@@ -107,14 +112,14 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                             alt={integration.name}
                             className={`transition-all duration-200 object-contain ${
                               integration.id === 'tally'
-                                ? 'w-14 h-14 group-hover:w-11 group-hover:h-11'
+                                ? 'w-20 h-20 group-hover:w-16 group-hover:h-16'
                                 : integration.id === 'whatsapp'
-                                ? 'w-8 h-8 group-hover:w-9 group-hover:h-9'
-                                : 'w-7 h-7 group-hover:w-8 group-hover:h-8'
+                                ? 'w-11 h-11 group-hover:w-12 group-hover:h-12'
+                                : 'w-10 h-10 group-hover:w-11 group-hover:h-11'
                             } ${isDisabled ? 'grayscale' : ''}`}
                           />
                         </div>
-                        <span className={`text-[10px] font-medium text-center leading-tight ${
+                        <span className={`text-sm font-medium text-center leading-tight ${
                           isDisabled ? 'text-waygent-text-secondary/50' : isActive ? 'text-waygent-blue' : 'text-waygent-text-secondary'
                         }`}>
                           {integration.name}
@@ -126,12 +131,12 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                             e.stopPropagation();
                             setIsAutoCycling(true);
                           }}
-                          className="absolute -top-1 -right-1 w-5 h-5 bg-waygent-blue rounded-full flex items-center justify-center shadow-md hover:bg-waygent-blue-hover transition z-10"
+                          className="absolute -top-2 -right-2 w-7 h-7 bg-waygent-blue rounded-full flex items-center justify-center shadow-lg hover:bg-waygent-blue-hover transition z-10"
                           title="Unpin to resume auto-play"
                         >
                           <svg
-                            width="12"
-                            height="12"
+                            width="14"
+                            height="14"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -151,27 +156,27 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             </div>
 
             {/* 3rd Party Integrations */}
-            <div className="flex flex-col gap-4">
-              <h3 className="text-sm font-semibold text-waygent-text-primary font-futura text-center lg:text-left uppercase tracking-wider">
+            <div className="flex flex-col gap-6">
+              <h3 className="text-lg font-semibold text-waygent-text-primary font-futura text-center lg:text-left uppercase tracking-wider">
                 3rd Party Integrations
               </h3>
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
                 {thirdPartyIntegrations.map((integration) => {
                   return (
-                    <div key={integration.id} className="relative flex flex-col items-center gap-1.5">
-                      <div className="group flex flex-col items-center gap-1.5 cursor-default">
-                        <div className="relative flex items-center justify-center w-14 h-14 rounded-[14px] backdrop-blur-sm border bg-transparent border-gray-300/40 hover:bg-white/10 hover:border-waygent-blue/40 hover:-translate-y-0.5 hover:scale-105 hover:shadow-md transition-all duration-200 ease-out">
+                    <div key={integration.id} className="relative flex flex-col items-center gap-2">
+                      <div className="group flex flex-col items-center gap-2 cursor-default">
+                        <div className="relative flex items-center justify-center w-20 h-20 rounded-[18px] backdrop-blur-sm border-2 bg-transparent border-gray-300/40 hover:bg-white/10 hover:border-waygent-blue/40 hover:-translate-y-0.5 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
                           <img
                             src={integration.iconUrl}
                             alt={integration.name}
                             className={`transition-all duration-200 object-contain ${
                               integration.id === 'github'
-                                ? 'w-9 h-9 group-hover:w-10 group-hover:h-10'
-                                : 'w-7 h-7 group-hover:w-8 group-hover:h-8'
+                                ? 'w-12 h-12 group-hover:w-13 group-hover:h-13'
+                                : 'w-10 h-10 group-hover:w-11 group-hover:h-11'
                             }`}
                           />
                         </div>
-                        <span className="text-[10px] font-medium text-center leading-tight text-waygent-text-secondary">
+                        <span className="text-sm font-medium text-center leading-tight text-waygent-text-secondary">
                           {integration.name}
                         </span>
                       </div>

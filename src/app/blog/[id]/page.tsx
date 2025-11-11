@@ -65,7 +65,7 @@ export default function BlogArticlePage() {
       <>
         <NavBar />
         <main className="min-h-screen bg-waygent-cream">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="text-center text-gray-600 font-space-grotesk">
               Loading article...
             </div>
@@ -80,7 +80,7 @@ export default function BlogArticlePage() {
       <>
         <NavBar />
         <main className="min-h-screen bg-waygent-cream">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-900 font-futura mb-4">
                 {error || "Article not found"}
@@ -109,7 +109,7 @@ export default function BlogArticlePage() {
     <>
       <NavBar />
       <main className="min-h-screen bg-waygent-cream">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Back button */}
           <div className="mb-8">
             <Link

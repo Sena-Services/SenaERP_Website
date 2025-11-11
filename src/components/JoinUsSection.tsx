@@ -70,13 +70,13 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
     <section
       ref={ref}
       id="join-us"
-      className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 mb-8"
+      className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 pb-16"
       style={{
         paddingBottom: `${getResponsiveValue(64)}px`,
       }}
     >
       <div
-        className="relative max-w-7xl mx-auto"
+        className="relative max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto"
         style={{
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundColor: '#F5F3E8',
@@ -144,7 +144,7 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                   fontWeight: 400,
                   letterSpacing: "-0.02em",
                   color: "#2C1810",
-                  fontSize: `${getResponsiveValue(48)}px`,
+                  fontSize: '60px',
                   marginBottom: `${getResponsiveValue(8)}px`,
                   lineHeight: "1.2",
                 }}
@@ -152,11 +152,11 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                 Join our team
               </h2>
               <p
-                className="font-futura font-medium mx-auto"
+                className="font-futura mx-auto text-xl md:text-2xl"
                 style={{
-                  fontSize: `${getResponsiveValue(18)}px`,
                   color: '#4B5563',
                   maxWidth: `${getResponsiveValue(576)}px`,
+                  letterSpacing: "-0.01em",
                 }}
               >
                 Help us build the future of business software

@@ -161,8 +161,8 @@ export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
-    <div className="w-full bg-waygent-cream py-16 scroll-mt-24">
-      <div className="mx-auto" style={{ maxWidth: '1280px', width: 'calc(100vw - 64px)' }}>
+    <div className="w-full bg-waygent-cream scroll-mt-24 mt-32 sm:mt-48 pb-16">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px]">
         {/* Section Title */}
         <div className="mb-12 text-center">
           <h2
