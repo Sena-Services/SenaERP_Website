@@ -35,8 +35,8 @@ export default function IntroSection() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [splitProgress, setSplitProgress] = useState(0);
   const [rotateProgress, setRotateProgress] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(1440);
-  const [viewportHeight, setViewportHeight] = useState(900);
+  const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1440);
+  const [viewportHeight, setViewportHeight] = useState(typeof window !== 'undefined' ? window.innerHeight : 900);
   const [expandedCard, setExpandedCard] = useState<ExpandedCard>(null);
   const [animationLocked, setAnimationLocked] = useState(false);
 
