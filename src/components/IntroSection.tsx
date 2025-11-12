@@ -32,15 +32,17 @@ export default function IntroSection() {
   }
   const sectionRef = useRef<HTMLElement | null>(null);
   const contentScrollRef = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [splitProgress, setSplitProgress] = useState(0);
   const [rotateProgress, setRotateProgress] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1440);
-  const [viewportHeight, setViewportHeight] = useState(typeof window !== 'undefined' ? window.innerHeight : 900);
+  const [viewportWidth, setViewportWidth] = useState(1440);
+  const [viewportHeight, setViewportHeight] = useState(900);
   const [expandedCard, setExpandedCard] = useState<ExpandedCard>(null);
   const [animationLocked, setAnimationLocked] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleResize = () => {
       setViewportWidth(window.innerWidth);
       setViewportHeight(window.innerHeight);
@@ -292,6 +294,17 @@ export default function IntroSection() {
 
   // Calculate image offsets based on ZERO gap so painting doesn't shift
   const baseCardWidth = currentWidthValue / 3; // Card width when gap = 0
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <section
+        id="intro"
+        className="relative w-full bg-waygent-cream"
+        style={{ minHeight: '100vh' }}
+      />
+    );
+  }
 
   return (
     <section
