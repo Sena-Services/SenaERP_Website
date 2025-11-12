@@ -98,13 +98,21 @@ export default function IntroSection() {
 
       // If in intro section (all animations at 0)
       if (scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
-        // Scrolling down: prevent page scroll if content not at bottom
+        // Scrolling down: prevent page scroll if content not at bottom, and scroll content instead
         if (scrollingDown && !atBottom) {
           e.preventDefault();
+          // Scroll the content container programmatically
+          const scrollAmount = touchStartY - touchCurrentY;
+          contentEl.scrollTop = Math.max(0, contentEl.scrollTop + scrollAmount * 0.5);
+          touchStartY = touchCurrentY; // Update for continuous scrolling
         }
-        // Scrolling up: prevent page scroll if content not at top
+        // Scrolling up: prevent page scroll if content not at top, and scroll content instead
         else if (scrollingUp && !atTop) {
           e.preventDefault();
+          // Scroll the content container programmatically
+          const scrollAmount = touchStartY - touchCurrentY;
+          contentEl.scrollTop = Math.max(0, contentEl.scrollTop + scrollAmount * 0.5);
+          touchStartY = touchCurrentY; // Update for continuous scrolling
         }
       }
     };

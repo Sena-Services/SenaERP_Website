@@ -100,6 +100,9 @@ export default function Home() {
       return () => window.removeEventListener('scroll', handleMobileScroll);
     }
 
+    // IMPORTANT: Skip all desktop scroll snapping logic on mobile
+    if (isMobile) return;
+
     let isAnimating = false;
     let animationFrameId: number;
     let directionLock: 'up' | 'down' | null = null;
