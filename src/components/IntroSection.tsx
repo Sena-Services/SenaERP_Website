@@ -53,84 +53,9 @@ export default function IntroSection() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Prevent page scroll on mobile when content is not fully scrolled
-  useEffect(() => {
-    if (viewportWidth >= 768) return; // Only for mobile
-
-    let touchStartY = 0;
-
-    const preventPageScroll = (e: WheelEvent) => {
-      const contentEl = contentScrollRef.current;
-      if (!contentEl) return;
-
-      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
-      const atTop = contentEl.scrollTop <= 1;
-      const scrollingDown = e.deltaY > 0;
-      const scrollingUp = e.deltaY < 0;
-
-      // If in intro section (all animations at 0)
-      if (scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
-        // Scrolling down: prevent page scroll if content not at bottom
-        if (scrollingDown && !atBottom) {
-          e.preventDefault();
-          contentEl.scrollTop += e.deltaY;
-        }
-        // Scrolling up: prevent page scroll if content not at top
-        else if (scrollingUp && !atTop) {
-          e.preventDefault();
-          contentEl.scrollTop += e.deltaY;
-        }
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const contentEl = contentScrollRef.current;
-      if (!contentEl) return;
-
-      const touchCurrentY = e.touches[0].clientY;
-      const touchDeltaY = touchStartY - touchCurrentY;
-      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
-      const atTop = contentEl.scrollTop <= 1;
-      const scrollingDown = touchDeltaY > 0;
-      const scrollingUp = touchDeltaY < 0;
-
-      // If in intro section (all animations at 0)
-      if (scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) {
-        // Scrolling down: prevent page scroll if content not at bottom, and scroll content instead
-        if (scrollingDown && !atBottom) {
-          e.preventDefault();
-          // Scroll the content container programmatically
-          const scrollAmount = touchStartY - touchCurrentY;
-          contentEl.scrollTop = Math.max(0, contentEl.scrollTop + scrollAmount * 0.5);
-          touchStartY = touchCurrentY; // Update for continuous scrolling
-        }
-        // Scrolling up: prevent page scroll if content not at top, and scroll content instead
-        else if (scrollingUp && !atTop) {
-          e.preventDefault();
-          // Scroll the content container programmatically
-          const scrollAmount = touchStartY - touchCurrentY;
-          contentEl.scrollTop = Math.max(0, contentEl.scrollTop + scrollAmount * 0.5);
-          touchStartY = touchCurrentY; // Update for continuous scrolling
-        }
-      }
-    };
-
-    const section = sectionRef.current;
-    if (section) {
-      section.addEventListener('wheel', preventPageScroll, { passive: false });
-      section.addEventListener('touchstart', handleTouchStart, { passive: true });
-      section.addEventListener('touchmove', handleTouchMove, { passive: false });
-      return () => {
-        section.removeEventListener('wheel', preventPageScroll);
-        section.removeEventListener('touchstart', handleTouchStart);
-        section.removeEventListener('touchmove', handleTouchMove);
-      };
-    }
-  }, [viewportWidth, scrollProgress, splitProgress, rotateProgress]);
+  // On mobile: Let IntroContent handle its own scrolling naturally
+  // The content div has overflow:auto and will scroll natively
+  // We don't need to intercept here - IntroContent.tsx handles the scroll prevention
 
   // Listen for homeLeft event to lock animations
   useEffect(() => {

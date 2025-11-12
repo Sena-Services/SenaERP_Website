@@ -16,56 +16,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
     setIsMobile(window.innerWidth < 768);
   }, []);
 
-  useEffect(() => {
-    if (!isMobile || !contentRef.current) return;
-
-    const contentEl = contentRef.current;
-
-    const handleWheel = (e: WheelEvent) => {
-      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
-      const atTop = contentEl.scrollTop <= 0;
-      const scrollingDown = e.deltaY > 0;
-      const scrollingUp = e.deltaY < 0;
-
-      // If scrolling down and not at bottom, or scrolling up and not at top
-      // then scroll the content and prevent page scroll
-      if ((scrollingDown && !atBottom) || (scrollingUp && !atTop)) {
-        e.preventDefault();
-        e.stopPropagation();
-        contentEl.scrollTop += e.deltaY;
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      contentEl.dataset.touchStartY = touch.clientY.toString();
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      const startY = parseFloat(contentEl.dataset.touchStartY || '0');
-      const deltaY = startY - touch.clientY;
-
-      const atBottom = contentEl.scrollHeight - contentEl.scrollTop <= contentEl.clientHeight + 1;
-      const atTop = contentEl.scrollTop <= 0;
-      const scrollingDown = deltaY > 0;
-      const scrollingUp = deltaY < 0;
-
-      if ((scrollingDown && !atBottom) || (scrollingUp && !atTop)) {
-        e.preventDefault();
-      }
-    };
-
-    contentEl.addEventListener('wheel', handleWheel, { passive: false });
-    contentEl.addEventListener('touchstart', handleTouchStart, { passive: true });
-    contentEl.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-    return () => {
-      contentEl.removeEventListener('wheel', handleWheel);
-      contentEl.removeEventListener('touchstart', handleTouchStart);
-      contentEl.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, [isMobile]);
+  // On mobile: Use CSS overscroll-behavior to prevent page scroll
+  // This gives native scroll feeling while containing scrolls within the content
+  // No need for manual touch handlers - let browser handle it naturally!
 
   return (
     <div
@@ -84,6 +37,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         minHeight: isMobile ? undefined : '100%',
         height: isMobile ? '50vh' : undefined,
         overflow: isMobile ? 'auto' : undefined,
+        // Use native overscroll behavior for smooth scrolling
+        overscrollBehavior: isMobile ? 'contain' : undefined,
+        WebkitOverflowScrolling: isMobile ? 'touch' : undefined, // iOS momentum scrolling
         zIndex: 10,
       }}
     >
