@@ -43,7 +43,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   return (
     <div
       ref={contentRef}
-      className="relative flex flex-col w-full md:w-[78%] xl:w-[58%] ml-0 md:ml-[5%]"
+      className="relative flex flex-col w-full md:w-[70%] xl:w-[54%] ml-0 md:ml-[5%]"
       style={{
         opacity: contentOpacity,
         pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
@@ -58,10 +58,13 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         paddingBottom: `${bottomPadding}px`,
         minHeight: isMobile ? undefined : '100%',
         height: isMobile ? '100vh' : undefined, // FIXED height = 100vh to contain scroll
-        // Native scroll with iOS momentum - no overscroll-behavior to allow page scroll
-        overflow: isMobile ? 'auto' : undefined,
+        // Native scroll with iOS momentum and elastic overscroll
+        overflow: isMobile ? 'scroll' : undefined,
         overflowY: isMobile ? 'scroll' : undefined,
         WebkitOverflowScrolling: isMobile ? 'touch' : undefined,
+        overscrollBehavior: isMobile ? 'auto' : undefined, // Allow elastic bounce effect
+        // Force iOS to recognize this as a scrollable area
+        touchAction: isMobile ? 'pan-y' : undefined,
         zIndex: 10,
       }}
     >
@@ -196,7 +199,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         right: isMobile ? undefined : 'auto',
         marginTop: isMobile ? '24px' : undefined,
         width: 'auto',
-        maxWidth: isMobile ? '100%' : 'min(800px, 85%)',
+        maxWidth: isMobile ? '100%' : 'min(900px, 90%)',
       }}>
         <div
           style={{

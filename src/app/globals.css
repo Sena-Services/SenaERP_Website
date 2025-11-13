@@ -191,7 +191,8 @@ body {
   min-height: 100%;
   background-color: var(--color-waygent-cream);
   color: var(--color-waygent-text-primary);
-  overscroll-behavior: none;
+  overscroll-behavior-x: none; /* Prevent horizontal overscroll only */
+  overscroll-behavior-y: auto; /* Allow vertical elastic bounce */
   -webkit-overflow-scrolling: touch;
   margin: 0;
   overflow-x: clip;
@@ -200,7 +201,8 @@ body {
 
 html {
   scroll-behavior: auto;
-  overscroll-behavior: none;
+  overscroll-behavior-x: none; /* Prevent horizontal overscroll only */
+  overscroll-behavior-y: auto; /* Allow vertical elastic bounce */
 }
 
 html.smooth-scroll {
