@@ -202,8 +202,8 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         isNavigatingRef.current = false;
         return;
       }
-      // Builder section has py-16 (64px) padding, so we need less offset
-      const navbarHeight = id === "builder" ? 20 : 90;
+      // Builder section needs to scroll more to the top to show header properly
+      const navbarHeight = id === "builder" ? 80 : 90;
       targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
     }
 

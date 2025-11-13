@@ -255,21 +255,22 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 {/* Get Early Access Button */}
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 rounded-lg transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-medium cursor-pointer outline-none leading-none focus-visible:outline-none"
+                  className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold cursor-pointer outline-none leading-none focus-visible:outline-none"
                   style={{
-                    background: 'rgba(255,255,255,0.15)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255,255,255,0.25)',
-                    color: '#2C1810',
-                    fontFamily: 'Georgia, serif',
+                    background: '#8FB7C5',
+                    border: '1px solid #7AA5B5',
+                    borderRadius: '1.5rem',
+                    color: '#FFFFFF',
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    boxShadow: '0 2px 8px rgba(143, 183, 197, 0.3)',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
+                    e.currentTarget.style.background = '#7AA5B5';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(143, 183, 197, 0.4)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
+                    e.currentTarget.style.background = '#8FB7C5';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.3)';
                   }}
                 >
                   <span className="leading-none">Get Early Access</span>
