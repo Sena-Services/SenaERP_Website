@@ -1,0 +1,1 @@
+- pls donot run dev servers ; we are already running the website in localhost:3000 dont add new ones
