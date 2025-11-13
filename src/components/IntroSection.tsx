@@ -135,16 +135,15 @@ export default function IntroSection() {
   const getResponsiveValue = (baseValue: number) => {
     const baseScreenHeight = 1200;
 
-    // Aggressive scaling down for low-height screens (720px and below)
-    if (viewportHeight <= 720) {
-      // At 720px: 0.5x, at 600px: 0.4x
-      const scaleFactor = Math.max(0.4, viewportHeight / 1440);
+    // Aggressive scaling down for very low-height screens (600px and below)
+    if (viewportHeight <= 600) {
+      const scaleFactor = 0.4;
       return baseValue * scaleFactor;
     }
-    // Moderate scaling for medium heights (720-1200px)
+    // Gradual scaling for low to medium heights (600-1200px)
     else if (viewportHeight <= baseScreenHeight) {
-      // Gradual scale from 0.5x at 720px to 1x at 1200px
-      const scaleFactor = 0.5 + ((viewportHeight - 720) / (baseScreenHeight - 720)) * 0.5;
+      // Smooth gradual scale from 0.4x at 600px to 1x at 1200px
+      const scaleFactor = 0.4 + ((viewportHeight - 600) / (baseScreenHeight - 600)) * 0.6;
       return baseValue * scaleFactor;
     }
     // Scale up proportionally for screens taller than 1200px
@@ -152,9 +151,9 @@ export default function IntroSection() {
     return baseValue * scaleFactor;
   };
 
-  // Match BuilderTabbed and other components: min(1600px, calc(100vw - 200px))
-  const maxContainerWidth = 1600;
-  const viewportPadding = 200; // Matching Builder's calc(100vw - 200px)
+  // Match BuilderTabbed and other components: min(1280px, calc(100vw - 320px))
+  const maxContainerWidth = 1280;
+  const viewportPadding = 320; // Matching Builder's calc(100vw - 320px)
 
   // Account for card gaps - subtract the max gap width from target to match Builder exactly
   const maxCardGapTotal = 12; // responsiveMaxGap (6) * 2 gaps
@@ -171,8 +170,13 @@ export default function IntroSection() {
   // On mobile, make the card full height to fill the entire screen
   const startHeight = viewportWidth < 768 ? viewportHeight : viewportHeight * 0.92;
   const responsiveMinHeight = getResponsiveValue(600);
-  // Increase target height slightly for low-height screens to utilize bottom space
-  const heightMultiplier = viewportHeight <= 720 ? 0.78 : 0.75;
+  // Gradually decrease height multiplier as screen gets taller
+  // At 720px: 0.78, at 900px: 0.75, smoothly transitions between
+  const heightMultiplier = viewportHeight <= 720
+    ? 0.78
+    : viewportHeight >= 900
+      ? 0.75
+      : 0.78 - ((viewportHeight - 720) / (900 - 720)) * 0.03;
   const targetHeight = Math.max(viewportHeight * heightMultiplier, responsiveMinHeight);
   const currentHeightValue =
     startHeight - (startHeight - targetHeight) * scrollProgress;
@@ -201,9 +205,18 @@ export default function IntroSection() {
   const navbarHeight = getResponsiveValue(90); // Space for navbar
   const titleHeight = getResponsiveValue(120); // Space for "How it works?" title + subtitle
 
-  // Add extra top space for low-height screens to ensure cards fit below navbar
-  // Increased to push cards down more and utilize bottom space
-  const extraTopSpace = viewportHeight <= 720 ? getResponsiveValue(60) : 0;
+  // Add extra top space to push cards down as height increases
+  // Gradually adjust space based on viewport height
+  let extraTopSpace = 0;
+  if (viewportHeight <= 720) {
+    extraTopSpace = getResponsiveValue(60);
+  } else if (viewportHeight <= 1000) {
+    // Gradually reduce from 60 to 30 between 720px and 1000px
+    extraTopSpace = getResponsiveValue(60 - ((viewportHeight - 720) / (1000 - 720)) * 30);
+  } else {
+    // Keep some space for screens above 1000px
+    extraTopSpace = getResponsiveValue(30);
+  }
   const topSpaceNeeded = navbarHeight + titleHeight + extraTopSpace;
 
   // On mobile, use NO padding for true full-screen effect
@@ -290,45 +303,26 @@ export default function IntroSection() {
           {/* Anchor for "how-it-works" section at the rotated position */}
           <div id="how-it-works" className="absolute" style={{ top: `-${getResponsiveValue(140)}px` }} />
 
-          {/* Back button - positioned at the very left, above the card */}
-          {expandedCard && (
-            <button
-              onClick={() => setExpandedCard(null)}
-              className="absolute flex items-center gap-2 text-gray-900 hover:text-gray-600 transition-all group bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg"
-              style={{
-                left: '0',
-                top: `${-getResponsiveValue(140)}px`,
-                zIndex: 1000,
-              }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
-                <path
-                  d="M15 18L9 12L15 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="font-medium">Back</span>
-            </button>
-          )}
-
-          {/* Title that appears when card shrinks (before split) */}
+          {/* Title that appears when card shrinks (before split) - keep showing even when card is expanded */}
           <div
             className="absolute left-0 right-0 z-10"
             style={{
               top: `${-getResponsiveValue(140)}px`,
-              opacity: scrollProgress,
-              pointerEvents: scrollProgress > 0.9 ? "auto" : "none",
+              opacity: expandedCard ? 1 : scrollProgress, // Keep visible when expanded
+              pointerEvents: (scrollProgress > 0.9 || expandedCard) ? "auto" : "none", // Make interactive when expanded
             }}
           >
-            {/* Home button - positioned at the very left */}
+            {/* Home/Back button - positioned at the very left */}
             {rotateProgress === 1 && (
               <button
                 onClick={() => {
-                  // Trigger reverse animation back to intro
-                  window.dispatchEvent(new CustomEvent('resetHome'));
+                  if (expandedCard) {
+                    // When expanded, go back to cards view
+                    setExpandedCard(null);
+                  } else {
+                    // When not expanded, go back to intro
+                    window.dispatchEvent(new CustomEvent('resetHome'));
+                  }
                 }}
                 className="absolute flex items-center justify-center gap-2 text-gray-700 hover:text-gray-900 transition-all group cursor-pointer hover:bg-gray-100/50"
                 style={{
@@ -344,15 +338,29 @@ export default function IntroSection() {
                   backdropFilter: 'blur(8px)',
                 }}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
-                  <path
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                {expandedCard ? (
+                  // Back arrow when card is expanded
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
+                    <path
+                      d="M15 18L9 12L15 6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  // Home icon when not expanded
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
+                    <path
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
               </button>
             )}
 
@@ -364,28 +372,17 @@ export default function IntroSection() {
                   fontWeight: 400,
                   letterSpacing: "-0.02em",
                   color: "#2C1810",
-                  fontSize: `${getResponsiveValue(60)}px`,
-                  marginBottom: `${getResponsiveValue(4)}px`,
+                  fontSize: `${getResponsiveValue(72)}px`,
                 }}
               >
                 How it <span style={{ fontStyle: "italic" }}>works</span>?
               </h2>
-              <p
-                style={{
-                  fontFamily: "system-ui, -apple-system, sans-serif",
-                  fontWeight: 500,
-                  fontSize: `${getResponsiveValue(18)}px`,
-                  color: "#4B5563",
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                Three simple steps. Click each card to explore.
-              </p>
             </div>
           </div>
 
           {/* Always show 3 cards, but when splitProgress = 0, they're flush together with no gap */}
           <div
+            id="cards-container"
             className="relative w-full h-full flex items-center transition-all duration-700 ease-out"
             style={{
               gap: `${cardGap}px`,
@@ -457,168 +454,275 @@ export default function IntroSection() {
             />
           </div>
 
-          {/* Expanded content - displayed in background */}
-          {expandedCard && (
-            <div
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              style={{
-                transition: 'opacity 600ms ease-out',
-                opacity: expandedCard ? 1 : 0,
-              }}
-            >
-              {/* Content area positioned to the right or left depending on which card is expanded */}
+          {/* Expanded content - positioned INSIDE cards container to match card height exactly */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: 0,
+              bottom: 0,
+              left: expandedCard && expandedCard !== 'right' ? '80px' : '0', // Match card's paddingLeft
+              right: expandedCard === 'right' ? '80px' : '0', // Match card's paddingRight
+              transition: 'opacity 600ms ease-out',
+              opacity: expandedCard ? 1 : 0,
+              pointerEvents: 'none', // Always keep parent as pointer-events-none so card can receive hover
+            }}
+          >
+            {expandedCard && (
               <div
-                className={`absolute h-full flex items-center px-12 pointer-events-auto ${
-                  expandedCard === 'right' ? 'left-0' : 'right-0'
-                }`}
+                className={`absolute pointer-events-auto flex items-center`}
                 style={{
-                  width: '45%',
+                  width: '48%',
+                  height: `${currentHeightValue}px`, // EXACT same height as the card
+                  top: '50%',
                   transform: expandedCard
-                    ? 'translateX(0) scale(1)'
-                    : expandedCard === 'right' ? 'translateX(-40px) scale(0.95)' : 'translateX(40px) scale(0.95)',
+                    ? 'translateY(-50%) translateX(0) scale(1)' // Don't move up, keep in place
+                    : expandedCard === 'right'
+                      ? 'translateY(-50%) translateX(40px) scale(0.95)'
+                      : 'translateY(-50%) translateX(-40px) scale(0.95)',
+                  // Position right next to the card edge - close but not touching/overlapping
+                  // For right card: position from right side to place detail box on its LEFT
+                  // For left/center: position from left side to place detail box on their RIGHT
+                  [expandedCard === 'right' ? 'right' : 'left']: expandedCard === 'right'
+                    ? `calc(${cardWidth}px + 8px)` // Right card: position from right edge, card width + 8px gap
+                    : `calc(${cardWidth}px + 8px)`, // Left/center: position from left edge, after card + 8px gap
                   transition: 'all 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
                   opacity: expandedCard ? 1 : 0,
                 }}
               >
+                {/* Content box - cool glassmorphism effect with gradient backdrop */}
                 <div
-                  className="w-full max-w-xl"
+                  className="w-full h-full flex items-center relative overflow-hidden"
                   style={{
+                    // For right card, round the LEFT side. For left/center cards, round the RIGHT side
+                    borderTopLeftRadius: expandedCard === 'right' ? `${borderRadius}px` : '0',
+                    borderBottomLeftRadius: expandedCard === 'right' ? `${borderRadius}px` : '0',
+                    borderTopRightRadius: expandedCard === 'right' ? '0' : `${borderRadius}px`,
+                    borderBottomRightRadius: expandedCard === 'right' ? '0' : `${borderRadius}px`,
                     animation: expandedCard ? 'slideInContent 700ms cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+                    background: 'rgba(255, 255, 255, 0.85)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                    boxShadow: expandedCard === 'right'
+                      ? `
+                        -8px 8px 32px rgba(0, 0, 0, 0.12),
+                        -2px 2px 8px rgba(0, 0, 0, 0.08),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.05)
+                      `
+                      : `
+                        0 8px 32px rgba(0, 0, 0, 0.12),
+                        0 2px 8px rgba(0, 0, 0, 0.08),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.05)
+                      `,
                   }}
                 >
+                  {/* Scrollable content wrapper with proper padding */}
+                  <div
+                    className="w-full h-full overflow-y-auto pl-8 pr-6 py-8 custom-scrollbar"
+                    style={{
+                      scrollbarWidth: 'thin', // Firefox - thin scrollbar
+                      scrollbarColor: 'rgba(156, 163, 175, 0.4) transparent', // gray thumb, transparent track
+                    }}
+                  >
+                    {/* Custom scrollbar styles for Chrome/Safari/Edge */}
+                    <style jsx>{`
+                      .custom-scrollbar::-webkit-scrollbar {
+                        width: 8px;
+                      }
+                      .custom-scrollbar::-webkit-scrollbar-track {
+                        background: transparent;
+                        margin: 8px 0;
+                      }
+                      .custom-scrollbar::-webkit-scrollbar-thumb {
+                        background: rgba(156, 163, 175, 0.3);
+                        border-radius: 10px;
+                        transition: all 0.2s ease;
+                        border: 2px solid transparent;
+                        background-clip: padding-box;
+                      }
+                      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                        background: rgba(156, 163, 175, 0.5);
+                        background-clip: padding-box;
+                      }
+                      .custom-scrollbar::-webkit-scrollbar-thumb:active {
+                        background: rgba(156, 163, 175, 0.7);
+                        background-clip: padding-box;
+                      }
+                    `}</style>
 
-                  {/* Content based on which card is expanded */}
-                  {expandedCard === "left" && (
-                    <div>
-                      <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                        Talk to Sena
-                      </h2>
-                      <p className="text-gray-600 mb-8 leading-relaxed text-lg">
+                    {/* Content based on which card is expanded */}
+                    {expandedCard === "left" && (
+                      <div className="w-full">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div
+                          className="flex items-center justify-center rounded-full flex-shrink-0"
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            background: '#3B82F6',
+                            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                          }}
+                        >
+                          <span className="text-white font-bold text-lg">1</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                          Talk to Sena
+                        </h2>
+                      </div>
+                      <p className="text-gray-600 mb-4 leading-relaxed text-sm">
                         Sena is your AI co-founder who helps you build custom ERP systems through natural conversation.
                         Choose between Discovery Mode for collaborative exploration or Express Mode for direct control.
                       </p>
 
-                      <div className="space-y-8">
+                      <div className="space-y-4">
                         <div>
-                          <h3 className="text-2xl font-bold text-blue-700 mb-3">Discovery Mode (Voice)</h3>
-                          <p className="text-gray-600 mb-4 leading-relaxed">
+                          <h3 className="text-lg font-bold text-blue-700 mb-2">Discovery Mode (Voice)</h3>
+                          <p className="text-gray-600 mb-2 leading-relaxed text-xs">
                             Have a natural conversation with Sena in your preferred language. She'll ask insightful questions
                             like a co-founder or analyst to deeply understand your operations.
                           </p>
-                          <ul className="space-y-3">
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Multilingual voice conversations in 50+ languages</span>
+                          <ul className="space-y-1.5">
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Multilingual voice conversations in 50+ languages</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Proactive questioning to uncover hidden requirements</span>
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Proactive questioning to uncover hidden requirements</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Deep understanding of your business processes</span>
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Deep understanding of your business processes</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Collaborative requirement building</span>
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Collaborative requirement building</span>
                             </li>
                           </ul>
                         </div>
 
                         <div>
-                          <h3 className="text-2xl font-bold text-blue-700 mb-3">Express Mode (Text)</h3>
-                          <p className="text-gray-600 mb-4 leading-relaxed">
+                          <h3 className="text-lg font-bold text-blue-700 mb-2">Express Mode (Text)</h3>
+                          <p className="text-gray-600 mb-2 leading-relaxed text-xs">
                             Know exactly what you want? Use Express Mode to tell Sena your requirements directly
                             and get instant results without back-and-forth.
                           </p>
-                          <ul className="space-y-3">
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Direct text-based interface for precise control</span>
+                          <ul className="space-y-1.5">
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Direct text-based interface for precise control</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Specify exact requirements and features</span>
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Specify exact requirements and features</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Instant system generation</span>
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Instant system generation</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-700">Zero unnecessary conversation</span>
+                            <li className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                              <span className="text-gray-700 text-xs">Zero unnecessary conversation</span>
                             </li>
                           </ul>
                         </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {expandedCard === "center" && (
-                    <div>
-                      <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                        Review & Refine
-                      </h2>
-                      <p className="text-gray-600 mb-8 leading-relaxed text-lg">
+                    {expandedCard === "center" && (
+                      <div className="w-full">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div
+                          className="flex items-center justify-center rounded-full flex-shrink-0"
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            background: '#8B5CF6',
+                            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+                          }}
+                        >
+                          <span className="text-white font-bold text-lg">2</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                          Review & Refine
+                        </h2>
+                      </div>
+                      <p className="text-gray-600 mb-4 leading-relaxed text-sm">
                         Walk through every detail of your system before going live. Make changes, ask questions,
                         and iterate in real-time until everything is exactly right.
                       </p>
 
-                      <div className="space-y-5">
-                        <div className="border-l-4 border-blue-500 pl-5 py-3">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Visual Preview</h4>
-                          <p className="text-gray-600">See exactly how your system looks and works before deployment</p>
+                      <div className="space-y-3">
+                        <div className="border-l-4 border-purple-500 pl-4 py-2">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Visual Preview</h4>
+                          <p className="text-gray-600 text-xs">See exactly how your system looks and works before deployment</p>
                         </div>
-                        <div className="border-l-4 border-blue-500 pl-5 py-3">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Interactive Editing</h4>
-                          <p className="text-gray-600">Click to edit any table, workflow, or interface element</p>
+                        <div className="border-l-4 border-purple-500 pl-4 py-2">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Interactive Editing</h4>
+                          <p className="text-gray-600 text-xs">Click to edit any table, workflow, or interface element</p>
                         </div>
-                        <div className="border-l-4 border-blue-500 pl-5 py-3">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Real-Time Updates</h4>
-                          <p className="text-gray-600">See changes instantly as you make modifications</p>
+                        <div className="border-l-4 border-purple-500 pl-4 py-2">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Real-Time Updates</h4>
+                          <p className="text-gray-600 text-xs">See changes instantly as you make modifications</p>
                         </div>
-                        <div className="border-l-4 border-blue-500 pl-5 py-3">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Unlimited Iterations</h4>
-                          <p className="text-gray-600">Refine and perfect your system with no limits</p>
+                        <div className="border-l-4 border-purple-500 pl-4 py-2">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Unlimited Iterations</h4>
+                          <p className="text-gray-600 text-xs">Refine and perfect your system with no limits</p>
+                        </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {expandedCard === "right" && (
-                    <div>
-                      <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                        Go Live
-                      </h2>
-                      <p className="text-gray-600 mb-8 leading-relaxed text-lg">
+                    {expandedCard === "right" && (
+                      <div className="w-full">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div
+                          className="flex items-center justify-center rounded-full flex-shrink-0"
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            background: '#EC4899',
+                            boxShadow: '0 4px 12px rgba(236, 72, 153, 0.3)',
+                          }}
+                        >
+                          <span className="text-white font-bold text-lg">3</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                          Go Live
+                        </h2>
+                      </div>
+                      <p className="text-gray-600 mb-4 leading-relaxed text-sm">
                         One click and your custom ERP is live. Your team can start using it immediately
                         with no setup, installation, or technical complexity.
                       </p>
 
-                      <div className="space-y-5">
-                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Instant Deployment</h4>
-                          <p className="text-gray-700">Deploy to production with a single click - no DevOps required</p>
+                      <div className="space-y-3">
+                        <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Instant Deployment</h4>
+                          <p className="text-gray-700 text-xs">Deploy to production with a single click - no DevOps required</p>
                         </div>
-                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Immediate Access</h4>
-                          <p className="text-gray-700">Your team gets instant access - just share the link</p>
+                        <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Immediate Access</h4>
+                          <p className="text-gray-700 text-xs">Your team gets instant access - just share the link</p>
                         </div>
-                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Cloud Infrastructure</h4>
-                          <p className="text-gray-700">Fully managed, scalable cloud hosting included</p>
+                        <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Cloud Infrastructure</h4>
+                          <p className="text-gray-700 text-xs">Fully managed, scalable cloud hosting included</p>
                         </div>
-                        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200">
-                          <h4 className="font-bold text-gray-900 mb-2 text-lg">Enterprise Security</h4>
-                          <p className="text-gray-700">Bank-level security, compliance, and data protection</p>
+                        <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-gray-200">
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Enterprise Security</h4>
+                          <p className="text-gray-700 text-xs">Bank-level security, compliance, and data protection</p>
+                        </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Content overlay - only visible when fully back in intro state */}
           <div

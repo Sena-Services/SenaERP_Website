@@ -224,9 +224,32 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
     }, 1000);
   };
 
+  // Get responsive scale based on viewport width
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setScale(1); // Full size at 1024px and above
+      } else if (width >= 768) {
+        // Scale from 0.6 at 768px to 1 at 1024px
+        setScale(0.6 + ((width - 768) / (1024 - 768)) * 0.4);
+      } else {
+        setScale(0); // Hide below 768px
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
+  if (scale === 0) return null;
+
   return (
-    <aside className="hidden lg:flex fixed left-0 top-1/2 z-50 -translate-y-1/2 transform group">
-      <div className="w-auto">
+    <aside className="fixed left-0 top-1/2 z-50 transform group" style={{ transform: 'translateY(-50%)' }}>
+      <div className="w-auto" style={{ transform: `scale(${scale})`, transformOrigin: 'left center' }}>
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}

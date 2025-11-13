@@ -252,32 +252,32 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
 
   return (
     <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ marginTop: mounted && isMobile ? '64px' : '192px' }}>
-      {(!mounted || !isMobile) && (
+      {mounted && (
         <div
           className="relative mx-auto w-full"
           style={{
-            maxWidth: 'min(1600px, calc(100vw - 200px))',
-            paddingLeft: 'max(16px, min(32px, 2vw))',
-            paddingRight: 'max(16px, min(32px, 2vw))'
+            maxWidth: isMobile ? '100%' : 'min(1280px, calc(100vw - 320px))',
+            paddingLeft: isMobile ? '16px' : 'max(16px, min(32px, 2vw))',
+            paddingRight: isMobile ? '16px' : 'max(16px, min(32px, 2vw))'
           }}
         >
-          <div className="mb-12 text-center">
+          <div className="mb-8 md:mb-12 text-center px-4 md:px-0">
             <h2
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontWeight: 400,
                 letterSpacing: "-0.02em",
                 color: "#2C1810",
-                fontSize: '60px',
+                fontSize: isMobile ? '32px' : '60px',
               }}
             >
               Environments
             </h2>
             <p
-              className="font-futura text-gray-700 mt-4 mx-auto max-w-3xl"
+              className="font-futura text-gray-700 mt-2 md:mt-4 mx-auto max-w-3xl"
               style={{
                 letterSpacing: "-0.01em",
-                fontSize: '24px',
+                fontSize: isMobile ? '14px' : '24px',
               }}
             >
               Click any environment to see what's included, or launch the selector to customize one for your business.
@@ -289,7 +289,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
       <div
         className="mx-auto"
         style={{
-          maxWidth: 'min(1600px, calc(100vw - 200px))',
+          maxWidth: 'min(1280px, calc(100vw - 320px))',
           paddingLeft: 'max(16px, min(32px, 2vw))',
           paddingRight: 'max(16px, min(32px, 2vw))'
         }}

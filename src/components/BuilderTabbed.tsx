@@ -6,6 +6,11 @@ import UIBuilderDemo from "./UIBuilderDemo";
 import DataBuilderDemo from "./DataBuilderDemo";
 import WorkflowsBuilderDemo from "./WorkflowsBuilderDemo";
 import AgentsBuilderDemo from "./AgentsBuilderDemo";
+import MobileBuilderCard from "./MobileBuilderCard";
+import MobileUIBuilderDemo from "./MobileUIBuilderDemo";
+import MobileWorkflowsBuilderDemo from "./MobileWorkflowsBuilderDemo";
+import MobileDataBuilderDemo from "./MobileDataBuilderDemo";
+import MobileAgentsBuilderDemo from "./MobileAgentsBuilderDemo";
 
 type Tab = {
   id: string;
@@ -160,6 +165,7 @@ const chatMessageVariants = {
 export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeBuilderTab, setActiveBuilderTab] = useState("ui");
 
   // Detect mobile and sync with navbar tab selection
   useEffect(() => {
@@ -226,30 +232,40 @@ export default function BuilderTabbed() {
   }, [isMobile, activeTab, tabs]);
 
   return (
-    <div className="w-full bg-waygent-cream scroll-mt-24 mt-32 sm:mt-48 pb-16">
+    <div className="w-full bg-white scroll-mt-24 pb-16">
+      {/* Visual Divider - Mobile only */}
+      {isMobile && (
+        <div className="w-full">
+          {/* Top gradient transition from How It Works */}
+          <div className="h-16 bg-gradient-to-b from-gray-50 to-white"></div>
+          {/* Thin accent line */}
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        </div>
+      )}
+
       <div
         className="mx-auto"
         style={{
-          maxWidth: isMobile ? '100%' : 'min(1600px, calc(100vw - 200px))',
+          maxWidth: isMobile ? '100%' : 'min(1280px, calc(100vw - 320px))',
           paddingLeft: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
           paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))'
         }}
       >
-        {/* Section Title - Hidden on mobile */}
-        <div className="mb-12 text-center hidden md:block">
+        {/* Section Title - Visible on all devices */}
+        <div className={`mb-8 md:mb-12 text-center px-4 ${isMobile ? 'mt-12' : 'mt-32 sm:mt-48'}`}>
           <h2
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               color: "#2C1810",
-              fontSize: '60px',
+              fontSize: isMobile ? '32px' : '60px',
             }}
           >
             Builder
           </h2>
           <p
-            className="text-xl md:text-2xl text-gray-700 mt-4 mx-auto max-w-3xl font-futura"
+            className="text-sm md:text-xl md:text-2xl text-gray-700 mt-2 md:mt-4 mx-auto max-w-3xl font-futura"
             style={{
               letterSpacing: "-0.01em",
             }}
@@ -591,45 +607,168 @@ export default function BuilderTabbed() {
 
         {/* Mobile Builder - Show all tabs stacked vertically with separators */}
         {isMobile && (
-          <div className="md:hidden w-full">
-            {/* UI Builder */}
-            <div id="mobile-builder-ui" className="w-full relative">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500"></div>
-              <UIBuilderDemo />
+          <div className="md:hidden w-full px-4">
+            {/* UI Builder Card */}
+            <MobileBuilderCard
+              id="mobile-builder-ui"
+              title="UI Builder"
+              subtitle="Build beautiful interfaces"
+              description="Click, describe, or draw—we'll build it in real-time with live previews, responsive design, and beautiful animations built in."
+              features={[
+                "Dashboards & analytics screens",
+                "Data tables & lists",
+                "Forms & input screens",
+                "Custom layouts & components"
+              ]}
+              accentColor="#3B82F6"
+              icon={
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+              }
+              demoComponent={<MobileUIBuilderDemo />}
+              onVisibilityChange={(isVisible) => {
+                if (isVisible) {
+                  setActiveBuilderTab("ui");
+                  window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'ui' } }));
+                }
+              }}
+            />
+
+            {/* Section Divider */}
+            <div className="py-8 my-8 relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t-2 border-dashed border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <div className="px-4 bg-white">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Separator */}
-            <div className="h-16 bg-gradient-to-b from-gray-50 to-waygent-cream flex items-center justify-center">
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            {/* Data Builder Card */}
+            <MobileBuilderCard
+              id="mobile-builder-data"
+              title="Data"
+              subtitle="Connect and transform data"
+              description="Connect any data source to your ERP—databases, APIs, spreadsheets, or third-party tools. Automatically map schemas, transform data on the fly, and set up real-time sync pipelines."
+              features={[
+                "Database schema generation",
+                "API & third-party integrations",
+                "Real-time data pipelines",
+                "Automatic data validation"
+              ]}
+              accentColor="#10B981"
+              icon={
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                </svg>
+              }
+              demoComponent={<MobileDataBuilderDemo />}
+              onVisibilityChange={(isVisible) => {
+                if (isVisible) {
+                  setActiveBuilderTab("data");
+                  window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'data' } }));
+                }
+              }}
+            />
+
+            {/* Section Divider */}
+            <div className="py-8 my-8 relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t-2 border-dashed border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <div className="px-4 bg-white">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Data Builder */}
-            <div id="mobile-builder-data" className="w-full relative">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-400 to-green-500"></div>
-              <DataBuilderDemo />
+            {/* Workflows Builder Card */}
+            <MobileBuilderCard
+              id="mobile-builder-workflows"
+              title="Workflows"
+              subtitle="Automate complex processes"
+              description="Automate your entire business process from lead to cash. Design multi-step workflows with triggers, conditional logic, and actions across your tools."
+              features={[
+                "Multi-step automation flows",
+                "Conditional logic & branching",
+                "Cross-tool integrations",
+                "Real-time monitoring & alerts"
+              ]}
+              accentColor="#8B5CF6"
+              icon={
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              }
+              demoComponent={<MobileWorkflowsBuilderDemo />}
+              onVisibilityChange={(isVisible) => {
+                if (isVisible) {
+                  setActiveBuilderTab("workflows");
+                  window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'workflows' } }));
+                }
+              }}
+            />
+
+            {/* Section Divider */}
+            <div className="py-8 my-8 relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t-2 border-dashed border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <div className="px-4 bg-white">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Separator */}
-            <div className="h-16 bg-gradient-to-b from-gray-50 to-waygent-cream flex items-center justify-center">
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
-            </div>
-
-            {/* Workflows Builder */}
-            <div id="mobile-builder-workflows" className="w-full relative">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-violet-400 to-purple-500"></div>
-              <WorkflowsBuilderDemo />
-            </div>
-
-            {/* Separator */}
-            <div className="h-16 bg-gradient-to-b from-gray-50 to-waygent-cream flex items-center justify-center">
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
-            </div>
-
-            {/* Agents Builder */}
-            <div id="mobile-builder-agents" className="w-full relative">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 via-rose-400 to-pink-500"></div>
-              <AgentsBuilderDemo />
-            </div>
+            {/* Agents Builder Card */}
+            <MobileBuilderCard
+              id="mobile-builder-agents"
+              title="Agents"
+              subtitle="Deploy AI-powered agents"
+              description="Deploy AI agents that work alongside your team. Train them on your docs, processes, and data to handle customer support, data entry, analysis, or custom tasks."
+              features={[
+                "Custom AI agents for any task",
+                "Train on your documentation",
+                "24/7 autonomous operation",
+                "Full reasoning transparency"
+              ]}
+              accentColor="#EC4899"
+              icon={
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              }
+              demoComponent={<MobileAgentsBuilderDemo />}
+              onVisibilityChange={(isVisible) => {
+                if (isVisible) {
+                  setActiveBuilderTab("agents");
+                  window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'agents' } }));
+                }
+              }}
+            />
           </div>
         )}
       </div>

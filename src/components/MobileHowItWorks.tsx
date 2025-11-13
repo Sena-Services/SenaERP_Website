@@ -161,6 +161,35 @@ export default function MobileHowItWorks() {
 
   return (
     <div className="w-full bg-gradient-to-b from-waygent-cream to-gray-50 relative pt-10" id="how-it-works">
+      {/* Section Header - Only on Mobile */}
+      {isMobile && (
+        <div className="text-center px-4 pb-8">
+          <h2
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              color: "#2C1810",
+              fontSize: "32px",
+              marginBottom: "8px",
+            }}
+          >
+            How it <span style={{ fontStyle: "italic" }}>works</span>?
+          </h2>
+          <p
+            style={{
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontWeight: 500,
+              fontSize: "14px",
+              color: "#6B7280",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Three simple steps
+          </p>
+        </div>
+      )}
+
       {/* Cards Container with Padding */}
       <div className="relative px-4 pb-6">
         {cards.map((card, index) => (
