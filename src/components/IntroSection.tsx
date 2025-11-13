@@ -131,13 +131,23 @@ export default function IntroSection() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [animationLocked, viewportWidth]);
 
-  // Responsive scaling: only scale up when viewport HEIGHT > 1200px
+  // Responsive scaling: scale down aggressively for low heights, scale up for tall screens
   const getResponsiveValue = (baseValue: number) => {
     const baseScreenHeight = 1200;
-    if (viewportHeight <= baseScreenHeight) {
-      return baseValue;
+
+    // Aggressive scaling down for low-height screens (720px and below)
+    if (viewportHeight <= 720) {
+      // At 720px: 0.5x, at 600px: 0.4x
+      const scaleFactor = Math.max(0.4, viewportHeight / 1440);
+      return baseValue * scaleFactor;
     }
-    // Scale proportionally for screens taller than 1200px
+    // Moderate scaling for medium heights (720-1200px)
+    else if (viewportHeight <= baseScreenHeight) {
+      // Gradual scale from 0.5x at 720px to 1x at 1200px
+      const scaleFactor = 0.5 + ((viewportHeight - 720) / (baseScreenHeight - 720)) * 0.5;
+      return baseValue * scaleFactor;
+    }
+    // Scale up proportionally for screens taller than 1200px
     const scaleFactor = viewportHeight / baseScreenHeight;
     return baseValue * scaleFactor;
   };
@@ -161,7 +171,9 @@ export default function IntroSection() {
   // On mobile, make the card full height to fill the entire screen
   const startHeight = viewportWidth < 768 ? viewportHeight : viewportHeight * 0.92;
   const responsiveMinHeight = getResponsiveValue(600);
-  const targetHeight = Math.max(viewportHeight * 0.75, responsiveMinHeight);
+  // Increase target height slightly for low-height screens to utilize bottom space
+  const heightMultiplier = viewportHeight <= 720 ? 0.78 : 0.75;
+  const targetHeight = Math.max(viewportHeight * heightMultiplier, responsiveMinHeight);
   const currentHeightValue =
     startHeight - (startHeight - targetHeight) * scrollProgress;
   const currentHeight =
@@ -188,7 +200,11 @@ export default function IntroSection() {
   // After shrinking is done (scrollProgress >= 1), add extra top padding for "How it works" title and navbar
   const navbarHeight = getResponsiveValue(90); // Space for navbar
   const titleHeight = getResponsiveValue(120); // Space for "How it works?" title + subtitle
-  const topSpaceNeeded = navbarHeight + titleHeight;
+
+  // Add extra top space for low-height screens to ensure cards fit below navbar
+  // Increased to push cards down more and utilize bottom space
+  const extraTopSpace = viewportHeight <= 720 ? getResponsiveValue(60) : 0;
+  const topSpaceNeeded = navbarHeight + titleHeight + extraTopSpace;
 
   // On mobile, use NO padding for true full-screen effect
   const centeredPadding = viewportWidth < 768
@@ -358,7 +374,7 @@ export default function IntroSection() {
                 style={{
                   fontFamily: "system-ui, -apple-system, sans-serif",
                   fontWeight: 500,
-                  fontSize: `${getResponsiveValue(16)}px`,
+                  fontSize: `${getResponsiveValue(18)}px`,
                   color: "#4B5563",
                   letterSpacing: "-0.01em",
                 }}
