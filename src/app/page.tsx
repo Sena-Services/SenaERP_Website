@@ -561,18 +561,18 @@ export default function Home() {
       {/* Mobile How It Works - only shows on mobile */}
       <MobileHowItWorks />
 
-      {/* Section Divider between How It Works and Builder - Mobile Only */}
-      <div className="md:hidden w-full" style={{
-        background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #FAF9F5 50%, #FAF9F5 100%)`,
+      {/* Section Divider between How It Works and Builder */}
+      <div className="w-full" style={{
+        background: `linear-gradient(to bottom, #f9fafb 0%, #f9fafb 50%, #FAF9F5 50%, #FAF9F5 100%)`,
         paddingTop: '8px',
         paddingBottom: '8px'
       }}>
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300/50"></div>
+            <div className="w-full border-t border-gray-300/40"></div>
           </div>
           <div className="relative px-4">
-            <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+            <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
           </div>
         </div>
       </div>
@@ -585,18 +585,18 @@ export default function Home() {
               <BuilderTabbed />
             </div>
 
-            {/* Section Divider & Color Transition - Mobile Only */}
-            <div className="md:hidden w-full" style={{
+            {/* Section Divider & Color Transition */}
+            <div className="w-full" style={{
               background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
               paddingTop: '8px',
               paddingBottom: '8px'
             }}>
               <div className="relative flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300/50"></div>
+                  <div className="w-full border-t border-gray-300/40"></div>
                 </div>
                 <div className="relative px-4">
-                  <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+                  <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
                 </div>
               </div>
             </div>
@@ -606,18 +606,18 @@ export default function Home() {
               <IntegrationsSection ref={integrationsRef} />
             </div>
 
-            {/* Section Divider & Color Transition - Mobile Only */}
-            <div className="md:hidden w-full" style={{
+            {/* Section Divider & Color Transition */}
+            <div className="w-full" style={{
               background: `linear-gradient(to bottom, #F0EFE9 0%, #F0EFE9 50%, #FAF9F5 50%, #FAF9F5 100%)`,
               paddingTop: '8px',
               paddingBottom: '8px'
             }}>
               <div className="relative flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300/50"></div>
+                  <div className="w-full border-t border-gray-300/40"></div>
                 </div>
                 <div className="relative px-4">
-                  <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+                  <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
                 </div>
               </div>
             </div>
@@ -628,18 +628,18 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Section Divider & Color Transition - Mobile Only */}
-          <div className="md:hidden w-full" style={{
+          {/* Section Divider & Color Transition */}
+          <div className="w-full" style={{
             background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
             paddingTop: '8px',
             paddingBottom: '8px'
           }}>
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300/50"></div>
+                <div className="w-full border-t border-gray-300/40"></div>
               </div>
               <div className="relative px-4">
-                <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
               </div>
             </div>
           </div>

@@ -271,7 +271,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ marginTop: mounted && isMobile ? '0' : '192px', paddingTop: mounted && isMobile ? '16px' : '0' }}>
+    <section ref={ref} id="environments" className="scroll-mt-24 pb-16">
       {mounted && (
         <div
           className="relative mx-auto w-full"
@@ -281,23 +281,23 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
             paddingRight: isMobile ? '16px' : 'max(16px, min(32px, 2vw))'
           }}
         >
-          <div className="mb-8 md:mb-12 text-center px-4 md:px-0">
+          <div className="mt-4 mb-4 md:mb-6 text-center px-4 md:px-0">
             <h2
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontWeight: 400,
                 letterSpacing: "-0.02em",
                 color: "#2C1810",
-                fontSize: isMobile ? '32px' : '60px',
+                fontSize: isMobile ? '32px' : '40px',
               }}
             >
               Environments
             </h2>
             <p
-              className="font-futura text-gray-700 mt-2 md:mt-4 mx-auto max-w-3xl"
+              className="font-futura text-gray-700 mt-1 md:mt-2 mx-auto max-w-3xl"
               style={{
                 letterSpacing: "-0.01em",
-                fontSize: isMobile ? '14px' : '24px',
+                fontSize: isMobile ? '14px' : '16px',
               }}
             >
               Click any environment to see what's included, or launch the selector to customize one for your business.
@@ -314,17 +314,16 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           paddingRight: 'max(16px, min(32px, 2vw))'
         }}
       >
-        <div className="hidden lg:grid lg:grid-cols-[minmax(600px,800px)_minmax(400px,1fr)] gap-8 xl:gap-12">
+        <div className="hidden lg:grid lg:grid-cols-2 gap-4 xl:gap-6">
           {/* Left side - EnvironmentSelector */}
-          <div className="relative h-[640px] rounded-[36px] bg-white group transition-all duration-300" style={{
+          <div className="relative h-[480px] rounded-[24px] bg-white group transition-all duration-300" style={{
             overflow: 'clip',
             border: '2px solid #9CA3AF',
-            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
-            minWidth: '600px'
+            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
           }}>
             {/* Interactive indicator badge */}
-            <div className="absolute top-6 right-6 z-10 px-4 py-2.5 bg-gray-800 text-white text-sm font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 pointer-events-none">
-              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <div className="absolute top-3 right-3 z-10 px-2.5 py-1.5 bg-gray-800 text-white text-xs font-semibold rounded-full shadow-lg flex items-center justify-center gap-1.5 pointer-events-none">
+              <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z" />
               </svg>
               <span className="leading-none">Click to explore</span>
@@ -359,43 +358,43 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
               >
               {!activeEnvironment ? (
                 // Initial content - Launch-ready description
-                <div className="space-y-8">
-                  <div className="space-y-4">
-                    <h3 className="text-5xl font-bold leading-[1.15] text-waygent-text-primary tracking-tight">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-3xl font-bold leading-[1.15] text-waygent-text-primary tracking-tight">
                       Launch-ready verticals built into Sena.
                     </h3>
-                    <p className="text-xl text-waygent-text-secondary leading-relaxed">
+                    <p className="text-base text-waygent-text-secondary leading-relaxed">
                       Every environment is a complete workspace—UI, workflows, data,
                       automations, and agents—trained on industry playbooks.
                     </p>
                   </div>
 
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-semibold uppercase tracking-wider text-waygent-blue">
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-waygent-blue">
                       What's included
                     </h4>
-                    <div className="space-y-3 pl-4 border-l-2 border-waygent-light-blue/30">
+                    <div className="space-y-2 pl-3 border-l-2 border-waygent-light-blue/30">
                       <div>
-                        <p className="font-medium text-waygent-text-primary">
+                        <p className="font-medium text-sm text-waygent-text-primary">
                           Pre-built UI components
                         </p>
-                        <p className="text-sm text-waygent-text-secondary mt-0.5">
+                        <p className="text-xs text-waygent-text-secondary mt-0.5">
                           Forms, tables, dashboards, and mobile views designed for your vertical.
                         </p>
                       </div>
                       <div>
-                        <p className="font-medium text-waygent-text-primary">
+                        <p className="font-medium text-sm text-waygent-text-primary">
                           Smart automations
                         </p>
-                        <p className="text-sm text-waygent-text-secondary mt-0.5">
+                        <p className="text-xs text-waygent-text-secondary mt-0.5">
                           Workflows that handle bookings, invoicing, reminders, and operations.
                         </p>
                       </div>
                       <div>
-                        <p className="font-medium text-waygent-text-primary">
+                        <p className="font-medium text-sm text-waygent-text-primary">
                           AI agents
                         </p>
-                        <p className="text-sm text-waygent-text-secondary mt-0.5">
+                        <p className="text-xs text-waygent-text-secondary mt-0.5">
                           Copilots trained on industry best practices to accelerate your team.
                         </p>
                       </div>
@@ -404,34 +403,34 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
                 </div>
               ) : (
                 // Environment details (only shown on click)
-                <div className="space-y-6">
-                  <div className="flex flex-col gap-3">
-                    <span className="text-xs uppercase tracking-[0.35em] text-waygent-blue font-semibold">
+                <div className="space-y-3">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[10px] uppercase tracking-[0.35em] text-waygent-blue font-semibold">
                       {activeEnvironment.label}
                     </span>
-                    <h3 className="text-3xl font-semibold text-waygent-text-primary leading-tight">
+                    <h3 className="text-2xl font-semibold text-waygent-text-primary leading-tight">
                       Built for {activeEnvironment.label.toLowerCase()}.
                     </h3>
-                    <p className="text-lg text-waygent-text-secondary leading-relaxed">
+                    <p className="text-sm text-waygent-text-secondary leading-relaxed">
                       {activeEnvironment.summary}
                     </p>
                   </div>
-                  <ul className="space-y-3 text-sm text-waygent-text-secondary">
+                  <ul className="space-y-2 text-xs text-waygent-text-secondary">
                     {activeEnvironment.bullets.map((bullet) => (
-                      <li key={bullet} className="flex items-start gap-3">
-                        <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
+                      <li key={bullet} className="flex items-start gap-2">
+                        <span className="mt-1 inline-flex h-1.5 w-1.5 flex-none rounded-full bg-waygent-blue" />
                         <span>{bullet}</span>
                       </li>
                     ))}
                   </ul>
-                  <div className="flex flex-wrap items-center gap-4 pt-4">
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
                     <Link
                       href="/environment-selector"
-                      className="rounded-full bg-waygent-blue px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover hover:shadow-waygent-blue/35"
+                      className="rounded-full bg-waygent-blue px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover hover:shadow-waygent-blue/35"
                     >
                       Launch this environment
                     </Link>
-                    <span className="text-sm text-waygent-text-muted">
+                    <span className="text-xs text-waygent-text-muted">
                       Fork it, remix it, or ask Sena to generate a new vertical.
                     </span>
                   </div>

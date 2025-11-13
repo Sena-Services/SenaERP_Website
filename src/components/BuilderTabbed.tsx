@@ -267,7 +267,7 @@ export default function BuilderTabbed() {
         }}
       >
         {/* Section Title - Visible on all devices with responsive scaling */}
-        <div className={`text-center px-4 ${isMobile ? 'mt-12' : 'mt-12 sm:mt-16'}`}
+        <div className={`text-center px-4 ${isMobile ? 'mt-4' : 'mt-4'}`}
           style={{
             marginBottom: isMobile ? '32px' : `${getResponsiveValue(24)}px`,
           }}
@@ -278,17 +278,15 @@ export default function BuilderTabbed() {
               fontWeight: 400,
               letterSpacing: "-0.02em",
               color: "#2C1810",
-              fontSize: isMobile ? '32px' : `${getResponsiveValue(56)}px`, // MUCH BIGGER
+              fontSize: isMobile ? '32px' : '40px',
             }}
           >
             Builder
           </h2>
           <p
-            className="text-gray-700 mx-auto max-w-3xl font-futura"
+            className="text-xs md:text-base text-gray-700 mx-auto max-w-3xl font-futura"
             style={{
               letterSpacing: "-0.01em",
-              fontSize: isMobile ? '14px' : `${getResponsiveValue(26)}px`, // EVEN BIGGER
-              marginTop: isMobile ? '8px' : `${getResponsiveValue(12)}px`,
             }}
           >
             Build, scale, and manage your entire AI workforce with one platform.
