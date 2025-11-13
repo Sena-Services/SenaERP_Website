@@ -18,11 +18,9 @@ const links: { href: string; label: string }[] = [
 const sections = [
   { id: "intro", label: "Introduction" },
   { id: "how-it-works", label: "How it Works" },
-  { id: "environments", label: "Environments" },
-  { id: "integrations", label: "Integrations" },
   { id: "builder", label: "Builder" },
-  { id: "pricing", label: "Pricing" },
-  { id: "blog", label: "Blog" },
+  { id: "integrations", label: "Integrations" },
+  { id: "environments", label: "Environments" },
   { id: "join-us", label: "Join Us" },
 ];
 
@@ -72,6 +70,19 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
   const handleSectionClick = (sectionId: string) => {
     setIsMobileMenuOpen(false);
+
+    // Special case: Introduction should scroll to the very top
+    if (sectionId === "intro") {
+      // Reset the internal content scroll in IntroSection
+      window.dispatchEvent(new CustomEvent('resetIntroScroll'));
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       const navbarHeight = 80;

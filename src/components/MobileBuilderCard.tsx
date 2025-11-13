@@ -32,13 +32,13 @@ export default function MobileBuilderCard({
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const visible = entry.intersectionRatio > 0.5;
+        const visible = entry.isIntersecting;
         setIsVisible(visible);
         onVisibilityChange?.(visible);
       },
       {
-        threshold: [0, 0.5, 1],
-        rootMargin: "-20px",
+        threshold: 0,
+        rootMargin: "0px",
       }
     );
 
@@ -97,17 +97,12 @@ export default function MobileBuilderCard({
         </p>
       </div>
 
-      {/* Demo Section - Only animate this when visible */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isVisible ? 1 : 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mb-6"
-      >
+      {/* Demo Section - Always rendered, just pass visibility state */}
+      <div className="mb-6">
         {isValidElement(demoComponent)
           ? cloneElement(demoComponent, { isVisible } as any)
           : demoComponent}
-      </motion.div>
+      </div>
 
       {/* Features Section - Prerendered, no fade-in */}
       <div>

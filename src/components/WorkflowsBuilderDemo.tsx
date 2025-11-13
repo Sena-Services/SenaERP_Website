@@ -267,10 +267,10 @@ export default function WorkflowsBuilderDemo() {
   }, [showFinalResponse, currentData.steps.length]);
 
   return (
-    <div className="flex flex-col md:flex-row h-[600px] max-h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
+    <div className="flex flex-col md:flex-row h-full w-full bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
       {/* Left Side - Chat Container */}
       <motion.div
-        className={`w-full md:w-[35%] flex items-stretch p-4 md:p-6 h-full max-h-full ${
+        className={`w-full md:w-[35%] flex items-stretch p-2 md:p-3 h-full max-h-full ${
           isMobile && showPreview ? 'hidden' : ''
         }`}
         animate={{ opacity: isMobile && showPreview ? 0 : (fadeOut ? 0 : 1) }}
@@ -281,13 +281,13 @@ export default function WorkflowsBuilderDemo() {
             boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
           }}>
             {/* Chat Header */}
-            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">WORKFLOWS BUILDER</h3>
-              <p className="text-xs text-gray-500 font-futura mt-1">Automate any business process</p>
+            <div className="px-2.5 py-1.5 bg-gray-50 border-b border-gray-200 rounded-t-xl flex-shrink-0">
+              <h3 className="text-xs font-bold text-gray-900 font-futura uppercase tracking-wide">WORKFLOWS BUILDER</h3>
+              <p className="text-[10px] text-gray-500 font-futura mt-0.5">Automate any business process</p>
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 space-y-3 overflow-hidden p-6">
+            <div className="flex-1 space-y-2 overflow-hidden p-3">
               {/* User Message - Animates in */}
               {showUserMessage && (
                 <motion.div
@@ -296,12 +296,12 @@ export default function WorkflowsBuilderDemo() {
                   transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 20 }}
                   className="flex flex-col items-end"
                 >
-                  <div className="bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-2xl max-w-[90%] text-sm font-futura shadow-sm">
+                  <div className="bg-white border border-gray-200 text-gray-900 px-2.5 py-1.5 rounded-lg max-w-[90%] text-[11px] font-futura shadow-sm leading-snug">
                     {currentData.request}
                   </div>
-                  <div className="flex items-center gap-2 mt-2 text-xs text-gray-400 font-futura">
+                  <div className="flex items-center gap-1.5 mt-1 text-[10px] text-gray-400 font-futura">
                     <span>Oct 21, 10:00 AM</span>
-                    <svg className="w-3.5 h-3.5 hover:text-gray-600 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-2.5 h-2.5 hover:text-gray-600 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -310,27 +310,27 @@ export default function WorkflowsBuilderDemo() {
 
               {/* Building Progress Steps */}
               {buildingStage > 0 && (
-                <div className="space-y-2 mt-4">
+                <div className="space-y-1 mt-2">
                   {currentData.steps.slice(0, buildingStage).map((step, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="flex items-center gap-2 text-xs font-futura"
+                      className="flex items-center gap-1.5 text-[10px] font-futura"
                     >
                       {!showFinalResponse && index === buildingStage - 1 ? (
                         <>
-                          <div className="flex gap-1">
-                            <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          <div className="flex gap-0.5">
+                            <span className="w-1 h-1 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <span className="w-1 h-1 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <span className="w-1 h-1 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                           </div>
                           <span className="text-waygent-blue">Creating {step.title} node...</span>
                         </>
                       ) : (
                         <>
-                          <span className="text-green-600">✓</span>
+                          <span className="text-green-600 text-[10px]">✓</span>
                           <span className="text-gray-500">{step.title} configured</span>
                         </>
                       )}
@@ -345,26 +345,26 @@ export default function WorkflowsBuilderDemo() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4 }}
-                  className="text-sm font-futura text-gray-700 leading-relaxed mt-3"
+                  className="text-[11px] font-futura text-gray-700 leading-snug mt-1.5"
                 >
                   {aiResponseText}
                   {showCursor && aiResponseText.length < 140 && (
-                    <span className="inline-block w-0.5 h-4 bg-gray-900 ml-1 animate-pulse" />
+                    <span className="inline-block w-0.5 h-3 bg-gray-900 ml-0.5 animate-pulse" />
                   )}
                 </motion.div>
               )}
             </div>
 
             {/* Input Area - Disabled/Empty state */}
-            <div className="relative p-6 pt-0">
+            <div className="relative px-2.5 pb-2.5 pt-0 flex-shrink-0">
               <input
                 type="text"
                 placeholder="Describe your workflow..."
-                className="w-full px-4 py-3 pr-12 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
+                className="w-full px-2 py-1 pr-7 rounded-md bg-gray-50 border border-gray-200 text-[11px] text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
                 disabled
               />
-              <button className="absolute right-9 top-3 text-gray-400">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <button className="absolute right-3.5 top-1 text-gray-400">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                 </svg>
               </button>
@@ -374,32 +374,32 @@ export default function WorkflowsBuilderDemo() {
 
       {/* Right Side - Workflow Nodes */}
       <motion.div
-        className={`w-full md:w-[65%] flex items-center justify-center p-4 md:p-6 md:pl-0 h-full max-h-full ${
+        className={`w-full md:w-[65%] flex items-center justify-center p-2 md:p-3 md:pl-0 h-full max-h-full ${
           isMobile && !showPreview ? 'hidden' : ''
         }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: (isMobile && showPreview) || !isMobile ? (fadeOut ? 0 : 1) : 0 }}
         transition={{ duration: 0.5 }}
       >
-          <div className="relative max-w-2xl w-full h-full flex items-center justify-center overflow-y-auto">
+          <div className="relative max-w-2xl w-full h-full flex items-center justify-center overflow-hidden">
             {visibleSteps > 0 ? (
-              <div className="w-full relative py-4">
+              <div className="w-full relative py-2">
                 {/* Vertical connecting line - starts FROM first dot, connects to last dot */}
                 {visibleSteps > 1 && (
                   <motion.div
                     className="absolute w-0.5 bg-gray-300 z-0"
                     style={{
-                      left: '20px',
-                      top: '45px', // Center of first card (90px min-height / 2 = 45px)
+                      left: '1.5px', // Center of dot (0px left + 1.5px for half of 3px dot)
+                      top: '25px', // Center of first dot (50px card / 2)
                     }}
                     initial={{ height: 0 }}
-                    animate={{ height: `${(visibleSteps - 1) * 122}px` }}
+                    animate={{ height: `${(visibleSteps - 1) * 51}px` }} // 50px card + 1px space
                     transition={{ duration: 0.3 }}
                   />
                 )}
 
                 {/* Workflow steps */}
-                <div className="space-y-2 relative">
+                <div className="space-y-1 relative">
                   {currentData.steps.slice(0, visibleSteps).map((step, idx) => (
                     <motion.div
                       key={idx}
@@ -410,38 +410,38 @@ export default function WorkflowsBuilderDemo() {
                     >
                       {/* Connection dot - centered vertically on card */}
                       <div
-                        className="absolute w-4 h-4 rounded-full bg-green-500 border-2 border-white shadow-sm z-10"
+                        className="absolute w-3 h-3 rounded-full bg-green-500 border-2 border-white shadow-sm z-10"
                         style={{
-                          left: '14px',
+                          left: '0px',
                           top: '50%',
                           transform: 'translateY(-50%)'
                         }}
                       />
 
                       {/* Node card */}
-                      <div className="ml-12 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex-1"
+                      <div className="ml-6 bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden flex-1"
                         style={{
-                          minHeight: '90px' // Ensure consistent height for dot alignment
+                          minHeight: '50px' // Much smaller min height
                         }}
                       >
                         {/* Technical section - top */}
-                        <div className="px-3 py-1.5 border-b border-gray-200">
+                        <div className="px-1.5 py-0.5 border-b border-gray-200">
                           {/* Header */}
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <span className="text-sm">{step.icon}</span>
-                            <h4 className="font-futura font-bold text-[9px] uppercase tracking-wide text-gray-900">
+                          <div className="flex items-center gap-1 mb-0.5">
+                            <span className="text-xs">{step.icon}</span>
+                            <h4 className="font-futura font-bold text-[8px] uppercase tracking-wide text-gray-900">
                               {step.title}
                             </h4>
                           </div>
 
                           {/* Technical details */}
-                          <div className="space-y-0.5">
+                          <div className="space-y-0">
                             {step.technicalDetails.map((detail, detailIdx) => (
-                              <div key={detailIdx} className="flex items-start text-[9px]">
-                                <span className="font-futura font-semibold text-gray-600 min-w-[60px]">
+                              <div key={detailIdx} className="flex items-start text-[8px]">
+                                <span className="font-futura font-semibold text-gray-600 min-w-[50px]">
                                   {detail.label}:
                                 </span>
-                                <span className="font-futura text-gray-800 font-mono text-[8px]">
+                                <span className="font-futura text-gray-800 font-mono text-[7px]">
                                   {detail.value}
                                 </span>
                               </div>
@@ -450,8 +450,8 @@ export default function WorkflowsBuilderDemo() {
                         </div>
 
                         {/* Natural language section - bottom */}
-                        <div className="px-3 py-1.5 bg-gray-50">
-                          <p className="text-[8px] font-futura text-gray-600 leading-snug">
+                        <div className="px-1.5 py-0.5 bg-gray-50">
+                          <p className="text-[7px] font-futura text-gray-600 leading-tight">
                             {step.naturalLanguage}
                           </p>
                         </div>

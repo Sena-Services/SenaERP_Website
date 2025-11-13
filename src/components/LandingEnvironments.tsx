@@ -47,10 +47,10 @@ const environments: EnvironmentDeck[] = [
       "Generate traveler docs, reminders, and reconciled ledgers without manual effort.",
     ],
     metrics: [
-      { id: "ui", label: "UI components", value: "18", icon: "🧩" },
-      { id: "flows", label: "Automations", value: "24", icon: "⚡" },
-      { id: "agents", label: "Agents", value: "6", icon: "🤖" },
-      { id: "data", label: "Data models", value: "12", icon: "📊" },
+      { id: "ui", label: "UI components", value: "18", icon: "layout" },
+      { id: "flows", label: "Automations", value: "24", icon: "zap" },
+      { id: "agents", label: "Agents", value: "6", icon: "cpu" },
+      { id: "data", label: "Data models", value: "12", icon: "database" },
     ],
     blueprintCounts: { UI: 18, Logic: 24, Database: 12, Integration: 10, Agents: 6 },
   },
@@ -67,10 +67,10 @@ const environments: EnvironmentDeck[] = [
       "Monitor margins, payments, and pax manifests in real time.",
     ],
     metrics: [
-      { id: "ui", label: "UI components", value: "26", icon: "🧩" },
-      { id: "flows", label: "Automations", value: "32", icon: "⚡" },
-      { id: "agents", label: "Agents", value: "9", icon: "🤖" },
-      { id: "data", label: "Data models", value: "18", icon: "📊" },
+      { id: "ui", label: "UI components", value: "26", icon: "layout" },
+      { id: "flows", label: "Automations", value: "32", icon: "zap" },
+      { id: "agents", label: "Agents", value: "9", icon: "cpu" },
+      { id: "data", label: "Data models", value: "18", icon: "database" },
     ],
     blueprintCounts: { UI: 26, Logic: 32, Database: 18, Integration: 14, Agents: 9 },
   },
@@ -87,10 +87,10 @@ const environments: EnvironmentDeck[] = [
       "Adjust rates, packages, and upsell campaigns based on live occupancy.",
     ],
     metrics: [
-      { id: "ui", label: "UI components", value: "20", icon: "🧩" },
-      { id: "flows", label: "Automations", value: "28", icon: "⚡" },
-      { id: "agents", label: "Agents", value: "8", icon: "🤖" },
-      { id: "data", label: "Data models", value: "14", icon: "📊" },
+      { id: "ui", label: "UI components", value: "20", icon: "layout" },
+      { id: "flows", label: "Automations", value: "28", icon: "zap" },
+      { id: "agents", label: "Agents", value: "8", icon: "cpu" },
+      { id: "data", label: "Data models", value: "14", icon: "database" },
     ],
     blueprintCounts: { UI: 20, Logic: 28, Database: 14, Integration: 12, Agents: 8 },
   },
@@ -107,10 +107,10 @@ const environments: EnvironmentDeck[] = [
       "Forecast demand and automate purchase orders with supplier confirmations.",
     ],
     metrics: [
-      { id: "ui", label: "UI components", value: "16", icon: "🧩" },
-      { id: "flows", label: "Automations", value: "21", icon: "⚡" },
-      { id: "agents", label: "Agents", value: "5", icon: "🤖" },
-      { id: "data", label: "Data models", value: "11", icon: "📊" },
+      { id: "ui", label: "UI components", value: "16", icon: "layout" },
+      { id: "flows", label: "Automations", value: "21", icon: "zap" },
+      { id: "agents", label: "Agents", value: "5", icon: "cpu" },
+      { id: "data", label: "Data models", value: "11", icon: "database" },
     ],
     blueprintCounts: { UI: 16, Logic: 21, Database: 11, Integration: 9, Agents: 5 },
   },
@@ -162,16 +162,36 @@ function useEnvironmentCardTransform(
 }
 
 const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments(props, ref) {
-  const [activeId, setActiveId] = useState<string | undefined>(undefined);
+  const [activeId, setActiveId] = useState<string | undefined>(environments[0].id);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
 
   // Handle initial mount
   useEffect(() => {
     setMounted(true);
     setIsMobile(window.innerWidth < 1024);
   }, []);
+
+  // Track scroll position to update active card
+  useEffect(() => {
+    if (!isMobile || !carouselRef.current) return;
+
+    const carousel = carouselRef.current;
+    const handleScroll = () => {
+      const scrollLeft = carousel.scrollLeft;
+      const cardWidth = carousel.scrollWidth / environments.length;
+      const activeIndex = Math.round(scrollLeft / cardWidth);
+      const newActiveId = environments[activeIndex]?.id;
+      if (newActiveId && newActiveId !== activeId) {
+        setActiveId(newActiveId);
+      }
+    };
+
+    carousel.addEventListener('scroll', handleScroll, { passive: true });
+    return () => carousel.removeEventListener('scroll', handleScroll);
+  }, [isMobile, activeId]);
   const selectorEnvironments = useMemo<SelectorEnvironment[]>(() => {
     return environments.map((environment) => {
       const active_blueprints =
@@ -251,7 +271,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ marginTop: mounted && isMobile ? '64px' : '192px' }}>
+    <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ marginTop: mounted && isMobile ? '0' : '192px', paddingTop: mounted && isMobile ? '16px' : '0' }}>
       {mounted && (
         <div
           className="relative mx-auto w-full"
@@ -425,19 +445,14 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
 
       {/* Mobile: Horizontal scrolling carousel */}
       <div className="lg:hidden mt-12">
-        <div className="overflow-x-auto hide-scrollbar px-4 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
+        <div ref={carouselRef} className="overflow-x-auto hide-scrollbar px-4 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
           <div className="flex gap-4" style={{ width: 'max-content' }}>
             {environments.map((environment, index) => {
               const isActive = environment.id === activeId;
               return (
                 <motion.div
                   key={environment.id}
-                  className={clsx(
-                    "rounded-3xl border transition-all duration-300 flex-shrink-0",
-                    isActive
-                      ? "border-waygent-blue bg-white shadow-xl"
-                      : "border-white/40 bg-white/80 shadow-md",
-                  )}
+                  className="rounded-3xl border border-waygent-blue bg-white shadow-xl flex-shrink-0"
                   style={{
                     width: 'calc(100vw - 64px)',
                     maxWidth: '400px',
@@ -447,29 +462,12 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveId(isActive ? undefined : environment.id);
-                    }}
-                    className="flex w-full flex-col p-6 text-left"
-                  >
+                  <div className="flex w-full flex-col p-6">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
                       <span className="text-xs uppercase tracking-[0.35em] text-waygent-blue font-semibold">
                         {environment.label}
                       </span>
-                      <motion.svg
-                        className="w-5 h-5 text-waygent-blue flex-shrink-0"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                        animate={{ rotate: isActive ? 180 : 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                      </motion.svg>
                     </div>
 
                     {/* Title */}
@@ -479,53 +477,57 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
 
                     {/* Metrics row */}
                     <div className="grid grid-cols-2 gap-2 mb-4">
-                      {environment.metrics.map((metric) => (
-                        <div key={metric.id} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
-                          <span className="text-lg">{metric.icon}</span>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-semibold text-gray-900">{metric.value}</span>
-                            <span className="text-[10px] text-gray-600">{metric.label}</span>
+                      {environment.metrics.map((metric) => {
+                        const getIcon = (iconName: string) => {
+                          switch(iconName) {
+                            case 'layout':
+                              return <svg className="w-4 h-4 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" /></svg>;
+                            case 'zap':
+                              return <svg className="w-4 h-4 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>;
+                            case 'cpu':
+                              return <svg className="w-4 h-4 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>;
+                            case 'database':
+                              return <svg className="w-4 h-4 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>;
+                            default:
+                              return null;
+                          }
+                        };
+                        return (
+                          <div key={metric.id} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+                            {getIcon(metric.icon)}
+                            <div className="flex flex-col">
+                              <span className="text-xs font-semibold text-gray-900">{metric.value}</span>
+                              <span className="text-[10px] text-gray-600">{metric.label}</span>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {/* Summary - always visible */}
-                    <p className="text-sm text-waygent-text-secondary leading-relaxed">
+                    <p className="text-sm text-waygent-text-secondary leading-relaxed mb-4">
                       {environment.summary}
                     </p>
-                  </button>
 
-                  {/* Expanded content */}
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden px-6 pb-6"
-                      >
-                        <div className="pt-4 border-t border-gray-200 space-y-3 text-sm text-waygent-text-secondary">
-                          {environment.bullets.map((bullet) => (
-                            <div key={bullet} className="flex items-start gap-3">
-                              <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
-                              <span>{bullet}</span>
-                            </div>
-                          ))}
-                          <Link
-                            href="/environment-selector"
-                            className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-waygent-blue text-white text-sm font-semibold rounded-full shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover"
-                          >
-                            Launch this environment
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                          </Link>
+                    {/* Expanded content - Always visible */}
+                    <div className="pt-4 border-t border-gray-200 space-y-3 text-sm text-waygent-text-secondary">
+                      {environment.bullets.map((bullet) => (
+                        <div key={bullet} className="flex items-start gap-3">
+                          <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
+                          <span>{bullet}</span>
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      ))}
+                      <Link
+                        href="/environment-selector"
+                        className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-waygent-blue text-white text-sm font-semibold rounded-full shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover"
+                      >
+                        Launch this environment
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
                 </motion.div>
               );
             })}
@@ -537,7 +539,17 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           {environments.map((env, index) => (
             <button
               key={env.id}
-              onClick={() => setActiveId(env.id)}
+              onClick={() => {
+                setActiveId(env.id);
+                // Scroll to the card
+                if (carouselRef.current) {
+                  const cardWidth = carouselRef.current.scrollWidth / environments.length;
+                  carouselRef.current.scrollTo({
+                    left: cardWidth * index,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
               className={clsx(
                 "h-2 rounded-full transition-all duration-300",
                 env.id === activeId ? "bg-waygent-blue w-8" : "bg-gray-300 w-2"

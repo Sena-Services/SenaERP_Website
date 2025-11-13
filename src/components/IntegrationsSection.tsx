@@ -53,10 +53,10 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
         const nextIndex = (currentIndex + 1) % enabledNativeIntegrations.length;
         return enabledNativeIntegrations[nextIndex].id;
       });
-    }, 3000); // Change every 3 seconds
+    }, isMobile ? 5000 : 3000); // Slower on mobile: 5 seconds, desktop: 3 seconds
 
     return () => clearInterval(interval);
-  }, [isAutoCycling, enabledNativeIntegrations]);
+  }, [isAutoCycling, enabledNativeIntegrations, isMobile]);
 
   const handleIntegrationClick = (id: string) => {
     setActiveId(id);
@@ -64,29 +64,29 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
   };
 
   return (
-    <section ref={ref} id="integrations" className="scroll-mt-24 mt-32 sm:mt-48 pb-16">
+    <section ref={ref} id="integrations" className="scroll-mt-24 pb-8" style={{ paddingTop: isMobile ? '16px' : '0' }}>
       <div
         className="relative mx-auto w-full"
         style={{
-          maxWidth: isMobile ? '100%' : 'min(1280px, calc(100vw - 320px))',
+          maxWidth: isMobile ? '100%' : 'min(900px, calc(100vw - 320px))',
           paddingLeft: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
           paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))'
         }}
       >
-        <div className="mb-8 md:mb-12 text-center px-4 md:px-0">
+        <div className="mb-2 md:mb-3 text-center px-4 md:px-0">
           <h2
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               color: "#2C1810",
-              fontSize: isMobile ? '32px' : '60px',
+              fontSize: isMobile ? '32px' : '40px',
             }}
           >
             Integrations
           </h2>
           <p
-            className="text-sm md:text-xl md:text-2xl text-gray-700 mt-2 md:mt-4 mx-auto max-w-3xl font-futura"
+            className="text-xs md:text-base text-gray-700 mt-1 mx-auto max-w-3xl font-futura"
             style={{
               letterSpacing: "-0.01em",
             }}
@@ -95,15 +95,15 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           </p>
         </div>
 
-        <div className={`flex flex-col gap-8 md:gap-12 ${isMobile ? 'px-4' : ''}`}>
+        <div className={`flex flex-col gap-2 md:gap-3 ${isMobile ? 'px-4' : ''}`}>
           {/* Native Integrations */}
           <div className="md:px-0">
-            <div className="flex items-center gap-3 mb-4 justify-center">
+            <div className="flex items-center gap-2 mb-2 justify-center">
               <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
-              <h3 className="text-sm md:text-base font-futura tracking-wide text-waygent-blue uppercase">Native Integrations</h3>
+              <h3 className="text-[10px] md:text-xs font-futura tracking-wide text-waygent-blue uppercase">Native Integrations</h3>
               <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
             </div>
-            <div className="flex flex-wrap gap-3 md:gap-6 justify-center items-center">
+            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center items-center">
               {nativeIntegrations.map((integration) => {
                 const isActive = activeId === integration.id;
 
@@ -114,10 +114,10 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                       className="group flex flex-col items-center gap-2"
                     >
                       <div
-                        className={`relative flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-2xl backdrop-blur-sm border-2 transition-all duration-200 ease-out ${
+                        className={`relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-lg backdrop-blur-sm border transition-all duration-200 ease-out ${
                           isActive
                             ? 'bg-white border-waygent-blue shadow-xl scale-110'
-                            : 'bg-white/90 border-gray-200 hover:bg-white hover:border-waygent-blue/40 hover:scale-105 hover:shadow-lg'
+                            : 'bg-white/90 border-gray-200 hover:bg-white hover:border-waygent-blue/40 hover:scale-105 hover:shadow-md'
                         }`}
                       >
                         <img
@@ -125,8 +125,8 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                           alt={integration.name}
                           className={`transition-all duration-200 object-contain ${
                             integration.id === 'whatsapp'
-                              ? 'w-9 h-9 md:w-11 md:h-11'
-                              : 'w-8 h-8 md:w-10 md:h-10'
+                              ? 'w-5 h-5 md:w-6 md:h-6'
+                              : 'w-4 h-4 md:w-5 md:h-5'
                           }`}
                         />
                       </div>
@@ -137,12 +137,12 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                           e.stopPropagation();
                           setIsAutoCycling(true);
                         }}
-                        className="absolute -top-1 -right-1 w-6 h-6 bg-waygent-blue rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition z-10"
+                        className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-waygent-blue rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition z-10"
                         title="Resume auto-play"
                       >
                         <svg
-                          width="12"
-                          height="12"
+                          width="10"
+                          height="10"
                           viewBox="0 0 24 24"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +162,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           </div>
 
           {/* Bottom - Screenshot preview with description */}
-          <div className={isMobile ? '' : 'mt-4'}>
+          <div className={isMobile ? '' : 'mt-1'}>
             {/* Description header */}
             <AnimatePresence mode="wait">
               {activeIntegration && (
@@ -171,22 +171,22 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="mb-4"
+                  transition={{ duration: isMobile ? 0.6 : 0.3, ease: "easeInOut" }}
+                  className={isMobile ? "mb-1.5" : "mb-2"}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <div className="w-5 h-5 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center">
                       <img
                         src={activeIntegration.iconUrl}
                         alt={activeIntegration.name}
-                        className="w-5 h-5 object-contain"
+                        className="w-3 h-3 object-contain"
                       />
                     </div>
-                    <h4 className="text-lg font-semibold text-gray-900 font-futura">
+                    <h4 className="text-sm font-semibold text-gray-900 font-futura">
                       {activeIntegration.name} Integration
                     </h4>
                   </div>
-                  <p className="text-sm text-gray-600 leading-relaxed font-futura">
+                  <p className="text-[10px] md:text-xs text-gray-600 leading-relaxed font-futura">
                     {activeIntegration.id === 'whatsapp' && (
                       "AI agents handle customer conversations on WhatsApp automatically. Respond to inquiries, provide product information, process orders, and escalate to humans when needed—all in real-time, 24/7."
                     )}
@@ -203,11 +203,17 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
 
             {/* Screenshot container */}
             <div
-              className={`relative w-full overflow-hidden bg-white ${isMobile ? '-mx-4 px-4' : ''}`}
+              className={`relative overflow-hidden mx-auto ${isMobile ? '' : 'bg-white'}`}
               style={{
                 border: isMobile ? 'none' : '2px solid #9CA3AF',
-                borderRadius: isMobile ? '0' : '1.5rem',
-                boxShadow: isMobile ? 'none' : '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
+                borderRadius: isMobile ? '0' : '1rem',
+                boxShadow: isMobile ? 'none' : '0 10px 30px -8px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxHeight: isMobile ? 'none' : '320px',
+                maxWidth: isMobile ? '90%' : '100%',
+                width: 'fit-content'
               }}
             >
               <AnimatePresence mode="wait">
@@ -217,19 +223,20 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="w-full flex items-center justify-center"
+                    transition={{ duration: isMobile ? 0.6 : 0.3, ease: "easeInOut" }}
+                    className="flex items-center justify-center"
+                    style={{ maxHeight: isMobile ? 'none' : '320px' }}
                   >
                     <img
                       src={activeIntegration.screenshot}
                       alt={`${activeIntegration.name} integration example`}
-                      className="w-full h-auto"
+                      className="h-auto"
                       style={{
                         imageRendering: '-webkit-optimize-contrast',
-                        maxWidth: '100%',
+                        maxHeight: isMobile ? 'none' : '320px',
+                        width: 'auto',
                         display: 'block',
-                        objectFit: 'contain',
-                        margin: '0 auto'
+                        objectFit: 'contain'
                       }}
                     />
                   </motion.div>
@@ -245,116 +252,116 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                  className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3"
+                  transition={{ duration: isMobile ? 0.6 : 0.3, delay: 0.1, ease: "easeInOut" }}
+                  className={`${isMobile ? 'mt-1.5' : 'mt-2'} grid grid-cols-1 md:grid-cols-3 gap-1.5`}
                 >
                   {activeIntegration.id === 'whatsapp' && (
                     <>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">Auto-Reply</p>
-                          <p className="text-xs text-gray-600 font-futura">Instant responses to customer messages</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">Auto-Reply</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Instant responses to customer messages</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">Order Processing</p>
-                          <p className="text-xs text-gray-600 font-futura">Take orders directly via chat</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">Order Processing</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Take orders directly via chat</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">24/7 Support</p>
-                          <p className="text-xs text-gray-600 font-futura">Never miss a customer inquiry</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">24/7 Support</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Never miss a customer inquiry</p>
                         </div>
                       </div>
                     </>
                   )}
                   {activeIntegration.id === 'instagram' && (
                     <>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">DM Automation</p>
-                          <p className="text-xs text-gray-600 font-futura">Reply to messages instantly</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">DM Automation</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Reply to messages instantly</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">Comment Responses</p>
-                          <p className="text-xs text-gray-600 font-futura">Engage with every comment</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">Comment Responses</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Engage with every comment</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">Brand Voice</p>
-                          <p className="text-xs text-gray-600 font-futura">Maintain consistent tone</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">Brand Voice</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Maintain consistent tone</p>
                         </div>
                       </div>
                     </>
                   )}
                   {activeIntegration.id === 'gmail' && (
                     <>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">Smart Replies</p>
-                          <p className="text-xs text-gray-600 font-futura">AI drafts context-aware responses</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">Smart Replies</p>
+                          <p className="text-[10px] text-gray-600 font-futura">AI drafts context-aware responses</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">Email Triage</p>
-                          <p className="text-xs text-gray-600 font-futura">Prioritize urgent messages</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">Email Triage</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Prioritize urgent messages</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-start gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg className="w-2.5 h-2.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 font-futura">Meeting Scheduling</p>
-                          <p className="text-xs text-gray-600 font-futura">Coordinate calendars automatically</p>
+                          <p className="text-[11px] font-semibold text-gray-900 font-futura">Meeting Scheduling</p>
+                          <p className="text-[10px] text-gray-600 font-futura">Coordinate calendars automatically</p>
                         </div>
                       </div>
                     </>
@@ -365,24 +372,24 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           </div>
 
           {/* 3rd Party Integrations - Below everything, smaller */}
-          <div className="md:px-0 mt-8 md:mt-12">
-            <div className="flex items-center gap-3 mb-4 justify-center">
+          <div className="md:px-0 mt-2 md:mt-3">
+            <div className="flex items-center gap-2 mb-1.5 justify-center">
               <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"></div>
-              <h3 className="text-xs md:text-sm font-futura tracking-wide text-gray-500 uppercase">3rd Party Integrations</h3>
+              <h3 className="text-[9px] md:text-[10px] font-futura tracking-wide text-gray-500 uppercase">3rd Party Integrations</h3>
               <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"></div>
             </div>
-            <div className="flex flex-wrap gap-2 md:gap-4 justify-center items-center">
+            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center items-center">
               {thirdPartyIntegrations.map((integration) => (
                 <div key={integration.id} className="relative">
                   <div className="group flex flex-col items-center gap-1 cursor-default">
-                    <div className="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl backdrop-blur-sm border border-gray-200 bg-white/90 transition-all duration-200 ease-out hover:shadow-md">
+                    <div className="relative flex items-center justify-center w-7 h-7 md:w-8 md:h-8 rounded-lg backdrop-blur-sm border border-gray-200 bg-white/90 transition-all duration-200 ease-out hover:shadow-md">
                       <img
                         src={integration.iconUrl}
                         alt={integration.name}
                         className={`transition-all duration-200 object-contain ${
                           integration.id === 'github'
-                            ? 'w-7 h-7 md:w-8 md:h-8'
-                            : 'w-6 h-6 md:w-7 md:h-7'
+                            ? 'w-4 h-4 md:w-5 md:h-5'
+                            : 'w-3.5 h-3.5 md:w-4 md:h-4'
                         }`}
                       />
                     </div>
@@ -390,6 +397,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                 </div>
               ))}
             </div>
+            <p className="text-center text-[10px] text-gray-500 mt-2 font-futura">Many more to come</p>
           </div>
         </div>
       </div>

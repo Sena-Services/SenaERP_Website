@@ -166,10 +166,34 @@ export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [isMobile, setIsMobile] = useState(false);
   const [activeBuilderTab, setActiveBuilderTab] = useState("ui");
+  const [viewportHeight, setViewportHeight] = useState(900);
+
+  // Responsive scaling function - same as IntroSection
+  const getResponsiveValue = (baseValue: number) => {
+    const baseScreenHeight = 1200;
+
+    // Aggressive scaling down for very low-height screens (600px and below)
+    if (viewportHeight <= 600) {
+      const scaleFactor = 0.4;
+      return baseValue * scaleFactor;
+    }
+    // Gradual scaling for low to medium heights (600-1200px)
+    else if (viewportHeight <= baseScreenHeight) {
+      // Smooth gradual scale from 0.4x at 600px to 1x at 1200px
+      const scaleFactor = 0.4 + ((viewportHeight - 600) / (baseScreenHeight - 600)) * 0.6;
+      return baseValue * scaleFactor;
+    }
+    // Scale up proportionally for screens taller than 1200px
+    const scaleFactor = viewportHeight / baseScreenHeight;
+    return baseValue * scaleFactor;
+  };
 
   // Detect mobile and sync with navbar tab selection
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      setViewportHeight(window.innerHeight);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -232,16 +256,7 @@ export default function BuilderTabbed() {
   }, [isMobile, activeTab, tabs]);
 
   return (
-    <div className="w-full bg-white scroll-mt-24 pb-16">
-      {/* Visual Divider - Mobile only */}
-      {isMobile && (
-        <div className="w-full">
-          {/* Top gradient transition from How It Works */}
-          <div className="h-16 bg-gradient-to-b from-gray-50 to-white"></div>
-          {/* Thin accent line */}
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-        </div>
-      )}
+    <div className="w-full scroll-mt-24 pb-16" style={{ paddingTop: isMobile ? '16px' : '0' }}>
 
       <div
         className="mx-auto"
@@ -251,23 +266,29 @@ export default function BuilderTabbed() {
           paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))'
         }}
       >
-        {/* Section Title - Visible on all devices */}
-        <div className={`mb-8 md:mb-12 text-center px-4 ${isMobile ? 'mt-12' : 'mt-32 sm:mt-48'}`}>
+        {/* Section Title - Visible on all devices with responsive scaling */}
+        <div className={`text-center px-4 ${isMobile ? 'mt-12' : 'mt-12 sm:mt-16'}`}
+          style={{
+            marginBottom: isMobile ? '32px' : `${getResponsiveValue(24)}px`,
+          }}
+        >
           <h2
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               color: "#2C1810",
-              fontSize: isMobile ? '32px' : '60px',
+              fontSize: isMobile ? '32px' : `${getResponsiveValue(56)}px`, // MUCH BIGGER
             }}
           >
             Builder
           </h2>
           <p
-            className="text-sm md:text-xl md:text-2xl text-gray-700 mt-2 md:mt-4 mx-auto max-w-3xl font-futura"
+            className="text-gray-700 mx-auto max-w-3xl font-futura"
             style={{
               letterSpacing: "-0.01em",
+              fontSize: isMobile ? '14px' : `${getResponsiveValue(26)}px`, // EVEN BIGGER
+              marginTop: isMobile ? '8px' : `${getResponsiveValue(12)}px`,
             }}
           >
             Build, scale, and manage your entire AI workforce with one platform.
@@ -280,14 +301,14 @@ export default function BuilderTabbed() {
           boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
         }}>
           {/* Tabs at Top with Description - All in same container */}
-          <div className="bg-waygent-cream/50 px-4 pt-4 pb-6 border-b border-gray-200">
+          <div className="bg-waygent-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
             {/* Tabs Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
               {tabs.map((tab, index) => (
                 <motion.button
                   key={tab.id}
                   onClick={() => setActiveTab(tab)}
-                  className={`relative px-4 py-3 text-left rounded-xl cursor-pointer overflow-hidden ${
+                  className={`relative px-3 py-2 text-left rounded-lg cursor-pointer overflow-hidden ${
                     activeTab.id === tab.id
                       ? ""
                       : "bg-white hover:bg-waygent-cream border border-gray-200/50"
@@ -317,7 +338,7 @@ export default function BuilderTabbed() {
                   <div className="relative z-10 flex items-start gap-3">
                     <div className="flex-1 min-w-0">
                       <div
-                        className={`font-futura font-bold text-xl mb-2 ${
+                        className={`font-futura font-bold text-sm mb-1 ${
                           activeTab.id === tab.id ? "text-white" : "text-waygent-text-primary"
                         }`}
                         style={{ letterSpacing: "-0.02em" }}
@@ -325,7 +346,7 @@ export default function BuilderTabbed() {
                         {tab.label}
                       </div>
                       <div
-                        className={`text-base font-futura ${
+                        className={`text-xs font-futura ${
                           activeTab.id === tab.id ? "text-white/90" : "text-waygent-text-secondary"
                         }`}
                         style={{ letterSpacing: "-0.01em" }}
@@ -346,9 +367,9 @@ export default function BuilderTabbed() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.25 }}
-                className="px-4"
+                className="px-3"
               >
-                <p className="text-base text-gray-700 font-futura leading-relaxed max-w-4xl">
+                <p className="text-xs text-gray-700 font-futura leading-snug max-w-4xl">
                   {activeTab.agentDescription}
                 </p>
               </motion.div>
@@ -356,7 +377,7 @@ export default function BuilderTabbed() {
           </div>
 
           {/* Content Area */}
-          <div className="h-[560px] xl:h-[580px] 2xl:h-[600px] overflow-hidden">
+          <div className="h-[380px] xl:h-[420px] 2xl:h-[460px] overflow-hidden">
             <AnimatePresence mode="sync">
               <motion.div
                 key={activeTab.id}
@@ -636,12 +657,12 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="py-8 my-8 relative">
+            <div className="py-4 my-4 relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t-2 border-dashed border-gray-300"></div>
               </div>
               <div className="relative flex justify-center">
-                <div className="px-4 bg-white">
+                <div className="px-4 bg-waygent-cream">
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
                     <div className="flex gap-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
@@ -681,12 +702,12 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="py-8 my-8 relative">
+            <div className="py-4 my-4 relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t-2 border-dashed border-gray-300"></div>
               </div>
               <div className="relative flex justify-center">
-                <div className="px-4 bg-white">
+                <div className="px-4 bg-waygent-cream">
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
                     <div className="flex gap-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
@@ -726,12 +747,12 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="py-8 my-8 relative">
+            <div className="py-4 my-4 relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t-2 border-dashed border-gray-300"></div>
               </div>
               <div className="relative flex justify-center">
-                <div className="px-4 bg-white">
+                <div className="px-4 bg-waygent-cream">
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
                     <div className="flex gap-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>

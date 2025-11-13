@@ -251,8 +251,9 @@ export default function Home() {
         }
       };
 
-      // BLOCK ALL UPWARD SCROLL if user has left home AND anywhere near intro section
-      if (hasLeftHome && direction === 'up' && currentScrollY <= points.rotated + 200) {
+      // BLOCK ALL UPWARD SCROLL if user has left home AND trying to go back into intro animations
+      // Only block if trying to scroll BELOW the rotated position (back into animations)
+      if (hasLeftHome && direction === 'up' && currentScrollY < points.rotated) {
         blockScroll();
         // Force scroll position to stay at minimum threshold
         const minScroll = points.rotated;
@@ -560,27 +561,91 @@ export default function Home() {
       {/* Mobile How It Works - only shows on mobile */}
       <MobileHowItWorks />
 
-      <div className="bg-waygent-cream w-full relative z-1">
-        <div className="flex min-h-screen flex-1 flex-col bg-waygent-cream">
+      {/* Section Divider between How It Works and Builder - Mobile Only */}
+      <div className="md:hidden w-full" style={{
+        background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #FAF9F5 50%, #FAF9F5 100%)`,
+        paddingTop: '8px',
+        paddingBottom: '8px'
+      }}>
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300/50"></div>
+          </div>
+          <div className="relative px-4">
+            <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full relative z-1">
+        <div className="flex min-h-screen flex-1 flex-col">
           <div className="flex-1 flex flex-col relative">
-            <div id="builder">
+            {/* Builder - Color 1 */}
+            <div id="builder" style={{ backgroundColor: '#FAF9F5' }}>
               <BuilderTabbed />
             </div>
-            <div id="integrations">
+
+            {/* Section Divider & Color Transition - Mobile Only */}
+            <div className="md:hidden w-full" style={{
+              background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+              paddingTop: '8px',
+              paddingBottom: '8px'
+            }}>
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300/50"></div>
+                </div>
+                <div className="relative px-4">
+                  <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Integrations - Color 2 */}
+            <div id="integrations" style={{ backgroundColor: '#F0EFE9' }}>
               <IntegrationsSection ref={integrationsRef} />
             </div>
-            <div id="environments">
+
+            {/* Section Divider & Color Transition - Mobile Only */}
+            <div className="md:hidden w-full" style={{
+              background: `linear-gradient(to bottom, #F0EFE9 0%, #F0EFE9 50%, #FAF9F5 50%, #FAF9F5 100%)`,
+              paddingTop: '8px',
+              paddingBottom: '8px'
+            }}>
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300/50"></div>
+                </div>
+                <div className="relative px-4">
+                  <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Environments - Color 1 */}
+            <div id="environments" style={{ backgroundColor: '#FAF9F5' }}>
               <LandingEnvironments ref={environmentsRef} />
             </div>
           </div>
 
-          {/* <div id="pricing">
-            <PricingSection ref={pricingRef} />
+          {/* Section Divider & Color Transition - Mobile Only */}
+          <div className="md:hidden w-full" style={{
+            background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+            paddingTop: '8px',
+            paddingBottom: '8px'
+          }}>
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300/50"></div>
+              </div>
+              <div className="relative px-4">
+                <div className="w-2 h-2 rounded-full bg-waygent-blue/30"></div>
+              </div>
+            </div>
           </div>
-          <div id="blogs">
-            <BlogSection ref={blogRef} />
-          </div> */}
-          <div id="join-us">
+
+          {/* Join Us - Color 2 */}
+          <div id="join-us" style={{ backgroundColor: '#F0EFE9' }}>
             <JoinUsSection ref={joinUsRef} />
           </div>
         </div>

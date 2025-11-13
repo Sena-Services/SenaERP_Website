@@ -40,6 +40,18 @@ export default function IntroSection() {
   const [expandedCard, setExpandedCard] = useState<ExpandedCard>(null);
   const [animationLocked, setAnimationLocked] = useState(false);
 
+  // Listen for intro navigation to reset content scroll
+  useEffect(() => {
+    const handleIntroNavigation = () => {
+      if (contentScrollRef.current) {
+        contentScrollRef.current.scrollTop = 0;
+      }
+    };
+
+    window.addEventListener('resetIntroScroll', handleIntroNavigation);
+    return () => window.removeEventListener('resetIntroScroll', handleIntroNavigation);
+  }, []);
+
   useEffect(() => {
     const handleResize = () => {
       setViewportWidth(window.innerWidth);

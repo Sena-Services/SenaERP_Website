@@ -152,7 +152,7 @@ export default function MobileUIBuilderDemo({ isVisible = true }: MobileUIBuilde
 
   return (
     <div className="w-full">
-      {/* Fixed height container */}
+      {/* Fixed height container - Always visible */}
       <div
         className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl overflow-hidden border border-gray-200"
         style={{ height: '420px' }}
@@ -162,7 +162,7 @@ export default function MobileUIBuilderDemo({ isVisible = true }: MobileUIBuilde
             // CHAT PHASE - Shows chat conversation
             <motion.div
               key="chat"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}

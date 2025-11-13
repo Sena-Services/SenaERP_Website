@@ -72,10 +72,11 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
     <section
       ref={ref}
       id="join-us"
-      className="scroll-mt-24 pb-16"
+      className="scroll-mt-24"
       style={{
-        marginTop: isMobile ? '64px' : '192px',
-        paddingBottom: isMobile ? '32px' : `${getResponsiveValue(64)}px`,
+        marginTop: isMobile ? '0' : '192px',
+        paddingTop: isMobile ? '16px' : '0',
+        paddingBottom: isMobile ? '80px' : `${getResponsiveValue(120)}px`,
       }}
     >
       <div

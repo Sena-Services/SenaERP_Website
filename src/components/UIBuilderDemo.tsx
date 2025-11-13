@@ -165,10 +165,10 @@ export default function UIBuilderDemo() {
   }, [showFinalResponse]);
 
   return (
-    <div className="flex flex-col md:flex-row h-[600px] max-h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
+    <div className="flex flex-col md:flex-row h-full w-full bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
       {/* Left Side - Chat Container */}
       <motion.div
-        className={`w-full md:w-[35%] flex items-stretch p-4 md:p-6 h-full max-h-full ${
+        className={`w-full md:w-[35%] flex items-stretch p-2 md:p-3 h-full max-h-full ${
           isMobile && showPreview ? 'hidden' : ''
         }`}
         animate={{ opacity: isMobile && showPreview ? 0 : (fadeOut ? 0 : 1) }}
@@ -179,13 +179,13 @@ export default function UIBuilderDemo() {
           boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
         }}>
           {/* Chat Header - Fixed */}
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex-shrink-0">
-            <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">BUILDER CHAT</h3>
-            <p className="text-xs text-gray-500 font-futura mt-1">Build anything with just conversation</p>
+          <div className="px-2.5 py-1.5 bg-gray-50 border-b border-gray-200 flex-shrink-0 rounded-t-xl">
+            <h3 className="text-xs font-bold text-gray-900 font-futura uppercase tracking-wide">BUILDER CHAT</h3>
+            <p className="text-[10px] text-gray-500 font-futura mt-0.5">Build anything with just conversation</p>
           </div>
 
           {/* Messages Area - Scrollable */}
-          <div className="flex-1 space-y-3 overflow-y-auto p-6">
+          <div className="flex-1 space-y-2 overflow-y-auto p-3">
           {/* User Message - Animates in */}
           {showUserMessage && (
             <motion.div
@@ -195,12 +195,12 @@ export default function UIBuilderDemo() {
               transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 20 }}
               className="flex flex-col items-end"
             >
-              <div className="bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-2xl max-w-[90%] text-sm font-futura shadow-sm">
+              <div className="bg-white border border-gray-200 text-gray-900 px-2.5 py-1.5 rounded-lg max-w-[90%] text-[11px] font-futura shadow-sm leading-snug">
                 {currentExampleData.userMessage}
               </div>
-              <div className="flex items-center gap-2 mt-2 text-xs text-gray-400 font-futura">
+              <div className="flex items-center gap-1.5 mt-1 text-[10px] text-gray-400 font-futura">
                 <span>Oct 21, 10:00 AM</span>
-                <svg className="w-3.5 h-3.5 hover:text-gray-600 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-2.5 h-2.5 hover:text-gray-600 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -209,27 +209,39 @@ export default function UIBuilderDemo() {
 
           {/* Building Progress Steps - always show when building stage > 0 */}
           {buildingStage > 0 && (
-            <div className="space-y-2 mt-4">
+            <div className="space-y-1 mt-2">
               {currentExampleData.buildingSteps.slice(0, buildingStage).map((step, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="flex items-center gap-2 text-xs font-futura"
+                  className="flex items-center gap-1.5 text-[10px] font-futura"
                 >
                   {!showFinalResponse && index === buildingStage - 1 ? (
                     <>
-                      <div className="flex gap-1">
-                        <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <div className="flex items-center gap-0.5">
+                        {[0, 1, 2, 3, 4].map((i) => (
+                          <motion.div
+                            key={i}
+                            className="w-0.5 bg-waygent-blue rounded-full"
+                            animate={{
+                              height: [4, 8, 4],
+                            }}
+                            transition={{
+                              duration: 0.8,
+                              repeat: Infinity,
+                              delay: i * 0.1,
+                              ease: "easeInOut"
+                            }}
+                          />
+                        ))}
                       </div>
                       <span className="text-waygent-blue">{step}</span>
                     </>
                   ) : (
                     <>
-                      <span className="text-green-600">✓</span>
+                      <span className="text-green-600 text-[10px]">✓</span>
                       <span className="text-gray-500">{step}</span>
                     </>
                   )}
@@ -245,11 +257,11 @@ export default function UIBuilderDemo() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="text-sm font-futura text-gray-700 leading-relaxed mt-3"
+                className="text-[11px] font-futura text-gray-700 leading-snug mt-1.5"
               >
                 {aiResponseText}
                 {showCursor && aiResponseText.length < currentExampleData.aiResponse.length && (
-                  <span className="inline-block w-0.5 h-4 bg-gray-900 ml-1 animate-pulse" />
+                  <span className="inline-block w-0.5 h-3 bg-gray-900 ml-0.5 animate-pulse" />
                 )}
               </motion.div>
 
@@ -258,14 +270,14 @@ export default function UIBuilderDemo() {
           </div>
 
           {/* Input Area - Fixed at bottom */}
-          <div className="relative p-6 pt-0 flex-shrink-0">
+          <div className="relative px-2.5 pb-2.5 pt-0 flex-shrink-0">
             <input
               type="text"
-              placeholder="Describe your business or ask questions..."
-              className="w-full px-4 py-3 pr-12 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
+              placeholder="Describe your business..."
+              className="w-full px-2 py-1 pr-7 rounded-md bg-gray-50 border border-gray-200 text-[11px] text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
             />
-            <button className="absolute right-9 top-3 text-gray-400 hover:text-waygent-blue transition-colors">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button className="absolute right-3.5 top-1 text-gray-400 hover:text-waygent-blue transition-colors">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
             </button>
@@ -275,7 +287,7 @@ export default function UIBuilderDemo() {
 
       {/* Right Side - Preview */}
       <motion.div
-        className={`w-full md:w-[65%] flex flex-col items-center justify-center p-4 md:p-6 h-full max-h-full ${
+        className={`w-full md:w-[65%] flex flex-col items-center justify-center p-2 md:p-3 h-full max-h-full ${
           isMobile && !showPreview ? 'hidden' : ''
         }`}
         initial={{ opacity: 0 }}

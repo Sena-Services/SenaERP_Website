@@ -202,7 +202,7 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
       >
         <div className="relative mx-auto w-full max-w-7xl">
           {/* Builder Header - Always Visible */}
-          <div className="mb-12 bg-waygent-cream pt-4 text-center">
+          <div className="mb-12 pt-4 text-center">
             <h2
               className="text-4xl md:text-5xl lg:text-6xl"
               style={{
@@ -217,7 +217,7 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
           </div>
 
           {/* Mobile Layout - Simple vertical cards */}
-          <div className="flex flex-col lg:hidden bg-waygent-cream space-y-8 pb-12">
+          <div className="flex flex-col lg:hidden space-y-8 pb-12">
             {showcaseSteps.map((step, index) => (
               <div key={step.id} className="flex flex-col space-y-4">
                 {/* Mobile Image for each step */}
@@ -258,9 +258,9 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
           {/* Desktop Layout - Side by side */}
           <div className="hidden lg:flex flex-row h-[calc(100vh-140px)]">
             {/* Left Side - Scrollable Content */}
-            <div className="w-[30%] flex flex-col bg-waygent-cream">
+            <div className="w-[30%] flex flex-col">
               {/* Sticky Header with Dynamic Subtitle */}
-              <div className="bg-waygent-cream pb-4 px-8 border-b border-gray-200/50">
+              <div className="pb-4 px-8 border-b border-gray-200/50">
                 {/* Dynamic Second Line - Changes on Scroll */}
                 <AnimatePresence mode="wait">
                   <motion.h3
@@ -319,7 +319,7 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
             </div>
 
             {/* Right Side - Static Image Display */}
-            <div className="w-[70%] flex items-center justify-center px-8 py-8 bg-waygent-cream">
+            <div className="w-[70%] flex items-center justify-center px-8 py-8">
               <motion.div
                 key={activeStep.id}
                 initial={{ opacity: 0, scale: 0.95 }}
