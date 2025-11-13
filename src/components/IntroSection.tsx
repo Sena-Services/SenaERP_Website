@@ -7,7 +7,7 @@ import IntroContent from "./IntroContent";
 const SHRINK_SCROLL_DISTANCE = 900;
 const SPLIT_SCROLL_DISTANCE = 400; // Distance to split into 3 cards
 const ROTATE_SCROLL_DISTANCE = 800; // Distance to flip cards 180 degrees
-const EXTRA_HOLD_DISTANCE = 340;
+const EXTRA_HOLD_DISTANCE = 50; // Minimal hold to ensure animations complete, then scroll continues
 
 type ExpandedCard = "left" | "center" | "right" | null;
 
