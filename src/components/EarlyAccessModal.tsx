@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG } from "@/lib/config";
 
@@ -20,8 +21,14 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,16 +76,17 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
     });
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
+        className="fixed inset-0 bg-black/60 backdrop-blur-md"
       />
 
-      {/* Modal */}
-      <div className="relative bg-white rounded-2xl sm:rounded-[32px] shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      {/* Centering container */}
+      <div className="flex min-h-full items-center justify-center p-4">
+        {/* Modal */}
+        <div className="relative bg-white rounded-2xl sm:rounded-[32px] shadow-2xl max-w-4xl w-full overflow-hidden">
         <div className="grid md:grid-cols-2 gap-0">
           {/* Left side - Image */}
           <div className="relative hidden md:block bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9] min-h-[500px]">
@@ -230,7 +238,10 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
             </form>
           </div>
         </div>
+        </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
