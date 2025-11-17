@@ -461,6 +461,17 @@ export default function Home() {
 
     window.addEventListener('triggerIntroSequence', handleTriggerIntro);
 
+    // Listen for scroll animation trigger from arrow button
+    const handleScrollAnimation = () => {
+      const points = getSnapPoints();
+      // Only trigger if we're at the initial position (home screen)
+      if (window.scrollY < points.unitedCard) {
+        playIntroSequence(points, true);
+      }
+    };
+
+    window.addEventListener('triggerScrollAnimation', handleScrollAnimation);
+
     // Listen for resetHome event from sidebar/button to unlock home
     const handleResetHome = () => {
       // Unlock the animations first
@@ -515,6 +526,7 @@ export default function Home() {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('triggerIntroSequence', handleTriggerIntro);
+      window.removeEventListener('triggerScrollAnimation', handleScrollAnimation);
       window.removeEventListener('resetHome', handleResetHome);
       clearInterval(scrollMonitorId);
       if (directionLockTimeout) {

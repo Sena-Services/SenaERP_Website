@@ -207,7 +207,6 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
     }
 
-    console.log(`Clicking ${id}, current scrollY: ${window.scrollY}, target: ${targetPosition}`);
 
     // Instant jump - no animations
     window.scrollTo({
@@ -215,11 +214,9 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       behavior: "auto",
     });
 
-    console.log(`After scroll, scrollY: ${window.scrollY}, isNavigating: ${isNavigatingRef.current}`);
 
     // Re-enable detection after navigation completes
     setTimeout(() => {
-      console.log(`Re-enabling detection, current scrollY: ${window.scrollY}`);
       isNavigatingRef.current = false;
     }, 1000);
   };

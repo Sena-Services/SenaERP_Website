@@ -37,7 +37,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   };
 
   // Calculate responsive padding values - middle ground
-  const topPadding = isMobile ? 16 : getScaledValue(50);
+  const topPadding = isMobile ? 16 : getScaledValue(15);
   const bottomPadding = isMobile ? 16 : getScaledValue(77);
 
   return (
@@ -68,16 +68,49 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         zIndex: 10,
       }}
     >
-      <div style={{ marginBottom: `${getScaledValue(23)}px` }}>
+      <div style={{
+        marginBottom: `${getScaledValue(15)}px`,
+        paddingBottom: `${getScaledValue(15)}px`,
+        position: 'relative'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${getScaledValue(8)}px`,
+          marginBottom: `${getScaledValue(8)}px`
+        }}>
+          <img
+            src="/logo.png"
+            alt="Sena"
+            style={{
+              width: isMobile ? '32px' : `${getScaledValue(40)}px`,
+              height: isMobile ? '32px' : `${getScaledValue(40)}px`,
+              objectFit: 'contain',
+              filter: 'brightness(0) saturate(100%) invert(52%) sepia(18%) saturate(645%) hue-rotate(357deg) brightness(92%) contrast(87%)'
+            }}
+          />
+          <span style={{
+            fontFamily: "Georgia, serif",
+            fontSize: isMobile ? '0.875rem' : `${getScaledValue(16)}px`,
+            color: "#8b7355",
+            textTransform: 'uppercase',
+            letterSpacing: '0.15em',
+            fontWeight: 600
+          }}>
+            Sena
+          </span>
+        </div>
         <h1
           style={{
-            fontFamily: "Georgia, serif",
-            color: "#2C1810",
-            fontSize: isMobile ? '1.5rem' : `${getScaledValue(46)}px`,
-            fontWeight: 'bold',
-            letterSpacing: '-0.02em',
-            marginBottom: `${getScaledValue(11)}px`,
-            lineHeight: 1.15,
+            fontFamily: "Edwardian Script ITC, Lucida Handwriting, cursive",
+            color: "#8b7355",
+            fontSize: isMobile ? '2.75rem' : `${getScaledValue(58)}px`,
+            fontWeight: 400,
+            letterSpacing: '0.015em',
+            marginBottom: `${getScaledValue(8)}px`,
+            lineHeight: 1.3,
+            textRendering: 'optimizeLegibility',
+            WebkitFontSmoothing: 'antialiased',
           }}
         >
           Compose your business like a painting
@@ -85,113 +118,76 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <p
           style={{
             fontFamily: "Georgia, serif",
-            color: "#5A4A3A",
-            fontStyle: "italic",
-            fontSize: isMobile ? '1rem' : `${getScaledValue(21)}px`,
-            marginTop: `${getScaledValue(7)}px`,
+            color: "#8b7355",
+            fontStyle: "normal",
+            fontSize: isMobile ? '0.875rem' : `${getScaledValue(18)}px`,
+            marginTop: `${getScaledValue(4)}px`,
+            lineHeight: 1.5,
+            letterSpacing: '0.02em',
+            fontWeight: 400,
           }}
         >
-          Every stroke deliberate. Every layer connected.
+          Craft your own ERP, from the ground up
         </p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: `${getScaledValue(15)}px` }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: `${getScaledValue(10)}px`, position: 'relative', marginTop: `${getScaledValue(15)}px`, paddingTop: `${getScaledValue(15)}px` }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: isMobile ? '100px' : `${getScaledValue(200)}px`,
+          height: '1px',
+          background: 'linear-gradient(to right, rgba(139, 115, 85, 0.6), transparent)'
+        }}></div>
         <p
           style={{
             fontFamily: "Georgia, serif",
-            color: "#3A3A3A",
-            fontSize: isMobile ? '0.875rem' : `${getScaledValue(18)}px`,
+            color: "#6b5d4f",
+            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
             lineHeight: 1.6,
           }}
         >
-          We believe software should be as expressive as art. Not locked in
-          rigid templates, not trapped in boxes someone else designed.
+          We believe your ERP should be a direct extension of how your business actually operates. Not locked into
+          rigid templates, never trapped in boxes someone else designed.
         </p>
 
         <p
           style={{
             fontFamily: "Georgia, serif",
-            color: "#3A3A3A",
-            fontSize: isMobile ? '0.875rem' : `${getScaledValue(18)}px`,
+            color: "#6b5d4f",
+            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
             lineHeight: 1.6,
           }}
         >
-          Sena is a canvas where your business takes shape—built from
-          composable pieces that adapt to your vision, orchestrated by AI
-          that understands your intent.
+          Sena is where that system is assembled from modular pieces: data models, workflows, screens, and AI agents,
+          all wired into the tools your team already uses.
+
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: `${getScaledValue(9)}px`, paddingTop: `${getScaledValue(7)}px` }}>
-          <div className="flex items-start" style={{ gap: `${getScaledValue(9)}px` }}>
-            <span style={{ fontFamily: "Georgia, serif", color: "#3A3A3A", fontSize: isMobile ? '0.75rem' : `${getScaledValue(16)}px`, lineHeight: "1.6" }}>•</span>
-            <p
-              className="flex-1"
-              style={{
-                fontFamily: "Georgia, serif",
-                color: "#3A3A3A",
-                fontSize: isMobile ? '0.75rem' : `${getScaledValue(16)}px`,
-                lineHeight: 1.6,
-              }}
-            >
-              Start with primitives (databases, workflows, UI components) and combine them like brushstrokes
-            </p>
-          </div>
-          <div className="flex items-start" style={{ gap: `${getScaledValue(9)}px` }}>
-            <span style={{ fontFamily: "Georgia, serif", color: "#3A3A3A", fontSize: isMobile ? '0.75rem' : `${getScaledValue(16)}px`, lineHeight: "1.6" }}>•</span>
-            <p
-              className="flex-1"
-              style={{
-                fontFamily: "Georgia, serif",
-                color: "#3A3A3A",
-                fontSize: isMobile ? '0.75rem' : `${getScaledValue(16)}px`,
-                lineHeight: 1.6,
-              }}
-            >
-              Describe what you need in natural language, and watch AI architect the solution
-            </p>
-          </div>
-          <div className="flex items-start" style={{ gap: `${getScaledValue(9)}px` }}>
-            <span style={{ fontFamily: "Georgia, serif", color: "#3A3A3A", fontSize: isMobile ? '0.75rem' : `${getScaledValue(16)}px`, lineHeight: "1.6" }}>•</span>
-            <p
-              className="flex-1"
-              style={{
-                fontFamily: "Georgia, serif",
-                color: "#3A3A3A",
-                fontSize: isMobile ? '0.75rem' : `${getScaledValue(16)}px`,
-                lineHeight: 1.6,
-              }}
-            >
-              Let intelligent agents handle the mundane while you focus on what matters
-            </p>
-          </div>
-        </div>
+        <p
+          style={{
+            fontFamily: "Georgia, serif",
+            color: "#6b5d4f",
+            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
+            lineHeight: 1.6,
+          }}
+        >
+          Choose from a marketplace of pre-built environments to jumpstart your build, or generate exactly what you need in real-time—on request.
+        </p>
 
-        <div style={{ marginTop: `${getScaledValue(19)}px`, paddingTop: `${getScaledValue(15)}px` }} className="border-t border-gray-400/30">
-          <div className="relative">
-            <div style={{
-              position: 'absolute',
-              top: `${getScaledValue(-23)}px`,
-              left: 0,
-              width: isMobile ? '40px' : `${getScaledValue(54)}px`,
-              height: '1px',
-              background: 'linear-gradient(to right, rgba(107, 114, 128, 0.6), transparent)'
-            }}></div>
-            <p
-              style={{
-                fontFamily: "Georgia, serif",
-                fontStyle: "italic",
-                color: "#4A3A2A",
-                fontSize: isMobile ? '0.875rem' : `${getScaledValue(18)}px`,
-                lineHeight: 1.6,
-              }}
-            >
-              From CRM to invoicing, analytics to automation—your entire
-              operating system, composed exactly as you envision it.
-            </p>
-          </div>
+        <div style={{ marginTop: `${getScaledValue(15)}px`, paddingTop: `${getScaledValue(15)}px`, position: 'relative' }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: isMobile ? '100px' : `${getScaledValue(200)}px`,
+            height: '1px',
+            background: 'linear-gradient(to left, rgba(139, 115, 85, 0.6), transparent)'
+          }}></div>
         </div>
       </div>
-
+{/* footer */}
       <div style={{
         position: isMobile ? 'relative' : 'absolute',
         bottom: isMobile ? undefined : `${getScaledValue(19)}px`,
@@ -205,9 +201,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: `${getScaledValue(11)}px`,
-            padding: isMobile ? '12px' : `${getScaledValue(22)}px`,
-            borderRadius: isMobile ? '8px' : `${getScaledValue(15)}px`,
+            gap: `${getScaledValue(9)}px`,
+            padding: isMobile ? '12px' : `${getScaledValue(16)}px`,
+            borderRadius: isMobile ? '8px' : `${getScaledValue(12)}px`,
             background: "rgba(255,255,255,0.15)",
             backdropFilter: "blur(12px)",
             border: "1px solid rgba(255,255,255,0.25)",
@@ -228,9 +224,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           <p
             style={{
               fontFamily: "Georgia, serif",
-              color: "#2C1810",
-              fontSize: isMobile ? '0.75rem' : `${getScaledValue(16)}px`,
-              lineHeight: 1.58,
+              color: "#6b5d4f",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
+              lineHeight: 1.6,
             }}
           >
             No rigid workflows. No endless configuration. No armies of
@@ -250,11 +246,15 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               Begin composing your masterpiece
             </p>
             <svg
-              className="text-gray-600 animate-bounce"
+              className="text-gray-600 animate-bounce cursor-pointer"
               style={{ width: `${getScaledValue(17)}px`, height: `${getScaledValue(17)}px` }}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              onClick={() => {
+                // Trigger the same animation sequence as scrolling
+                window.dispatchEvent(new CustomEvent('triggerScrollAnimation'));
+              }}
             >
               <path
                 strokeLinecap="round"

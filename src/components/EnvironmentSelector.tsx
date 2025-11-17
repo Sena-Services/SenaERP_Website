@@ -639,7 +639,6 @@ export default function EnvironmentSelector({
                         key={env.name}
                         data-environment-card={env.name}
                         onClick={() => {
-                          console.log('Card clicked:', env.name);
                           selectEnvironment(env.name);
                         }}
                         className={`group cursor-pointer environment-card ${
