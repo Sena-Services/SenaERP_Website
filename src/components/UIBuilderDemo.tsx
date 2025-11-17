@@ -165,7 +165,7 @@ export default function UIBuilderDemo() {
   }, [showFinalResponse]);
 
   return (
-    <div className="flex flex-col md:flex-row h-full w-full bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
+    <div className="flex flex-col md:flex-row h-full w-full bg-gradient-to-br from-blue-50/40 to-indigo-50/30 overflow-hidden md:rounded-2xl">
       {/* Left Side - Chat Container */}
       <motion.div
         className={`w-full md:w-[35%] flex items-stretch p-2 md:p-3 h-full max-h-full ${

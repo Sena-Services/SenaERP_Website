@@ -268,9 +268,10 @@ export default function DataBuilderDemo() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-gradient-to-br from-emerald-50/50 to-green-50/30 overflow-hidden p-2 md:p-4" style={{
+    <div className="flex flex-col h-full w-full overflow-hidden p-2 md:p-4" style={{
       scrollbarWidth: 'none',
-      msOverflowStyle: 'none'
+      msOverflowStyle: 'none',
+      backgroundColor: '#ECFDF5' // green-50 to match tab theme
     }}>
       {/* Request badge - appears first in stage 0 */}
       {stage >= 0 && !fadeOut && (

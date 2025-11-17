@@ -10,32 +10,31 @@ const getVideoHeightPercentage = () => {
   if (typeof window === 'undefined') return 50;
   const height = window.innerHeight;
 
-  // Very short screens (< 600px): 50% video, 50% content - sacrifice video to show all content
-  if (height < 600) return 50;
+  // Very short screens (< 600px): 45% video, 55% content - prioritize showing all content
+  if (height < 600) return 45;
 
-  // Short screens (600-720px): gradually increase from 50% to 55%
-  if (height < 720) {
-    return 50 + ((height - 600) / (720 - 600)) * 5;
+  // Short screens (600-680px): gradually increase from 45% to 50%
+  if (height < 680) {
+    return 45 + ((height - 600) / (680 - 600)) * 5;
   }
 
-  // Medium screens (720-740px): 55% video, 45% content
-  if (height < 740) return 55;
+  // Medium-short screens (680-740px): gradually increase from 50% to 55%
+  if (height < 740) {
+    return 50 + ((height - 680) / (740 - 680)) * 5;
+  }
 
-  // At 740px, jump to 62% video to push content down and increase image
-  if (height === 740) return 62;
-
-  // Transition zone (740-900px): gradually increase video from 62% to 68%
+  // Medium screens (740-900px): gradually increase from 55% to 60%
   if (height < 900) {
-    return 62 + ((height - 740) / (900 - 740)) * 6;
+    return 55 + ((height - 740) / (900 - 740)) * 5;
   }
 
-  // Large screens (900-1200px): gradually increase from 65% to 75%
+  // Large screens (900-1200px): gradually increase from 60% to 65%
   if (height < 1200) {
-    return 65 + ((height - 900) / (1200 - 900)) * 10;
+    return 60 + ((height - 900) / (1200 - 900)) * 5;
   }
 
-  // Very tall screens (1200px+): 75% video, 25% content - maximize video
-  return 75;
+  // Very tall screens (1200px+): 65% video, 35% content - more content space
+  return 65;
 };
 
 // Get card-specific color based on position (matching MobileHowItWorks)
@@ -385,13 +384,21 @@ export default function FlipCard({
         {/* Content section - hidden when expanded */}
         {!isExpanded && (
           <div
-            className="flex flex-col px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3 relative overflow-hidden"
+            className="flex flex-col px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3 relative overflow-y-auto"
             style={{
               height: `${100 - finalVideoHeight}%`,
               background: 'transparent',
               position: 'relative',
+              scrollbarWidth: 'none', // Firefox - hide scrollbar
+              msOverflowStyle: 'none', // IE/Edge - hide scrollbar
             }}
           >
+          {/* Hide scrollbar for Chrome/Safari */}
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           {/* Gentle gradient overlay at top of content for seamless transition */}
           <div
             className="absolute top-0 left-0 right-0 pointer-events-none"
@@ -434,21 +441,21 @@ export default function FlipCard({
 
           {/* Main description with styled keywords */}
           <p
-            className="leading-relaxed mb-1 sm:mb-1.5 relative z-10 text-[10px] sm:text-xs flex-shrink-0"
+            className="leading-relaxed mb-2 sm:mb-2 relative z-10 text-xs sm:text-sm flex-shrink-0"
             style={{
-              lineHeight: '1.4',
+              lineHeight: '1.5',
               fontWeight: 400,
               color: '#4B5563',
             }}
           >
             {position === "left" && (
               <>
-                Choose your path: have a conversation with Sena or tell her exactly what you need. Either way, it's <span style={{ color: getCardColor(position).hex }}>always business-friendly</span> with zero technical jargon.
+                Choose your path: have a conversation with Sena or tell it exactly what you need. Either way, it's <span style={{ color: getCardColor(position).hex }}>always business-friendly</span> with zero technical jargon.
               </>
             )}
             {position === "center" && (
               <>
-                Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and <span style={{ color: getCardColor(position).hex }}>iterate in real-time</span> until it's exactly right.
+                Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and ensure it's <span style={{ color: getCardColor(position).hex }}>exactly right</span>.
               </>
             )}
             {position === "right" && (
@@ -459,36 +466,36 @@ export default function FlipCard({
           </p>
 
           {/* Feature highlights - matte style, no scrolling, fill remaining space */}
-          <div className="space-y-1 sm:space-y-1.5 relative z-10 flex-1 overflow-hidden">
+          <div className="space-y-1.5 sm:space-y-2 relative z-10 flex-1 overflow-hidden">
             {position === "left" && (
               <>
                 {/* Two modes - simplified */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-1.5">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
                     <div
                       className="rounded-full"
                       style={{
-                        width: '4px',
-                        height: '4px',
+                        width: '5px',
+                        height: '5px',
                         flexShrink: 0,
                         background: getCardColor(position).hex,
                       }}
                     />
-                    <span className="font-semibold text-[9px] sm:text-[10px]" style={{ color: getCardColor(position).hex }}>DISCOVERY MODE</span>
-                    <span className="text-gray-500 text-[8px] sm:text-[9px]">Voice conversations</span>
+                    <span className="font-semibold text-[10px] sm:text-xs" style={{ color: getCardColor(position).hex }}>DISCOVERY MODE</span>
+                    <span className="text-gray-500 text-[9px] sm:text-[10px]">Voice conversations</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <div
                       className="rounded-full"
                       style={{
-                        width: '4px',
-                        height: '4px',
+                        width: '5px',
+                        height: '5px',
                         flexShrink: 0,
                         background: getCardColor(position).hex,
                       }}
                     />
-                    <span className="font-semibold text-[9px] sm:text-[10px]" style={{ color: getCardColor(position).hex }}>EXPRESS MODE</span>
-                    <span className="text-gray-500 text-[8px] sm:text-[9px]">Direct text input</span>
+                    <span className="font-semibold text-[10px] sm:text-xs" style={{ color: getCardColor(position).hex }}>EXPRESS MODE</span>
+                    <span className="text-gray-500 text-[9px] sm:text-[10px]">Direct text input</span>
                   </div>
                 </div>
               </>
@@ -498,52 +505,41 @@ export default function FlipCard({
               <>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">Live preview of all changes</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Live preview of all changes</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">Interactive workflow builder</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Interactive workflow builder</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">Unlimited iterations</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Unlimited iterations</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <div
-                    className="rounded-full mt-0.5 sm:mt-1"
-                    style={{
-                      width: '4px',
-                      height: '4px',
-                      flexShrink: 0,
-                      background: getCardColor(position).hex,
-                    }}
-                  />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">Full customization control</span>
-                </div>
+          
               </>
             )}
 
@@ -551,51 +547,51 @@ export default function FlipCard({
               <>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">One-click deployment</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">One-click deployment</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">Instant team access</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Instant team access</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">Cloud-hosted infrastructure</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Cloud-hosted infrastructure</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[9px] sm:text-[10px] leading-tight">Enterprise-grade security</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Enterprise-grade security</span>
                 </div>
               </>
             )}

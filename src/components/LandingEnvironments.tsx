@@ -271,7 +271,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   }, []);
 
   return (
-    <section ref={ref} id="environments" className="scroll-mt-24 pb-16">
+    <section ref={ref} id="environments" className="scroll-mt-24 pb-16" style={{ paddingTop: isMobile ? '16px' : '0' }}>
       {mounted && (
         <div
           className="relative mx-auto w-full"

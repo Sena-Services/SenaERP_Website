@@ -13,7 +13,7 @@ type Integration = {
 };
 
 const nativeIntegrations: Integration[] = [
-  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/images/whatsapp-img.png" },
+  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/images/whatsapp-img-2.png" },
   { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true, screenshot: "/images/instagram-img.png" },
   { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true, screenshot: "/images/email-img.png" },
 ];
@@ -86,7 +86,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
   };
 
   return (
-    <section ref={ref} id="integrations" className="scroll-mt-24 pb-8">
+    <section ref={ref} id="integrations" className="scroll-mt-24 pb-8" style={{ paddingTop: isMobile ? '16px' : '0' }}>
       <div
         className="relative mx-auto w-full"
         style={{
@@ -229,7 +229,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
               {/* Screenshot container - Left side */}
               <div className="flex justify-center md:w-2/3">
                 <div
-                  className={`relative overflow-hidden group/screenshot ${isMobile ? '' : 'bg-white'}`}
+                  className={`relative group/screenshot ${isMobile ? '' : 'bg-white'}`}
                   style={{
                     border: isMobile ? 'none' : '2px solid #9CA3AF',
                     borderRadius: isMobile ? '0' : '1rem',
@@ -237,7 +237,9 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    maxHeight: isMobile ? 'none' : 'min(480px, 50vh)'
+                    maxHeight: isMobile ? 'none' : 'min(600px, 60vh)',
+                    overflow: 'visible',
+                    padding: isMobile ? '0' : '16px'
                   }}
                 >
                 {/* Expand icon overlay */}
@@ -258,8 +260,8 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ duration: isMobile ? 0.8 : 0.6, ease: "easeInOut" }}
-                      className="flex items-center justify-center"
-                      style={{ maxHeight: isMobile ? 'none' : 'min(480px, 50vh)' }}
+                      className="flex items-center justify-center relative"
+                      style={{ maxHeight: isMobile ? 'none' : 'min(600px, 60vh)' }}
                     >
                       <img
                         src={activeIntegration.screenshot}
@@ -267,20 +269,124 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         className="h-auto cursor-pointer"
                         style={{
                           imageRendering: '-webkit-optimize-contrast',
-                          maxHeight: isMobile ? 'none' : 'min(480px, 50vh)',
+                          maxHeight: isMobile ? 'none' : 'min(600px, 60vh)',
                           width: 'auto',
                           display: 'block',
                           objectFit: 'contain'
                         }}
                         onClick={openGallery}
                       />
+
+                      {/* Animated Arrow Annotations - Only for WhatsApp on desktop */}
+                      {!isMobile && activeIntegration.id === 'whatsapp' && (
+                        <>
+                          {/* Arrow 1: Customer requirement (pointing to "Hi! What activities...") */}
+                          <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.8, duration: 0.5 }}
+                            className="absolute"
+                            style={{ top: '10%', right: '-350px' }}
+                          >
+                            <svg width="380" height="60" className="absolute" style={{ left: '-385px', top: '0' }}>
+                              <defs>
+                                <marker id="arrowhead1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                  <polygon points="0 0, 10 3, 0 6" fill="#25D366" />
+                                </marker>
+                              </defs>
+                              <motion.line
+                                x1="380"
+                                y1="30"
+                                x2="5"
+                                y2="30"
+                                stroke="#25D366"
+                                strokeWidth="2.5"
+                                markerEnd="url(#arrowhead1)"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ delay: 0.9, duration: 0.9, ease: "easeOut" }}
+                              />
+                            </svg>
+                            <div className="bg-green-50 border-2 border-green-500 rounded-lg px-3 py-2 shadow-lg" style={{ width: '240px' }}>
+                              <p className="text-xs font-bold text-green-900 mb-0.5">Customer Requirement Captured</p>
+                              <p className="text-[10px] text-green-700 leading-tight">Natural language query understood instantly</p>
+                            </div>
+                          </motion.div>
+
+                          {/* Arrow 2: AI Agent triggered (pointing to @travelbot command) */}
+                          <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 1.1, duration: 0.5 }}
+                            className="absolute"
+                            style={{ top: '31%', right: '-350px' }}
+                          >
+                            <svg width="320" height="60" className="absolute" style={{ left: '-325px', top: '0' }}>
+                              <defs>
+                                <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                  <polygon points="0 0, 10 3, 0 6" fill="#25D366" />
+                                </marker>
+                              </defs>
+                              <motion.line
+                                x1="320"
+                                y1="30"
+                                x2="5"
+                                y2="30"
+                                stroke="#25D366"
+                                strokeWidth="2.5"
+                                markerEnd="url(#arrowhead2)"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ delay: 1.2, duration: 0.75, ease: "easeOut" }}
+                              />
+                            </svg>
+                            <div className="bg-green-50 border-2 border-green-500 rounded-lg px-3 py-2 shadow-lg" style={{ width: '240px' }}>
+                              <p className="text-xs font-bold text-green-900 mb-0.5">AI Agent Triggered</p>
+                              <p className="text-[10px] text-green-700 leading-tight">Specialized bot retrieves relevant data</p>
+                            </div>
+                          </motion.div>
+
+                          {/* Arrow 3: Intelligent response (pointing to the detailed activities list) */}
+                          <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 1.4, duration: 0.5 }}
+                            className="absolute"
+                            style={{ top: '57%', right: '-350px' }}
+                          >
+                            <svg width="165" height="60" className="absolute" style={{ left: '-145px', top: '0' }}>
+                              <defs>
+                                <marker id="arrowhead3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                  <polygon points="0 0, 10 3, 0 6" fill="#25D366" />
+                                </marker>
+                              </defs>
+                              <motion.line
+                                x1="140"
+                                y1="30"
+                                x2="5"
+                                y2="30"
+                                stroke="#25D366"
+                                strokeWidth="2.5"
+                                markerEnd="url(#arrowhead3)"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ delay: 1.5, duration: 0.4, ease: "easeOut" }}
+                              />
+                            </svg>
+                            <div className="bg-green-50 border-2 border-green-500 rounded-lg px-3 py-2 shadow-lg" style={{ width: '240px' }}>
+                              <p className="text-xs font-bold text-green-900 mb-0.5">Intelligent Response Generated</p>
+                              <p className="text-[10px] text-green-700 leading-tight">Structured, comprehensive answer delivered</p>
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
                 </div>
               </div>
 
-              {/* Features list - Right side */}
+              {/* Features list - Right side (hidden for WhatsApp on desktop since we use arrows) */}
               <AnimatePresence mode="wait">
                 {activeIntegration && (
                   <motion.div
@@ -289,7 +395,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: isMobile ? 0.8 : 0.6, delay: 0.15, ease: "easeInOut" }}
-                    className={`${isMobile ? 'mt-1.5 w-full' : 'md:w-1/3'} flex flex-col gap-1.5`}
+                    className={`${isMobile ? 'mt-1.5 w-full' : 'md:w-1/3'} flex flex-col gap-1.5 ${!isMobile && activeIntegration.id === 'whatsapp' ? 'hidden' : ''}`}
                   >
                   {activeIntegration.id === 'whatsapp' && (
                     <>
@@ -313,17 +419,6 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         <div>
                           <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Order Processing</p>
                           <p className="text-[11px] md:text-xs text-gray-600 font-futura">Take orders directly via chat</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">24/7 Support</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Never miss a customer inquiry</p>
                         </div>
                       </div>
                     </>

@@ -150,20 +150,19 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                   fontWeight: 400,
                   letterSpacing: "-0.02em",
                   color: "#2C1810",
-                  fontSize: isMobile ? '36px' : '60px',
-                  marginBottom: isMobile ? '12px' : `${getResponsiveValue(8)}px`,
+                  fontSize: isMobile ? '32px' : '40px',
+                  marginBottom: isMobile ? '8px' : `${getResponsiveValue(8)}px`,
                   lineHeight: "1.2",
                 }}
               >
                 Join our team
               </h2>
               <p
-                className="font-futura mx-auto"
+                className="text-gray-700 font-futura mx-auto"
                 style={{
-                  color: '#4B5563',
                   maxWidth: isMobile ? '100%' : `${getResponsiveValue(576)}px`,
                   letterSpacing: "-0.01em",
-                  fontSize: isMobile ? '16px' : '24px',
+                  fontSize: isMobile ? '14px' : '16px',
                 }}
               >
                 Help us build the future of business software

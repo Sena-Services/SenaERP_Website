@@ -251,20 +251,14 @@ export default function Home() {
         }
       };
 
-      // BLOCK ALL UPWARD SCROLL if user has left home AND trying to go back into intro animations
-      // Only block if trying to scroll BELOW the rotated position (back into animations)
-      if (hasLeftHome && direction === 'up' && currentScrollY < points.rotated) {
+      // BLOCK ALL UPWARD SCROLL if user has left home AND at or approaching the boundary
+      if (hasLeftHome && direction === 'up' && currentScrollY <= points.rotated + 10) {
         blockScroll();
-        // Force scroll position to stay at minimum threshold
-        const minScroll = points.rotated;
-        if (window.scrollY < minScroll) {
-          window.scrollTo(0, minScroll);
-        }
         return;
       }
 
       // IMPORTANT: Allow completely normal scrolling after rotated position (How It Works)
-      if (currentScrollY > points.rotated + 50) {
+      if (currentScrollY > points.rotated + 10) {
         // Everything after How It Works is completely normal scrolling - no snapping at all
         return;
       }
@@ -506,19 +500,24 @@ export default function Home() {
 
     window.addEventListener('resetHome', handleResetHome);
 
-    // Continuous scroll position monitoring to prevent going above threshold
-    const monitorScrollPosition = () => {
+    // Use requestAnimationFrame for smooth clamping without jitter
+    let clampAnimationFrame: number | null = null;
+    const clampScrollPosition = () => {
       if (hasLeftHome) {
         const points = getSnapPoints();
         const minScroll = points.rotated;
-        if (window.scrollY < minScroll) {
+        const currentScroll = window.scrollY;
+
+        // If below threshold, clamp to minimum
+        if (currentScroll < minScroll) {
           window.scrollTo(0, minScroll);
         }
       }
+      clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
     };
 
-    // Monitor scroll position continuously
-    const scrollMonitorId = setInterval(monitorScrollPosition, 16); // ~60fps
+    // Start the clamping loop
+    clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
 
     return () => {
       window.removeEventListener('wheel', handleWheel);
@@ -528,7 +527,9 @@ export default function Home() {
       window.removeEventListener('triggerIntroSequence', handleTriggerIntro);
       window.removeEventListener('triggerScrollAnimation', handleScrollAnimation);
       window.removeEventListener('resetHome', handleResetHome);
-      clearInterval(scrollMonitorId);
+      if (clampAnimationFrame) {
+        cancelAnimationFrame(clampAnimationFrame);
+      }
       if (directionLockTimeout) {
         clearTimeout(directionLockTimeout);
       }
@@ -575,7 +576,7 @@ export default function Home() {
 
       {/* Section Divider between How It Works and Builder */}
       <div className="w-full" style={{
-        background: `linear-gradient(to bottom, #f9fafb 0%, #f9fafb 50%, #FAF9F5 50%, #FAF9F5 100%)`,
+        background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
         paddingTop: '8px',
         paddingBottom: '8px'
       }}>
@@ -592,30 +593,9 @@ export default function Home() {
       <div className="w-full relative z-1">
         <div className="flex min-h-screen flex-1 flex-col">
           <div className="flex-1 flex flex-col relative">
-            {/* Builder - Color 1 */}
-            <div id="builder" style={{ backgroundColor: '#FAF9F5' }}>
+            {/* Builder - Color 2 */}
+            <div id="builder" style={{ backgroundColor: '#F0EFE9' }}>
               <BuilderTabbed />
-            </div>
-
-            {/* Section Divider & Color Transition */}
-            <div className="w-full" style={{
-              background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
-              paddingTop: '8px',
-              paddingBottom: '8px'
-            }}>
-              <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300/40"></div>
-                </div>
-                <div className="relative px-4">
-                  <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Integrations - Color 2 */}
-            <div id="integrations" style={{ backgroundColor: '#F0EFE9' }}>
-              <IntegrationsSection ref={integrationsRef} />
             </div>
 
             {/* Section Divider & Color Transition */}
@@ -634,15 +614,36 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Environments - Color 1 */}
-            <div id="environments" style={{ backgroundColor: '#FAF9F5' }}>
+            {/* Integrations - Color 1 */}
+            <div id="integrations" style={{ backgroundColor: '#FAF9F5' }}>
+              <IntegrationsSection ref={integrationsRef} />
+            </div>
+
+            {/* Section Divider & Color Transition */}
+            <div className="w-full" style={{
+              background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+              paddingTop: '8px',
+              paddingBottom: '8px'
+            }}>
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300/40"></div>
+                </div>
+                <div className="relative px-4">
+                  <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Environments - Color 2 */}
+            <div id="environments" style={{ backgroundColor: '#F0EFE9' }}>
               <LandingEnvironments ref={environmentsRef} />
             </div>
           </div>
 
           {/* Section Divider & Color Transition */}
           <div className="w-full" style={{
-            background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+            background: `linear-gradient(to bottom, #F0EFE9 0%, #F0EFE9 50%, #FAF9F5 50%, #FAF9F5 100%)`,
             paddingTop: '8px',
             paddingBottom: '8px'
           }}>
@@ -656,8 +657,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Join Us - Color 2 */}
-          <div id="join-us" style={{ backgroundColor: '#F0EFE9' }}>
+          {/* Join Us - Color 1 */}
+          <div id="join-us" style={{ backgroundColor: '#FAF9F5' }}>
             <JoinUsSection ref={joinUsRef} />
           </div>
         </div>

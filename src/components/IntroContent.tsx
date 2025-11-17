@@ -38,7 +38,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
 
   // Calculate responsive padding values - middle ground
   const topPadding = isMobile ? 16 : getScaledValue(15);
-  const bottomPadding = isMobile ? 16 : getScaledValue(77);
+  const bottomPadding = isMobile ? 120 : getScaledValue(77); // Large bottom padding on mobile to clear phone nav bar
 
   return (
     <div
@@ -160,7 +160,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             lineHeight: 1.6,
           }}
         >
-          Sena is where that system is assembled from modular pieces: data models, workflows, screens, and AI agents,
+          Sena is where that system is assembled from modular pieces: data models, workflows, interfaces, and AI agents,
           all wired into the tools your team already uses.
 
         </p>

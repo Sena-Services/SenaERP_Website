@@ -28,12 +28,14 @@ export default function MobileHowItWorks() {
           (entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
+                console.log(`Video ${idx + 1} in view, attempting to play`);
                 // Force load and play
                 video.load();
                 const playPromise = video.play();
                 if (playPromise !== undefined) {
                   playPromise
                     .then(() => {
+                      console.log(`Video ${idx + 1} playing successfully`);
                       video.playbackRate = 0.7;
                     })
                     .catch(err => console.log(`Video ${idx + 1} play error:`, err));
