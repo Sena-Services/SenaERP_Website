@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect, useRef, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
@@ -14,9 +14,9 @@ type Integration = {
 };
 
 const nativeIntegrations: Integration[] = [
-  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/images/whatsapp-img-2.png" },
-  { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true, screenshot: "/images/instagram-img.png" },
-  { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true, screenshot: "/images/email-img.png" },
+  { id: "whatsapp", name: "WhatsApp", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png", useColor: true, screenshot: "/images/whatsapp-img-3.png" },
+  { id: "instagram", name: "Instagram", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg", useColor: true, screenshot: "/images/instagram-img-3.png" },
+  { id: "gmail", name: "Gmail", iconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico", useColor: true, screenshot: "/images/email-img-3.png" },
 ];
 
 const thirdPartyIntegrations: Integration[] = [
@@ -38,6 +38,95 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
   const activeIntegration = integrations.find((int) => int.id === activeId && !int.disabled);
 
+  const imageRef = useRef<HTMLDivElement>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [arrowPositions, setArrowPositions] = useState({
+    arrow1: { top: '10%', right: '-350px' },
+    arrow2: { top: '31%', right: '-350px' },
+    arrow3: { top: '57%', right: '-350px' },
+  });
+  const [boxWidth, setBoxWidth] = useState(240);
+  const [arrowLength, setArrowLength] = useState({ arrow1: 380, arrow2: 320, arrow3: 165 });
+
+  const updateArrowPositions = () => {
+    const imageContainer = imageRef.current;
+    if (!imageContainer || isMobile || activeId !== 'whatsapp') {
+      return;
+    }
+
+    const rect = imageContainer.getBoundingClientRect();
+    const imageHeight = rect.height;
+    const imageWidth = rect.width;
+    const windowWidth = window.innerWidth;
+
+    if (imageHeight === 0) return;
+
+    // Hardcoded positions for different screen widths
+    let arrow1Top, arrow2Top, arrow3Top, arrowRight;
+
+    // Smooth scaling of arrow distance based on width
+    let boxWidthValue;
+
+    // Define anchor points in the image (as percentages of the original image dimensions)
+    // These are the EXACT points in the image where chat bubbles are located
+    // Measured from the original image at its natural size
+    const imageAnchors = {
+      bubble1: { topPercent: 0.12, leftPercent: 0.42 },  // First chat bubble "Hi! What activities..."
+      bubble2: { topPercent: 0.335, leftPercent: 0.42 }, // AI command bubble "@travelbot..."
+      bubble3: { topPercent: 0.60, leftPercent: 0.42 },  // Response bubble with activities list
+    };
+
+    // Calculate actual pixel positions of these anchors in the scaled image
+    const anchor1Top = imageHeight * imageAnchors.bubble1.topPercent;
+    const anchor2Top = imageHeight * imageAnchors.bubble2.topPercent;
+    const anchor3Top = imageHeight * imageAnchors.bubble3.topPercent;
+
+    // Position arrows to point at these anchors
+    arrow1Top = anchor1Top;
+    arrow2Top = anchor2Top;
+    arrow3Top = anchor3Top;
+
+    // Container position stays fixed at -350px so boxes don't move
+    arrowRight = 350;
+    boxWidthValue = 240;
+
+    // Arrow lengths scale with image width to reach from boxes to image edge
+    // At larger images, arrows need to be longer; at smaller images, shorter
+    const baseImageWidth = 800; // Reference width where arrows are perfectly sized
+    const widthScale = Math.min(imageWidth / baseImageWidth, 1);
+
+    let arrow1Length, arrow2Length, arrow3Length;
+
+    // Scale arrow lengths based on how much the image has scaled
+    arrow1Length = 250 + (130 * widthScale); // 250-380px range
+    arrow2Length = 200 + (120 * widthScale); // 200-320px range
+    arrow3Length = 250 + (60 * widthScale);  // 250-310px range
+
+    console.log('🎯 Arrow at width', windowWidth, ':', { arrow1Length, arrow2Length, arrow3Length });
+
+    setArrowPositions({
+      arrow1: {
+        top: `${arrow1Top}px`,
+        right: `-${arrowRight}px`
+      },
+      arrow2: {
+        top: `${arrow2Top}px`,
+        right: `-${arrowRight}px`
+      },
+      arrow3: {
+        top: `${arrow3Top}px`,
+        right: `-${arrowRight}px`
+      },
+    });
+
+    setBoxWidth(boxWidthValue);
+    setArrowLength({
+      arrow1: arrow1Length,
+      arrow2: arrow2Length,
+      arrow3: arrow3Length
+    });
+  };
+
   // Detect mobile on mount
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -45,6 +134,18 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Calculate arrow positions on resize and when image loads
+  useEffect(() => {
+    if (isMobile || activeId !== 'whatsapp') return;
+
+    updateArrowPositions();
+    window.addEventListener('resize', updateArrowPositions);
+
+    return () => {
+      window.removeEventListener('resize', updateArrowPositions);
+    };
+  }, [isMobile, activeId, imageLoaded]);
 
   // Auto-cycle through ONLY native integrations (excluding disabled ones)
   useEffect(() => {
@@ -226,7 +327,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             </AnimatePresence>
 
             {/* Screenshot and Features side by side */}
-            <div className="flex flex-col md:flex-row gap-4 xl:gap-6 items-center">
+            <div className="flex flex-col md:flex-row gap-4 xl:gap-6 items-start">
               {/* Screenshot container - Left side */}
               <div className="flex justify-center md:w-2/3">
                 <div
@@ -256,6 +357,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                 <AnimatePresence mode="wait">
                   {activeIntegration && (
                     <motion.div
+                      ref={imageRef}
                       key={activeIntegration.id}
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -279,118 +381,19 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                           objectFit: 'contain'
                         }}
                         onClick={openGallery}
+                        onLoad={() => {
+                          setImageLoaded(true);
+                          setTimeout(() => updateArrowPositions(), 50);
+                        }}
                       />
 
-                      {/* Animated Arrow Annotations - Only for WhatsApp on desktop */}
-                      {!isMobile && activeIntegration.id === 'whatsapp' && (
-                        <>
-                          {/* Arrow 1: Customer requirement (pointing to "Hi! What activities...") */}
-                          <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.8, duration: 0.5 }}
-                            className="absolute"
-                            style={{ top: '10%', right: '-350px' }}
-                          >
-                            <svg width="380" height="60" className="absolute" style={{ left: '-385px', top: '0' }}>
-                              <defs>
-                                <marker id="arrowhead1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                  <polygon points="0 0, 10 3, 0 6" fill="#25D366" />
-                                </marker>
-                              </defs>
-                              <motion.line
-                                x1="380"
-                                y1="30"
-                                x2="5"
-                                y2="30"
-                                stroke="#25D366"
-                                strokeWidth="2.5"
-                                markerEnd="url(#arrowhead1)"
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                                transition={{ delay: 0.9, duration: 0.9, ease: "easeOut" }}
-                              />
-                            </svg>
-                            <div className="bg-green-50 border-2 border-green-500 rounded-lg px-3 py-2 shadow-lg" style={{ width: '240px' }}>
-                              <p className="text-xs font-bold text-green-900 mb-0.5">Customer Requirement Captured</p>
-                              <p className="text-[10px] text-green-700 leading-tight">Natural language query understood instantly</p>
-                            </div>
-                          </motion.div>
-
-                          {/* Arrow 2: AI Agent triggered (pointing to @travelbot command) */}
-                          <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 1.1, duration: 0.5 }}
-                            className="absolute"
-                            style={{ top: '31%', right: '-350px' }}
-                          >
-                            <svg width="320" height="60" className="absolute" style={{ left: '-325px', top: '0' }}>
-                              <defs>
-                                <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                  <polygon points="0 0, 10 3, 0 6" fill="#25D366" />
-                                </marker>
-                              </defs>
-                              <motion.line
-                                x1="320"
-                                y1="30"
-                                x2="5"
-                                y2="30"
-                                stroke="#25D366"
-                                strokeWidth="2.5"
-                                markerEnd="url(#arrowhead2)"
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                                transition={{ delay: 1.2, duration: 0.75, ease: "easeOut" }}
-                              />
-                            </svg>
-                            <div className="bg-green-50 border-2 border-green-500 rounded-lg px-3 py-2 shadow-lg" style={{ width: '240px' }}>
-                              <p className="text-xs font-bold text-green-900 mb-0.5">AI Agent Triggered</p>
-                              <p className="text-[10px] text-green-700 leading-tight">Specialized bot retrieves relevant data</p>
-                            </div>
-                          </motion.div>
-
-                          {/* Arrow 3: Intelligent response (pointing to the detailed activities list) */}
-                          <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 1.4, duration: 0.5 }}
-                            className="absolute"
-                            style={{ top: '57%', right: '-350px' }}
-                          >
-                            <svg width="165" height="60" className="absolute" style={{ left: '-145px', top: '0' }}>
-                              <defs>
-                                <marker id="arrowhead3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                  <polygon points="0 0, 10 3, 0 6" fill="#25D366" />
-                                </marker>
-                              </defs>
-                              <motion.line
-                                x1="140"
-                                y1="30"
-                                x2="5"
-                                y2="30"
-                                stroke="#25D366"
-                                strokeWidth="2.5"
-                                markerEnd="url(#arrowhead3)"
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                                transition={{ delay: 1.5, duration: 0.4, ease: "easeOut" }}
-                              />
-                            </svg>
-                            <div className="bg-green-50 border-2 border-green-500 rounded-lg px-3 py-2 shadow-lg" style={{ width: '240px' }}>
-                              <p className="text-xs font-bold text-green-900 mb-0.5">Intelligent Response Generated</p>
-                              <p className="text-[10px] text-green-700 leading-tight">Structured, comprehensive answer delivered</p>
-                            </div>
-                          </motion.div>
-                        </>
-                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
                 </div>
               </div>
 
-              {/* Features list - Right side (hidden for WhatsApp on desktop since we use arrows) */}
+              {/* Features list - Right side */}
               <AnimatePresence mode="wait">
                 {activeIntegration && (
                   <motion.div
@@ -399,104 +402,176 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: isMobile ? 0.8 : 0.6, delay: 0.15, ease: "easeInOut" }}
-                    className={`${isMobile ? 'mt-1.5 w-full' : 'md:w-1/3'} flex flex-col gap-1.5 ${!isMobile && activeIntegration.id === 'whatsapp' ? 'hidden' : ''}`}
+                    className={`${isMobile ? 'mt-1.5 w-full' : 'md:w-1/3'} flex flex-col gap-2`}
+                    style={{ maxHeight: isMobile ? 'auto' : 'min(600px, 60vh)' }}
                   >
                   {activeIntegration.id === 'whatsapp' && (
                     <>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Auto-Reply</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Instant responses to customer messages</p>
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-green-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">24/7 Automated Response</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">AI agents instantly understand customer queries in natural language and respond immediately, eliminating wait times.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full">Real-time</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full">NLP</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
+
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-green-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">ERP Data Integration</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">Specialized bots pull live data from your ERP, CRM, and inventory systems to provide accurate, contextual responses.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full">Live Data</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full">Multi-Source</span>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Order Processing</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Take orders directly via chat</p>
+                      </div>
+
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-green-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">Smart Order Processing</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">Handle complete transactions via chat - from product inquiries to payment processing and order confirmation, all automated.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full">End-to-End</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full">Payments</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </>
                   )}
                   {activeIntegration.id === 'instagram' && (
                     <>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">DM Automation</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Reply to messages instantly</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Comment Responses</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Engage with every comment</p>
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-pink-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">DM & Comment Automation</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">AI responds to every DM and comment on your posts instantly, engaging followers 24/7 while maintaining your brand voice.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-pink-50 text-pink-700 rounded-full">Auto-Reply</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-pink-50 text-pink-700 rounded-full">Engagement</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
+
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-pink-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">Social Commerce</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">Convert followers into customers with AI-powered product recommendations, links to your shop, and seamless checkout experiences.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-pink-50 text-pink-700 rounded-full">Shopping</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-pink-50 text-pink-700 rounded-full">Sales</span>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Brand Voice</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Maintain consistent tone</p>
+                      </div>
+
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-pink-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">Lead Qualification</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">AI identifies high-intent users, captures contact information, and routes qualified leads to your sales team automatically.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-pink-50 text-pink-700 rounded-full">Lead Gen</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-pink-50 text-pink-700 rounded-full">CRM Sync</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </>
                   )}
                   {activeIntegration.id === 'gmail' && (
                     <>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Smart Replies</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">AI drafts context-aware responses</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Email Triage</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Prioritize urgent messages</p>
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">AI-Powered Inbox Management</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">Automatically categorize, prioritize, and route emails based on content, sender, and urgency using intelligent filters.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-full">Smart Sort</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-full">Auto-Tag</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-start gap-2 md:gap-2.5">
-                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
+
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">Context-Aware Auto-Replies</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">Generate personalized email responses using templates and customer data, maintaining professional tone across all communications.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-full">Templates</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-full">Personalized</span>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 font-futura">Meeting Scheduling</p>
-                          <p className="text-[11px] md:text-xs text-gray-600 font-futura">Coordinate calendars automatically</p>
+                      </div>
+
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-500 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">CRM Integration & Tracking</h4>
+                            <p className="text-[11px] text-gray-600 leading-snug mb-1.5">Every email interaction automatically syncs to your CRM, creating complete customer communication histories and touchpoint analytics.</p>
+                            <div className="flex flex-wrap gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-full">Auto-Sync</span>
+                              <span className="text-[9px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-full">Analytics</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </>
