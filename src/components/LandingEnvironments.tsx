@@ -346,7 +346,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           </div>
 
           {/* Right side - Content that changes on click */}
-          <div className="relative pt-8">
+          <div className="relative h-[480px] overflow-y-auto overflow-x-hidden custom-scrollbar pt-8 pr-3">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeEnvironment?.id || 'initial'}
@@ -403,11 +403,22 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
                 </div>
               ) : (
                 // Environment details (only shown on click)
-                <div className="space-y-3">
+                <div className="space-y-5">
+                  {/* Header */}
                   <div className="flex flex-col gap-2">
-                    <span className="text-[10px] uppercase tracking-[0.35em] text-waygent-blue font-semibold">
-                      {activeEnvironment.label}
-                    </span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase tracking-[0.35em] text-waygent-blue font-semibold">
+                        {activeEnvironment.label}
+                      </span>
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                        className="px-2.5 py-1 bg-green-100 border border-green-300 rounded-full"
+                      >
+                        <span className="text-[9px] font-bold text-green-700 uppercase tracking-wide">Production Ready</span>
+                      </motion.div>
+                    </div>
                     <h3 className="text-2xl font-semibold text-waygent-text-primary leading-tight">
                       Built for {activeEnvironment.label.toLowerCase()}.
                     </h3>
@@ -415,31 +426,138 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
                       {activeEnvironment.summary}
                     </p>
                   </div>
-                  <ul className="space-y-2 text-xs text-waygent-text-secondary">
-                    {activeEnvironment.bullets.map((bullet) => (
-                      <li key={bullet} className="flex items-start gap-2">
-                        <span className="mt-1 inline-flex h-1.5 w-1.5 flex-none rounded-full bg-waygent-blue" />
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
+
+                  {/* Metrics Grid - Animated */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {activeEnvironment.metrics.map((metric, idx) => {
+                      const getIcon = (iconName: string) => {
+                        switch(iconName) {
+                          case 'layout':
+                            return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" /></svg>;
+                          case 'zap':
+                            return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>;
+                          case 'cpu':
+                            return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>;
+                          case 'database':
+                            return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>;
+                          default:
+                            return null;
+                        }
+                      };
+
+                      return (
+                        <motion.div
+                          key={metric.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 + idx * 0.05, type: "spring", stiffness: 150 }}
+                          className="relative overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 shadow-sm hover:shadow-md transition-shadow group"
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="p-2 rounded-lg bg-waygent-blue/10 text-waygent-blue group-hover:bg-waygent-blue group-hover:text-white transition-colors">
+                              {getIcon(metric.icon)}
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-2xl font-bold text-gray-900">{metric.value}</div>
+                            <div className="text-xs text-gray-600 font-medium">{metric.label}</div>
+                          </div>
+                          {/* Progress bar animation */}
+                          <motion.div
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
+                            transition={{ delay: 0.3 + idx * 0.05, duration: 0.6, ease: "easeOut" }}
+                            className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-waygent-blue to-blue-400 origin-left"
+                            style={{ width: '100%' }}
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Feature Highlights */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100"
+                  >
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-waygent-blue mb-3 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Key Features
+                    </h4>
+                    <ul className="space-y-2.5 text-xs text-gray-700">
+                      {activeEnvironment.bullets.map((bullet, idx) => (
+                        <motion.li
+                          key={bullet}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.4 + idx * 0.08 }}
+                          className="flex items-start gap-2.5"
+                        >
+                          <span className="mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded-full bg-waygent-blue/20">
+                            <svg className="w-3 h-3 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </span>
+                          <span className="leading-relaxed">{bullet}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+
+                  {/* Deployment Info */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg"
+                  >
+                    <div className="flex-shrink-0">
+                      <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs font-semibold text-amber-900">Deploy in minutes</div>
+                      <div className="text-[10px] text-amber-700 mt-0.5">All components pre-configured and production-ready</div>
+                    </div>
+                  </motion.div>
+
+                  {/* CTA */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="flex flex-col gap-2 pt-2"
+                  >
                     <Link
                       href="/environment-selector"
-                      className="rounded-full bg-waygent-blue px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover hover:shadow-waygent-blue/35"
+                      className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-waygent-blue to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-waygent-blue/30 transition-all hover:shadow-xl hover:shadow-waygent-blue/40 hover:scale-[1.02]"
                     >
-                      Launch this environment
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Launch {activeEnvironment.label}
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
-                    <span className="text-xs text-waygent-text-muted">
-                      Fork it, remix it, or ask Sena to generate a new vertical.
-                    </span>
-                  </div>
+                    <p className="text-center text-[10px] text-gray-500">
+                      Fork it, customize it, or ask Sena to generate a new vertical
+                    </p>
+                  </motion.div>
                 </div>
               )}
             </motion.div>
           </AnimatePresence>
+          </div>
         </div>
-      </div>
       </div>
 
       {/* Mobile: Horizontal scrolling carousel */}
@@ -559,7 +677,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
         </div>
       </div>
 
-      {/* Add CSS to hide scrollbar */}
+      {/* Add CSS for scrollbars */}
       <style jsx>{`
         .hide-scrollbar {
           -ms-overflow-style: none;
@@ -567,6 +685,24 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
         }
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
+        }
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(156, 163, 175, 0.3);
+          border-radius: 2px;
+          transition: background 0.2s;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(107, 114, 128, 0.5);
         }
       `}</style>
     </section>

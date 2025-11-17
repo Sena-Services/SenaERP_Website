@@ -11,6 +11,8 @@ type BlogPost = {
   description: string;
   attachment?: string;
   blog_id?: string;
+  author?: string;
+  published_date?: string;
 };
 
 // Fallback data in case API fails
@@ -21,6 +23,8 @@ const fallbackBlogPosts: BlogPost[] = [
     title: "Why the next wave of ERPs is AI-first",
     description:
       "We break down the architectural shifts that make intelligence the new system of record.",
+    author: "Sena Team",
+    published_date: "2024-01-15",
   },
   {
     id: "customer-knowledge",
@@ -28,6 +32,8 @@ const fallbackBlogPosts: BlogPost[] = [
     title: "Scaling customer knowledge without chaos",
     description:
       "How ops teams centralize learnings so teams never go into meetings unprepared.",
+    author: "Sena Team",
+    published_date: "2024-01-10",
   },
   {
     id: "reliable-automations",
@@ -35,6 +41,8 @@ const fallbackBlogPosts: BlogPost[] = [
     title: "Designing reliable automations",
     description:
       "Our framework for building playbooks that operators actually trust day-to-day.",
+    author: "Sena Team",
+    published_date: "2024-01-05",
   },
 ];
 
@@ -76,13 +84,13 @@ function BlogVisual({
   }, [isHovered, isActive, isVideo]);
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#f6efe4] aspect-[5/4]">
+    <div className="relative w-full h-full overflow-hidden bg-[#f6efe4]">
       {attachment ? (
         isVideo ? (
           <video
             ref={videoRef}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-              isHovered || isActive ? "opacity-100" : "opacity-50"
+              isHovered || isActive ? "opacity-100" : "opacity-70"
             }`}
             loop
             muted
@@ -95,12 +103,16 @@ function BlogVisual({
             src={attachment}
             alt="Blog visual"
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-              isHovered || isActive ? "opacity-100" : "opacity-50"
+              isHovered || isActive ? "opacity-100" : "opacity-70"
             }`}
+            onError={(e) => {
+              // If image fails to load, hide it
+              e.currentTarget.style.display = 'none';
+            }}
           />
         )
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+        <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
           No media
         </div>
       )}
@@ -114,6 +126,20 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
   const [loading, setLoading] = React.useState(true);
   const [activeCardIndex, setActiveCardIndex] = React.useState<number>(1); // Start with second card active
   const carouselRef = React.useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [scrollPosition, setScrollPosition] = React.useState(0);
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false);
+  const [canScrollRight, setCanScrollRight] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const [isTransitioning, setIsTransitioning] = React.useState(false);
+  const [slideDirection, setSlideDirection] = React.useState<'left' | 'right'>('right');
+
+  React.useEffect(() => {
+    setIsMobile(window.innerWidth < 1024);
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   React.useEffect(() => {
     // Fetch blog posts from the custom Website Blog API
@@ -142,6 +168,8 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
             title: blog.title,
             description: blog.description || '',
             attachment: getFileUrl(blog.attachment),
+            author: blog.author || blog.owner || 'Sena Team',
+            published_date: blog.published_date || blog.creation || new Date().toISOString().split('T')[0],
           }));
           setBlogPosts(blogs.length > 0 ? blogs : fallbackBlogPosts);
         } else {
@@ -191,34 +219,43 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
     }
   }, [loading, blogPosts]);
 
-  // Detect which card is centered on scroll
+  // Detect which card is centered on scroll and update scroll indicators
   React.useEffect(() => {
     const carousel = carouselRef.current;
     if (!carousel) return;
 
     const handleScroll = () => {
-      // Only on mobile/tablet
-      if (window.innerWidth >= 768) return;
+      // Update scroll indicators for desktop
+      if (window.innerWidth >= 768) {
+        const scrollLeft = carousel.scrollLeft;
+        const scrollWidth = carousel.scrollWidth;
+        const clientWidth = carousel.clientWidth;
 
-      const cards = carousel.querySelectorAll('article');
-      const carouselRect = carousel.getBoundingClientRect();
-      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+        setCanScrollLeft(scrollLeft > 10);
+        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+        setScrollPosition(scrollLeft);
+      } else {
+        // Mobile card detection
+        const cards = carousel.querySelectorAll('article');
+        const carouselRect = carousel.getBoundingClientRect();
+        const carouselCenter = carouselRect.left + carouselRect.width / 2;
 
-      let closestIndex = 0;
-      let closestDistance = Infinity;
+        let closestIndex = 0;
+        let closestDistance = Infinity;
 
-      cards.forEach((card, index) => {
-        const cardRect = card.getBoundingClientRect();
-        const cardCenter = cardRect.left + cardRect.width / 2;
-        const distance = Math.abs(cardCenter - carouselCenter);
+        cards.forEach((card, index) => {
+          const cardRect = card.getBoundingClientRect();
+          const cardCenter = cardRect.left + cardRect.width / 2;
+          const distance = Math.abs(cardCenter - carouselCenter);
 
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
-        }
-      });
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestIndex = index;
+          }
+        });
 
-      setActiveCardIndex(closestIndex);
+        setActiveCardIndex(closestIndex);
+      }
     };
 
     // Initial check
@@ -234,38 +271,41 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
   }, [loading, blogPosts]);
 
   return (
-    <section
-      ref={ref}
-      id="blog"
-      className="scroll-mt-24 mt-32 sm:mt-48 px-4 sm:px-6 lg:px-8 overflow-visible"
-    >
+    <section ref={ref} id="blog" className="scroll-mt-24 pb-12" style={{ paddingTop: isMobile ? '16px' : '0' }}>
       <style jsx>{`
         .blog-carousel::-webkit-scrollbar {
           display: none;
         }
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
           .blog-carousel {
             padding-left: max(1rem, calc(50% - 140px));
             padding-right: max(1rem, calc(50% - 140px));
           }
         }
       `}</style>
-      <div className="relative mx-auto w-full max-w-7xl font-space-grotesk overflow-visible">
+      <div
+        className="relative mx-auto w-full"
+        style={{
+          maxWidth: isMobile ? '100%' : 'min(1280px, calc(100vw - 320px))',
+          paddingLeft: isMobile ? '16px' : 'max(16px, min(32px, 2vw))',
+          paddingRight: isMobile ? '16px' : 'max(16px, min(32px, 2vw))'
+        }}
+      >
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute -left-32 top-0 h-80 w-80 rounded-full bg-[#ffe7f1] opacity-50 blur-3xl" />
           <div className="absolute left-1/2 top-12 h-64 w-64 -translate-x-1/2 rounded-full bg-[#f6efe4] opacity-40 blur-3xl" />
           <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[#e5f0ff] opacity-45 blur-[110px]" />
         </div>
 
-        <div className="relative flex flex-col overflow-visible">
-          <div className="mb-12 text-center">
+        <div className="relative flex flex-col">
+          <div className="mt-4 mb-4 md:mb-6 text-center px-4 md:px-0">
             <h2
-              className="text-4xl md:text-5xl lg:text-6xl"
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontWeight: 400,
                 letterSpacing: "-0.02em",
                 color: "#2C1810",
+                fontSize: isMobile ? '32px' : '40px',
               }}
             >
               Blog
@@ -273,81 +313,220 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-waygent-text-secondary">Loading blog posts...</div>
+            <div className="flex items-center justify-center py-12 min-h-[400px]">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative w-16 h-16">
+                  <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-waygent-orange border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <p className="text-gray-600 font-space-grotesk text-sm">Loading blog posts...</p>
+              </div>
             </div>
           ) : (
+            <>
             <div
               ref={carouselRef}
-              className="blog-carousel flex gap-4 items-center md:items-stretch overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none mb-6 py-6 md:py-0"
+              className="blog-carousel overflow-hidden py-8 md:py-4 relative"
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
+                marginBottom: '1.5rem',
               }}
             >
-              {blogPosts.map((post, index) => {
-                const isActive = index === activeCardIndex;
-                return (
-                  <article
+              {/* Real Carousel - All pages laid out horizontally */}
+              <div
+                className="flex transition-transform duration-700 ease-in-out"
+                style={{
+                  transform: `translateX(-${currentPage * 100}%)`,
+                }}
+              >
+                {/* Create pages of 3 blogs each */}
+                {Array.from({ length: Math.ceil(blogPosts.length / 3) }).map((_, pageIndex) => (
+                  <div
+                    key={pageIndex}
+                    className="flex-shrink-0 w-full grid grid-cols-3 gap-4"
+                  >
+                    {blogPosts.slice(pageIndex * 3, (pageIndex * 3) + 3).map((post, index) => {
+                      const isActive = index === activeCardIndex;
+                      const formattedDate = post.published_date
+                        ? new Date(post.published_date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })
+                        : '';
+
+                      return (
+                        <Link
                     key={post.id}
-                    className={`flex flex-col overflow-hidden rounded-[24px] border bg-white text-waygent-text-primary shadow-lg transition-all duration-300 w-[280px] flex-shrink-0 snap-center md:snap-align-none hover:-translate-y-1 hover:shadow-xl ${
-                      isActive
-                        ? 'border-waygent-orange scale-105 md:scale-100 shadow-xl md:border-waygent-light-blue/40 md:opacity-100'
-                        : 'border-waygent-light-blue/40 opacity-60 md:opacity-100 scale-95 md:scale-100 hover:opacity-100'
+                    href={`/blog/${post.id}`}
+                    className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-white text-waygent-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer ${
+                      isMobile
+                        ? `w-[280px] flex-shrink-0 snap-center ${
+                            isActive
+                              ? 'border-waygent-orange scale-105 shadow-xl opacity-100'
+                              : 'border-waygent-light-blue/40 opacity-60 scale-95'
+                          }`
+                        : 'border-waygent-light-blue/40 hover:border-waygent-blue/40'
                     }`}
                     onMouseEnter={() => setHoveredCardId(post.id)}
                     onMouseLeave={() => setHoveredCardId(null)}
                   >
+                    {/* Image/Video Container - Perfect Square */}
+                    <div className="relative w-full aspect-square">
+                      <BlogVisual
+                        attachment={post.attachment}
+                        isHovered={hoveredCardId === post.id}
+                        isActive={isActive && typeof window !== 'undefined' && window.innerWidth < 768}
+                      />
 
-                  <BlogVisual
-                    attachment={post.attachment}
-                    isHovered={hoveredCardId === post.id}
-                    isActive={isActive && typeof window !== 'undefined' && window.innerWidth < 768}
-                  />
-                  <div className="flex flex-1 flex-col gap-2.5 border-t border-waygent-light-blue/30 px-4 py-3.5">
-                    <div className="flex flex-col gap-2 flex-1">
-                      <h3 className="text-[15px] font-bold text-waygent-text-primary leading-snug">
-                        {post.title}
-                      </h3>
-                      <p className="text-[12px] leading-relaxed text-waygent-text-secondary/90">
-                        {post.description}
-                      </p>
+                      {/* Subtle gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                      {/* Title and Metadata Overlay with Glassmorphic Effect */}
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        {/* Glassmorphic background - translucent with blur */}
+                        <div
+                          className="absolute inset-0 backdrop-blur-lg"
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.25)',
+                            borderBottomLeftRadius: '16px',
+                            borderBottomRightRadius: '16px',
+                            border: '1px solid rgba(255, 255, 255, 0.18)',
+                            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.15)'
+                          }}
+                        />
+
+                        {/* Text content with shadow for readability */}
+                        <div className="relative z-10">
+                          <h3
+                            className="text-white font-bold leading-tight mb-1.5 transition-all duration-300 group-hover:text-waygent-cream line-clamp-2"
+                            style={{
+                              fontFamily: "Georgia, 'Times New Roman', serif",
+                              fontSize: isMobile ? '14px' : '13px',
+                              letterSpacing: '-0.01em',
+                              textShadow: '0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.8)',
+                            }}
+                          >
+                            {post.title}
+                          </h3>
+
+                          {/* Author and Date - with text shadow */}
+                          <div
+                            className="flex items-center gap-2 text-white font-space-grotesk font-medium"
+                            style={{
+                              fontSize: '11px',
+                              textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)'
+                            }}
+                          >
+                            <span className="truncate">{post.author}</span>
+                            <span className="opacity-70">•</span>
+                            <span className="flex-shrink-0">{formattedDate}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <Link
-                      href={`/blog/${post.id}`}
-                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-waygent-blue transition hover:text-waygent-blue-hover mt-auto"
-                    >
-                      Read article →
-                    </Link>
+                        </Link>
+                      );
+                    })}
                   </div>
-                </article>
-                );
-              })}
+                ))}
+              </div>
+            </div>
 
-              {blogPosts.length > 4 && (
-                <div className="hidden md:flex items-center justify-center ml-8">
-                  <a
-                    href="#"
-                    className="group flex flex-col items-center gap-3 transition"
-                  >
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-waygent-text-primary/20 bg-white transition hover:border-waygent-text-primary hover:bg-waygent-text-primary">
+            {/* Navigation Arrows and Page Indicators */}
+            {!isMobile && blogPosts.length > 3 && (() => {
+              const blogsPerPage = 3; // 3 columns x 1 row
+              const totalPages = Math.ceil(blogPosts.length / blogsPerPage);
+              const hasPrevPage = currentPage > 0;
+              const hasNextPage = currentPage < totalPages - 1;
+
+              return (
+                <div className="flex flex-col items-center gap-3 mt-6">
+                  {/* Navigation Controls */}
+                  <div className="flex items-center justify-center gap-4">
+                    {/* Previous Arrow */}
+                    <button
+                      onClick={() => {
+                        if (hasPrevPage) {
+                          setCurrentPage(Math.max(0, currentPage - 1));
+                        }
+                      }}
+                      disabled={!hasPrevPage}
+                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                        hasPrevPage
+                          ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                          : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+                      }`}
+                      aria-label="Previous page"
+                    >
                       <svg
-                        className="h-5 w-5 transition group-hover:text-white"
+                        className="w-5 h-5"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        strokeWidth={2}
+                        strokeWidth={2.5}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+
+                    {/* Page Dots */}
+                    <div className="flex items-center gap-2">
+                      {Array.from({ length: totalPages }).map((_, pageIndex) => {
+                        const isActive = pageIndex === currentPage;
+                        return (
+                          <button
+                            key={pageIndex}
+                            onClick={() => {
+                              setCurrentPage(pageIndex);
+                            }}
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                              isActive
+                                ? 'bg-waygent-blue scale-125'
+                                : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                            }`}
+                            aria-label={`Go to page ${pageIndex + 1}`}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    {/* Next Arrow */}
+                    <button
+                      onClick={() => {
+                        if (hasNextPage) {
+                          setCurrentPage(Math.min(totalPages - 1, currentPage + 1));
+                        }
+                      }}
+                      disabled={!hasNextPage}
+                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                        hasNextPage
+                          ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                          : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+                      }`}
+                      aria-label="Next page"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
-                    </div>
-                    <span className="text-xs font-semibold text-waygent-text-secondary whitespace-nowrap">
-                      See more
-                    </span>
-                  </a>
+                    </button>
+                  </div>
+
+                  {/* Page Counter */}
+                  <div className="text-sm text-waygent-text-secondary font-space-grotesk">
+                    Page <span className="font-semibold text-waygent-text-primary">{currentPage + 1}</span> of <span className="font-semibold text-waygent-text-primary">{totalPages}</span>
+                  </div>
                 </div>
-              )}
-            </div>
+              );
+            })()}
+            </>
           )}
         </div>
       </div>

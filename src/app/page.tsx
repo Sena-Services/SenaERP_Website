@@ -7,7 +7,7 @@ import BuilderTabbed from "@/components/BuilderTabbed";
 import LandingEnvironments from "@/components/LandingEnvironments";
 import IntegrationsSection from "@/components/IntegrationsSection";
 // import PricingSection from "@/components/PricingSection";
-// import BlogSection from "@/components/BlogSection";
+import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
 import NavBar from "@/components/NavBar";
 import SidebarNav from "@/components/SidebarNav";
@@ -19,7 +19,7 @@ export default function Home() {
   const integrationsRef = useRef<HTMLElement>(null);
   const builderRef = useRef<HTMLDivElement>(null);
   // const pricingRef = useRef<HTMLElement>(null);
-  // const blogRef = useRef<HTMLElement>(null);
+  const blogRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
   const [showNavigation, setShowNavigation] = useState(false);
   const sidebarSections = [
@@ -28,8 +28,8 @@ export default function Home() {
     { id: "builder", label: "Builder" },
     { id: "integrations", label: "Integrations" },
     { id: "environments", label: "Environments" },
+    { id: "blog", label: "Blog" },
     // { id: "pricing", label: "Pricing" },
-    // { id: "blogs", label: "Blogs" },
     { id: "join-us", label: "Join Our Team" },
   ];
 
@@ -38,7 +38,7 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'environments' | 'join-us' | 'other'>('other');
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'environments' | 'blog' | 'join-us' | 'other'>('other');
 
   useEffect(() => {
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
@@ -66,11 +66,13 @@ export default function Home() {
         const builderEl = document.getElementById('builder');
         const integrationsEl = document.getElementById('integrations');
         const environmentsEl = document.getElementById('environments');
+        const blogEl = document.getElementById('blog');
         const joinUsEl = document.getElementById('join-us');
 
         // Get all section positions
         const sections = [
           { id: 'join-us', el: joinUsEl },
+          { id: 'blog', el: blogEl },
           { id: 'environments', el: environmentsEl },
           { id: 'integrations', el: integrationsEl },
           { id: 'builder', el: builderEl },
@@ -555,6 +557,7 @@ export default function Home() {
             showBuilder={currentSection === 'builder'}
             showIntegrations={currentSection === 'integrations'}
             showEnvironments={currentSection === 'environments'}
+            showBlog={currentSection === 'blog'}
             showJoinUs={currentSection === 'join-us'}
           />
         </div>
@@ -657,8 +660,29 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Join Us - Color 1 */}
-          <div id="join-us" style={{ backgroundColor: '#FAF9F5' }}>
+          {/* Blog - Color 1 */}
+          <div id="blog" style={{ backgroundColor: '#FAF9F5' }}>
+            <BlogSection ref={blogRef} />
+          </div>
+
+          {/* Section Divider & Color Transition */}
+          <div className="w-full" style={{
+            background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+            paddingTop: '8px',
+            paddingBottom: '8px'
+          }}>
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300/40"></div>
+              </div>
+              <div className="relative px-4">
+                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Join Us - Color 2 */}
+          <div id="join-us" style={{ backgroundColor: '#F0EFE9' }}>
             <JoinUsSection ref={joinUsRef} />
           </div>
         </div>

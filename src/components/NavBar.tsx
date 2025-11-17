@@ -21,6 +21,7 @@ const sections = [
   { id: "builder", label: "Builder" },
   { id: "integrations", label: "Integrations" },
   { id: "environments", label: "Environments" },
+  { id: "blog", label: "Blog" },
   { id: "join-us", label: "Join Us" },
 ];
 
@@ -29,10 +30,11 @@ type NavBarProps = {
   showBuilder?: boolean;
   showIntegrations?: boolean;
   showEnvironments?: boolean;
+  showBlog?: boolean;
   showJoinUs?: boolean;
 };
 
-export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showEnvironments = false, showJoinUs = false }: NavBarProps) {
+export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showEnvironments = false, showBlog = false, showJoinUs = false }: NavBarProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -464,6 +466,23 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                   }}
                 >
                   Environments
+                </h2>
+              </div>
+            )}
+
+            {showBlog && (
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "16px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Blog
                 </h2>
               </div>
             )}

@@ -279,7 +279,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className="group/item relative flex items-center gap-3 p-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer min-w-[40px] h-10 rounded-md"
+                      className="group/item relative flex items-center gap-3 p-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer w-[40px] group-hover:w-[160px] h-10 rounded-md"
                       style={{
                         background: isActive
                           ? '#8FB7C5'
