@@ -179,10 +179,10 @@ export default function AgentsBuilderDemo() {
   }, [showFinalResponse]);
 
   return (
-    <div className="flex flex-col md:flex-row h-[600px] max-h-[600px] bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
+    <div className="flex flex-col md:flex-row h-full w-full bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden md:rounded-2xl">
       {/* Left Side - Chat Container */}
       <motion.div
-        className={`w-full md:w-[35%] flex items-stretch p-4 md:p-6 h-full max-h-full ${
+        className={`w-full md:w-[35%] flex items-stretch p-2 md:p-3 h-full max-h-full ${
           isMobile && showPreview ? 'hidden' : ''
         }`}
         animate={{ opacity: isMobile && showPreview ? 0 : (fadeOut ? 0 : 1) }}
@@ -192,13 +192,13 @@ export default function AgentsBuilderDemo() {
           boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)'
         }}>
           {/* Chat Header */}
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-sm font-bold text-gray-900 font-futura uppercase tracking-wide">AGENTS BUILDER</h3>
-            <p className="text-xs text-gray-500 font-futura mt-1">Configure intelligent AI assistants</p>
+          <div className="px-2.5 py-1.5 bg-gray-50 border-b border-gray-200 rounded-t-xl flex-shrink-0">
+            <h3 className="text-xs font-bold text-gray-900 font-futura uppercase tracking-wide">AGENTS BUILDER</h3>
+            <p className="text-[10px] text-gray-500 font-futura mt-0.5">Configure intelligent AI assistants</p>
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 space-y-3 overflow-hidden p-6">
+          <div className="flex-1 space-y-2 overflow-hidden p-3">
             {/* User Message */}
             {showUserMessage && (
               <motion.div
@@ -208,10 +208,10 @@ export default function AgentsBuilderDemo() {
                 transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 20 }}
                 className="flex flex-col items-end"
               >
-                <div className="bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-2xl max-w-[90%] text-sm font-futura shadow-sm">
+                <div className="bg-white border border-gray-200 text-gray-900 px-2.5 py-1.5 rounded-lg max-w-[90%] text-[11px] font-futura shadow-sm leading-snug">
                   {currentExampleData.userMessage}
                 </div>
-                <div className="flex items-center gap-2 mt-2 text-xs text-gray-400 font-futura">
+                <div className="flex items-center gap-1.5 mt-1 text-[10px] text-gray-400 font-futura">
                   <span>Oct 21, 10:00 AM</span>
                 </div>
               </motion.div>
@@ -219,27 +219,39 @@ export default function AgentsBuilderDemo() {
 
             {/* Building Progress Steps */}
             {buildingStage > 0 && (
-              <div className="space-y-2 mt-4">
+              <div className="space-y-1 mt-2">
                 {currentExampleData.buildingSteps.slice(0, buildingStage).map((step, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="flex items-center gap-2 text-xs font-futura"
+                    className="flex items-center gap-1.5 text-[10px] font-futura"
                   >
                     {!showFinalResponse && index === buildingStage - 1 ? (
                       <>
-                        <div className="flex gap-1">
-                          <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <span className="w-1.5 h-1.5 bg-waygent-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        <div className="flex items-center gap-0.5">
+                          {[0, 1, 2, 3, 4].map((i) => (
+                            <motion.div
+                              key={i}
+                              className="w-0.5 bg-waygent-blue rounded-full"
+                              animate={{
+                                height: [4, 8, 4],
+                              }}
+                              transition={{
+                                duration: 0.8,
+                                repeat: Infinity,
+                                delay: i * 0.1,
+                                ease: "easeInOut"
+                              }}
+                            />
+                          ))}
                         </div>
                         <span className="text-waygent-blue">{step}</span>
                       </>
                     ) : (
                       <>
-                        <span className="text-green-600">✓</span>
+                        <span className="text-green-600 text-[10px]">✓</span>
                         <span className="text-gray-500">{step}</span>
                       </>
                     )}
@@ -254,25 +266,25 @@ export default function AgentsBuilderDemo() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="text-sm font-futura text-gray-700 leading-relaxed mt-3"
+                className="text-[11px] font-futura text-gray-700 leading-snug mt-1.5"
               >
                 {aiResponseText}
                 {showCursor && aiResponseText.length < currentExampleData.aiResponse.length && (
-                  <span className="inline-block w-0.5 h-4 bg-gray-900 ml-1 animate-pulse" />
+                  <span className="inline-block w-0.5 h-3 bg-gray-900 ml-0.5 animate-pulse" />
                 )}
               </motion.div>
             )}
           </div>
 
           {/* Input Area */}
-          <div className="relative p-6 pt-0">
+          <div className="relative px-2.5 pb-2.5 pt-0 flex-shrink-0">
             <input
               type="text"
               placeholder="Describe your agent..."
-              className="w-full px-4 py-3 pr-12 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
+              className="w-full px-2 py-1 pr-7 rounded-md bg-gray-50 border border-gray-200 text-[11px] text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
             />
-            <button className="absolute right-9 top-3 text-gray-400 hover:text-waygent-blue transition-colors">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button className="absolute right-3.5 top-1 text-gray-400 hover:text-waygent-blue transition-colors">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
             </button>
@@ -282,7 +294,7 @@ export default function AgentsBuilderDemo() {
 
       {/* Right Side - Agent Configuration Preview */}
       <motion.div
-        className={`w-full md:w-[65%] flex items-center justify-center p-4 md:p-6 md:pl-0 h-full max-h-full overflow-y-auto ${
+        className={`w-full md:w-[65%] flex items-center justify-center p-2 md:p-3 md:pl-0 h-full max-h-full overflow-hidden ${
           isMobile && !showPreview ? 'hidden' : ''
         }`}
         initial={{ opacity: 0 }}
@@ -290,46 +302,46 @@ export default function AgentsBuilderDemo() {
         transition={{ duration: 0.5 }}
       >
         {buildingStage > 0 ? (
-          <div className="w-full max-w-2xl space-y-3 py-4">
+          <div className="w-full max-w-2xl space-y-1.5 py-1">
             {/* Agent Card Header */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: buildingStage >= 1 ? 1 : 0, y: buildingStage >= 1 ? 0 : 20 }}
               transition={{ duration: 0.5 }}
-              className="bg-white rounded-xl shadow-lg border border-gray-200 p-4"
+              className="bg-white rounded-md shadow-lg border border-gray-200 p-1.5"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-waygent-blue/10 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-1.5">
+                <div className="w-6 h-6 rounded-md bg-waygent-blue/10 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-3 h-3 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-futura font-bold text-base text-gray-900">{currentExampleData.agentName}</h3>
-                  <p className="text-xs text-gray-500 font-futura">AI Agent • Active</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-futura font-bold text-[10px] text-gray-900 truncate">{currentExampleData.agentName}</h3>
+                  <p className="text-[8px] text-gray-500 font-futura">AI Agent • Active</p>
                 </div>
-                <div className="px-2.5 py-1 bg-green-50 border border-green-200 rounded-md">
-                  <span className="text-[10px] font-futura font-semibold text-green-700 uppercase">Live</span>
+                <div className="px-1 py-0.5 bg-green-50 border border-green-200 rounded flex-shrink-0">
+                  <span className="text-[8px] font-futura font-semibold text-green-700 uppercase">Live</span>
                 </div>
               </div>
             </motion.div>
 
             {/* Configuration Cards Grid */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-1.5">
               {/* Personality */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: buildingStage >= 1 ? 1 : 0, scale: buildingStage >= 1 ? 1 : 0.9 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="bg-white rounded-lg border border-gray-200 p-3"
+                className="bg-white rounded-md border border-gray-200 p-1.5"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="text-[10px] font-futura font-semibold text-gray-700 uppercase">Personality</span>
+                  <span className="text-[8px] font-futura font-semibold text-gray-700 uppercase">Personality</span>
                 </div>
-                <p className="text-xs font-futura text-gray-900">{currentExampleData.agentConfig.personality}</p>
+                <p className="text-[9px] font-futura text-gray-900">{currentExampleData.agentConfig.personality}</p>
               </motion.div>
 
               {/* Response Length */}
@@ -337,15 +349,15 @@ export default function AgentsBuilderDemo() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: buildingStage >= 2 ? 1 : 0, scale: buildingStage >= 2 ? 1 : 0.9 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="bg-white rounded-lg border border-gray-200 p-3"
+                className="bg-white rounded-md border border-gray-200 p-1.5"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
                   </svg>
-                  <span className="text-[10px] font-futura font-semibold text-gray-700 uppercase">Response Length</span>
+                  <span className="text-[8px] font-futura font-semibold text-gray-700 uppercase">Response Length</span>
                 </div>
-                <p className="text-xs font-futura text-gray-900">{currentExampleData.agentConfig.responseLength}</p>
+                <p className="text-[9px] font-futura text-gray-900">{currentExampleData.agentConfig.responseLength}</p>
               </motion.div>
 
               {/* Creativity */}
@@ -353,15 +365,15 @@ export default function AgentsBuilderDemo() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: buildingStage >= 2 ? 1 : 0, scale: buildingStage >= 2 ? 1 : 0.9 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="bg-white rounded-lg border border-gray-200 p-3"
+                className="bg-white rounded-md border border-gray-200 p-1.5"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
-                  <span className="text-[10px] font-futura font-semibold text-gray-700 uppercase">Creativity</span>
+                  <span className="text-[8px] font-futura font-semibold text-gray-700 uppercase">Creativity</span>
                 </div>
-                <p className="text-xs font-futura text-gray-900">{currentExampleData.agentConfig.creativity}</p>
+                <p className="text-[9px] font-futura text-gray-900">{currentExampleData.agentConfig.creativity}</p>
               </motion.div>
 
               {/* Style */}
@@ -369,15 +381,15 @@ export default function AgentsBuilderDemo() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: buildingStage >= 2 ? 1 : 0, scale: buildingStage >= 2 ? 1 : 0.9 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
-                className="bg-white rounded-lg border border-gray-200 p-3"
+                className="bg-white rounded-md border border-gray-200 p-1.5"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                   </svg>
-                  <span className="text-[10px] font-futura font-semibold text-gray-700 uppercase">Style</span>
+                  <span className="text-[8px] font-futura font-semibold text-gray-700 uppercase">Style</span>
                 </div>
-                <p className="text-xs font-futura text-gray-900">{currentExampleData.agentConfig.style}</p>
+                <p className="text-[9px] font-futura text-gray-900">{currentExampleData.agentConfig.style}</p>
               </motion.div>
             </div>
 
@@ -386,17 +398,17 @@ export default function AgentsBuilderDemo() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: buildingStage >= 3 ? 1 : 0, y: buildingStage >= 3 ? 0 : 20 }}
               transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg border border-gray-200 p-4"
+              className="bg-white rounded-md border border-gray-200 p-1.5"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-1 mb-0.5">
+                <svg className="w-2.5 h-2.5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-                <span className="text-xs font-futura font-semibold text-gray-700 uppercase">Knowledge Base</span>
+                <span className="text-[8px] font-futura font-semibold text-gray-700 uppercase">Knowledge Base</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1">
                 {currentExampleData.agentConfig.knowledge.map((item, idx) => (
-                  <span key={idx} className="px-2.5 py-1 bg-gray-50 text-[10px] font-futura text-gray-700 rounded-md border border-gray-200">
+                  <span key={idx} className="px-1.5 py-0.5 bg-gray-50 text-[8px] font-futura text-gray-700 rounded border border-gray-200">
                     {item}
                   </span>
                 ))}
@@ -405,27 +417,67 @@ export default function AgentsBuilderDemo() {
 
             {/* Test Response Preview */}
             {buildingStage >= 4 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="bg-white rounded-lg border border-gray-200 p-4"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-xs font-futura font-semibold text-green-600 uppercase">Test Passed</span>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                  <p className="text-xs font-futura text-gray-600 mb-2">Sample Question:</p>
-                  <p className="text-xs font-futura text-gray-900 italic">"What's your refund policy?"</p>
-                  <div className="mt-2 pt-2 border-t border-gray-200">
-                    <p className="text-xs font-futura text-gray-600 mb-1">Agent Response:</p>
-                    <p className="text-xs font-futura text-gray-900 leading-relaxed">✓ Response generated successfully</p>
+              <>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-white rounded-md border border-gray-200 p-1.5"
+                >
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <svg className="w-2.5 h-2.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-[8px] font-futura font-semibold text-green-600 uppercase">Test Passed</span>
                   </div>
-                </div>
-              </motion.div>
+                  <div className="bg-gray-50 rounded p-1.5 border border-gray-200">
+                    <p className="text-[8px] font-futura text-gray-600 mb-0.5">Sample Question:</p>
+                    <p className="text-[8px] font-futura text-gray-900 italic">"What's your refund policy?"</p>
+                    <div className="mt-1 pt-1 border-t border-gray-200">
+                      <p className="text-[8px] font-futura text-gray-600 mb-0.5">Agent Response:</p>
+                      <p className="text-[8px] font-futura text-gray-900">✓ Response generated successfully</p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Voice Mode Test */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-md border border-pink-200 p-1.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-1 mb-0.5">
+                        <svg className="w-2.5 h-2.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        </svg>
+                        <span className="text-[8px] font-futura font-semibold text-pink-900 uppercase">Voice Mode</span>
+                      </div>
+                      <p className="text-[8px] font-futura text-pink-700">Test agent with voice interactions</p>
+                    </div>
+                    {/* Animated Voice Waves */}
+                    <div className="flex items-center gap-0.5">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="w-0.5 bg-pink-500 rounded-full"
+                          animate={{
+                            height: [8, 16, 8],
+                          }}
+                          transition={{
+                            duration: 0.8,
+                            repeat: Infinity,
+                            delay: i * 0.1,
+                            ease: "easeInOut"
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </>
             )}
           </div>
         ) : (

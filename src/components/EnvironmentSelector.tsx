@@ -568,13 +568,13 @@ export default function EnvironmentSelector({
               style={{ maxHeight: "calc(100vh - 4rem)" }}
             >
               {/* Hero Section */}
-              <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-8' : 'mb-8'}`}>
-                <div className={`inline-flex items-center justify-center ${previewMode ? 'mb-2' : 'mb-2'}`}>
-                  <img src="/waygent.png" alt="Sena ERP" className={previewMode ? 'w-16 h-16' : 'w-20 h-20'} />
+              <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-3' : 'mb-4'}`}>
+                <div className={`inline-flex items-center justify-center ${previewMode ? 'mb-1' : 'mb-1'}`}>
+                  <img src="/waygent.png" alt="Sena ERP" className={previewMode ? 'w-10 h-10' : 'w-12 h-12'} />
                 </div>
-                <h1 className={`font-bold text-gray-800 ${previewMode ? 'text-5xl mb-3' : 'text-7xl mb-3'}`}>Sena ERP</h1>
+                <h1 className={`font-bold text-gray-800 ${previewMode ? 'text-3xl mb-1' : 'text-4xl mb-1.5'}`}>Sena ERP</h1>
                 <div className="tagline-container">
-                  <p className={`tagline ${previewMode ? 'text-base' : ''}`}>
+                  <p className={`tagline ${previewMode ? 'text-sm' : 'text-sm'}`}>
                     <span className="tagline-text">
                       {animatedTagline.map((item, index) => (
                         <span
@@ -592,8 +592,8 @@ export default function EnvironmentSelector({
 
               {/* Search Bar */}
               {activeEnvironments.length >= 4 && (
-                <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-6' : 'mb-6'}`}>
-                  <div className={`relative ${previewMode ? 'w-3/4' : 'w-1/2'}`}>
+                <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-3' : 'mb-4'}`}>
+                  <div className={`relative ${previewMode ? 'w-3/4' : 'w-3/4'}`}>
                     <svg
                       className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 pointer-events-none ${previewMode ? 'w-5 h-5' : 'w-5 h-5'}`}
                       fill="none"
@@ -621,7 +621,7 @@ export default function EnvironmentSelector({
               {/* Environment Cards */}
               {activeEnvironments.length > 0 && (
                 <div
-                  className={`flex-1 mb-6 pt-3 ${
+                  className={`flex-1 mb-3 pt-2 ${
                     readOnly && previewMode
                       ? "overflow-visible"
                       : "overflow-y-auto custom-scrollbar"
@@ -629,7 +629,7 @@ export default function EnvironmentSelector({
                   style={{ pointerEvents: 'auto' }}
                 >
                   <div
-                    className={`grid gap-3 md:grid-cols-2 ${
+                    className={`grid gap-2 md:grid-cols-2 ${
                       activeEnvironments.length === 1 ? "single-env-grid" : ""
                     }`}
                     style={{ pointerEvents: 'auto' }}
@@ -639,7 +639,6 @@ export default function EnvironmentSelector({
                         key={env.name}
                         data-environment-card={env.name}
                         onClick={() => {
-                          console.log('Card clicked:', env.name);
                           selectEnvironment(env.name);
                         }}
                         className={`group cursor-pointer environment-card ${
@@ -679,10 +678,10 @@ export default function EnvironmentSelector({
                         <div
                           className={previewMode ? "environment-card-clickable cursor-pointer" : "environment-card-clickable"}
                         >
-                          <div className="flex items-start gap-3 environment-card-inner">
+                          <div className="flex items-start gap-2 environment-card-inner">
                             <div className="flex-shrink-0 flex items-center justify-center">
                               <svg
-                                className={`w-6 h-6 transition-colors duration-200 ${
+                                className={`w-4 h-4 transition-colors duration-200 ${
                                   env.name === currentEnvironment
                                     ? "text-blue-600"
                                     : "text-gray-600"
@@ -700,9 +699,9 @@ export default function EnvironmentSelector({
                               </svg>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
+                              <div className="flex items-center gap-1.5 mb-0.5">
                                 <h3
-                                  className={`font-medium text-sm transition-colors duration-200 ${
+                                  className={`font-medium text-xs transition-colors duration-200 ${
                                     env.name === currentEnvironment
                                       ? "text-blue-900"
                                       : "text-gray-800"
@@ -710,18 +709,6 @@ export default function EnvironmentSelector({
                                 >
                                   {env.display_name || env.environment_name || env.name}
                                 </h3>
-                                {env.name === currentEnvironment && (
-                                  <span className="selected-badge">
-                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                    <span>Active</span>
-                                  </span>
-                                )}
                               </div>
                               <p className="env-description">
                                 {env.description || "ERP Environment"}
@@ -991,8 +978,8 @@ export default function EnvironmentSelector({
         .environment-card {
           background: #f8f7f4;
           border: 1px solid rgba(15, 23, 42, 0.18);
-          border-radius: 0.75rem;
-          padding: 14px;
+          border-radius: 0.5rem;
+          padding: 8px;
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 6px 12px -12px rgba(15, 23, 42, 0.25);
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
@@ -1000,8 +987,8 @@ export default function EnvironmentSelector({
 
         /* Bigger cards only in preview mode */
         .preview-zoom .environment-card {
-          padding: 24px;
-          min-height: 160px;
+          padding: 10px;
+          min-height: 80px;
           cursor: pointer;
           position: relative;
         }
@@ -1022,35 +1009,35 @@ export default function EnvironmentSelector({
 
         /* Bigger content in preview mode cards */
         .preview-zoom .environment-card h3 {
-          font-size: 1.125rem;
-          line-height: 1.4;
+          font-size: 0.75rem;
+          line-height: 1.3;
           font-weight: 600;
         }
 
         .preview-zoom .env-description {
-          font-size: 0.875rem;
-          line-height: 1.5;
-          margin-bottom: 0.875rem;
+          font-size: 0.625rem;
+          line-height: 1.2;
+          margin-bottom: 0.25rem;
         }
 
         .preview-zoom .environment-card svg {
-          width: 2rem;
-          height: 2rem;
+          width: 1rem;
+          height: 1rem;
         }
 
         .preview-zoom .component-badge {
-          height: 28px;
-          padding: 0 10px;
-          gap: 6px;
+          height: 16px;
+          padding: 0 4px;
+          gap: 2px;
         }
 
         .preview-zoom .component-badge svg {
-          width: 16px;
-          height: 16px;
+          width: 10px;
+          height: 10px;
         }
 
         .preview-zoom .component-badge span {
-          font-size: 12px;
+          font-size: 9px;
           font-weight: 600;
         }
 
@@ -1163,14 +1150,14 @@ export default function EnvironmentSelector({
 
         .env-description {
           display: -webkit-box;
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
           text-overflow: ellipsis;
-          font-size: 0.688rem;
-          line-height: 1.3;
+          font-size: 0.625rem;
+          line-height: 1.2;
           color: #64748b;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.25rem;
         }
 
         .environment-card:not(.environment-card-selected):hover {
@@ -1224,7 +1211,7 @@ export default function EnvironmentSelector({
         .component-counts {
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 3px;
           flex-wrap: wrap;
         }
 
@@ -1232,13 +1219,13 @@ export default function EnvironmentSelector({
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 4px;
-          padding: 0 6px;
+          gap: 2px;
+          padding: 0 4px;
           background: rgba(148, 163, 184, 0.08);
           border: 1px solid rgba(148, 163, 184, 0.2);
-          border-radius: 4px;
+          border-radius: 3px;
           transition: all 0.2s ease;
-          height: 18px;
+          height: 14px;
           box-sizing: border-box;
           line-height: 1;
         }
@@ -1249,8 +1236,8 @@ export default function EnvironmentSelector({
         }
 
         .component-badge svg {
-          width: 12px;
-          height: 12px;
+          width: 10px;
+          height: 10px;
           flex-shrink: 0;
           color: #64748b;
           stroke-width: 2;
@@ -1258,7 +1245,7 @@ export default function EnvironmentSelector({
         }
 
         .component-badge span {
-          font-size: 10px;
+          font-size: 9px;
           font-weight: 600;
           color: #475569;
           text-align: center;

@@ -72,16 +72,16 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
     <section
       ref={ref}
       id="join-us"
-      className="scroll-mt-24 pb-16"
+      className="scroll-mt-24"
       style={{
-        marginTop: isMobile ? '64px' : '192px',
-        paddingBottom: isMobile ? '32px' : `${getResponsiveValue(64)}px`,
+        paddingTop: '16px',
+        paddingBottom: isMobile ? '80px' : `${getResponsiveValue(120)}px`,
       }}
     >
       <div
         className="relative mx-auto"
         style={{
-          maxWidth: isMobile ? 'calc(100vw - 32px)' : 'min(1600px, calc(100vw - 200px))',
+          maxWidth: isMobile ? 'calc(100vw - 32px)' : 'min(1280px, calc(100vw - 320px))',
           paddingLeft: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
           paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -150,20 +150,19 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                   fontWeight: 400,
                   letterSpacing: "-0.02em",
                   color: "#2C1810",
-                  fontSize: isMobile ? '36px' : '60px',
-                  marginBottom: isMobile ? '12px' : `${getResponsiveValue(8)}px`,
+                  fontSize: isMobile ? '32px' : '40px',
+                  marginBottom: isMobile ? '8px' : `${getResponsiveValue(8)}px`,
                   lineHeight: "1.2",
                 }}
               >
                 Join our team
               </h2>
               <p
-                className="font-futura mx-auto"
+                className="text-gray-700 font-futura mx-auto"
                 style={{
-                  color: '#4B5563',
                   maxWidth: isMobile ? '100%' : `${getResponsiveValue(576)}px`,
                   letterSpacing: "-0.01em",
-                  fontSize: isMobile ? '16px' : '24px',
+                  fontSize: isMobile ? '14px' : '16px',
                 }}
               >
                 Help us build the future of business software

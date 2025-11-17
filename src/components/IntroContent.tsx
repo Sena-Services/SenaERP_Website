@@ -9,196 +9,252 @@ type IntroContentProps = {
 
 export default function IntroContent({ contentOpacity, scrollRef }: IntroContentProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState(900);
   const localContentRef = useRef<HTMLDivElement>(null);
   const contentRef = scrollRef || localContentRef;
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setViewportHeight(window.innerHeight);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // On mobile: Use CSS overscroll-behavior to prevent page scroll
-  // This gives native scroll feeling while containing scrolls within the content
-  // No need for manual touch handlers - let browser handle it naturally!
+  // Mobile: No JavaScript event interception!
+  // Let browser handle all scroll physics naturally for smooth momentum
+
+  // Scale content based on viewport height - fill space while staying responsive
+  const getScaledValue = (baseValue: number) => {
+    if (isMobile) return baseValue;
+    // For laptop/tablet screens, scale proportionally
+    // Base height: 910px (middle ground for better balance)
+    // This ensures we fill the space on normal screens but scale down on smaller ones
+    const heightRatio = viewportHeight / 910;
+    return baseValue * heightRatio;
+  };
+
+  // Calculate responsive padding values - middle ground
+  const topPadding = isMobile ? 16 : getScaledValue(15);
+  const bottomPadding = isMobile ? 120 : getScaledValue(77); // Large bottom padding on mobile to clear phone nav bar
 
   return (
     <div
       ref={contentRef}
-      className="relative flex flex-col w-full md:w-[85%] xl:w-[60%] px-6 sm:px-8 md:px-10 lg:px-16 md:pt-16 lg:pt-18 pb-6 md:pb-48 lg:pb-52 ml-0 md:ml-[5%]"
+      className="relative flex flex-col w-full md:w-[70%] xl:w-[54%] ml-0 md:ml-[5%]"
       style={{
         opacity: contentOpacity,
         pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
-        // On mobile, position content in bottom 50vh
+        // On mobile, cover ENTIRE viewport to capture all touches, padding pushes content down
         position: isMobile ? 'absolute' : undefined,
-        top: isMobile ? '50vh' : undefined,
+        top: isMobile ? 0 : undefined,
         left: isMobile ? 0 : undefined,
         right: isMobile ? 0 : undefined,
-        paddingTop: isMobile ? '16px' : undefined,
-        paddingBottom: isMobile ? '16px' : undefined,
+        paddingLeft: isMobile ? '24px' : getScaledValue(40),
+        paddingRight: isMobile ? '24px' : getScaledValue(40),
+        paddingTop: isMobile ? '50vh' : `${topPadding}px`, // 50vh padding = content shows in bottom half
+        paddingBottom: `${bottomPadding}px`,
         minHeight: isMobile ? undefined : '100%',
-        height: isMobile ? '50vh' : undefined,
-        overflow: isMobile ? 'auto' : undefined,
-        // Use native overscroll behavior for smooth scrolling
-        overscrollBehavior: isMobile ? 'contain' : undefined,
-        WebkitOverflowScrolling: isMobile ? 'touch' : undefined, // iOS momentum scrolling
+        height: isMobile ? '100vh' : undefined, // FIXED height = 100vh to contain scroll
+        // Native scroll with iOS momentum and elastic overscroll
+        overflow: isMobile ? 'scroll' : undefined,
+        overflowY: isMobile ? 'scroll' : undefined,
+        WebkitOverflowScrolling: isMobile ? 'touch' : undefined,
+        overscrollBehavior: isMobile ? 'auto' : undefined, // Allow elastic bounce effect
+        // Force iOS to recognize this as a scrollable area
+        touchAction: isMobile ? 'pan-y' : undefined,
         zIndex: 10,
       }}
     >
-      <div className="mb-4 md:mb-5">
-        <h1
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-1.5 md:mb-2 leading-tight"
-          style={{
+      <div style={{
+        marginBottom: `${getScaledValue(15)}px`,
+        paddingBottom: `${getScaledValue(15)}px`,
+        position: 'relative'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${getScaledValue(8)}px`,
+          marginBottom: `${getScaledValue(8)}px`
+        }}>
+          <img
+            src="/logo.png"
+            alt="Sena"
+            style={{
+              width: isMobile ? '32px' : `${getScaledValue(40)}px`,
+              height: isMobile ? '32px' : `${getScaledValue(40)}px`,
+              objectFit: 'contain',
+              filter: 'brightness(0) saturate(100%) invert(52%) sepia(18%) saturate(645%) hue-rotate(357deg) brightness(92%) contrast(87%)'
+            }}
+          />
+          <span style={{
             fontFamily: "Georgia, serif",
-            color: "#2C1810",
+            fontSize: isMobile ? '0.875rem' : `${getScaledValue(16)}px`,
+            color: "#8b7355",
+            textTransform: 'uppercase',
+            letterSpacing: '0.15em',
+            fontWeight: 600
+          }}>
+            Sena
+          </span>
+        </div>
+        <h1
+          style={{
+            fontFamily: "'Tangerine', 'Edwardian Script ITC', 'Lucida Handwriting', cursive",
+            color: "#8b7355",
+            fontSize: isMobile ? '2.75rem' : `${getScaledValue(58)}px`,
+            fontWeight: 700,
+            letterSpacing: '0.015em',
+            marginBottom: `${getScaledValue(8)}px`,
+            lineHeight: 1.3,
+            textRendering: 'optimizeLegibility',
+            WebkitFontSmoothing: 'antialiased',
           }}
         >
           Compose your business like a painting
         </h1>
         <p
-          className="text-base sm:text-lg md:text-xl mt-1.5 md:mt-2"
           style={{
             fontFamily: "Georgia, serif",
-            color: "#5A4A3A",
-            fontStyle: "italic",
+            color: "#8b7355",
+            fontStyle: "normal",
+            fontSize: isMobile ? '0.875rem' : `${getScaledValue(18)}px`,
+            marginTop: `${getScaledValue(4)}px`,
+            lineHeight: 1.5,
+            letterSpacing: '0.02em',
+            fontWeight: 400,
           }}
         >
-          Every stroke deliberate. Every layer connected.
+          Craft your own ERP, from the ground up
         </p>
       </div>
 
-      <div className="space-y-2.5 md:space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: `${getScaledValue(10)}px`, position: 'relative', marginTop: `${getScaledValue(15)}px`, paddingTop: `${getScaledValue(15)}px` }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: isMobile ? '100px' : `${getScaledValue(200)}px`,
+          height: '1px',
+          background: 'linear-gradient(to right, rgba(139, 115, 85, 0.6), transparent)'
+        }}></div>
         <p
-          className="text-sm sm:text-base md:text-lg leading-relaxed"
           style={{
             fontFamily: "Georgia, serif",
-            color: "#3A3A3A",
+            color: "#6b5d4f",
+            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
+            lineHeight: 1.6,
           }}
         >
-          We believe software should be as expressive as art. Not locked in
-          rigid templates, not trapped in boxes someone else designed.
+          We believe your ERP should be a direct extension of how your business actually operates. Not locked into
+          rigid templates, never trapped in boxes someone else designed.
         </p>
 
         <p
-          className="text-sm sm:text-base md:text-lg leading-relaxed"
           style={{
             fontFamily: "Georgia, serif",
-            color: "#3A3A3A",
+            color: "#6b5d4f",
+            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
+            lineHeight: 1.6,
           }}
         >
-          Sena is a canvas where your business takes shape—built from
-          composable pieces that adapt to your vision, orchestrated by AI
-          that understands your intent.
+          Sena is where that system is assembled from modular pieces: data models, workflows, interfaces, and AI agents,
+          all wired into the tools your team already uses.
+
         </p>
 
-        <div className="space-y-1.5 md:space-y-2 pt-1.5">
-          <div className="flex items-start gap-2 md:gap-2.5">
-            <span className="text-xs sm:text-sm md:text-base" style={{ fontFamily: "Georgia, serif", color: "#3A3A3A", lineHeight: "1.5" }}>•</span>
-            <p
-              className="text-xs sm:text-sm md:text-base flex-1"
-              style={{
-                fontFamily: "Georgia, serif",
-                color: "#3A3A3A",
-              }}
-            >
-              Start with primitives (databases, workflows, UI components) and combine them like brushstrokes
-            </p>
-          </div>
-          <div className="flex items-start gap-2 md:gap-2.5">
-            <span className="text-xs sm:text-sm md:text-base" style={{ fontFamily: "Georgia, serif", color: "#3A3A3A", lineHeight: "1.5" }}>•</span>
-            <p
-              className="text-xs sm:text-sm md:text-base flex-1"
-              style={{
-                fontFamily: "Georgia, serif",
-                color: "#3A3A3A",
-              }}
-            >
-              Describe what you need in natural language, and watch AI architect the solution
-            </p>
-          </div>
-          <div className="flex items-start gap-2 md:gap-2.5">
-            <span className="text-xs sm:text-sm md:text-base" style={{ fontFamily: "Georgia, serif", color: "#3A3A3A", lineHeight: "1.5" }}>•</span>
-            <p
-              className="text-xs sm:text-sm md:text-base flex-1"
-              style={{
-                fontFamily: "Georgia, serif",
-                color: "#3A3A3A",
-              }}
-            >
-              Let intelligent agents handle the mundane while you focus on what matters
-            </p>
-          </div>
-        </div>
+        <p
+          style={{
+            fontFamily: "Georgia, serif",
+            color: "#6b5d4f",
+            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
+            lineHeight: 1.6,
+          }}
+        >
+          Choose from a marketplace of pre-built environments to jumpstart your build, or generate exactly what you need in real-time—on request.
+        </p>
 
-        <div className="mt-4 md:mt-5 pt-3 md:pt-4 border-t border-gray-400/30">
-          <div className="relative">
-            <div className="absolute -top-5 md:-top-6 left-0 w-10 md:w-12 h-px bg-gradient-to-r from-gray-600/60 to-transparent"></div>
-            <p
-              className="text-sm sm:text-base md:text-lg leading-relaxed"
-              style={{
-                fontFamily: "Georgia, serif",
-                fontStyle: "italic",
-                color: "#4A3A2A",
-                lineHeight: "1.7",
-              }}
-            >
-              From CRM to invoicing, analytics to automation—your entire
-              operating system, composed exactly as you envision it.
-            </p>
-          </div>
+        <div style={{ marginTop: `${getScaledValue(15)}px`, paddingTop: `${getScaledValue(15)}px`, position: 'relative' }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: isMobile ? '100px' : `${getScaledValue(200)}px`,
+            height: '1px',
+            background: 'linear-gradient(to left, rgba(139, 115, 85, 0.6), transparent)'
+          }}></div>
         </div>
       </div>
-
-      <div className="md:absolute bottom-3 sm:bottom-4 md:bottom-5 left-4 right-4 sm:left-8 sm:right-8 md:left-10 md:right-auto lg:left-16 mt-6" style={{
+{/* footer */}
+      <div style={{
+        position: isMobile ? 'relative' : 'absolute',
+        bottom: isMobile ? undefined : `${getScaledValue(19)}px`,
+        left: isMobile ? undefined : getScaledValue(40),
+        right: isMobile ? undefined : 'auto',
+        marginTop: isMobile ? '24px' : undefined,
         width: 'auto',
-        maxWidth: 'min(800px, 85%)',
-        position: isMobile ? 'relative' : undefined,
+        maxWidth: isMobile ? '100%' : 'min(900px, 90%)',
       }}>
         <div
-          className="space-y-2 md:space-y-2.5 p-3 sm:p-4 md:p-5 rounded-lg md:rounded-xl"
           style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: `${getScaledValue(9)}px`,
+            padding: isMobile ? '12px' : `${getScaledValue(16)}px`,
+            borderRadius: isMobile ? '8px' : `${getScaledValue(12)}px`,
             background: "rgba(255,255,255,0.15)",
             backdropFilter: "blur(12px)",
             border: "1px solid rgba(255,255,255,0.25)",
           }}
         >
           <p
-            className="text-[10px] sm:text-xs uppercase tracking-widest font-semibold"
             style={{
               fontFamily: "Georgia, serif",
               color: "#6B5744",
+              fontSize: isMobile ? '10px' : `${getScaledValue(12.5)}px`,
+              textTransform: 'uppercase',
               letterSpacing: "0.18em",
+              fontWeight: 600,
             }}
           >
             Built for creators, not corporations
           </p>
           <p
-            className="text-xs sm:text-sm md:text-base leading-relaxed"
             style={{
               fontFamily: "Georgia, serif",
-              color: "#2C1810",
-              lineHeight: "1.6",
+              color: "#6b5d4f",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
+              lineHeight: 1.6,
             }}
           >
             No rigid workflows. No endless configuration. No armies of
             consultants. Just you, your vision, and an intelligent system
             that grows with your imagination.
           </p>
-          <div className="h-px bg-gray-400/40 w-full mt-2 md:mt-3"></div>
-          <div className="flex items-center justify-between pt-1.5 md:pt-2">
+          <div className="h-px bg-gray-400/40 w-full" style={{ marginTop: `${getScaledValue(7)}px` }}></div>
+          <div className="flex items-center justify-between" style={{ paddingTop: `${getScaledValue(7)}px` }}>
             <p
-              className="text-[10px] sm:text-xs md:text-sm"
               style={{
                 fontFamily: "Georgia, serif",
                 color: "#6B5744",
                 fontStyle: "italic",
+                fontSize: isMobile ? '10px' : `${getScaledValue(13.5)}px`,
               }}
             >
               Begin composing your masterpiece
             </p>
             <svg
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 animate-bounce"
+              className="text-gray-600 animate-bounce cursor-pointer"
+              style={{ width: `${getScaledValue(17)}px`, height: `${getScaledValue(17)}px` }}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              onClick={() => {
+                // Trigger the same animation sequence as scrolling
+                window.dispatchEvent(new CustomEvent('triggerScrollAnimation'));
+              }}
             >
               <path
                 strokeLinecap="round"

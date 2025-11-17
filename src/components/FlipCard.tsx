@@ -4,17 +4,58 @@ import { useRef, useState, useEffect } from "react";
 
 // ===== ADJUST THIS VALUE TO CHANGE VIDEO/CONTENT RATIO FOR ALL CARDS =====
 // Video takes this percentage, content takes the remainder
-// Example: 60 = 60% video, 40% content
-// Responsive: smaller screens need more space for content
+// As height decreases, sacrifice MORE video to show ALL content
+// As height increases past 740px, increase video ratio so content doesn't get too big
 const getVideoHeightPercentage = () => {
   if (typeof window === 'undefined') return 50;
   const height = window.innerHeight;
-  // Smaller screens (laptops): give more space for content
-  if (height < 800) return 45;
-  // Medium screens: balanced
-  if (height < 1000) return 50;
-  // Large screens: more space for video
-  return 55;
+
+  // Very short screens (< 600px): 45% video, 55% content - prioritize showing all content
+  if (height < 600) return 45;
+
+  // Short screens (600-680px): gradually increase from 45% to 50%
+  if (height < 680) {
+    return 45 + ((height - 600) / (680 - 600)) * 5;
+  }
+
+  // Medium-short screens (680-740px): gradually increase from 50% to 55%
+  if (height < 740) {
+    return 50 + ((height - 680) / (740 - 680)) * 5;
+  }
+
+  // Medium screens (740-900px): gradually increase from 55% to 60%
+  if (height < 900) {
+    return 55 + ((height - 740) / (900 - 740)) * 5;
+  }
+
+  // Large screens (900-1200px): gradually increase from 60% to 65%
+  if (height < 1200) {
+    return 60 + ((height - 900) / (1200 - 900)) * 5;
+  }
+
+  // Very tall screens (1200px+): 65% video, 35% content - more content space
+  return 65;
+};
+
+// Get card-specific color based on position (matching MobileHowItWorks)
+const getCardColor = (position: "left" | "center" | "right") => {
+  switch (position) {
+    case 'left':
+      return {
+        rgb: '59, 130, 246',    // Blue
+        hex: '#3B82F6',
+      };
+    case 'center':
+      return {
+        rgb: '139, 92, 246',    // Purple
+        hex: '#8B5CF6',
+      };
+    case 'right':
+      return {
+        rgb: '236, 72, 153',    // Pink
+        hex: '#EC4899',
+      };
+  }
 };
 // =========================================================================
 
@@ -38,6 +79,11 @@ type FlipCardProps = {
   cardDescription: string;
   expandedCard: ExpandedCard;
   onCardClick: () => void;
+};
+
+// When a card is expanded, show 100% video and hide the content section
+const getExpandedVideoHeight = (isExpanded: boolean) => {
+  return isExpanded ? 100 : undefined; // 100% when expanded, normal otherwise
 };
 
 export default function FlipCard({
@@ -77,28 +123,11 @@ export default function FlipCard({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleMouseEnter = () => {
-    if (videoRef.current) {
-      videoRef.current.style.filter = 'grayscale(60%) brightness(1) contrast(0.9)';
-      videoRef.current.playbackRate = 0.65; // Slow down the video
-      videoRef.current.play().catch(err => console.log('Play error:', err));
-    }
-    if (overlayRef.current) {
-      overlayRef.current.style.opacity = '0.2';
-    }
-  };
+  const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseLeave = () => {
-    if (videoRef.current) {
-      videoRef.current.style.filter = 'grayscale(90%) brightness(0.85) contrast(0.7)';
-      videoRef.current.playbackRate = 1; // Reset playback rate
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-    if (overlayRef.current) {
-      overlayRef.current.style.opacity = '1';
-    }
-  };
+  const isExpanded = expandedCard === position;
+
+  // Dynamic border radius based on position AND expansion state
   const borderRadiusStyle =
     position === "left"
       ? {
@@ -114,11 +143,76 @@ export default function FlipCard({
           borderTopRightRadius: `${borderRadius}px`,
           borderBottomRightRadius: `${borderRadius}px`,
         }
-      : { borderRadius: 0 };
-
-  const isExpanded = expandedCard === position;
+      : isExpanded
+        ? {
+            // When center card is expanded, give it left rounded borders like the left card
+            borderTopLeftRadius: `${borderRadius}px`,
+            borderBottomLeftRadius: `${borderRadius}px`,
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+          }
+        : { borderRadius: 0 };
   const isOtherExpanded = expandedCard !== null && expandedCard !== position;
   const canClick = rotateProgress === 1; // Only clickable when fully flipped
+
+  // When expanded, override video height to 100%
+  const finalVideoHeight = isExpanded ? 100 : videoHeightPercentage;
+
+  // When card is expanded, pause video and show static desaturated state
+  useEffect(() => {
+    if (isExpanded && videoRef.current) {
+      // Keep the desaturated aesthetic when expanded
+      videoRef.current.style.filter = 'grayscale(90%) brightness(0.85) contrast(0.7)';
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      if (overlayRef.current) {
+        overlayRef.current.style.opacity = '1';
+      }
+    } else if (!isExpanded && videoRef.current) {
+      videoRef.current.style.filter = 'grayscale(90%) brightness(0.85) contrast(0.7)';
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      if (overlayRef.current) {
+        overlayRef.current.style.opacity = '1';
+      }
+    }
+  }, [isExpanded]);
+
+  const handleMouseEnter = () => {
+    // Allow hover interaction even when expanded
+    setIsHovered(true);
+    if (videoRef.current) {
+      const video = videoRef.current;
+      video.style.filter = 'grayscale(60%) brightness(1) contrast(0.9)';
+      video.playbackRate = 0.65; // Slow down the video
+
+      // Ensure video is loaded before playing
+      if (video.readyState >= 2) {
+        video.play().catch(err => console.log('Play error:', err));
+      } else {
+        video.addEventListener('loadeddata', () => {
+          video.play().catch(err => console.log('Play error:', err));
+        }, { once: true });
+      }
+    }
+    if (overlayRef.current) {
+      overlayRef.current.style.opacity = '0.2';
+    }
+  };
+
+  const handleMouseLeave = () => {
+    // Reset to static state on mouse leave
+    setIsHovered(false);
+    if (videoRef.current) {
+      videoRef.current.style.filter = 'grayscale(90%) brightness(0.85) contrast(0.7)';
+      videoRef.current.playbackRate = 1; // Reset playback rate
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    if (overlayRef.current) {
+      overlayRef.current.style.opacity = '1';
+    }
+  };
 
   // Don't render cards that aren't expanded
   if (isOtherExpanded) {
@@ -151,7 +245,7 @@ export default function FlipCard({
         height: "100%",
         transform: `translateX(${translateX}px) rotateY(${rotateProgress * 180}deg) ${
           isExpanded
-            ? 'scale(1.05) translateY(0)'
+            ? 'scale(1.05) translateY(0)' // Don't move card up when expanded, keep it in place
             : 'scale(1) translateY(0)'
         }`,
         transformStyle: "preserve-3d",
@@ -190,35 +284,48 @@ export default function FlipCard({
 
       {/* Back face - How It Works card */}
       <div
-        className="absolute inset-0 overflow-hidden flex flex-col bg-white group cursor-pointer transition-all duration-300"
+        className="absolute inset-0 overflow-hidden flex flex-col group cursor-pointer"
         style={{
           backfaceVisibility: "hidden",
-          transform: "rotateY(180deg)",
-          ...borderRadiusStyle,
+          // When expanded, no lift effect on hover. Only in normal "how it works" view
+          transform: `rotateY(180deg) ${isHovered && canClick && !isExpanded ? 'translateY(-8px)' : 'translateY(0)'}`,
           cursor: canClick ? 'pointer' : 'default',
           border: '2px solid #9CA3AF',
           boxSizing: 'border-box',
+          // When expanded, keep shadow constant. Only change shadow on hover in normal view
+          boxShadow: isHovered && canClick && !isExpanded
+            ? '0 28px 80px -16px rgba(0, 0, 0, 0.25), 0 16px 40px -12px rgba(0, 0, 0, 0.15)'
+            : '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
+          transition: 'all 0.3s ease-out',
+          ...borderRadiusStyle,
+          // Balanced gradient - just right amount of color
+          background: `linear-gradient(180deg,
+            rgba(${getCardColor(position).rgb}, 0.08) 0%,
+            rgba(${getCardColor(position).rgb}, 0.06) ${videoHeightPercentage * 0.5}%,
+            rgba(${getCardColor(position).rgb}, 0.04) ${videoHeightPercentage}%,
+            rgba(${getCardColor(position).rgb}, 0.02) ${videoHeightPercentage + 10}%,
+            rgba(255, 255, 255, 0.98) 100%)`,
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onClick={() => canClick && onCardClick()}
+        onClick={() => canClick && !isExpanded && onCardClick()} // Don't allow closing when expanded
       >
-        {/* Hover overlay for better feedback */}
-        {canClick && !isExpanded && (
-          <div
-            className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10"
-            style={{
-              mixBlendMode: 'multiply',
-            }}
-          />
-        )}
-        {/* Video section */}
+        {/* Video section - full height when expanded */}
         <div
           className="relative w-full overflow-hidden"
           style={{
-            height: `${videoHeightPercentage}%`,
+            height: `${finalVideoHeight}%`,
             borderTopLeftRadius: position === "left" ? `${borderRadius - 2}px` : 0,
             borderTopRightRadius: position === "right" ? `${borderRadius - 2}px` : 0,
+            // When expanded, no mask fade. When normal, smooth fade
+            maskImage: isExpanded
+              ? 'none'
+              : 'linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.8) 85%, rgba(0,0,0,0.4) 95%, transparent 100%)',
+            WebkitMaskImage: isExpanded
+              ? 'none'
+              : 'linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.8) 85%, rgba(0,0,0,0.4) 95%, transparent 100%)',
+            borderBottomLeftRadius: isExpanded && position === "left" ? `${borderRadius - 2}px` : 0,
+            borderBottomRightRadius: isExpanded && position === "right" ? `${borderRadius - 2}px` : 0,
           }}
         >
           <video
@@ -259,55 +366,73 @@ export default function FlipCard({
               mixBlendMode: 'saturation',
             }}
           />
-          {/* Subtle multi-layer blend effect */}
+
+          {/* Balanced colored gradient overlay - noticeable but not overpowering */}
           <div
-            className="absolute bottom-0 left-0 right-0 pointer-events-none"
+            className="absolute inset-0 pointer-events-none"
             style={{
-              height: '5%',
-              background: 'linear-gradient(to bottom, rgba(239, 246, 255, 0) 0%, rgba(239, 246, 255, 0.4) 50%, #EFF6FF 100%)',
-              filter: 'blur(1px)',
-            }}
-          />
-          {/* Secondary sharper gradient on top */}
-          <div
-            className="absolute bottom-0 left-0 right-0 pointer-events-none"
-            style={{
-              height: '3%',
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(239, 246, 255, 0.7) 50%, #EFF6FF 100%)',
+              background: `linear-gradient(180deg,
+                rgba(${getCardColor(position).rgb}, 0.16) 0%,
+                rgba(${getCardColor(position).rgb}, 0.13) 35%,
+                rgba(${getCardColor(position).rgb}, 0.10) 65%,
+                rgba(${getCardColor(position).rgb}, 0.06) 85%,
+                transparent 100%)`,
             }}
           />
         </div>
 
-        {/* Content section - all blue now */}
-        <div
-          className="flex flex-col px-4 sm:px-6 pt-2 sm:pt-3 pb-3 sm:pb-4 relative overflow-y-auto"
-          style={{
-            height: `${100 - videoHeightPercentage}%`,
-            background: '#EFF6FF',
-          }}
-        >
+        {/* Content section - hidden when expanded */}
+        {!isExpanded && (
+          <div
+            className="flex flex-col px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3 relative overflow-y-auto"
+            style={{
+              height: `${100 - finalVideoHeight}%`,
+              background: 'transparent',
+              position: 'relative',
+              scrollbarWidth: 'none', // Firefox - hide scrollbar
+              msOverflowStyle: 'none', // IE/Edge - hide scrollbar
+            }}
+          >
+          {/* Hide scrollbar for Chrome/Safari */}
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          {/* Gentle gradient overlay at top of content for seamless transition */}
+          <div
+            className="absolute top-0 left-0 right-0 pointer-events-none"
+            style={{
+              height: '50%',
+              background: `linear-gradient(to bottom,
+                rgba(${getCardColor(position).rgb}, 0.05) 0%,
+                rgba(${getCardColor(position).rgb}, 0.03) 50%,
+                transparent 100%)`,
+              zIndex: 0,
+            }}
+          />
 
           {/* Step number and title */}
-          <div className="flex items-center gap-2 sm:gap-2.5 mb-1.5 sm:mb-2 relative z-10 flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-1.5 relative z-10 flex-shrink-0">
             <div
               className="flex items-center justify-center rounded-full"
               style={{
-                width: '28px',
-                height: '28px',
+                width: '22px',
+                height: '22px',
                 flexShrink: 0,
-                background: '#3B82F6',
+                background: getCardColor(position).hex,
                 boxShadow: 'none',
               }}
             >
-              <span className="text-white font-semibold text-sm sm:text-base">
+              <span className="text-white font-semibold text-xs sm:text-sm">
                 {cardNumber}
               </span>
             </div>
             <h3
-              className="font-bold leading-tight text-base sm:text-lg"
+              className="font-bold leading-tight text-sm sm:text-base"
               style={{
                 letterSpacing: '-0.01em',
-                color: '#1E40AF',
+                color: getCardColor(position).hex,
               }}
             >
               {cardTitle}
@@ -316,7 +441,7 @@ export default function FlipCard({
 
           {/* Main description with styled keywords */}
           <p
-            className="leading-relaxed mb-2 sm:mb-3 relative z-10 text-xs sm:text-sm flex-shrink-0"
+            className="leading-relaxed mb-2 sm:mb-2 relative z-10 text-xs sm:text-sm flex-shrink-0"
             style={{
               lineHeight: '1.5',
               fontWeight: 400,
@@ -325,114 +450,52 @@ export default function FlipCard({
           >
             {position === "left" && (
               <>
-                Choose your path: have a conversation with Sena or tell her exactly what you need. Either way, it's <span style={{ color: '#2563EB' }}>always business-friendly</span> with zero technical jargon.
+                Choose your path: have a conversation with Sena or tell it exactly what you need. Either way, it's <span style={{ color: getCardColor(position).hex }}>always business-friendly</span> with zero technical jargon.
               </>
             )}
             {position === "center" && (
               <>
-                Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and <span style={{ color: '#2563EB' }}>iterate in real-time</span> until it's exactly right.
+                Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and ensure it's <span style={{ color: getCardColor(position).hex }}>exactly right</span>.
               </>
             )}
             {position === "right" && (
               <>
-                One click and your custom ERP is live. Your team can start using it immediately—<span style={{ color: '#2563EB' }}>no setup, no installation</span>, no complexity.
+                One click and your custom ERP is live. Your team can start using it immediately—<span style={{ color: getCardColor(position).hex }}>no setup, no installation</span>, no complexity.
               </>
             )}
           </p>
 
-          {/* Feature highlights - matte style */}
-          <div className="space-y-1.5 sm:space-y-2 relative z-10 mb-2 sm:mb-3 flex-1 overflow-y-auto">
+          {/* Feature highlights - matte style, no scrolling, fill remaining space */}
+          <div className="space-y-1.5 sm:space-y-2 relative z-10 flex-1 overflow-hidden">
             {position === "left" && (
               <>
-                {/* Discovery Mode */}
-                <div className="mb-2 sm:mb-3">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
-                    <span className="text-blue-700 font-semibold text-[10px] sm:text-xs" style={{ letterSpacing: '0.02em' }}>DISCOVERY MODE</span>
-                    <span className="text-gray-500 text-[9px] sm:text-[11px]">• Voice</span>
+                {/* Two modes - simplified */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="rounded-full"
+                      style={{
+                        width: '5px',
+                        height: '5px',
+                        flexShrink: 0,
+                        background: getCardColor(position).hex,
+                      }}
+                    />
+                    <span className="font-semibold text-[10px] sm:text-xs" style={{ color: getCardColor(position).hex }}>DISCOVERY MODE</span>
+                    <span className="text-gray-500 text-[9px] sm:text-[10px]">Voice conversations</span>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-start gap-2">
-                      <div
-                        className="rounded-full mt-0.5 sm:mt-1"
-                        style={{
-                          width: '4px',
-                          height: '4px',
-                          flexShrink: 0,
-                          background: '#60A5FA',
-                        }}
-                      />
-                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Multilingual voice conversations</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div
-                        className="rounded-full mt-0.5 sm:mt-1"
-                        style={{
-                          width: '4px',
-                          height: '4px',
-                          flexShrink: 0,
-                          background: '#60A5FA',
-                        }}
-                      />
-                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Asks questions like a co-founder</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div
-                        className="rounded-full mt-0.5 sm:mt-1"
-                        style={{
-                          width: '4px',
-                          height: '4px',
-                          flexShrink: 0,
-                          background: '#60A5FA',
-                        }}
-                      />
-                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Deeply understands your operations</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Express Mode */}
-                <div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
-                    <span className="text-blue-700 font-semibold text-[10px] sm:text-xs" style={{ letterSpacing: '0.02em' }}>EXPRESS MODE</span>
-                    <span className="text-gray-500 text-[9px] sm:text-[11px]">• Text</span>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-start gap-2">
-                      <div
-                        className="rounded-full mt-0.5 sm:mt-1"
-                        style={{
-                          width: '4px',
-                          height: '4px',
-                          flexShrink: 0,
-                          background: '#60A5FA',
-                        }}
-                      />
-                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Direct text-based control</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div
-                        className="rounded-full mt-0.5 sm:mt-1"
-                        style={{
-                          width: '4px',
-                          height: '4px',
-                          flexShrink: 0,
-                          background: '#60A5FA',
-                        }}
-                      />
-                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Tell Sena exactly what you want</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div
-                        className="rounded-full mt-0.5 sm:mt-1"
-                        style={{
-                          width: '4px',
-                          height: '4px',
-                          flexShrink: 0,
-                          background: '#60A5FA',
-                        }}
-                      />
-                      <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Get instant results, zero back-and-forth</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="rounded-full"
+                      style={{
+                        width: '5px',
+                        height: '5px',
+                        flexShrink: 0,
+                        background: getCardColor(position).hex,
+                      }}
+                    />
+                    <span className="font-semibold text-[10px] sm:text-xs" style={{ color: getCardColor(position).hex }}>EXPRESS MODE</span>
+                    <span className="text-gray-500 text-[9px] sm:text-[10px]">Direct text input</span>
                   </div>
                 </div>
               </>
@@ -442,52 +505,41 @@ export default function FlipCard({
               <>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
-                      background: '#60A5FA',
+                      background: getCardColor(position).hex,
                     }}
                   />
                   <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Live preview of all changes</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
-                      background: '#60A5FA',
+                      background: getCardColor(position).hex,
                     }}
                   />
                   <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Interactive workflow builder</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
-                      background: '#60A5FA',
+                      background: getCardColor(position).hex,
                     }}
                   />
                   <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Unlimited iterations</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <div
-                    className="rounded-full mt-0.5 sm:mt-1"
-                    style={{
-                      width: '4px',
-                      height: '4px',
-                      flexShrink: 0,
-                      background: '#60A5FA',
-                    }}
-                  />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Full customization control</span>
-                </div>
+          
               </>
             )}
 
@@ -495,48 +547,48 @@ export default function FlipCard({
               <>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
-                      background: '#60A5FA',
+                      background: getCardColor(position).hex,
                     }}
                   />
                   <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">One-click deployment</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
-                      background: '#60A5FA',
+                      background: getCardColor(position).hex,
                     }}
                   />
                   <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Instant team access</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
-                      background: '#60A5FA',
+                      background: getCardColor(position).hex,
                     }}
                   />
                   <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Cloud-hosted infrastructure</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
-                    className="rounded-full mt-0.5 sm:mt-1"
+                    className="rounded-full mt-1"
                     style={{
-                      width: '4px',
-                      height: '4px',
+                      width: '5px',
+                      height: '5px',
                       flexShrink: 0,
-                      background: '#60A5FA',
+                      background: getCardColor(position).hex,
                     }}
                   />
                   <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Enterprise-grade security</span>
@@ -545,34 +597,27 @@ export default function FlipCard({
             )}
           </div>
 
-          {/* Footer section */}
-          <div className="mt-auto pt-1.5 sm:pt-2 border-t border-blue-200/40 relative z-10 flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <p className="text-gray-500 text-[9px] sm:text-[10px]">
-                {position === "left" && "Start building in minutes"}
-                {position === "center" && "Perfect your system"}
-                {position === "right" && "Launch instantly"}
-              </p>
-              {canClick && !isExpanded && (
-                <div className="flex items-center gap-1 sm:gap-1.5 transition-all duration-300 group-hover:gap-2">
-                  <span className="text-blue-600 font-medium text-[9px] sm:text-[10px] group-hover:text-blue-700">
-                    Learn more
-                  </span>
-                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5">
-                    <path
-                      d="M6 12L10 8L6 4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-blue-600 group-hover:text-blue-700"
-                    />
-                  </svg>
-                </div>
-              )}
-            </div>
+          {/* Footer - Click to learn more */}
+          <div className="mt-auto pt-1 relative z-10 flex-shrink-0" style={{ borderTop: `1px solid rgba(${getCardColor(position).rgb}, 0.15)` }}>
+            {canClick && !isExpanded && (
+              <div className="flex items-center justify-center gap-1 transition-all duration-300 group-hover:gap-1.5">
+                <span className="font-medium text-[9px] sm:text-[10px]" style={{ color: getCardColor(position).hex }}>
+                  Click to learn more
+                </span>
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5">
+                  <path
+                    d="M6 12L10 8L6 4"
+                    stroke={getCardColor(position).hex}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

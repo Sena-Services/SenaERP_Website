@@ -18,11 +18,9 @@ const links: { href: string; label: string }[] = [
 const sections = [
   { id: "intro", label: "Introduction" },
   { id: "how-it-works", label: "How it Works" },
-  { id: "environments", label: "Environments" },
-  { id: "integrations", label: "Integrations" },
   { id: "builder", label: "Builder" },
-  { id: "pricing", label: "Pricing" },
-  { id: "blog", label: "Blog" },
+  { id: "integrations", label: "Integrations" },
+  { id: "environments", label: "Environments" },
   { id: "join-us", label: "Join Us" },
 ];
 
@@ -72,6 +70,19 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
   const handleSectionClick = (sectionId: string) => {
     setIsMobileMenuOpen(false);
+
+    // Special case: Introduction should scroll to the very top
+    if (sectionId === "intro") {
+      // Reset the internal content scroll in IntroSection
+      window.dispatchEvent(new CustomEvent('resetIntroScroll'));
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       const navbarHeight = 80;
@@ -244,21 +255,22 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 {/* Get Early Access Button */}
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 rounded-lg transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-medium cursor-pointer outline-none leading-none focus-visible:outline-none"
+                  className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold cursor-pointer outline-none leading-none focus-visible:outline-none"
                   style={{
-                    background: 'rgba(255,255,255,0.15)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255,255,255,0.25)',
-                    color: '#2C1810',
-                    fontFamily: 'Georgia, serif',
+                    background: '#8FB7C5',
+                    border: '1px solid #7AA5B5',
+                    borderRadius: '1.5rem',
+                    color: '#FFFFFF',
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    boxShadow: '0 2px 8px rgba(143, 183, 197, 0.3)',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
+                    e.currentTarget.style.background = '#7AA5B5';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(143, 183, 197, 0.4)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
+                    e.currentTarget.style.background = '#8FB7C5';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.3)';
                   }}
                 >
                   <span className="leading-none">Get Early Access</span>
@@ -347,54 +359,43 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         {!isMobileMenuOpen && (
           <>
             {showHowItWorks && (
-              <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
                 <h2
                   style={{
                     fontFamily: "Georgia, 'Times New Roman', serif",
                     fontWeight: 400,
                     letterSpacing: "-0.02em",
                     color: "#2C1810",
-                    fontSize: "20px",
-                    marginBottom: "2px",
+                    fontSize: "16px",
+                    marginBottom: "0px",
                   }}
                 >
                   How it <span style={{ fontStyle: "italic" }}>works</span>?
                 </h2>
-                <p
-                  style={{
-                    fontFamily: "system-ui, -apple-system, sans-serif",
-                    fontWeight: 500,
-                    fontSize: "11px",
-                    color: "#6B7280",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  Three simple steps
-                </p>
               </div>
             )}
 
             {showBuilder && (
               <div className="md:hidden w-full border-t border-white/20">
                 {/* Builder Title */}
-                <div className="text-center px-4 pt-3 pb-2">
+                <div className="text-center px-3 pt-1.5 pb-1">
                   <h2
                     style={{
                       fontFamily: "Georgia, 'Times New Roman', serif",
                       fontWeight: 400,
                       letterSpacing: "-0.02em",
                       color: "#2C1810",
-                      fontSize: "20px",
+                      fontSize: "16px",
                     }}
                   >
                     Builder
                   </h2>
                 </div>
 
-                {/* Unified Tab Selector - Single Component with Curved Borders */}
-                <div className="px-3 pb-3">
+                {/* Compact Tab Selector - No Subtitles */}
+                <div className="px-3 pb-2">
                   <div
-                    className="grid grid-cols-4 rounded-2xl overflow-hidden"
+                    className="grid grid-cols-4 rounded-xl overflow-hidden"
                     style={{
                       background: 'rgba(255, 255, 255, 0.4)',
                       border: '1px solid rgba(0, 0, 0, 0.08)',
@@ -408,7 +409,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                           // Dispatch event for BuilderTabbed component to listen
                           window.dispatchEvent(new CustomEvent('builderTabChange', { detail: { tabId: tab.id } }));
                         }}
-                        className={`px-2 py-2.5 transition-all duration-200 relative ${
+                        className={`px-2 py-2 transition-all duration-200 relative ${
                           index !== builderTabs.length - 1 ? 'border-r border-white/40' : ''
                         }`}
                         style={{
@@ -419,18 +420,11 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                       >
                         <div className="text-center">
                           <div
-                            className={`text-[11px] font-bold mb-0.5 transition-colors ${
+                            className={`text-[10px] font-bold transition-colors ${
                               activeBuilderTab === tab.id ? 'text-white' : 'text-gray-900'
                             }`}
                           >
                             {tab.label}
-                          </div>
-                          <div
-                            className={`text-[8px] leading-tight transition-colors ${
-                              activeBuilderTab === tab.id ? 'text-white/80' : 'text-gray-600'
-                            }`}
-                          >
-                            {tab.subtitle}
                           </div>
                         </div>
                       </button>
@@ -441,86 +435,53 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
             )}
 
             {showIntegrations && (
-              <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
                 <h2
                   style={{
                     fontFamily: "Georgia, 'Times New Roman', serif",
                     fontWeight: 400,
                     letterSpacing: "-0.02em",
                     color: "#2C1810",
-                    fontSize: "20px",
-                    marginBottom: "2px",
+                    fontSize: "16px",
+                    marginBottom: "0px",
                   }}
                 >
                   Integrations
                 </h2>
-                <p
-                  style={{
-                    fontFamily: "system-ui, -apple-system, sans-serif",
-                    fontWeight: 500,
-                    fontSize: "11px",
-                    color: "#6B7280",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  Connect with your tools
-                </p>
               </div>
             )}
 
             {showEnvironments && (
-              <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
                 <h2
                   style={{
                     fontFamily: "Georgia, 'Times New Roman', serif",
                     fontWeight: 400,
                     letterSpacing: "-0.02em",
                     color: "#2C1810",
-                    fontSize: "20px",
-                    marginBottom: "2px",
+                    fontSize: "16px",
+                    marginBottom: "0px",
                   }}
                 >
                   Environments
                 </h2>
-                <p
-                  style={{
-                    fontFamily: "system-ui, -apple-system, sans-serif",
-                    fontWeight: 500,
-                    fontSize: "11px",
-                    color: "#6B7280",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  Manage your workspaces
-                </p>
               </div>
             )}
 
             {showJoinUs && (
-              <div className="md:hidden w-full px-4 pb-3 pt-2 text-center border-t border-white/20">
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
                 <h2
                   style={{
                     fontFamily: "Georgia, 'Times New Roman', serif",
                     fontWeight: 400,
                     letterSpacing: "-0.02em",
                     color: "#2C1810",
-                    fontSize: "20px",
-                    marginBottom: "2px",
+                    fontSize: "16px",
+                    marginBottom: "0px",
                   }}
                 >
                   Join Our Team
                 </h2>
-                <p
-                  style={{
-                    fontFamily: "system-ui, -apple-system, sans-serif",
-                    fontWeight: 500,
-                    fontSize: "11px",
-                    color: "#6B7280",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  Build the future with us
-                </p>
               </div>
             )}
           </>

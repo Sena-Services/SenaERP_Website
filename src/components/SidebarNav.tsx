@@ -202,12 +202,11 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         isNavigatingRef.current = false;
         return;
       }
-      // Builder section has py-16 (64px) padding, so we need less offset
-      const navbarHeight = id === "builder" ? 20 : 90;
+      // Builder section needs to scroll more to the top to show header properly
+      const navbarHeight = id === "builder" ? 80 : 90;
       targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
     }
 
-    console.log(`Clicking ${id}, current scrollY: ${window.scrollY}, target: ${targetPosition}`);
 
     // Instant jump - no animations
     window.scrollTo({
@@ -215,18 +214,39 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       behavior: "auto",
     });
 
-    console.log(`After scroll, scrollY: ${window.scrollY}, isNavigating: ${isNavigatingRef.current}`);
 
     // Re-enable detection after navigation completes
     setTimeout(() => {
-      console.log(`Re-enabling detection, current scrollY: ${window.scrollY}`);
       isNavigatingRef.current = false;
     }, 1000);
   };
 
+  // Get responsive scale based on viewport width
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setScale(1); // Full size at 1024px and above
+      } else if (width >= 768) {
+        // Scale from 0.6 at 768px to 1 at 1024px
+        setScale(0.6 + ((width - 768) / (1024 - 768)) * 0.4);
+      } else {
+        setScale(0); // Hide below 768px
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
+  if (scale === 0) return null;
+
   return (
-    <aside className="hidden lg:flex fixed left-0 top-1/2 z-50 -translate-y-1/2 transform group">
-      <div className="w-auto">
+    <aside className="fixed left-0 top-1/2 z-50 transform group" style={{ transform: 'translateY(-50%)' }}>
+      <div className="w-auto" style={{ transform: `scale(${scale})`, transformOrigin: 'left center' }}>
         <nav aria-label="Section index" className="relative">
           <div
             ref={scrollContainerRef}
@@ -259,7 +279,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className="group/item relative flex items-center gap-3 px-3 py-2.5 text-left transition-all duration-200 ease-out focus-visible:outline-none cursor-pointer w-full rounded-xl"
+                      className="group/item relative flex items-center gap-3 p-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer min-w-[40px] h-10 rounded-md"
                       style={{
                         background: isActive
                           ? '#8FB7C5'
