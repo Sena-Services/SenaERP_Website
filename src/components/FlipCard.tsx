@@ -273,17 +273,17 @@ export default function FlipCard({
           }}
         >
           <Image
-            src="/illustrations/monet-intro-expanded2.png"
+            src="/illustrations/monet-intro-expanded2.webp"
             alt="Monet painting"
             fill
             priority
-            quality={85}
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+            quality={100}
+            unoptimized
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover object-center md:object-right"
             style={{
-              opacity: 0.95,
+              opacity: 1,
+              imageRendering: 'crisp-edges',
             }}
           />
         </div>
