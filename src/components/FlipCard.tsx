@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 
 // ===== ADJUST THIS VALUE TO CHANGE VIDEO/CONTENT RATIO FOR ALL CARDS =====
 // Video takes this percentage, content takes the remainder
@@ -271,10 +272,16 @@ export default function FlipCard({
             height: "100%",
           }}
         >
-          <img
+          <Image
             src="/illustrations/monet-intro-expanded2.png"
             alt="Monet painting"
-            className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+            fill
+            priority
+            quality={85}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover object-center md:object-right"
             style={{
               opacity: 0.95,
             }}

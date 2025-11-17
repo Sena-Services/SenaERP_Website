@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { getApiUrl, API_CONFIG } from "@/lib/config";
 
 type JobOpening = {
@@ -70,9 +71,12 @@ export default function CareersSection({ onBackClick }: CareersSectionProps) {
       <section className="px-4 sm:px-6 lg:px-8 pb-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-center items-center">
-            <img
+            <Image
               src="/noopening.png"
               alt="No open positions"
+              width={600}
+              height={400}
+              quality={85}
               className="max-w-full h-auto"
             />
           </div>

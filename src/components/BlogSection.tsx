@@ -2,6 +2,7 @@
 
 import React, { forwardRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getApiUrl, getFileUrl, API_CONFIG } from "@/lib/config";
 
 type BlogPost = {
@@ -99,10 +100,13 @@ function BlogVisual({
             <source src={attachment} type="video/mp4" />
           </video>
         ) : (
-          <img
+          <Image
             src={attachment}
             alt="Blog visual"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+            fill
+            quality={85}
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className={`object-cover transition-opacity duration-300 ${
               isHovered || isActive ? "opacity-100" : "opacity-70"
             }`}
             onError={(e) => {

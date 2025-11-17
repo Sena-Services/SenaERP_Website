@@ -2,6 +2,7 @@
 
 import { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 type Integration = {
   id: string;
@@ -263,9 +264,12 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                       className="flex items-center justify-center relative"
                       style={{ maxHeight: isMobile ? 'none' : 'min(600px, 60vh)' }}
                     >
-                      <img
+                      <Image
                         src={activeIntegration.screenshot}
                         alt={`${activeIntegration.name} integration example`}
+                        width={1200}
+                        height={800}
+                        quality={85}
                         className="h-auto cursor-pointer"
                         style={{
                           imageRendering: '-webkit-optimize-contrast',
@@ -595,9 +599,12 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   transition={{ duration: 0.3 }}
                   className="flex flex-col items-center gap-4"
                 >
-                  <img
+                  <Image
                     src={integrations[galleryIndex].screenshot}
                     alt={`${integrations[galleryIndex].name} integration`}
+                    width={1200}
+                    height={800}
+                    quality={85}
                     className="max-w-full max-h-[80vh] object-contain rounded-lg"
                     style={{ imageRendering: '-webkit-optimize-contrast' }}
                   />
