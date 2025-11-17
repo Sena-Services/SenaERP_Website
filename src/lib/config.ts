@@ -25,6 +25,9 @@ export const API_CONFIG = {
     GET_BLOG_COUNT: '/api/method/websitecms.api.website_blog.get_blog_count',
     SUBMIT_WAITLIST: '/api/method/websitecms.api.waitlist.submit_waitlist',
     GET_ACTIVE_OPENINGS: '/api/method/websitecms.api.opening.get_active_openings',
+    GET_PUBLISHED_ENVIRONMENTS: '/api/method/websitecms.api.website_environment.get_published_environments',
+    GET_ENVIRONMENT_BY_ID: '/api/method/websitecms.api.website_environment.get_environment_by_id',
+    GET_ENVIRONMENT_COUNT: '/api/method/websitecms.api.website_environment.get_environment_count',
   }
 } as const;
 

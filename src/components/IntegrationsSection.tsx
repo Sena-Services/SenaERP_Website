@@ -331,7 +331,8 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
               {/* Screenshot container - Left side */}
               <div className="flex justify-center md:w-2/3">
                 <div
-                  className={`relative group/screenshot ${isMobile ? '' : 'bg-white'}`}
+                  onClick={openGallery}
+                  className={`relative group/screenshot cursor-pointer ${isMobile ? '' : 'bg-white'}`}
                   style={{
                     border: isMobile ? 'none' : '2px solid #9CA3AF',
                     borderRadius: isMobile ? '0' : '1rem',
@@ -344,16 +345,12 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                     padding: isMobile ? '0' : '16px'
                   }}
                 >
-                {/* Expand icon overlay */}
-                <button
-                  onClick={openGallery}
-                  className="absolute top-2 right-2 z-10 w-8 h-8 bg-black/60 hover:bg-black/80 rounded-lg flex items-center justify-center transition-all duration-200 opacity-0 group-hover/screenshot:opacity-100"
-                  title="View in gallery"
-                >
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                  </svg>
-                </button>
+                {/* Subtle view hint */}
+                <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+                    <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
+                  </div>
+                </div>
                 <AnimatePresence mode="wait">
                   {activeIntegration && (
                     <motion.div
@@ -582,33 +579,40 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             </div>
           </div>
 
-          {/* 3rd Party Integrations - Below everything, smaller */}
-          <div className="md:px-0 mt-2 md:mt-3">
-            <div className="flex items-center gap-2 mb-1.5 justify-center">
-              <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"></div>
-              <h3 className="text-[9px] md:text-[10px] font-futura tracking-wide text-gray-500 uppercase">3rd Party Integrations</h3>
-              <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"></div>
+          {/* 3rd Party Integrations - Below everything */}
+          <div className="md:px-0 mt-4 md:mt-6">
+            <div className="flex items-center gap-2 mb-3 justify-center">
+              <div className="h-px bg-gradient-to-r from-transparent via-purple-300 to-transparent flex-1"></div>
+              <h3 className="text-xs md:text-sm font-futura tracking-wide text-purple-600 uppercase font-semibold">Connect Your Environment</h3>
+              <div className="h-px bg-gradient-to-r from-transparent via-purple-300 to-transparent flex-1"></div>
             </div>
-            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center items-center">
+            <p className="text-center text-xs md:text-sm text-gray-600 mb-3 font-futura max-w-2xl mx-auto">
+              Seamlessly integrate with your existing tools and workflows
+            </p>
+            <div className="flex flex-wrap gap-2.5 md:gap-3 justify-center items-center mb-3">
               {thirdPartyIntegrations.map((integration) => (
                 <div key={integration.id} className="relative">
-                  <div className="group flex flex-col items-center gap-1 cursor-default">
-                    <div className="relative flex items-center justify-center w-7 h-7 md:w-8 md:h-8 rounded-lg backdrop-blur-sm border border-gray-200 bg-white/90 transition-all duration-200 ease-out hover:shadow-md">
+                  <div className="group flex flex-col items-center gap-2 cursor-default">
+                    <div className="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl backdrop-blur-sm border border-purple-200 bg-gradient-to-br from-white to-purple-50/30 transition-all duration-200 ease-out hover:shadow-lg hover:scale-105 hover:border-purple-400">
                       <img
                         src={integration.iconUrl}
                         alt={integration.name}
                         className={`transition-all duration-200 object-contain ${
                           integration.id === 'github'
-                            ? 'w-4 h-4 md:w-5 md:h-5'
-                            : 'w-3.5 h-3.5 md:w-4 md:h-4'
+                            ? 'w-7 h-7 md:w-8 md:h-8'
+                            : 'w-6 h-6 md:w-7 md:h-7'
                         }`}
                       />
                     </div>
+                    <span className="text-[10px] md:text-xs text-gray-600 font-futura">{integration.name}</span>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-center text-[10px] text-gray-500 mt-2 font-futura">Many more to come</p>
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+              <p className="text-center text-xs text-gray-500 font-futura">More integrations coming soon</p>
+            </div>
           </div>
         </div>
       </div>

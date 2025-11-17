@@ -271,7 +271,7 @@ export default function DataBuilderDemo() {
     <div className="flex flex-col h-full w-full overflow-hidden p-2 md:p-4" style={{
       scrollbarWidth: 'none',
       msOverflowStyle: 'none',
-      backgroundColor: '#ECFDF5' // green-50 to match tab theme
+      backgroundColor: '#EFF0F1'
     }}>
       {/* Request badge - appears first in stage 0 */}
       {stage >= 0 && !fadeOut && (

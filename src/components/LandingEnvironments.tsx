@@ -14,6 +14,7 @@ import {
   useTransform,
 } from "framer-motion";
 import type { MotionValue } from "framer-motion";
+import { getApiUrl, API_CONFIG } from "@/lib/config";
 
 type EnvironmentMetric = {
   id: string;
@@ -34,7 +35,8 @@ type EnvironmentDeck = {
   blueprintCounts: Record<BlueprintType, number>;
 };
 
-const environments: EnvironmentDeck[] = [
+// Fallback data in case API fails
+const fallbackEnvironments: EnvironmentDeck[] = [
   {
     id: "travel-agency",
     label: "Travel Agencies",
@@ -162,7 +164,9 @@ function useEnvironmentCardTransform(
 }
 
 const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments(props, ref) {
-  const [activeId, setActiveId] = useState<string | undefined>(environments[0].id);
+  const [environments, setEnvironments] = useState<EnvironmentDeck[]>(fallbackEnvironments);
+  const [loading, setLoading] = useState(true);
+  const [activeId, setActiveId] = useState<string | undefined>();
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -172,6 +176,51 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   useEffect(() => {
     setMounted(true);
     setIsMobile(window.innerWidth < 1024);
+  }, []);
+
+  // Fetch environments from API
+  useEffect(() => {
+    const fetchEnvironments = async () => {
+      try {
+        const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_ENVIRONMENTS), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            limit: 10
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch environments');
+        }
+
+        const result = await response.json();
+
+        if (result.message?.success && result.message?.data) {
+          const envs = result.message.data as EnvironmentDeck[];
+          setEnvironments(envs.length > 0 ? envs : fallbackEnvironments);
+          // Set first environment as active
+          if (envs.length > 0 && !activeId) {
+            setActiveId(envs[0].id);
+          }
+        } else {
+          // No environments found, use fallback
+          setEnvironments(fallbackEnvironments);
+          setActiveId(fallbackEnvironments[0].id);
+        }
+      } catch (error) {
+        console.error('Error fetching environments:', error);
+        // Keep using fallback data on error
+        setEnvironments(fallbackEnvironments);
+        setActiveId(fallbackEnvironments[0].id);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnvironments();
   }, []);
 
   // Track scroll position to update active card
@@ -305,6 +354,20 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           </div>
         </div>
       )}
+
+      {loading ? (
+        <div className="flex items-center justify-center py-12 min-h-[480px]">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-waygent-blue border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <p className="text-gray-600 font-space-grotesk text-sm">Loading environments...</p>
+          </div>
+        </div>
+      ) : (
+        <>
+
 
       <div
         className="mx-auto"
@@ -676,6 +739,9 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           ))}
         </div>
       </div>
+
+      </>
+      )}
 
       {/* Add CSS for scrollbars */}
       <style jsx>{`

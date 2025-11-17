@@ -35,7 +35,7 @@ type ChatMessage = {
   status?: string;
 };
 
-// Color themes for each tab
+// Color themes for each tab - ALL BLUE
 const tabThemes = {
   ui: {
     primary: '#3B82F6', // blue-600
@@ -44,22 +44,22 @@ const tabThemes = {
     ring: 'rgba(59, 130, 246, 0.5)',
   },
   data: {
-    primary: '#10B981', // green-600
-    light: '#ECFDF5', // green-50
-    border: '#A7F3D0', // green-200
-    ring: 'rgba(16, 185, 129, 0.5)',
+    primary: '#3B82F6', // blue-600
+    light: '#EFF6FF', // blue-50
+    border: '#BFDBFE', // blue-200
+    ring: 'rgba(59, 130, 246, 0.5)',
   },
   workflows: {
-    primary: '#8B5CF6', // violet-600
-    light: '#F5F3FF', // violet-50
-    border: '#DDD6FE', // violet-200
-    ring: 'rgba(139, 92, 246, 0.5)',
+    primary: '#3B82F6', // blue-600
+    light: '#EFF6FF', // blue-50
+    border: '#BFDBFE', // blue-200
+    ring: 'rgba(59, 130, 246, 0.5)',
   },
   agents: {
-    primary: '#EC4899', // pink-600
-    light: '#FDF2F8', // pink-50
-    border: '#FBCFE8', // pink-200
-    ring: 'rgba(236, 72, 153, 0.5)',
+    primary: '#3B82F6', // blue-600
+    light: '#EFF6FF', // blue-50
+    border: '#BFDBFE', // blue-200
+    ring: 'rgba(59, 130, 246, 0.5)',
   },
 };
 
@@ -189,6 +189,375 @@ const chatMessageVariants = {
     }
   }),
 };
+
+// Interface Gallery Component
+function InterfaceGallery() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    { src: "/images/interfaces-dashbaord.png", alt: "Analytics Dashboard" },
+    { src: "/images/interface-form.png", alt: "Customer Form" },
+    { src: "/images/interface-table.png", alt: "Data Table" },
+    { src: "/images/interface-ai.png", alt: "AI Assistant" }
+  ];
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const goToPrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < images.length - 1;
+
+  return (
+    <div className="relative flex flex-col h-full gap-3">
+      {/* Image Container - rounded, no visible border */}
+      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentIndex}
+            src={images[currentIndex].src}
+            alt={images[currentIndex].alt}
+            className="w-auto rounded-xl"
+            style={{
+              maxHeight: '340px',
+              height: 'auto',
+              border: '2px solid #000000',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+          />
+        </AnimatePresence>
+      </div>
+
+      {/* Navigation BELOW image - like BlogSection */}
+      <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={goToPrev}
+            disabled={!hasPrev}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasPrev
+                ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Previous interface"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Dot indicators */}
+          <div className="flex items-center gap-2">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex
+                    ? 'bg-waygent-blue scale-125'
+                    : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                }`}
+                aria-label={`Go to image ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={goToNext}
+            disabled={!hasNext}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasNext
+                ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Next interface"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Page Counter - like BlogSection */}
+        <div className="text-xs text-gray-600 font-futura">
+          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Data Gallery Component - Same design as Interface
+function DataGallery() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    { src: "/images/data-fields.png", alt: "Data Fields" },
+    { src: "/images/data-create.png", alt: "Data Create" },
+    { src: "/images/data-records.png", alt: "Data Records" }
+  ];
+
+  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < images.length - 1;
+
+  return (
+    <div className="relative flex flex-col h-full gap-3">
+      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentIndex}
+            src={images[currentIndex].src}
+            alt={images[currentIndex].alt}
+            className="w-auto rounded-xl"
+            style={{
+              maxHeight: '340px',
+              height: 'auto',
+              border: '2px solid #000000',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+          />
+        </AnimatePresence>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={goToPrev}
+            disabled={!hasPrev}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasPrev ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Previous"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <div className="flex items-center gap-2">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex ? 'bg-waygent-blue scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                }`}
+                aria-label={`Go to image ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={goToNext}
+            disabled={!hasNext}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasNext ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Next"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="text-xs text-gray-600 font-futura">
+          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Workflows Gallery Component - Same design as Interface
+function WorkflowsGallery() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    { src: "/images/workflow-1.png", alt: "Workflow Example 1" },
+    { src: "/images/workflow-2.png", alt: "Workflow Example 2" },
+    { src: "/images/workflow-3.png", alt: "Workflow Example 3" }
+  ];
+
+  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < images.length - 1;
+
+  return (
+    <div className="relative flex flex-col h-full gap-3">
+      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentIndex}
+            src={images[currentIndex].src}
+            alt={images[currentIndex].alt}
+            className="w-auto rounded-xl"
+            style={{
+              maxHeight: '340px',
+              height: 'auto',
+              border: '2px solid #000000',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+          />
+        </AnimatePresence>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={goToPrev}
+            disabled={!hasPrev}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasPrev ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Previous"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <div className="flex items-center gap-2">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex ? 'bg-waygent-blue scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                }`}
+                aria-label={`Go to image ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={goToNext}
+            disabled={!hasNext}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasNext ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Next"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="text-xs text-gray-600 font-futura">
+          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Agents Gallery Component - Same design as Interface
+function AgentsGallery() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    { src: "/images/agent-1.png", alt: "Agent Example 1" },
+    { src: "/images/agent-2.png", alt: "Agent Example 2" },
+    { src: "/images/agent-3.png", alt: "Agent Example 3" }
+  ];
+
+  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < images.length - 1;
+
+  return (
+    <div className="relative flex flex-col h-full gap-3">
+      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentIndex}
+            src={images[currentIndex].src}
+            alt={images[currentIndex].alt}
+            className="w-auto rounded-xl"
+            style={{
+              maxHeight: '340px',
+              height: 'auto',
+              border: '2px solid #000000',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+          />
+        </AnimatePresence>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={goToPrev}
+            disabled={!hasPrev}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasPrev ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Previous"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <div className="flex items-center gap-2">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex ? 'bg-waygent-blue scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                }`}
+                aria-label={`Go to image ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={goToNext}
+            disabled={!hasNext}
+            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+              hasNext ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            }`}
+            aria-label="Next"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="text-xs text-gray-600 font-futura">
+          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
@@ -323,7 +692,7 @@ export default function BuilderTabbed() {
           boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
         }}>
           {/* Tabs at Top with Description - All in same container */}
-          <div className="bg-waygent-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
+          <div className={`bg-waygent-cream/50 px-3 pt-3 pb-3 transition-colors duration-300 ${showDetails ? '' : 'border-b border-gray-200'}`}>
             {/* Tabs Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
               {tabs.map((tab, index) => (
@@ -575,10 +944,7 @@ export default function BuilderTabbed() {
           <div
             className="h-[380px] xl:h-[420px] 2xl:h-[460px] overflow-hidden relative"
             style={{
-              backgroundColor: activeTab.id === 'ui' ? '#F0EFE9' :
-                             activeTab.id === 'data' ? '#ECFDF5' :
-                             activeTab.id === 'workflows' ? '#F5F3FF' :
-                             activeTab.id === 'agents' ? '#FDF2F8' : '#F0EFE9'
+              backgroundColor: '#F0EFE9'
             }}
           >
             {/* Description area that slides down like a curtain/screen */}
@@ -594,10 +960,7 @@ export default function BuilderTabbed() {
               }}
               style={{
                 zIndex: 10,
-                backgroundColor: activeTab.id === 'ui' ? '#F0EFE9' :
-                               activeTab.id === 'data' ? '#ECFDF5' :
-                               activeTab.id === 'workflows' ? '#F5F3FF' :
-                               activeTab.id === 'agents' ? '#FDF2F8' : '#F0EFE9'
+                backgroundColor: '#FCFCFA'
               }}
             >
               <motion.div
@@ -610,609 +973,331 @@ export default function BuilderTabbed() {
                 transition={{ duration: 0.4, delay: showDetails ? 0.4 : 0 }}
               >
                 {activeTab.id === 'ui' && (
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div className="border-l-4 border-blue-500 pl-4">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2 font-futura">Interface Builder</h3>
-                      <p className="text-base text-gray-700 leading-relaxed font-futura">
-                        Describe what you need and get production-ready interfaces in real-time. Pull from our component registry or create custom layouts through conversation.
-                      </p>
-                    </div>
-
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                      <div className="text-3xl font-bold text-blue-600 mb-1">100+</div>
-                      <div className="text-xs text-gray-600 font-futura">Registry Components</div>
-                    </div>
-                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                      <div className="text-3xl font-bold text-blue-600 mb-1">&lt;5s</div>
-                      <div className="text-xs text-gray-600 font-futura">Real-time Creation</div>
-                    </div>
-                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                      <div className="text-3xl font-bold text-blue-600 mb-1">0</div>
-                      <div className="text-xs text-gray-600 font-futura">Lines of Code</div>
-                    </div>
-                  </div>
-
-                  {/* Conversational Examples */}
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura flex items-center gap-2">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                      How It Works
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="bg-white rounded-lg p-3 border border-blue-100">
-                        <div className="text-xs text-blue-600 font-semibold mb-1">You:</div>
-                        <div className="text-sm text-gray-700 font-futura italic">"Create a dashboard with revenue cards and a weekly chart"</div>
+                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
+                    {/* Left: Compact info */}
+                    <div className="space-y-3">
+                      {/* Header */}
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Interface Builder</h3>
+                        <p className="text-sm text-gray-600 leading-snug font-futura">
+                          Production-ready interfaces from conversation. Component registry + custom layouts.
+                        </p>
                       </div>
-                      <div className="text-center text-blue-400">
-                        <svg className="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
-                      </div>
-                      <div className="bg-white rounded-lg p-3 border border-blue-100">
-                        <div className="text-xs text-green-600 font-semibold mb-1">Sena:</div>
-                        <div className="text-xs text-gray-600 font-futura space-y-1">
-                          <div>✓ 3 metric cards (Revenue, Orders, Users) with growth indicators</div>
-                          <div>✓ Interactive bar chart with 7-day data</div>
-                          <div>✓ Responsive layout with smooth animations</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Component Registry */}
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">Component Registry</h4>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-blue-300 transition-colors">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      {/* Core Components - Compact list */}
+                      <div className="space-y-1.5">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Components</div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
+                            <span className="text-gray-900 font-medium">Data Tables</span>
+                            <span className="text-xs text-gray-500">Sort, filter, pagination</span>
                           </div>
-                          <div className="text-xs font-semibold text-gray-900">Data Tables</div>
-                        </div>
-                        <div className="text-[10px] text-gray-500 font-futura">Sorting, filtering, pagination, inline editing</div>
-                      </div>
-
-                      <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-blue-300 transition-colors">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
+                            <span className="text-gray-900 font-medium">Charts & Graphs</span>
+                            <span className="text-xs text-gray-500">Time series, forecasts</span>
                           </div>
-                          <div className="text-xs font-semibold text-gray-900">Charts</div>
-                        </div>
-                        <div className="text-[10px] text-gray-500 font-futura">Bar, line, pie, area with animations</div>
-                      </div>
-
-                      <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-blue-300 transition-colors">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
+                            <span className="text-gray-900 font-medium">Forms</span>
+                            <span className="text-xs text-gray-500">Validation, multi-step</span>
                           </div>
-                          <div className="text-xs font-semibold text-gray-900">Forms</div>
-                        </div>
-                        <div className="text-[10px] text-gray-500 font-futura">Validation, multi-step wizards, file upload</div>
-                      </div>
-
-                      <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-blue-300 transition-colors">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a2 1 0 01-1-1v-6z" />
                             </svg>
+                            <span className="text-gray-900 font-medium">Dashboards</span>
+                            <span className="text-xs text-gray-500">Metrics, KPIs</span>
                           </div>
-                          <div className="text-xs font-semibold text-gray-900">Modals</div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Modals & Dialogs</span>
+                            <span className="text-xs text-gray-500">Drawers, sheets</span>
+                          </div>
                         </div>
-                        <div className="text-[10px] text-gray-500 font-futura">Dialogs, drawers, confirmations, sheets</div>
+                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
+                          + Navigation, Tabs, Dropdowns, Tooltips, Notifications, and 90+ more
+                        </div>
                       </div>
-                    </div>
-                    <div className="mt-3 text-center">
-                      <span className="text-xs text-gray-500 font-futura">+ Navigation, Tabs, Dropdowns, Tooltips, Notifications, and 90+ more</span>
-                    </div>
-                  </div>
 
-                  {/* Real-time Creation */}
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">Real-time Interface Creation</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-gray-900">Registry + Custom</div>
-                          <div className="text-xs text-gray-600 font-futura">Pull pre-built components from the registry or create new ones on the fly</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-gray-900">Fully Customizable</div>
-                          <div className="text-xs text-gray-600 font-futura">Adjust colors, typography, spacing—globally or per component</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-gray-900">Interactive Prototypes</div>
-                          <div className="text-xs text-gray-600 font-futura">Test full functionality before deployment with clickable, working interfaces</div>
+                      {/* Key Features - Ultra compact */}
+                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Capabilities</div>
+                        <div className="space-y-1">
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Real-time preview as you build</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Pull from registry or create custom</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Fully customizable styling system</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Responsive, accessible by default</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+
+                    {/* Right: Image Gallery with Navigation */}
+                    <InterfaceGallery />
                   </div>
                 )}
 
                 {activeTab.id === 'data' && (
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div className="border-l-4 border-green-500 pl-4">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2 font-futura">Data Connector</h3>
-                      <p className="text-base text-gray-700 leading-relaxed font-futura">
-                        Connect any data source—databases, APIs, spreadsheets—and let Sena handle schema mapping, data transformation, and real-time sync pipelines.
-                      </p>
-                    </div>
-
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                        <div className="text-3xl font-bold text-green-600 mb-1">50+</div>
-                        <div className="text-xs text-gray-600 font-futura">Data Sources</div>
+                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
+                    {/* Left: Compact info */}
+                    <div className="space-y-3">
+                      {/* Header */}
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Data Connector</h3>
+                        <p className="text-sm text-gray-600 leading-snug font-futura">
+                          Connect any data source. Auto schema mapping, transformations, and real-time sync.
+                        </p>
                       </div>
-                      <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                        <div className="text-3xl font-bold text-green-600 mb-1">Auto</div>
-                        <div className="text-xs text-gray-600 font-futura">Schema Mapping</div>
-                      </div>
-                      <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                        <div className="text-3xl font-bold text-green-600 mb-1">Real-time</div>
-                        <div className="text-xs text-gray-600 font-futura">Sync Pipelines</div>
-                      </div>
-                    </div>
 
-                    {/* How It Works */}
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-5 border border-green-200">
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura flex items-center gap-2">
-                        <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                        </svg>
-                        From Source to ERP
-                      </h4>
-                      <div className="space-y-2">
-                        <div className="bg-white rounded-lg p-3 border border-green-100">
-                          <div className="text-xs text-green-600 font-semibold mb-1">You:</div>
-                          <div className="text-sm text-gray-700 font-futura italic">"Connect my Salesforce CRM data"</div>
-                        </div>
-                        <div className="text-center text-green-400">
-                          <svg className="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                          </svg>
-                        </div>
-                        <div className="bg-white rounded-lg p-3 border border-green-100">
-                          <div className="text-xs text-green-600 font-semibold mb-1">Sena:</div>
-                          <div className="text-xs text-gray-600 font-futura space-y-1">
-                            <div>✓ Authenticates with Salesforce API</div>
-                            <div>✓ Maps Accounts, Contacts, Opportunities to your schema</div>
-                            <div>✓ Sets up bidirectional sync with conflict resolution</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Supported Sources */}
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">Supported Data Sources</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-green-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-green-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Databases</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">PostgreSQL, MySQL, MongoDB, Redis</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-green-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-green-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">APIs</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">REST, GraphQL, SOAP, webhooks</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-green-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-green-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Files</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">CSV, Excel, JSON, XML</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-green-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-green-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">SaaS</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Salesforce, HubSpot, Stripe, Shopify</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Key Features */}
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">Intelligent Data Management</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      {/* Core Capabilities - Compact list */}
+                      <div className="space-y-1.5">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Capabilities</div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                             </svg>
+                            <span className="text-gray-900 font-medium">Database Connections</span>
+                            <span className="text-xs text-gray-500">PostgreSQL, MySQL, MongoDB</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Auto Schema Detection</div>
-                            <div className="text-xs text-gray-600 font-futura">Sena analyzes your data source and automatically generates matching database schemas</div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">API Integration</span>
+                            <span className="text-xs text-gray-500">REST, GraphQL, webhooks</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">SaaS Connectors</span>
+                            <span className="text-xs text-gray-500">Salesforce, HubSpot, Stripe</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">File Import</span>
+                            <span className="text-xs text-gray-500">CSV, Excel, JSON, XML</span>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Data Transformation</div>
-                            <div className="text-xs text-gray-600 font-futura">Clean, validate, and transform data as it moves between systems</div>
-                          </div>
+                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
+                          50+ data sources with auto schema detection
                         </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </div>
+
+                      {/* Key Features - Ultra compact */}
+                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Features</div>
+                        <div className="space-y-1">
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
+                            <span className="text-xs text-gray-700">Auto schema mapping and detection</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Bidirectional Sync</div>
-                            <div className="text-xs text-gray-600 font-futura">Changes in either system propagate automatically with conflict resolution</div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Real-time bidirectional sync</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Data transformation and validation</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Conflict resolution and error handling</span>
                           </div>
                         </div>
                       </div>
                     </div>
+
+                    {/* Right: Data Gallery */}
+                    <DataGallery />
                   </div>
                 )}
 
                 {activeTab.id === 'workflows' && (
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div className="border-l-4 border-violet-500 pl-4">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2 font-futura">Workflow Engine</h3>
-                      <p className="text-base text-gray-700 leading-relaxed font-futura">
-                        Automate business processes with multi-step workflows. Set triggers, define conditional logic, and chain actions across all your tools.
-                      </p>
-                    </div>
-
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-violet-50 rounded-xl p-4 border border-violet-200">
-                        <div className="text-3xl font-bold text-violet-600 mb-1">∞</div>
-                        <div className="text-xs text-gray-600 font-futura">Trigger Types</div>
+                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
+                    {/* Left: Compact info */}
+                    <div className="space-y-3">
+                      {/* Header */}
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Workflow Engine</h3>
+                        <p className="text-sm text-gray-600 leading-snug font-futura">
+                          Automate business processes. Set triggers, conditional logic, and chain actions.
+                        </p>
                       </div>
-                      <div className="bg-violet-50 rounded-xl p-4 border border-violet-200">
-                        <div className="text-3xl font-bold text-violet-600 mb-1">Smart</div>
-                        <div className="text-xs text-gray-600 font-futura">Branching Logic</div>
-                      </div>
-                      <div className="bg-violet-50 rounded-xl p-4 border border-violet-200">
-                        <div className="text-3xl font-bold text-violet-600 mb-1">24/7</div>
-                        <div className="text-xs text-gray-600 font-futura">Auto Execution</div>
-                      </div>
-                    </div>
 
-                    {/* How It Works */}
-                    <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-5 border border-violet-200">
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura flex items-center gap-2">
-                        <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        Build Complex Automations
-                      </h4>
-                      <div className="space-y-2">
-                        <div className="bg-white rounded-lg p-3 border border-violet-100">
-                          <div className="text-xs text-violet-600 font-semibold mb-1">You:</div>
-                          <div className="text-sm text-gray-700 font-futura italic">"When a lead fills the contact form, create a deal in the CRM and notify sales on Slack"</div>
-                        </div>
-                        <div className="text-center text-violet-400">
-                          <svg className="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                          </svg>
-                        </div>
-                        <div className="bg-white rounded-lg p-3 border border-violet-100">
-                          <div className="text-xs text-violet-600 font-semibold mb-1">Sena:</div>
-                          <div className="text-xs text-gray-600 font-futura space-y-1">
-                            <div>✓ Sets up form submission trigger</div>
-                            <div>✓ Creates deal in CRM with lead data</div>
-                            <div>✓ Sends formatted Slack message to #sales channel</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Workflow Capabilities */}
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">Workflow Building Blocks</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-violet-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-violet-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Triggers</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Events, schedules, webhooks, manual</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-violet-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-violet-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Conditions</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">If/else logic, filters, validators</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-violet-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-violet-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Actions</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Create, update, delete, notify, transform</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-violet-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-violet-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Delays</div>
-                          </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Wait periods, scheduled execution</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Key Features */}
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">Enterprise-Grade Automation</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-violet-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      {/* Core Capabilities - Compact list */}
+                      <div className="space-y-1.5">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Capabilities</div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
+                            <span className="text-gray-900 font-medium">Event Triggers</span>
+                            <span className="text-xs text-gray-500">Form submit, data changes</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Error Handling & Retry</div>
-                            <div className="text-xs text-gray-600 font-futura">Automatic retry with exponential backoff when actions fail</div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Conditional Logic</span>
+                            <span className="text-xs text-gray-500">If/else, branching paths</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Multi-step Actions</span>
+                            <span className="text-xs text-gray-500">Chain complex operations</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Scheduled Jobs</span>
+                            <span className="text-xs text-gray-500">Cron, recurring tasks</span>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-violet-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Real-time Monitoring</div>
-                            <div className="text-xs text-gray-600 font-futura">Track every workflow execution with detailed logs and performance metrics</div>
-                          </div>
+                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
+                          Visual builder with drag-and-drop nodes
                         </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-violet-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </div>
+
+                      {/* Key Features - Ultra compact */}
+                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Features</div>
+                        <div className="space-y-1">
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
+                            <span className="text-xs text-gray-700">Real-time monitoring and logs</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Version Control</div>
-                            <div className="text-xs text-gray-600 font-futura">Track changes, rollback to previous versions, test before deploying</div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Auto retry with exponential backoff</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Version control and rollback</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Test mode before deployment</span>
                           </div>
                         </div>
                       </div>
                     </div>
+
+                    {/* Right: Workflows Gallery */}
+                    <WorkflowsGallery />
                   </div>
                 )}
 
                 {activeTab.id === 'agents' && (
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div className="border-l-4 border-pink-500 pl-4">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2 font-futura">Agent Builder</h3>
-                      <p className="text-base text-gray-700 leading-relaxed font-futura">
-                        Deploy AI agents that understand your business, make decisions, and take actions autonomously. Train them on your docs and processes.
+                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
+                    {/* Left: Compact Info */}
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-bold text-gray-900">Agent Builder</h3>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Deploy AI agents that understand your business, make decisions, and take actions autonomously.
                       </p>
-                    </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-pink-50 rounded-xl p-4 border border-pink-200">
-                        <div className="text-3xl font-bold text-pink-600 mb-1">24/7</div>
-                        <div className="text-xs text-gray-600 font-futura">Always Active</div>
-                      </div>
-                      <div className="bg-pink-50 rounded-xl p-4 border border-pink-200">
-                        <div className="text-3xl font-bold text-pink-600 mb-1">100%</div>
-                        <div className="text-xs text-gray-600 font-futura">Transparent</div>
-                      </div>
-                      <div className="bg-pink-50 rounded-xl p-4 border border-pink-200">
-                        <div className="text-3xl font-bold text-pink-600 mb-1">Custom</div>
-                        <div className="text-xs text-gray-600 font-futura">Training Data</div>
-                      </div>
-                    </div>
-
-                    {/* How It Works */}
-                    <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl p-5 border border-pink-200">
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura flex items-center gap-2">
-                        <svg className="w-5 h-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        From Training to Deployment
-                      </h4>
-                      <div className="space-y-2">
-                        <div className="bg-white rounded-lg p-3 border border-pink-100">
-                          <div className="text-xs text-pink-600 font-semibold mb-1">You:</div>
-                          <div className="text-sm text-gray-700 font-futura italic">"Create a support agent that handles product questions and creates tickets for complex issues"</div>
-                        </div>
-                        <div className="text-center text-pink-400">
-                          <svg className="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                          </svg>
-                        </div>
-                        <div className="bg-white rounded-lg p-3 border border-pink-100">
-                          <div className="text-xs text-pink-600 font-semibold mb-1">Sena:</div>
-                          <div className="text-xs text-gray-600 font-futura space-y-1">
-                            <div>✓ Trains agent on your product docs and FAQs</div>
-                            <div>✓ Gives it access to ticket creation tools</div>
-                            <div>✓ Deploys with full conversation transparency</div>
+                      {/* Core Capabilities */}
+                      <div>
+                        <h4 className="text-xs font-semibold text-gray-900 mb-2">Core Capabilities</h4>
+                        <div className="space-y-1.5 text-xs text-gray-700">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>Natural language conversations</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>Data analysis & reporting</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>Automated actions & workflows</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>Decision routing & escalation</span>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Agent Capabilities */}
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">What Agents Can Do</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-pink-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-pink-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Conversations</div>
+                      {/* Key Features */}
+                      <div>
+                        <h4 className="text-xs font-semibold text-gray-900 mb-2">Enterprise Features</h4>
+                        <div className="space-y-1.5 text-xs text-gray-700">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>Full reasoning & audit logs</span>
                           </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Natural language understanding and responses</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-pink-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-pink-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Data Analysis</div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>Human oversight & approvals</span>
                           </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Query databases, generate reports, spot patterns</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-pink-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-pink-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Actions</div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>Custom training on your data</span>
                           </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Create records, send emails, trigger workflows</div>
-                        </div>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-pink-300 transition-colors">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 bg-pink-100 rounded flex items-center justify-center">
-                              <svg className="w-4 h-4 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                              </svg>
-                            </div>
-                            <div className="text-xs font-semibold text-gray-900">Decisions</div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
+                            <span>24/7 autonomous operation</span>
                           </div>
-                          <div className="text-[10px] text-gray-500 font-futura">Route tickets, prioritize tasks, escalate issues</div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Key Features */}
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <h4 className="text-sm font-bold text-gray-900 mb-3 font-futura">Safe & Transparent AI</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Full Reasoning Logs</div>
-                            <div className="text-xs text-gray-600 font-futura">See exactly why agents made each decision with complete audit trails</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Human Oversight</div>
-                            <div className="text-xs text-gray-600 font-futura">Set approval rules for sensitive actions, escalate when uncertain</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">Custom Training</div>
-                            <div className="text-xs text-gray-600 font-futura">Train on your documentation, policies, and historical data</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    {/* Right: Agents Gallery */}
+                    <AgentsGallery />
                   </div>
                 )}
                   </motion.div>
