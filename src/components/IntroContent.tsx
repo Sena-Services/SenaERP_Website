@@ -102,10 +102,10 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         </div>
         <h1
           style={{
-            fontFamily: "Edwardian Script ITC, Lucida Handwriting, cursive",
+            fontFamily: "'Tangerine', 'Edwardian Script ITC', 'Lucida Handwriting', cursive",
             color: "#8b7355",
             fontSize: isMobile ? '2.75rem' : `${getScaledValue(58)}px`,
-            fontWeight: 400,
+            fontWeight: 700,
             letterSpacing: '0.015em',
             marginBottom: `${getScaledValue(8)}px`,
             lineHeight: 1.3,
