@@ -224,7 +224,7 @@ function InterfaceGallery() {
             style={{
               maxHeight: '340px',
               height: 'auto',
-              border: '2px solid #000000',
+              border: '2px solid #9CA3AF',
               borderRadius: '12px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
             }}
@@ -321,7 +321,7 @@ function DataGallery() {
             style={{
               maxHeight: '340px',
               height: 'auto',
-              border: '2px solid #000000',
+              border: '2px solid #9CA3AF',
               borderRadius: '12px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
             }}
@@ -387,9 +387,8 @@ function DataGallery() {
 function WorkflowsGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    { src: "/images/workflow-1.png", alt: "Workflow Example 1" },
-    { src: "/images/workflow-2.png", alt: "Workflow Example 2" },
-    { src: "/images/workflow-3.png", alt: "Workflow Example 3" }
+    { src: "/images/workflow-summary.png", alt: "Workflow Summary" },
+    { src: "/images/workflow-detailed.png", alt: "Workflow Detailed" }
   ];
 
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -409,7 +408,7 @@ function WorkflowsGallery() {
             style={{
               maxHeight: '340px',
               height: 'auto',
-              border: '2px solid #000000',
+              border: '2px solid #9CA3AF',
               borderRadius: '12px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
             }}
@@ -475,9 +474,10 @@ function WorkflowsGallery() {
 function AgentsGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    { src: "/images/agent-1.png", alt: "Agent Example 1" },
-    { src: "/images/agent-2.png", alt: "Agent Example 2" },
-    { src: "/images/agent-3.png", alt: "Agent Example 3" }
+    { src: "/images/agents-role.jpeg", alt: "Agent Role Configuration" },
+    { src: "/images/agents-greeting.jpeg", alt: "Agent Greeting Stages" },
+    { src: "/images/agents-personality.jpeg", alt: "Agent Personality Settings" },
+    { src: "/images/agents-mode.jpeg", alt: "Agent Mode Configuration" }
   ];
 
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -497,7 +497,7 @@ function AgentsGallery() {
             style={{
               maxHeight: '340px',
               height: 'auto',
-              border: '2px solid #000000',
+              border: '2px solid #9CA3AF',
               borderRadius: '12px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
             }}
@@ -564,7 +564,7 @@ export default function BuilderTabbed() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeBuilderTab, setActiveBuilderTab] = useState("ui");
   const [viewportHeight, setViewportHeight] = useState(900);
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(true);
 
   // Responsive scaling function - same as IntroSection
   const getResponsiveValue = (baseValue: number) => {
@@ -692,7 +692,7 @@ export default function BuilderTabbed() {
           boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
         }}>
           {/* Tabs at Top with Description - All in same container */}
-          <div className={`bg-waygent-cream/50 px-3 pt-3 pb-3 transition-colors duration-300 ${showDetails ? '' : 'border-b border-gray-200'}`}>
+          <div className="bg-waygent-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
             {/* Tabs Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
               {tabs.map((tab, index) => (
@@ -700,7 +700,6 @@ export default function BuilderTabbed() {
                   key={tab.id}
                   onClick={() => {
                     setActiveTab(tab);
-                    setShowDetails(false); // Reset details view when switching tabs
                   }}
                   className={`relative px-3 py-2 text-left rounded-lg cursor-pointer overflow-hidden ${
                     activeTab.id === tab.id
@@ -925,16 +924,52 @@ export default function BuilderTabbed() {
                   )}
                   </div>
 
-                  {/* Toggle button - Show for all tabs */}
-                  <button
-                    onClick={() => setShowDetails(!showDetails)}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-gray-300 bg-white hover:bg-gray-50 transition-colors text-[10px] font-medium text-gray-700 whitespace-nowrap"
-                  >
-                    {showDetails ? 'Animation' : 'Details'}
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d={showDetails ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
-                    </svg>
-                  </button>
+                  {/* Toggle pill - Show for all tabs */}
+                  <div className="relative inline-flex items-center bg-gray-100 rounded-full p-1 border border-gray-200">
+                    {/* Sliding indicator */}
+                    <motion.div
+                      className="absolute rounded-full shadow-sm"
+                      animate={{
+                        x: showDetails ? '0%' : 'calc(100% - 2px)',
+                      }}
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                        mass: 0.8
+                      }}
+                      style={{
+                        height: 'calc(100% - 8px)',
+                        width: 'calc(50% - 2px)',
+                        top: '4px',
+                        left: '4px',
+                        backgroundColor: '#3B82F6'
+                      }}
+                    />
+
+                    {/* Details button */}
+                    <button
+                      onClick={() => setShowDetails(true)}
+                      className={`relative z-10 px-3 py-1 rounded-full text-[10px] font-medium transition-colors duration-200 ${
+                        showDetails ? 'text-white' : 'text-gray-600'
+                      }`}
+                      style={{ width: '50%' }}
+                    >
+                      Details
+                    </button>
+
+                    {/* Animation button */}
+                    <button
+                      onClick={() => setShowDetails(false)}
+                      className={`relative z-10 px-3 py-1 rounded-full text-[10px] font-medium transition-colors duration-200 ${
+                        !showDetails ? 'text-white' : 'text-gray-600'
+                      }`}
+                      style={{ width: '50%' }}
+                    >
+                      Animation
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -944,7 +979,7 @@ export default function BuilderTabbed() {
           <div
             className="h-[380px] xl:h-[420px] 2xl:h-[460px] overflow-hidden relative"
             style={{
-              backgroundColor: '#F0EFE9'
+              backgroundColor: '#F7F9FC'
             }}
           >
             {/* Description area that slides down like a curtain/screen */}
@@ -959,8 +994,9 @@ export default function BuilderTabbed() {
                 ease: [0.4, 0.0, 0.2, 1]
               }}
               style={{
-                zIndex: 10,
-                backgroundColor: '#FCFCFA'
+                zIndex: 100,
+                backgroundColor: '#FCFCFA',
+                isolation: 'isolate'
               }}
             >
               <motion.div
@@ -1242,55 +1278,81 @@ export default function BuilderTabbed() {
 
                 {activeTab.id === 'agents' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    {/* Left: Compact Info */}
+                    {/* Left: Compact info */}
                     <div className="space-y-3">
-                      <h3 className="text-lg font-bold text-gray-900">Agent Builder</h3>
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        Deploy AI agents that understand your business, make decisions, and take actions autonomously.
-                      </p>
-
-                      {/* Core Capabilities */}
+                      {/* Header */}
                       <div>
-                        <h4 className="text-xs font-semibold text-gray-900 mb-2">Core Capabilities</h4>
-                        <div className="space-y-1.5 text-xs text-gray-700">
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>Natural language conversations</span>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Agent Builder</h3>
+                        <p className="text-sm text-gray-600 leading-snug font-futura">
+                          Deploy AI agents that understand your business, make decisions, and take actions autonomously.
+                        </p>
+                      </div>
+
+                      {/* Core Capabilities - Compact list */}
+                      <div className="space-y-1.5">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Capabilities</div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Natural Language</span>
+                            <span className="text-xs text-gray-500">Conversations</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>Data analysis & reporting</span>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Data Analysis</span>
+                            <span className="text-xs text-gray-500">Reporting</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>Automated actions & workflows</span>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Automated Actions</span>
+                            <span className="text-xs text-gray-500">Workflows</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>Decision routing & escalation</span>
+                          <div className="flex items-center gap-2 text-sm">
+                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                            <span className="text-gray-900 font-medium">Decision Routing</span>
+                            <span className="text-xs text-gray-500">Escalation</span>
                           </div>
+                        </div>
+                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
+                          Configure personality, stages, tools, and model parameters
                         </div>
                       </div>
 
-                      {/* Key Features */}
-                      <div>
-                        <h4 className="text-xs font-semibold text-gray-900 mb-2">Enterprise Features</h4>
-                        <div className="space-y-1.5 text-xs text-gray-700">
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>Full reasoning & audit logs</span>
+                      {/* Key Features - Ultra compact */}
+                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Enterprise Features</div>
+                        <div className="space-y-1">
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Full reasoning & audit logs</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>Human oversight & approvals</span>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Human oversight & approvals</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>Custom training on your data</span>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">Custom training on your data</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-gray-400"></div>
-                            <span>24/7 autonomous operation</span>
+                          <div className="flex items-start gap-2">
+                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs text-gray-700">24/7 autonomous operation</span>
                           </div>
                         </div>
                       </div>

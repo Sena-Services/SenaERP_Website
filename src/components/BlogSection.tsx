@@ -16,37 +16,6 @@ type BlogPost = {
   published_date?: string;
 };
 
-// Fallback data in case API fails
-const fallbackBlogPosts: BlogPost[] = [
-  {
-    id: "ai-first-erp",
-    name: "Why the next wave of ERPs is AI-first",
-    title: "Why the next wave of ERPs is AI-first",
-    description:
-      "We break down the architectural shifts that make intelligence the new system of record.",
-    author: "Sena Team",
-    published_date: "2024-01-15",
-  },
-  {
-    id: "customer-knowledge",
-    name: "Scaling customer knowledge without chaos",
-    title: "Scaling customer knowledge without chaos",
-    description:
-      "How ops teams centralize learnings so teams never go into meetings unprepared.",
-    author: "Sena Team",
-    published_date: "2024-01-10",
-  },
-  {
-    id: "reliable-automations",
-    name: "Designing reliable automations",
-    title: "Designing reliable automations",
-    description:
-      "Our framework for building playbooks that operators actually trust day-to-day.",
-    author: "Sena Team",
-    published_date: "2024-01-05",
-  },
-];
-
 function BlogVisual({
   attachment,
   isHovered,
@@ -126,7 +95,7 @@ function BlogVisual({
 
 const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
   const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
-  const [blogPosts, setBlogPosts] = React.useState<BlogPost[]>(fallbackBlogPosts);
+  const [blogPosts, setBlogPosts] = React.useState<BlogPost[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [activeCardIndex, setActiveCardIndex] = React.useState<number>(1); // Start with second card active
   const carouselRef = React.useRef<HTMLDivElement>(null);
@@ -175,10 +144,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
             author: blog.author || blog.owner || 'Sena Team',
             published_date: blog.published_date || blog.creation || new Date().toISOString().split('T')[0],
           }));
-          setBlogPosts(blogs.length > 0 ? blogs : fallbackBlogPosts);
-        } else {
-          // No blogs found, use fallback
-          setBlogPosts(fallbackBlogPosts);
+          setBlogPosts(blogs);
         }
       } catch (error) {
         console.error('Error fetching blogs:', error);

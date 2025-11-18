@@ -233,6 +233,29 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             >
               Remote-friendly · Competitive benefits · Growing team
             </p>
+
+            {/* Legal Links */}
+            <div
+              className="flex items-center justify-center gap-2 font-futura text-gray-500"
+              style={{
+                fontSize: isMobile ? '10px' : `${getResponsiveValue(11)}px`,
+                paddingTop: isMobile ? '8px' : `${getResponsiveValue(8)}px`,
+              }}
+            >
+              <Link
+                href="/privacy-policy"
+                className="hover:text-gray-700 transition-colors underline"
+              >
+                Privacy Policy
+              </Link>
+              <span>·</span>
+              <Link
+                href="/terms-and-conditions"
+                className="hover:text-gray-700 transition-colors underline"
+              >
+                Terms & Conditions
+              </Link>
+            </div>
           </div>
         </div>
       </div>

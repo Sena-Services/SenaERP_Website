@@ -11,6 +11,11 @@ export interface Environment {
     type?: string;
     blueprint_type?: string;
   }>;
+  // Direct count fields from API
+  interface_count?: number;
+  data_count?: number;
+  workflows_count?: number;
+  agents_count?: number;
 }
 
 interface EnvironmentSelectorProps {
@@ -318,6 +323,13 @@ export default function EnvironmentSelector({
   };
 
   const getComponentCount = (env: Environment, type: string): number => {
+    // First try to get from direct count fields (new API structure)
+    if (type === "UI" && env.interface_count !== undefined) return env.interface_count;
+    if (type === "Logic" && env.workflows_count !== undefined) return env.workflows_count;
+    if (type === "Database" && env.data_count !== undefined) return env.data_count;
+    if (type === "Agents" && env.agents_count !== undefined) return env.agents_count;
+
+    // Fallback to active_blueprints array (old structure)
     if (!env.active_blueprints || !Array.isArray(env.active_blueprints)) return 0;
     return env.active_blueprints.filter((bp) => {
       const blueprintType = bp.type || bp.blueprint_type || "";
@@ -560,19 +572,18 @@ export default function EnvironmentSelector({
         {!error && (
           <div
             className={`flex flex-col items-center h-full px-4 ${
-              activeEnvironments.length > 0 ? "py-16" : "pt-24"
+              activeEnvironments.length > 0 ? "py-3" : "pt-6"
             }`}
           >
             <div
-              className={`w-full max-w-3xl flex flex-col`}
-              style={{ maxHeight: "calc(100vh - 4rem)" }}
+              className={`w-full max-w-3xl flex flex-col h-full`}
             >
               {/* Hero Section */}
-              <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-3' : 'mb-4'}`}>
-                <div className={`inline-flex items-center justify-center ${previewMode ? 'mb-1' : 'mb-1'}`}>
+              <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-2 mt-3' : 'mb-4'}`}>
+                <div className={`inline-flex items-center justify-center ${previewMode ? 'mb-0' : 'mb-1'}`}>
                   <img src="/waygent.png" alt="Sena ERP" className={previewMode ? 'w-10 h-10' : 'w-12 h-12'} />
                 </div>
-                <h1 className={`font-bold text-gray-800 ${previewMode ? 'text-3xl mb-1' : 'text-4xl mb-1.5'}`}>Sena ERP</h1>
+                <h1 className={`font-bold text-gray-800 ${previewMode ? 'text-3xl mb-0.5' : 'text-4xl mb-1.5'}`}>Sena ERP</h1>
                 <div className="tagline-container">
                   <p className={`tagline ${previewMode ? 'text-sm' : 'text-sm'}`}>
                     <span className="tagline-text">
@@ -592,7 +603,7 @@ export default function EnvironmentSelector({
 
               {/* Search Bar */}
               {activeEnvironments.length >= 4 && (
-                <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-3' : 'mb-4'}`}>
+                <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-2' : 'mb-4'}`}>
                   <div className={`relative ${previewMode ? 'w-3/4' : 'w-3/4'}`}>
                     <svg
                       className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 pointer-events-none ${previewMode ? 'w-5 h-5' : 'w-5 h-5'}`}
@@ -621,15 +632,11 @@ export default function EnvironmentSelector({
               {/* Environment Cards */}
               {activeEnvironments.length > 0 && (
                 <div
-                  className={`flex-1 mb-3 pt-2 ${
-                    readOnly && previewMode
-                      ? "overflow-visible"
-                      : "overflow-y-auto custom-scrollbar"
-                  }`}
-                  style={{ pointerEvents: 'auto' }}
+                  className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex items-center py-2`}
+                  style={{ pointerEvents: 'auto', minHeight: 0 }}
                 >
                   <div
-                    className={`grid gap-2 md:grid-cols-2 ${
+                    className={`grid gap-2 md:grid-cols-2 w-full ${
                       activeEnvironments.length === 1 ? "single-env-grid" : ""
                     }`}
                     style={{ pointerEvents: 'auto' }}
@@ -713,81 +720,6 @@ export default function EnvironmentSelector({
                               <p className="env-description">
                                 {env.description || "ERP Environment"}
                               </p>
-                              <div className="component-counts">
-                                {/* UI Components */}
-                                <div className="component-badge">
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                  >
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="9" y1="3" x2="9" y2="21"></line>
-                                  </svg>
-                                  <span>{getComponentCount(env, "UI")}</span>
-                                </div>
-
-                                {/* Logic Components */}
-                                <div className="component-badge">
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                  >
-                                    <polyline points="16 18 22 12 16 6"></polyline>
-                                    <polyline points="8 6 2 12 8 18"></polyline>
-                                  </svg>
-                                  <span>{getComponentCount(env, "Logic")}</span>
-                                </div>
-
-                                {/* Database Components */}
-                                <div className="component-badge">
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                  >
-                                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-                                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-                                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-                                  </svg>
-                                  <span>{getComponentCount(env, "Database")}</span>
-                                </div>
-
-                                {/* Integration Components */}
-                                <div className="component-badge">
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                  >
-                                    <circle cx="18" cy="5" r="3"></circle>
-                                    <circle cx="6" cy="12" r="3"></circle>
-                                    <circle cx="18" cy="19" r="3"></circle>
-                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                                  </svg>
-                                  <span>{getComponentCount(env, "Integration")}</span>
-                                </div>
-
-                                {/* Agent Components */}
-                                <div className="component-badge">
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                  >
-                                    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"></path>
-                                    <path d="M14.8 16H9.2a1 1 0 0 0-.98 1.21l.74 3.7a1 1 0 0 0 .98.79h4.12a1 1 0 0 0 .98-.79l.74-3.7a1 1 0 0 0-.98-1.21z"></path>
-                                  </svg>
-                                  <span>{getComponentCount(env, "Agents")}</span>
-                                </div>
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -987,8 +919,8 @@ export default function EnvironmentSelector({
 
         /* Bigger cards only in preview mode */
         .preview-zoom .environment-card {
-          padding: 10px;
-          min-height: 80px;
+          padding: 8px;
+          min-height: 64px;
           cursor: pointer;
           position: relative;
         }

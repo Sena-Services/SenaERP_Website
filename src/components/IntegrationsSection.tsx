@@ -31,15 +31,14 @@ const integrations: Integration[] = [...nativeIntegrations, ...thirdPartyIntegra
 
 const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection(props, ref) {
   const enabledNativeIntegrations = nativeIntegrations.filter(int => !int.disabled);
-  const [activeId, setActiveId] = useState<string>(enabledNativeIntegrations[0].id);
-  const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
+  const [activeId, setActiveId] = useState<string>("whatsapp");
+  const [isAutoCycling, setIsAutoCycling] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [showGallery, setShowGallery] = useState<boolean>(false);
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
   const activeIntegration = integrations.find((int) => int.id === activeId && !int.disabled);
 
   const imageRef = useRef<HTMLDivElement>(null);
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [arrowPositions, setArrowPositions] = useState({
     arrow1: { top: '10%', right: '-350px' },
     arrow2: { top: '31%', right: '-350px' },
@@ -102,7 +101,6 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
     arrow2Length = 200 + (120 * widthScale); // 200-320px range
     arrow3Length = 250 + (60 * widthScale);  // 250-310px range
 
-    console.log('🎯 Arrow at width', windowWidth, ':', { arrow1Length, arrow2Length, arrow3Length });
 
     setArrowPositions({
       arrow1: {
@@ -135,7 +133,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Calculate arrow positions on resize and when image loads
+  // Calculate arrow positions on resize
   useEffect(() => {
     if (isMobile || activeId !== 'whatsapp') return;
 
@@ -145,7 +143,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
     return () => {
       window.removeEventListener('resize', updateArrowPositions);
     };
-  }, [isMobile, activeId, imageLoaded]);
+  }, [isMobile, activeId]);
 
   // Auto-cycle through ONLY native integrations (excluding disabled ones)
   useEffect(() => {
@@ -164,7 +162,6 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
 
   const handleIntegrationClick = (id: string) => {
     setActiveId(id);
-    setIsAutoCycling(false); // Stop auto-cycling when user clicks
   };
 
   const openGallery = () => {
@@ -239,7 +236,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                       className="group flex flex-col items-center gap-2"
                     >
                       <div
-                        className={`relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-lg backdrop-blur-sm border transition-all duration-200 ease-out ${
+                        className={`relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg backdrop-blur-sm border transition-all duration-200 ease-out ${
                           isActive
                             ? 'bg-white border-waygent-blue shadow-xl scale-110'
                             : 'bg-white/90 border-gray-200 hover:bg-white hover:border-waygent-blue/40 hover:scale-105 hover:shadow-md'
@@ -250,36 +247,12 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                           alt={integration.name}
                           className={`transition-all duration-200 object-contain ${
                             integration.id === 'whatsapp'
-                              ? 'w-5 h-5 md:w-6 md:h-6'
-                              : 'w-4 h-4 md:w-5 md:h-5'
+                              ? 'w-7 h-7 md:w-8 md:h-8'
+                              : 'w-6 h-6 md:w-7 md:h-7'
                           }`}
                         />
                       </div>
                     </button>
-                    {isActive && !isAutoCycling && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsAutoCycling(true);
-                        }}
-                        className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-waygent-blue rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition z-10"
-                        title="Resume auto-play"
-                      >
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="text-white"
-                        >
-                          <path
-                            d="M8 5v14l11-7z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                      </button>
-                    )}
                   </div>
                 );
               })}
@@ -327,22 +300,18 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             </AnimatePresence>
 
             {/* Screenshot and Features side by side */}
-            <div className="flex flex-col md:flex-row gap-4 xl:gap-6 items-start">
+            <div className="flex flex-col md:flex-row gap-4 xl:gap-6 items-start" style={{ minHeight: isMobile ? 'auto' : '420px' }}>
               {/* Screenshot container - Left side */}
               <div className="flex justify-center md:w-2/3">
                 <div
                   onClick={openGallery}
-                  className={`relative group/screenshot cursor-pointer ${isMobile ? '' : 'bg-white'}`}
+                  className={`relative group/screenshot cursor-pointer w-full ${isMobile ? '' : 'bg-white'}`}
                   style={{
                     border: isMobile ? 'none' : '2px solid #9CA3AF',
                     borderRadius: isMobile ? '0' : '1rem',
                     boxShadow: isMobile ? 'none' : '0 10px 30px -8px rgba(0, 0, 0, 0.1), 0 4px 15px -5px rgba(0, 0, 0, 0.05)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    maxHeight: isMobile ? 'none' : 'min(600px, 60vh)',
                     overflow: 'visible',
-                    padding: isMobile ? '0' : '16px'
+                    padding: isMobile ? '0' : '6px'
                   }}
                 >
                 {/* Subtle view hint */}
@@ -360,8 +329,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ duration: isMobile ? 0.8 : 0.6, ease: "easeInOut" }}
-                      className="flex items-center justify-center relative"
-                      style={{ maxHeight: isMobile ? 'none' : 'min(600px, 60vh)' }}
+                      className="relative w-full"
                     >
                       <Image
                         src={activeIntegration.screenshot}
@@ -369,17 +337,15 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         width={1200}
                         height={800}
                         quality={85}
-                        className="h-auto cursor-pointer"
+                        priority
+                        className="w-full h-auto cursor-pointer"
                         style={{
                           imageRendering: '-webkit-optimize-contrast',
                           maxHeight: isMobile ? 'none' : 'min(600px, 60vh)',
-                          width: 'auto',
-                          display: 'block',
                           objectFit: 'contain'
                         }}
                         onClick={openGallery}
                         onLoad={() => {
-                          setImageLoaded(true);
                           setTimeout(() => updateArrowPositions(), 50);
                         }}
                       />
@@ -400,7 +366,6 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: isMobile ? 0.8 : 0.6, delay: 0.15, ease: "easeInOut" }}
                     className={`${isMobile ? 'mt-1.5 w-full' : 'md:w-1/3'} flex flex-col gap-2`}
-                    style={{ maxHeight: isMobile ? 'auto' : 'min(600px, 60vh)' }}
                   >
                   {activeIntegration.id === 'whatsapp' && (
                     <>
@@ -581,19 +546,16 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
 
           {/* 3rd Party Integrations - Below everything */}
           <div className="md:px-0 mt-4 md:mt-6">
-            <div className="flex items-center gap-2 mb-3 justify-center">
-              <div className="h-px bg-gradient-to-r from-transparent via-purple-300 to-transparent flex-1"></div>
-              <h3 className="text-xs md:text-sm font-futura tracking-wide text-purple-600 uppercase font-semibold">Connect Your Environment</h3>
-              <div className="h-px bg-gradient-to-r from-transparent via-purple-300 to-transparent flex-1"></div>
+            <div className="flex items-center gap-2 mb-2 justify-center">
+              <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+              <h3 className="text-[10px] md:text-xs font-futura tracking-wide text-waygent-blue uppercase">3rd Party Integrations</h3>
+              <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
             </div>
-            <p className="text-center text-xs md:text-sm text-gray-600 mb-3 font-futura max-w-2xl mx-auto">
-              Seamlessly integrate with your existing tools and workflows
-            </p>
-            <div className="flex flex-wrap gap-2.5 md:gap-3 justify-center items-center mb-3">
+            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center items-center">
               {thirdPartyIntegrations.map((integration) => (
                 <div key={integration.id} className="relative">
                   <div className="group flex flex-col items-center gap-2 cursor-default">
-                    <div className="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl backdrop-blur-sm border border-purple-200 bg-gradient-to-br from-white to-purple-50/30 transition-all duration-200 ease-out hover:shadow-lg hover:scale-105 hover:border-purple-400">
+                    <div className="relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg backdrop-blur-sm border bg-white/90 border-gray-200 transition-all duration-200 ease-out hover:bg-white hover:border-waygent-blue/40 hover:scale-105 hover:shadow-md">
                       <img
                         src={integration.iconUrl}
                         alt={integration.name}
@@ -604,14 +566,9 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         }`}
                       />
                     </div>
-                    <span className="text-[10px] md:text-xs text-gray-600 font-futura">{integration.name}</span>
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
-              <p className="text-center text-xs text-gray-500 font-futura">More integrations coming soon</p>
             </div>
           </div>
         </div>
