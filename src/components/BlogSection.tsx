@@ -26,6 +26,7 @@ function BlogVisual({
   isActive?: boolean;
 }) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [hasError, setHasError] = React.useState(false);
 
   // Determine if attachment is a video based on file extension
   const isVideo = React.useMemo(() => {
@@ -33,6 +34,13 @@ function BlogVisual({
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov'];
     return videoExtensions.some(ext => attachment.toLowerCase().endsWith(ext));
   }, [attachment]);
+
+  // Debug logging
+  React.useEffect(() => {
+    if (attachment) {
+      console.log('BlogVisual attachment:', attachment, 'isVideo:', isVideo);
+    }
+  }, [attachment, isVideo]);
 
   React.useEffect(() => {
     if (!isVideo) return;
@@ -43,11 +51,26 @@ function BlogVisual({
     const shouldPlay = isHovered || isActive;
 
     if (shouldPlay) {
-      video.playbackRate = 0.5;
-      video.play().catch(() => {
-        // Ignore play errors (e.g., if user hasn't interacted yet)
-      });
-    } else {
+      // Wait for video to be ready before playing
+      const playWhenReady = () => {
+        if (video.readyState >= 2) { // HAVE_CURRENT_DATA or better
+          video.playbackRate = 0.5;
+          video.play().catch((err) => {
+            console.error('Video play failed:', err);
+          });
+        } else {
+          // If not ready, wait for loadeddata event
+          video.addEventListener('loadeddata', () => {
+            video.playbackRate = 0.5;
+            video.play().catch((err) => {
+              console.error('Video play failed:', err);
+            });
+          }, { once: true });
+        }
+      };
+      playWhenReady();
+    } else if (video.readyState > 0) {
+      // Only pause if video has actually loaded some data
       video.pause();
       video.currentTime = 0;
     }
@@ -55,7 +78,7 @@ function BlogVisual({
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-[#f6efe4]">
-      {attachment ? (
+      {attachment && !hasError ? (
         isVideo ? (
           <video
             ref={videoRef}
@@ -65,6 +88,21 @@ function BlogVisual({
             loop
             muted
             playsInline
+            preload="metadata"
+            onLoadStart={() => console.log('Video load started:', attachment)}
+            onLoadedMetadata={() => console.log('Video metadata loaded:', attachment)}
+            onLoadedData={() => console.log('Video data loaded successfully:', attachment)}
+            onCanPlay={() => console.log('Video can play:', attachment)}
+            onError={(e) => {
+              const video = e.currentTarget;
+              console.error('Video error:', {
+                attachment,
+                error: video.error,
+                networkState: video.networkState,
+                readyState: video.readyState
+              });
+              setHasError(true);
+            }}
           >
             <source src={attachment} type="video/mp4" />
           </video>
@@ -79,14 +117,24 @@ function BlogVisual({
               isHovered || isActive ? "opacity-100" : "opacity-70"
             }`}
             onError={(e) => {
-              // If image fails to load, hide it
-              e.currentTarget.style.display = 'none';
+              console.error('Image failed to load:', attachment, e);
+              setHasError(true);
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', attachment);
             }}
           />
         )
       ) : (
         <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
-          No media
+          {hasError ? (
+            <div className="text-center px-4">
+              <div className="text-red-400 mb-1">Media failed to load</div>
+              <div className="text-xs text-gray-500 break-all">{attachment}</div>
+            </div>
+          ) : (
+            'No media'
+          )}
         </div>
       )}
     </div>
@@ -135,16 +183,42 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
         const result = await response.json();
 
         if (result.message?.success && result.message?.data) {
-          const blogs = result.message.data.map((blog: any) => ({
-            id: blog.blog_id || blog.name,
-            name: blog.name,
-            title: blog.title,
-            description: blog.description || '',
-            attachment: getFileUrl(blog.attachment),
-            author: blog.author || blog.owner || 'Sena Team',
-            published_date: blog.published_date || blog.creation || new Date().toISOString().split('T')[0],
-          }));
+          const blogs = result.message.data.map((blog: any) => {
+            const attachmentUrl = getFileUrl(blog.attachment);
+            console.log('Blog attachment mapping:', {
+              originalPath: blog.attachment,
+              generatedUrl: attachmentUrl,
+              title: blog.title
+            });
+            return {
+              id: blog.blog_id || blog.name,
+              name: blog.name,
+              title: blog.title,
+              description: blog.description || '',
+              attachment: attachmentUrl,
+              author: blog.author || blog.owner || 'Sena Team',
+              published_date: blog.published_date || blog.creation || new Date().toISOString().split('T')[0],
+            };
+          });
           setBlogPosts(blogs);
+
+          // Preload video attachments for faster loading
+          blogs.forEach((blog) => {
+            if (blog.attachment) {
+              const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov'];
+              const isVideo = videoExtensions.some(ext => blog.attachment.toLowerCase().endsWith(ext));
+
+              if (isVideo) {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'video';
+                link.href = blog.attachment;
+                link.type = 'video/mp4';
+                document.head.appendChild(link);
+                console.log('Preloading video:', blog.attachment);
+              }
+            }
+          });
         }
       } catch (error) {
         console.error('Error fetching blogs:', error);
@@ -241,7 +315,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
   }, [loading, blogPosts]);
 
   return (
-    <section ref={ref} id="blog" className="scroll-mt-24 pb-12" style={{ paddingTop: isMobile ? '16px' : '0' }}>
+    <section ref={ref} id="blog" className="scroll-mt-24 pb-4" style={{ paddingTop: isMobile ? '16px' : '0' }}>
       <style jsx>{`
         .blog-carousel::-webkit-scrollbar {
           display: none;
@@ -268,7 +342,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
         </div>
 
         <div className="relative flex flex-col">
-          <div className="mt-4 mb-4 md:mb-6 text-center px-4 md:px-0">
+          <div className="mt-4 mb-6 md:mb-8 text-center px-4 md:px-0">
             <h2
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
@@ -276,10 +350,22 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                 letterSpacing: "-0.02em",
                 color: "#2C1810",
                 fontSize: isMobile ? '32px' : '40px',
+                marginBottom: '12px',
               }}
             >
               Blog
             </h2>
+            <p
+              className="text-waygent-text-secondary font-space-grotesk"
+              style={{
+                fontSize: isMobile ? '14px' : '16px',
+                lineHeight: '1.6',
+                maxWidth: '600px',
+                margin: '0 auto',
+              }}
+            >
+              Insights, updates, and stories from our team
+            </p>
           </div>
 
           {loading ? (
@@ -311,15 +397,114 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                 }}
               >
                 {/* Create pages of 3 blogs each */}
-                {Array.from({ length: Math.ceil(blogPosts.length / 3) }).map((_, pageIndex) => (
+                {Array.from({ length: Math.ceil(Math.max(blogPosts.length, 3) / 3) }).map((_, pageIndex) => {
+                  const postsInPage = blogPosts.slice(pageIndex * 3, (pageIndex * 3) + 3);
+                  // Fill with placeholders if less than 3 posts
+                  const itemsToShow = [...postsInPage];
+                  while (itemsToShow.length < 3 && pageIndex === 0) {
+                    itemsToShow.push({ isPlaceholder: true, id: `placeholder-${itemsToShow.length}` } as any);
+                  }
+
+                  return (
                   <div
                     key={pageIndex}
-                    className="flex-shrink-0 w-full grid grid-cols-3 gap-4"
+                    className="flex-shrink-0 w-full grid gap-4 grid-cols-3 mx-auto"
+                    style={{
+                      maxWidth: '720px'
+                    }}
                   >
-                    {blogPosts.slice(pageIndex * 3, (pageIndex * 3) + 3).map((post, index) => {
+                    {itemsToShow.map((post, index) => {
+                      // Render placeholder card
+                      if ((post as any).isPlaceholder) {
+                        return (
+                          <div
+                            key={(post as any).id}
+                            className="relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-[#f6efe4] shadow-sm cursor-default"
+                          >
+                            {/* Placeholder Visual */}
+                            <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden">
+                              {/* Content */}
+                              <div className="relative z-10 text-center px-6">
+                                {/* Icon */}
+                                <div className="relative w-20 h-20 mx-auto mb-4">
+                                  <div
+                                    className="absolute inset-0 rounded-2xl flex items-center justify-center"
+                                    style={{
+                                      background: 'rgba(44, 24, 16, 0.08)',
+                                    }}
+                                  >
+                                    <svg
+                                      className="w-10 h-10"
+                                      style={{ color: '#2C1810' }}
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                      strokeWidth={1.5}
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
+                                      />
+                                    </svg>
+                                  </div>
+                                </div>
+
+                                <div
+                                  className="font-space-grotesk font-bold mb-1"
+                                  style={{
+                                    fontSize: '16px',
+                                    letterSpacing: '-0.02em',
+                                    color: '#2C1810'
+                                  }}
+                                >
+                                  Coming Soon
+                                </div>
+                                <div
+                                  className="font-space-grotesk text-gray-500"
+                                  style={{ fontSize: '11px', lineHeight: '1.4' }}
+                                >
+                                  More insights on the way
+                                </div>
+
+                                {/* Decorative dots */}
+                                <div className="flex items-center justify-center gap-1.5 mt-4">
+                                  <div
+                                    className="w-1.5 h-1.5 rounded-full animate-bounce"
+                                    style={{
+                                      background: '#2C1810',
+                                      animationDelay: '0ms',
+                                      animationDuration: '1500ms'
+                                    }}
+                                  />
+                                  <div
+                                    className="w-1.5 h-1.5 rounded-full animate-bounce"
+                                    style={{
+                                      background: '#2C1810',
+                                      animationDelay: '150ms',
+                                      animationDuration: '1500ms'
+                                    }}
+                                  />
+                                  <div
+                                    className="w-1.5 h-1.5 rounded-full animate-bounce"
+                                    style={{
+                                      background: '#2C1810',
+                                      animationDelay: '300ms',
+                                      animationDuration: '1500ms'
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      // Render actual blog post
+                      const actualPost = post as BlogPost;
                       const isActive = index === activeCardIndex;
-                      const formattedDate = post.published_date
-                        ? new Date(post.published_date).toLocaleDateString('en-US', {
+                      const formattedDate = actualPost.published_date
+                        ? new Date(actualPost.published_date).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric'
@@ -328,8 +513,8 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
 
                       return (
                         <Link
-                    key={post.id}
-                    href={`/blog/${post.id}`}
+                    key={actualPost.id}
+                    href={`/blog/${actualPost.id}`}
                     className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-white text-waygent-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer ${
                       isMobile
                         ? `w-[280px] flex-shrink-0 snap-center ${
@@ -339,14 +524,14 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                           }`
                         : 'border-waygent-light-blue/40 hover:border-waygent-blue/40'
                     }`}
-                    onMouseEnter={() => setHoveredCardId(post.id)}
+                    onMouseEnter={() => setHoveredCardId(actualPost.id)}
                     onMouseLeave={() => setHoveredCardId(null)}
                   >
                     {/* Image/Video Container - Perfect Square */}
                     <div className="relative w-full aspect-square">
                       <BlogVisual
-                        attachment={post.attachment}
-                        isHovered={hoveredCardId === post.id}
+                        attachment={actualPost.attachment}
+                        isHovered={hoveredCardId === actualPost.id}
                         isActive={isActive && typeof window !== 'undefined' && window.innerWidth < 768}
                       />
 
@@ -378,7 +563,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                               textShadow: '0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.8)',
                             }}
                           >
-                            {post.title}
+                            {actualPost.title}
                           </h3>
 
                           {/* Author and Date - with text shadow */}
@@ -389,7 +574,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                               textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)'
                             }}
                           >
-                            <span className="truncate">{post.author}</span>
+                            <span className="truncate">{actualPost.author}</span>
                             <span className="opacity-70">•</span>
                             <span className="flex-shrink-0">{formattedDate}</span>
                           </div>
@@ -400,7 +585,8 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                       );
                     })}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
