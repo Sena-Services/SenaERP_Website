@@ -25,6 +25,10 @@ export default function BlogArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const handleBackClick = () => {
+    router.back();
+  };
+
   useEffect(() => {
     const fetchArticle = async () => {
       try {
@@ -66,8 +70,14 @@ export default function BlogArticlePage() {
         <NavBar />
         <main className="min-h-screen bg-waygent-cream">
           <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center text-gray-600 font-space-grotesk">
-              Loading article...
+            <div className="flex items-center justify-center py-12 min-h-[400px]">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative w-16 h-16">
+                  <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-waygent-orange border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <p className="text-gray-600 font-space-grotesk text-sm">Loading article...</p>
+              </div>
             </div>
           </div>
         </main>
@@ -85,12 +95,12 @@ export default function BlogArticlePage() {
               <h1 className="text-2xl font-bold text-gray-900 font-futura mb-4">
                 {error || "Article not found"}
               </h1>
-              <Link
-                href="/"
-                className="text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk"
+              <button
+                onClick={handleBackClick}
+                className="text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk cursor-pointer"
               >
-                ← Back to home
-              </Link>
+                ← Go back
+              </button>
             </div>
           </div>
         </main>
@@ -112,9 +122,9 @@ export default function BlogArticlePage() {
         <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Back button */}
           <div className="mb-8">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk transition"
+            <button
+              onClick={handleBackClick}
+              className="inline-flex items-center gap-2 text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk transition cursor-pointer"
             >
               <svg
                 className="w-5 h-5"
@@ -125,8 +135,8 @@ export default function BlogArticlePage() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
-              Back to home
-            </Link>
+              Go back
+            </button>
           </div>
 
           {/* Article header */}

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function MobileHowItWorks() {
   const [isMobile, setIsMobile] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   useEffect(() => {
@@ -160,7 +162,7 @@ export default function MobileHowItWorks() {
   if (!isMobile) return null;
 
   return (
-    <div className="w-full bg-gradient-to-b from-waygent-cream to-gray-50 relative pt-10" id="how-it-works">
+    <div className="w-full relative pt-4" id="how-it-works" style={{ backgroundColor: '#FAF9F5' }}>
       {/* Section Header - Only on Mobile */}
       {isMobile && (
         <div className="text-center px-4 pb-8">
@@ -199,10 +201,7 @@ export default function MobileHowItWorks() {
         >
           {/* Card Container with modern styling */}
           <div
-            className="relative rounded-3xl overflow-hidden shadow-2xl"
-            style={{
-              minHeight: 'calc(100vh - 120px)',
-            }}
+            className="relative rounded-3xl overflow-hidden shadow-lg"
           >
             {/* Video Section - Compact with gradient overlay */}
             <div className="w-full h-[45vh] relative overflow-hidden">
@@ -267,11 +266,11 @@ export default function MobileHowItWorks() {
 
             {/* Content Section with glassmorphism */}
             <div
-              className="relative overflow-y-auto px-5 py-6"
+              className="relative px-5 py-6 cursor-pointer"
               style={{
-                background: 'rgba(255, 255, 255, 0.85)',
-                backdropFilter: 'blur(20px)',
+                background: '#FAF9F5',
               }}
+              onClick={() => setExpandedCard(expandedCard === index ? null : index)}
             >
               {/* Compact Title with accent */}
               <div className="mb-4">
@@ -288,15 +287,39 @@ export default function MobileHowItWorks() {
                 >
                   STEP {card.number}
                 </div>
-                <h3
-                  className="text-2xl font-bold leading-tight"
-                  style={{
-                    fontFamily: "Georgia, 'Times New Roman', serif",
-                    color: "#1F2937",
-                  }}
-                >
-                  {card.details.heading}
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3
+                    className="text-2xl font-bold leading-tight"
+                    style={{
+                      fontFamily: "Georgia, 'Times New Roman', serif",
+                      color: "#1F2937",
+                    }}
+                  >
+                    {card.details.heading}
+                  </h3>
+                  {/* Expand/Collapse Icon */}
+                  <motion.div
+                    animate={{ rotate: expandedCard === index ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex-shrink-0 ml-2"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{
+                        color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                      }}
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </motion.div>
+                </div>
               </div>
 
               <p
@@ -307,99 +330,112 @@ export default function MobileHowItWorks() {
                   lineHeight: "1.6",
                 }}
               >
-                {card.details.intro}
+                {card.description}
               </p>
 
-              {/* Mode-specific content for Card 1 - Compact cards */}
-              {card.details.modes && (
-                <div className="space-y-3">
-                  {card.details.modes.map((mode, modeIndex) => (
-                    <div
-                      key={modeIndex}
-                      className="rounded-2xl p-4"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.6)',
-                        border: '1px solid rgba(0, 0, 0, 0.05)',
-                      }}
-                    >
-                      <h4
-                        className="text-base font-bold mb-1 flex items-center gap-2"
-                        style={{
-                          fontFamily: "system-ui, sans-serif",
-                          color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                        }}
-                      >
-                        <span>{mode.title}</span>
-                      </h4>
-                      <p
-                        className="text-xs leading-relaxed mb-2"
-                        style={{
-                          fontFamily: "system-ui, -apple-system, sans-serif",
-                          color: "#6B7280",
-                        }}
-                      >
-                        {mode.description}
-                      </p>
-                      <ul className="space-y-1.5">
-                        {mode.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-start gap-2">
-                            <div
-                              className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
+              {/* Expandable Content */}
+              <AnimatePresence initial={false}>
+                {expandedCard === index && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    style={{ overflow: "hidden" }}
+                  >
+                    {/* Mode-specific content for Card 1 - Compact cards */}
+                    {card.details.modes && (
+                      <div className="space-y-3 mt-4">
+                        {card.details.modes.map((mode, modeIndex) => (
+                          <div
+                            key={modeIndex}
+                            className="rounded-2xl p-4"
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.6)',
+                              border: '1px solid rgba(0, 0, 0, 0.05)',
+                            }}
+                          >
+                            <h4
+                              className="text-base font-bold mb-1 flex items-center gap-2"
                               style={{
-                                background: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                              }}
-                            />
-                            <span
-                              className="text-xs"
-                              style={{
-                                fontFamily: "system-ui, -apple-system, sans-serif",
-                                color: "#4B5563",
+                                fontFamily: "system-ui, sans-serif",
+                                color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
                               }}
                             >
-                              {feature}
-                            </span>
-                          </li>
+                              <span>{mode.title}</span>
+                            </h4>
+                            <p
+                              className="text-xs leading-relaxed mb-2"
+                              style={{
+                                fontFamily: "system-ui, -apple-system, sans-serif",
+                                color: "#6B7280",
+                              }}
+                            >
+                              {mode.description}
+                            </p>
+                            <ul className="space-y-1.5">
+                              {mode.features.map((feature, featureIndex) => (
+                                <li key={featureIndex} className="flex items-start gap-2">
+                                  <div
+                                    className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
+                                    style={{
+                                      background: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                                    }}
+                                  />
+                                  <span
+                                    className="text-xs"
+                                    style={{
+                                      fontFamily: "system-ui, -apple-system, sans-serif",
+                                      color: "#4B5563",
+                                    }}
+                                  >
+                                    {feature}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
+                      </div>
+                    )}
 
-              {/* Feature list for Cards 2 & 3 - Grid layout */}
-              {card.details.features && !card.details.modes && (
-                <div className="grid grid-cols-2 gap-3">
-                  {card.details.features.map((feature, featureIndex) => (
-                    <div
-                      key={featureIndex}
-                      className="p-3 rounded-xl"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.6)',
-                        border: '1px solid rgba(0, 0, 0, 0.05)',
-                      }}
-                    >
-                      <h4
-                        className="font-bold mb-1 text-xs"
-                        style={{
-                          fontFamily: "system-ui, -apple-system, sans-serif",
-                          color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                        }}
-                      >
-                        {feature.title}
-                      </h4>
-                      <p
-                        className="text-[11px] leading-tight"
-                        style={{
-                          fontFamily: "system-ui, -apple-system, sans-serif",
-                          color: "#6B7280",
-                        }}
-                      >
-                        {feature.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    {/* Feature list for Cards 2 & 3 - Grid layout */}
+                    {card.details.features && !card.details.modes && (
+                      <div className="grid grid-cols-2 gap-3 mt-4">
+                        {card.details.features.map((feature, featureIndex) => (
+                          <div
+                            key={featureIndex}
+                            className="p-3 rounded-xl"
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.6)',
+                              border: '1px solid rgba(0, 0, 0, 0.05)',
+                            }}
+                          >
+                            <h4
+                              className="font-bold mb-1 text-xs"
+                              style={{
+                                fontFamily: "system-ui, -apple-system, sans-serif",
+                                color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                              }}
+                            >
+                              {feature.title}
+                            </h4>
+                            <p
+                              className="text-[11px] leading-tight"
+                              style={{
+                                fontFamily: "system-ui, -apple-system, sans-serif",
+                                color: "#6B7280",
+                              }}
+                            >
+                              {feature.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>

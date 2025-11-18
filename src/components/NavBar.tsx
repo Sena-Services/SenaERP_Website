@@ -59,7 +59,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   const isOnEnvironmentSelector = pathname === "/environment-selector";
 
   const builderTabs = [
-    { id: "ui", label: "UI", subtitle: "Build beautiful interfaces" },
+    { id: "ui", label: "Interface", subtitle: "Build beautiful interfaces" },
     { id: "data", label: "Data", subtitle: "Connect and transform" },
     { id: "workflows", label: "Workflows", subtitle: "Automate processes" },
     { id: "agents", label: "Agents", subtitle: "Deploy AI agents" },
@@ -72,6 +72,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
   const handleSectionClick = (sectionId: string) => {
     setIsMobileMenuOpen(false);
+    setIsModalOpen(false);
 
     // Special case: Introduction should scroll to the very top
     if (sectionId === "intro") {
@@ -83,6 +84,25 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         behavior: "smooth",
       });
       return;
+    }
+
+    // Special case: Builder on mobile should scroll to the first mobile builder card
+    if (sectionId === "builder") {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        const firstMobileCard = document.getElementById('mobile-builder-ui');
+        if (firstMobileCard) {
+          setTimeout(() => {
+            const navbarHeight = 180; // Account for navbar + builder tabs
+            const targetPosition = firstMobileCard.getBoundingClientRect().top + window.scrollY - navbarHeight;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth',
+            });
+          }, 100);
+          return;
+        }
+      }
     }
 
     const element = document.getElementById(sectionId);
@@ -408,8 +428,30 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                         key={tab.id}
                         onClick={() => {
                           setActiveBuilderTab(tab.id);
-                          // Dispatch event for BuilderTabbed component to listen
-                          window.dispatchEvent(new CustomEvent('builderTabChange', { detail: { tabId: tab.id } }));
+                          setIsModalOpen(false);
+
+                          // Check if mobile or desktop
+                          const isMobile = window.innerWidth < 768;
+
+                          if (isMobile) {
+                            // Scroll to the mobile builder card with proper offset
+                            const mobileCardId = `mobile-builder-${tab.id}`;
+                            const element = document.getElementById(mobileCardId);
+                            if (element) {
+                              // Small delay to let modal close
+                              setTimeout(() => {
+                                const navbarHeight = 180; // Account for navbar + builder tabs
+                                const targetPosition = element.getBoundingClientRect().top + window.scrollY - navbarHeight;
+                                window.scrollTo({
+                                  top: targetPosition,
+                                  behavior: 'smooth',
+                                });
+                              }, 100);
+                            }
+                          } else {
+                            // Desktop: dispatch event for BuilderTabbed component
+                            window.dispatchEvent(new CustomEvent('builderTabChange', { detail: { tabId: tab.id } }));
+                          }
                         }}
                         className={`px-2 py-2 transition-all duration-200 relative ${
                           index !== builderTabs.length - 1 ? 'border-r border-white/40' : ''

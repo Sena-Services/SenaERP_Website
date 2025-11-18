@@ -577,8 +577,8 @@ export default function Home() {
       {/* Mobile How It Works - only shows on mobile */}
       <MobileHowItWorks />
 
-      {/* Section Divider between How It Works and Builder */}
-      <div className="w-full" style={{
+      {/* Section Divider between How It Works and Builder - only shows on mobile */}
+      <div className="w-full md:hidden" style={{
         background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
         paddingTop: '8px',
         paddingBottom: '8px'

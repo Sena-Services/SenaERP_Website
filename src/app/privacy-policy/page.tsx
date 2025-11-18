@@ -1,16 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function PrivacyPolicy() {
+  const router = useRouter();
+
+  const handleBackClick = () => {
+    router.back();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Header */}
         <div className="mb-12">
-          <Link
-            href="/"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+          <button
+            onClick={handleBackClick}
+            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors cursor-pointer"
           >
             <svg
               className="w-5 h-5 mr-2"
@@ -25,8 +32,8 @@ export default function PrivacyPolicy() {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Home
-          </Link>
+            Go back
+          </button>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Privacy Policy
           </h1>

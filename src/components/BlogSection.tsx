@@ -203,19 +203,20 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
           setBlogPosts(blogs);
 
           // Preload video attachments for faster loading
-          blogs.forEach((blog) => {
+          blogs.forEach((blog: BlogPost) => {
             if (blog.attachment) {
               const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov'];
-              const isVideo = videoExtensions.some(ext => blog.attachment.toLowerCase().endsWith(ext));
+              const attachment = blog.attachment;
+              const isVideo = videoExtensions.some(ext => attachment.toLowerCase().endsWith(ext));
 
               if (isVideo) {
                 const link = document.createElement('link');
                 link.rel = 'preload';
                 link.as = 'video';
-                link.href = blog.attachment;
+                link.href = attachment;
                 link.type = 'video/mp4';
                 document.head.appendChild(link);
-                console.log('Preloading video:', blog.attachment);
+                console.log('Preloading video:', attachment);
               }
             }
           });
@@ -408,18 +409,18 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                   return (
                   <div
                     key={pageIndex}
-                    className="flex-shrink-0 w-full grid gap-4 grid-cols-3 mx-auto"
+                    className="flex-shrink-0 w-full grid gap-4 grid-cols-1 md:grid-cols-3 mx-auto px-4 md:px-0"
                     style={{
                       maxWidth: '720px'
                     }}
                   >
                     {itemsToShow.map((post, index) => {
-                      // Render placeholder card
+                      // Render placeholder card - hidden on mobile
                       if ((post as any).isPlaceholder) {
                         return (
                           <div
                             key={(post as any).id}
-                            className="relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-[#f6efe4] shadow-sm cursor-default"
+                            className="relative flex-col overflow-hidden rounded-2xl border border-gray-200 bg-[#f6efe4] shadow-sm cursor-default hidden md:flex"
                           >
                             {/* Placeholder Visual */}
                             <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden">

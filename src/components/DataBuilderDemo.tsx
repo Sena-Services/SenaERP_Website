@@ -319,11 +319,11 @@ export default function DataBuilderDemo() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: tableIdx * 0.12, duration: 0.4, type: "spring", stiffness: 200 }}
-                  className="rounded-lg shadow-md border-2 border-emerald-200 bg-white p-1.5 md:p-2 w-32 md:w-48 relative flex-shrink-0"
+                  className="rounded-lg shadow-md border-2 border-blue-200 bg-white p-1.5 md:p-2 w-32 md:w-48 relative flex-shrink-0"
                 >
                 {/* Table name */}
                 <div className="flex items-center gap-1 mb-1 pb-1 border-b border-gray-200">
-                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-emerald-500" />
+                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-blue-500" />
                   <h4 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 truncate">
                     {table.name}
                   </h4>
@@ -503,10 +503,10 @@ export default function DataBuilderDemo() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border-2 border-green-200 p-2 md:p-3"
+              className="bg-white rounded-lg shadow-md border-2 border-blue-200 p-2 md:p-3"
             >
               <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
-                <svg className="w-3 h-3 md:w-4 md:h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">
@@ -568,10 +568,10 @@ export default function DataBuilderDemo() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border-2 border-purple-200 p-2 md:p-3"
+              className="bg-white rounded-lg shadow-md border-2 border-blue-200 p-2 md:p-3"
             >
               <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
-                <svg className="w-3 h-3 md:w-4 md:h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">

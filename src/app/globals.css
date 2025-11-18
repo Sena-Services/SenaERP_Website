@@ -498,3 +498,37 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+/* Hide Next.js dev indicator */
+#__next-build-watcher {
+  display: none !important;
+}
+
+nextjs-portal {
+  display: none !important;
+}
+
+/* Environment card HTML content styling */
+.text-waygent-text-secondary h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.text-waygent-text-secondary h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.375rem;
+  margin-top: 0.625rem;
+}
+
+.text-waygent-text-secondary p {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.text-waygent-text-secondary p:last-child {
+  margin-bottom: 0;
+}

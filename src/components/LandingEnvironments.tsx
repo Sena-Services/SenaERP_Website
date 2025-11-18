@@ -29,6 +29,7 @@ type EnvironmentDeck = {
   persona: string;
   summary: string;
   bullets: string[];
+  status?: string;
   metrics?: EnvironmentMetric[];
   blueprintCounts?: Record<string, number>;
   // Direct count fields from API
@@ -89,13 +90,14 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   const [activeId, setActiveId] = useState<string | undefined>();
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const containerRef = useRef<HTMLDivElement | null>(null);
   const carouselRef = useRef<HTMLDivElement | null>(null);
 
   // Handle initial mount
   useEffect(() => {
     setMounted(true);
-    setIsMobile(window.innerWidth < 1024);
+    setIsMobile(window.innerWidth < 900);
   }, []);
 
   // Fetch environments from API
@@ -207,7 +209,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
     if (!board) return;
 
     const measure = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsMobile(window.innerWidth < 900);
 
       const host = board.querySelector<HTMLElement>(
         "[data-environment-selector-preview]",
@@ -310,7 +312,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           paddingRight: 'max(16px, min(32px, 2vw))'
         }}
       >
-        <div className="hidden lg:grid lg:grid-cols-2 gap-4 xl:gap-6">
+        <div className="hidden [@media(min-width:900px)]:grid [@media(min-width:900px)]:grid-cols-2 gap-4 xl:gap-6">
           {/* Left side - EnvironmentSelector */}
           <div className="relative h-[480px] rounded-[24px] bg-white group transition-all duration-300 overflow-y-auto custom-scrollbar" style={{
             border: '2px solid #9CA3AF',
@@ -409,9 +411,19 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                        className="px-2 py-1 bg-green-50 border border-green-200 rounded flex-shrink-0 flex items-center justify-center"
+                        className={`px-2 py-1 rounded flex-shrink-0 flex items-center justify-center ${
+                          activeEnvironment.status === 'In Development'
+                            ? 'bg-amber-50 border border-amber-200'
+                            : 'bg-green-50 border border-green-200'
+                        }`}
                       >
-                        <span className="text-[10px] font-semibold text-green-600 uppercase tracking-wide leading-none">Ready</span>
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide leading-none ${
+                          activeEnvironment.status === 'In Development'
+                            ? 'text-amber-600'
+                            : 'text-green-600'
+                        }`}>
+                          {activeEnvironment.status || 'Ready'}
+                        </span>
                       </motion.div>
                     </div>
                     <p className="text-sm text-gray-600 leading-relaxed mb-1">
@@ -495,18 +507,30 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
 
                   {/* CTA - Sticky at bottom, always visible */}
                   <div className="flex-shrink-0 pt-3 border-t border-gray-200">
-                    <Link
-                      href="/environment-selector"
-                      className="group relative overflow-hidden rounded-lg bg-waygent-blue px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                      Launch {activeEnvironment.label}
-                      <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </Link>
+                    {activeEnvironment.status === 'In Development' ? (
+                      <div className="group relative overflow-hidden rounded-lg bg-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-500 shadow-md flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Launch {activeEnvironment.label}
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <Link
+                        href="/environment-selector"
+                        className="group relative overflow-hidden rounded-lg bg-waygent-blue px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Launch {activeEnvironment.label}
+                        <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </Link>
+                    )}
                   </div>
                 </div>
               )}
@@ -517,7 +541,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
       </div>
 
       {/* Mobile: Horizontal scrolling carousel */}
-      <div className="lg:hidden mt-12">
+      <div className="[@media(min-width:900px)]:hidden mt-12">
         <div ref={carouselRef} className="overflow-x-auto hide-scrollbar px-4 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
           <div className="flex gap-4" style={{ width: 'max-content' }}>
             {environments.map((environment, index) => {
@@ -525,7 +549,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
               return (
                 <motion.div
                   key={environment.id}
-                  className="rounded-3xl border border-waygent-blue bg-white shadow-xl flex-shrink-0"
+                  className="rounded-3xl border border-waygent-blue bg-white shadow-xl flex-shrink-0 cursor-pointer"
                   style={{
                     width: 'calc(100vw - 64px)',
                     maxWidth: '400px',
@@ -534,22 +558,65 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
+                  onClick={() => {
+                    setExpandedCards(prev => {
+                      const next = new Set(prev);
+                      if (next.has(environment.id)) {
+                        next.delete(environment.id);
+                      } else {
+                        next.add(environment.id);
+                      }
+                      return next;
+                    });
+                  }}
                 >
-                  <div className="flex w-full flex-col p-6">
+                  <div className={`flex w-full flex-col transition-all duration-300 ${expandedCards.has(environment.id) ? 'p-6' : 'p-6 pb-4'}`}>
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
                       <span className="text-xs uppercase tracking-[0.35em] text-waygent-blue font-semibold">
                         {environment.label}
                       </span>
+                      <div className={`px-2 py-1 rounded flex-shrink-0 flex items-center justify-center ${
+                        environment.status === 'In Development'
+                          ? 'bg-amber-50 border border-amber-200'
+                          : 'bg-green-50 border border-green-200'
+                      }`}>
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide leading-none ${
+                          environment.status === 'In Development'
+                            ? 'text-amber-600'
+                            : 'text-green-600'
+                        }`}>
+                          {environment.status || 'Ready'}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Title */}
-                    <h3 className="text-2xl font-semibold text-waygent-text-primary mb-3 leading-tight">
-                      {environment.persona}
-                    </h3>
+                    {/* Title with expand icon */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <h3 className="text-2xl font-semibold text-waygent-text-primary leading-tight flex-1">
+                        {environment.persona}
+                      </h3>
+                      <motion.div
+                        animate={{ rotate: expandedCards.has(environment.id) ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex-shrink-0 mt-1"
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="text-waygent-blue"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </motion.div>
+                    </div>
 
                     {/* Metrics row */}
-                    <div className="grid grid-cols-2 gap-2 mb-4">
+                    <div className={`grid grid-cols-2 gap-2 transition-all duration-300 ${expandedCards.has(environment.id) ? 'mb-4' : 'mb-0'}`}>
                       {(environment.metrics || [
                         { id: 'interface', label: 'UI components', value: environment.interface_count || 0, icon: 'layout' },
                         { id: 'workflows', label: 'Automations', value: environment.workflows_count || 0, icon: 'zap' },
@@ -582,29 +649,53 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
                       })}
                     </div>
 
-                    {/* Summary - always visible */}
-                    <p className="text-sm text-waygent-text-secondary leading-relaxed mb-4">
-                      {environment.summary}
-                    </p>
+                    {/* Expanded content - Collapsible */}
+                    <AnimatePresence>
+                      {expandedCards.has(environment.id) && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="space-y-3 text-sm text-waygent-text-secondary">
+                            {/* Summary with HTML rendering */}
+                            <div
+                              className="mb-3"
+                              dangerouslySetInnerHTML={{ __html: environment.summary }}
+                            />
 
-                    {/* Expanded content - Always visible */}
-                    <div className="pt-4 border-t border-gray-200 space-y-3 text-sm text-waygent-text-secondary">
-                      {environment.bullets.map((bullet) => (
-                        <div key={bullet} className="flex items-start gap-3">
-                          <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
-                          <span>{bullet}</span>
-                        </div>
-                      ))}
-                      <Link
-                        href="/environment-selector"
-                        className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-waygent-blue text-white text-sm font-semibold rounded-full shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover"
-                      >
-                        Launch this environment
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                        </svg>
-                      </Link>
-                    </div>
+                            <div className="pt-3 border-t border-gray-200 space-y-3">
+                            {environment.bullets.map((bullet) => (
+                              <div key={bullet} className="flex items-start gap-3">
+                                <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-waygent-blue" />
+                                <span>{bullet}</span>
+                              </div>
+                            ))}
+                            {environment.status === 'In Development' ? (
+                              <div className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-gray-300 text-gray-500 text-sm font-semibold rounded-full shadow-lg cursor-not-allowed opacity-60">
+                                Launch this environment
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                              </div>
+                            ) : (
+                              <Link
+                                href="/environment-selector"
+                                className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-waygent-blue text-white text-sm font-semibold rounded-full shadow-lg shadow-waygent-blue/25 transition hover:bg-waygent-blue-hover"
+                              >
+                                Launch this environment
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                              </Link>
+                            )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </motion.div>
               );

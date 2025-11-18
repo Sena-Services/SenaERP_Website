@@ -208,10 +208,10 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
     }
 
 
-    // Instant jump - no animations
+    // Smooth scroll animation
     window.scrollTo({
       top: targetPosition,
-      behavior: "auto",
+      behavior: "smooth",
     });
 
 

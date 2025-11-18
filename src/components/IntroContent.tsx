@@ -103,7 +103,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <h1
           style={{
             fontFamily: "'Tangerine', 'Edwardian Script ITC', 'Lucida Handwriting', cursive",
-            color: "#8b7355",
+            color: isMobile ? "#5a4938" : "#8b7355",
             fontSize: isMobile ? '2.75rem' : `${getScaledValue(58)}px`,
             fontWeight: 700,
             letterSpacing: '0.015em',
@@ -111,6 +111,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             lineHeight: 1.3,
             textRendering: 'optimizeLegibility',
             WebkitFontSmoothing: 'antialiased',
+            textShadow: isMobile ? '0 3px 12px rgba(255, 255, 255, 1), 0 2px 8px rgba(255, 255, 255, 0.95), 0 1px 4px rgba(0, 0, 0, 0.3)' : undefined,
           }}
         >
           Compose your business like a painting
@@ -118,13 +119,14 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <p
           style={{
             fontFamily: "Georgia, serif",
-            color: "#8b7355",
+            color: isMobile ? "#4a3d30" : "#8b7355",
             fontStyle: "normal",
             fontSize: isMobile ? '0.875rem' : `${getScaledValue(18)}px`,
             marginTop: `${getScaledValue(4)}px`,
             lineHeight: 1.5,
             letterSpacing: '0.02em',
-            fontWeight: 400,
+            fontWeight: 500,
+            textShadow: isMobile ? '0 2px 8px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(0, 0, 0, 0.25)' : undefined,
           }}
         >
           Craft your own ERP, from the ground up
@@ -143,9 +145,11 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <p
           style={{
             fontFamily: "Georgia, serif",
-            color: "#6b5d4f",
+            color: isMobile ? "#3d3226" : "#6b5d4f",
             fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
             lineHeight: 1.6,
+            fontWeight: isMobile ? 500 : 400,
+            textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.2)' : undefined,
           }}
         >
           We believe your ERP should be a direct extension of how your business actually operates. Not locked into
@@ -155,9 +159,11 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <p
           style={{
             fontFamily: "Georgia, serif",
-            color: "#6b5d4f",
+            color: isMobile ? "#3d3226" : "#6b5d4f",
             fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
             lineHeight: 1.6,
+            fontWeight: isMobile ? 500 : 400,
+            textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.2)' : undefined,
           }}
         >
           Sena is where that system is assembled from modular pieces: data models, workflows, interfaces, and AI agents,
@@ -168,9 +174,11 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <p
           style={{
             fontFamily: "Georgia, serif",
-            color: "#6b5d4f",
+            color: isMobile ? "#3d3226" : "#6b5d4f",
             fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
             lineHeight: 1.6,
+            fontWeight: isMobile ? 500 : 400,
+            textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.2)' : undefined,
           }}
         >
           Choose from a marketplace of pre-built environments to jumpstart your build, or generate exactly what you need in real-time—on request.
@@ -252,8 +260,16 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               stroke="currentColor"
               viewBox="0 0 24 24"
               onClick={() => {
-                // Trigger the same animation sequence as scrolling
-                window.dispatchEvent(new CustomEvent('triggerScrollAnimation'));
+                if (isMobile) {
+                  // Mobile: Scroll down one viewport height to show the next content
+                  window.scrollBy({
+                    top: window.innerHeight,
+                    behavior: 'smooth'
+                  });
+                } else {
+                  // Desktop: Trigger the animation sequence
+                  window.dispatchEvent(new CustomEvent('triggerScrollAnimation'));
+                }
               }}
             >
               <path

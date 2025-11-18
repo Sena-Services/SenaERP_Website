@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface WorkflowStep {
@@ -21,6 +21,8 @@ export default function WorkflowsBuilderDemo() {
   const [fadeOut, setFadeOut] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [, forceUpdate] = useState({});
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -28,6 +30,16 @@ export default function WorkflowsBuilderDemo() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Force re-render when cards are mounted to calculate line heights
+  useEffect(() => {
+    if (visibleSteps > 0) {
+      const timer = setTimeout(() => {
+        forceUpdate({});
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [visibleSteps]);
 
   const examples = [
     {
@@ -381,49 +393,60 @@ export default function WorkflowsBuilderDemo() {
         animate={{ opacity: (isMobile && showPreview) || !isMobile ? (fadeOut ? 0 : 1) : 0 }}
         transition={{ duration: 0.5 }}
       >
-          <div className="relative max-w-2xl w-full h-full flex items-center justify-center overflow-hidden">
+          <div className="relative max-w-2xl w-full h-full flex items-center justify-center overflow-hidden px-4">
             {visibleSteps > 0 ? (
-              <div className="w-full relative py-2">
-                {/* Vertical connecting line - starts FROM first dot, connects to last dot */}
-                {visibleSteps > 1 && (
-                  <motion.div
-                    className="absolute w-0.5 bg-gray-300 z-0"
-                    style={{
-                      left: '1.5px', // Center of dot (0px left + 1.5px for half of 3px dot)
-                      top: '25px', // Center of first dot (50px card / 2)
-                    }}
-                    initial={{ height: 0 }}
-                    animate={{ height: `${(visibleSteps - 1) * 51}px` }} // 50px card + 1px space
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
+              <div className="w-full relative">
+                {/* Steps container */}
+                <div className="space-y-4">
+                  {currentData.steps.slice(0, visibleSteps).map((step, idx) => {
+                    // Calculate the line height for THIS step
+                    const currentCard = cardRefs.current[idx];
+                    const nextCard = cardRefs.current[idx + 1];
+                    let lineHeight = '16px'; // Default gap-4
 
-                {/* Workflow steps */}
-                <div className="space-y-1 relative">
-                  {currentData.steps.slice(0, visibleSteps).map((step, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
-                      className="relative flex items-start"
-                    >
-                      {/* Connection dot - centered vertically on card */}
-                      <div
-                        className="absolute w-3 h-3 rounded-full bg-green-500 border-2 border-white shadow-sm z-10"
-                        style={{
-                          left: '0px',
-                          top: '50%',
-                          transform: 'translateY(-50%)'
-                        }}
-                      />
+                    if (currentCard && nextCard) {
+                      // Calculate actual distance from this dot center to next dot center
+                      const currentCardHeight = currentCard.offsetHeight;
+                      const gapBetweenCards = 16; // space-y-4 = 16px
+                      // Line goes from center of this dot (12px from top) to center of next dot
+                      lineHeight = `${currentCardHeight - 12 + gapBetweenCards + 12}px`;
+                    }
 
-                      {/* Node card */}
-                      <div className="ml-6 bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden flex-1"
-                        style={{
-                          minHeight: '50px' // Much smaller min height
-                        }}
+                    return (
+                      <motion.div
+                        key={idx}
+                        ref={(el) => { cardRefs.current[idx] = el; }}
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+                        className="relative flex items-start gap-3 pl-5"
                       >
+                        {/* Connection dot - absolutely positioned to align perfectly */}
+                        <div
+                          className="absolute left-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white shadow-sm z-10"
+                          style={{
+                            top: '12px', // Fixed position from top of card
+                          }}
+                        />
+
+                        {/* Vertical line connecting this dot to next dot */}
+                        {idx < visibleSteps - 1 && (
+                          <motion.div
+                            className="absolute left-[5.5px] w-0.5 bg-gray-300 z-0"
+                            style={{
+                              top: '18px', // Start from center of dot (12px + 6px)
+                            }}
+                            initial={{ height: 0 }}
+                            animate={{
+                              height: lineHeight
+                            }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        )}
+
+                        {/* Node card */}
+                        <div className="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden w-full"
+                        >
                         {/* Technical section - top */}
                         <div className="px-1.5 py-0.5 border-b border-gray-200">
                           {/* Header */}
@@ -457,7 +480,8 @@ export default function WorkflowsBuilderDemo() {
                         </div>
                       </div>
                     </motion.div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ) : (

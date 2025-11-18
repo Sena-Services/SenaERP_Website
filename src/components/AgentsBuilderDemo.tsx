@@ -320,8 +320,8 @@ export default function AgentsBuilderDemo() {
                   <h3 className="font-futura font-bold text-[10px] text-gray-900 truncate">{currentExampleData.agentName}</h3>
                   <p className="text-[8px] text-gray-500 font-futura">AI Agent • Active</p>
                 </div>
-                <div className="px-1 py-0.5 bg-green-50 border border-green-200 rounded flex-shrink-0">
-                  <span className="text-[8px] font-futura font-semibold text-green-700 uppercase">Live</span>
+                <div className="px-1.5 py-0.5 bg-green-50 border border-green-200 rounded flex-shrink-0 self-center">
+                  <span className="text-[8px] font-futura font-semibold text-green-700 uppercase leading-none">Live</span>
                 </div>
               </div>
             </motion.div>
@@ -445,24 +445,24 @@ export default function AgentsBuilderDemo() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-md border border-pink-200 p-1.5"
+                  className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-md border border-blue-200 p-1.5"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-1 mb-0.5">
-                        <svg className="w-2.5 h-2.5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-2.5 h-2.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                         </svg>
-                        <span className="text-[8px] font-futura font-semibold text-pink-900 uppercase">Voice Mode</span>
+                        <span className="text-[8px] font-futura font-semibold text-blue-900 uppercase">Voice Mode</span>
                       </div>
-                      <p className="text-[8px] font-futura text-pink-700">Test agent with voice interactions</p>
+                      <p className="text-[8px] font-futura text-blue-700">Test agent with voice interactions</p>
                     </div>
                     {/* Animated Voice Waves */}
                     <div className="flex items-center gap-0.5">
                       {[0, 1, 2, 3, 4].map((i) => (
                         <motion.div
                           key={i}
-                          className="w-0.5 bg-pink-500 rounded-full"
+                          className="w-0.5 bg-blue-500 rounded-full"
                           animate={{
                             height: [8, 16, 8],
                           }}

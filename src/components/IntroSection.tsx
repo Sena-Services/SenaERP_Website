@@ -269,9 +269,12 @@ export default function IntroSection() {
   let extraTopSpace = 0;
   if (viewportHeight <= 720) {
     extraTopSpace = getResponsiveValue(60);
+  } else if (viewportHeight <= 760) {
+    // Increase space for 720-760px range
+    extraTopSpace = getResponsiveValue(60 + ((viewportHeight - 720) / (760 - 720)) * 20);
   } else if (viewportHeight <= 1000) {
-    // Gradually reduce from 60 to 30 between 720px and 1000px
-    extraTopSpace = getResponsiveValue(60 - ((viewportHeight - 720) / (1000 - 720)) * 30);
+    // Gradually reduce from 80 to 30 between 760px and 1000px
+    extraTopSpace = getResponsiveValue(80 - ((viewportHeight - 760) / (1000 - 760)) * 50);
   } else {
     // Keep some space for screens above 1000px
     extraTopSpace = getResponsiveValue(30);
@@ -444,16 +447,7 @@ export default function IntroSection() {
               >
                 How it <span style={{ fontStyle: "italic" }}>works</span>?
               </h2>
-              <p
-                className="text-gray-700 font-futura mx-auto"
-                style={{
-                  letterSpacing: "-0.01em",
-                  fontSize: viewportWidth < 768 ? '14px' : '16px',
-                  marginTop: '0',
-                }}
-              >
-                Three simple steps to build your custom ERP
-              </p>
+      
             </div>
           </div>
 
@@ -549,8 +543,10 @@ export default function IntroSection() {
                 className={`absolute pointer-events-auto flex items-center`}
                 style={{
                   width: '48%',
-                  height: `calc(${currentHeightValue}px + 35px)`, // Add 40px total height (20px top + 20px bottom)
-                  top: '50%',
+                  height: viewportHeight < 900
+                    ? `${Math.min(currentHeightValue + 35, viewportHeight * 0.80)}px`
+                    : `calc(${currentHeightValue}px + 35px)`, // Reduce height on shorter screens
+                  top: viewportHeight < 900 ? '52%' : '50%',
                   transform: 'translateY(-50%)',
                   // Position calculation from main container edge:
                   // Main container has currentPadding on both sides
@@ -598,8 +594,12 @@ export default function IntroSection() {
                   {/* Scrollable content wrapper with proper padding */}
                   <div
                     ref={detailScrollRef}
-                    className="w-full h-full overflow-y-auto pl-8 pr-6 py-8 custom-scrollbar"
+                    className="w-full h-full overflow-y-auto custom-scrollbar"
                     style={{
+                      paddingLeft: '32px',
+                      paddingRight: '24px',
+                      paddingTop: viewportHeight < 700 ? '16px' : viewportHeight < 800 ? '20px' : viewportHeight < 900 ? '24px' : '32px',
+                      paddingBottom: viewportHeight < 700 ? '16px' : viewportHeight < 800 ? '20px' : viewportHeight < 900 ? '24px' : '32px',
                       scrollbarWidth: 'thin', // Firefox - thin scrollbar
                       scrollbarColor: 'rgba(156, 163, 175, 0.6) rgba(156, 163, 175, 0.1)', // gray thumb, light track
                     }}

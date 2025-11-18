@@ -193,6 +193,7 @@ const chatMessageVariants = {
 // Interface Gallery Component
 function InterfaceGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
   const images = [
     { src: "/images/interfaces-dashbaord.png", alt: "Analytics Dashboard" },
     { src: "/images/interface-form.png", alt: "Customer Form" },
@@ -208,33 +209,53 @@ function InterfaceGallery() {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  const openImageExpanded = (imageUrl: string) => {
+    setExpandedImage(imageUrl);
+  };
+
+  const closeImageExpanded = () => {
+    setExpandedImage(null);
+  };
+
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
 
   return (
-    <div className="relative flex flex-col h-full gap-3">
-      {/* Image Container - rounded, no visible border */}
-      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentIndex}
-            src={images[currentIndex].src}
-            alt={images[currentIndex].alt}
-            className="w-auto rounded-xl"
-            style={{
-              maxHeight: '340px',
-              height: 'auto',
-              border: '2px solid #9CA3AF',
-              borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-            }}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-          />
-        </AnimatePresence>
-      </div>
+    <>
+      <div className="relative flex flex-col h-full gap-3">
+        {/* Image Container - rounded, no visible border */}
+        <div
+          onClick={() => openImageExpanded(images[currentIndex].src)}
+          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
+          style={{ backgroundColor: '#FCFCFA' }}
+        >
+          {/* Subtle view hint */}
+          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={images[currentIndex].src}
+              alt={images[currentIndex].alt}
+              className="w-auto rounded-xl cursor-pointer"
+              style={{
+                maxHeight: '340px',
+                height: 'auto',
+                border: '2px solid #9CA3AF',
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => openImageExpanded(images[currentIndex].src)}
+            />
+          </AnimatePresence>
+        </div>
 
       {/* Navigation BELOW image - like BlogSection */}
       <div className="flex flex-col items-center gap-2">
@@ -292,12 +313,56 @@ function InterfaceGallery() {
         </div>
       </div>
     </div>
+
+    {/* Image Expanded Modal */}
+    <AnimatePresence>
+      {expandedImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
+          onClick={closeImageExpanded}
+        >
+          {/* Close button - top right */}
+          <button
+            onClick={closeImageExpanded}
+            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
+            aria-label="Close"
+          >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Centered Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={expandedImage}
+              alt="Expanded interface"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              style={{ imageRendering: '-webkit-optimize-contrast' }}
+            />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
 
 // Data Gallery Component - Same design as Interface
 function DataGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
   const images = [
     { src: "/images/data-fields.png", alt: "Data Fields" },
     { src: "/images/data-create.png", alt: "Data Create" },
@@ -306,32 +371,53 @@ function DataGallery() {
 
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+
+  const openImageExpanded = (imageUrl: string) => {
+    setExpandedImage(imageUrl);
+  };
+
+  const closeImageExpanded = () => {
+    setExpandedImage(null);
+  };
+
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
 
   return (
-    <div className="relative flex flex-col h-full gap-3">
-      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentIndex}
-            src={images[currentIndex].src}
-            alt={images[currentIndex].alt}
-            className="w-auto rounded-xl"
-            style={{
-              maxHeight: '340px',
-              height: 'auto',
-              border: '2px solid #9CA3AF',
-              borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-            }}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-          />
-        </AnimatePresence>
-      </div>
+    <>
+      <div className="relative flex flex-col h-full gap-3">
+        <div
+          onClick={() => openImageExpanded(images[currentIndex].src)}
+          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
+          style={{ backgroundColor: '#FCFCFA' }}
+        >
+          {/* Subtle view hint */}
+          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={images[currentIndex].src}
+              alt={images[currentIndex].alt}
+              className="w-auto rounded-xl cursor-pointer"
+              style={{
+                maxHeight: '340px',
+                height: 'auto',
+                border: '2px solid #9CA3AF',
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => openImageExpanded(images[currentIndex].src)}
+            />
+          </AnimatePresence>
+        </div>
 
       <div className="flex flex-col items-center gap-2">
         <div className="flex items-center justify-center gap-3">
@@ -380,12 +466,56 @@ function DataGallery() {
         </div>
       </div>
     </div>
+
+    {/* Image Expanded Modal */}
+    <AnimatePresence>
+      {expandedImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
+          onClick={closeImageExpanded}
+        >
+          {/* Close button - top right */}
+          <button
+            onClick={closeImageExpanded}
+            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
+            aria-label="Close"
+          >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Centered Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={expandedImage}
+              alt="Expanded data view"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              style={{ imageRendering: '-webkit-optimize-contrast' }}
+            />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
 
 // Workflows Gallery Component - Same design as Interface
 function WorkflowsGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
   const images = [
     { src: "/images/workflow-summary.png", alt: "Workflow Summary" },
     { src: "/images/workflow-detailed.png", alt: "Workflow Detailed" }
@@ -393,32 +523,53 @@ function WorkflowsGallery() {
 
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+
+  const openImageExpanded = (imageUrl: string) => {
+    setExpandedImage(imageUrl);
+  };
+
+  const closeImageExpanded = () => {
+    setExpandedImage(null);
+  };
+
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
 
   return (
-    <div className="relative flex flex-col h-full gap-3">
-      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentIndex}
-            src={images[currentIndex].src}
-            alt={images[currentIndex].alt}
-            className="w-auto rounded-xl"
-            style={{
-              maxHeight: '340px',
-              height: 'auto',
-              border: '2px solid #9CA3AF',
-              borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-            }}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-          />
-        </AnimatePresence>
-      </div>
+    <>
+      <div className="relative flex flex-col h-full gap-3">
+        <div
+          onClick={() => openImageExpanded(images[currentIndex].src)}
+          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
+          style={{ backgroundColor: '#FCFCFA' }}
+        >
+          {/* Subtle view hint */}
+          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={images[currentIndex].src}
+              alt={images[currentIndex].alt}
+              className="w-auto rounded-xl cursor-pointer"
+              style={{
+                maxHeight: '340px',
+                height: 'auto',
+                border: '2px solid #9CA3AF',
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => openImageExpanded(images[currentIndex].src)}
+            />
+          </AnimatePresence>
+        </div>
 
       <div className="flex flex-col items-center gap-2">
         <div className="flex items-center justify-center gap-3">
@@ -467,12 +618,56 @@ function WorkflowsGallery() {
         </div>
       </div>
     </div>
+
+    {/* Image Expanded Modal */}
+    <AnimatePresence>
+      {expandedImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
+          onClick={closeImageExpanded}
+        >
+          {/* Close button - top right */}
+          <button
+            onClick={closeImageExpanded}
+            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
+            aria-label="Close"
+          >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Centered Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={expandedImage}
+              alt="Expanded workflow view"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              style={{ imageRendering: '-webkit-optimize-contrast' }}
+            />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
 
 // Agents Gallery Component - Same design as Interface
 function AgentsGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
   const images = [
     { src: "/images/agents-role.jpeg", alt: "Agent Role Configuration" },
     { src: "/images/agents-greeting.jpeg", alt: "Agent Greeting Stages" },
@@ -482,22 +677,42 @@ function AgentsGallery() {
 
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+
+  const openImageExpanded = (imageUrl: string) => {
+    setExpandedImage(imageUrl);
+  };
+
+  const closeImageExpanded = () => {
+    setExpandedImage(null);
+  };
+
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
 
   return (
-    <div className="relative flex flex-col h-full gap-3">
-      <div className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px]" style={{ backgroundColor: '#FCFCFA' }}>
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentIndex}
-            src={images[currentIndex].src}
-            alt={images[currentIndex].alt}
-            className="w-auto rounded-xl"
-            style={{
-              maxHeight: '340px',
-              height: 'auto',
-              border: '2px solid #9CA3AF',
+    <>
+      <div className="relative flex flex-col h-full gap-3">
+        <div
+          onClick={() => openImageExpanded(images[currentIndex].src)}
+          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
+          style={{ backgroundColor: '#FCFCFA' }}
+        >
+          {/* Subtle view hint */}
+          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={images[currentIndex].src}
+              alt={images[currentIndex].alt}
+              className="w-auto rounded-xl cursor-pointer"
+              style={{
+                maxHeight: '340px',
+                height: 'auto',
+                border: '2px solid #9CA3AF',
               borderRadius: '12px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
             }}
@@ -505,6 +720,7 @@ function AgentsGallery() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.3 }}
+            onClick={() => openImageExpanded(images[currentIndex].src)}
           />
         </AnimatePresence>
       </div>
@@ -556,6 +772,49 @@ function AgentsGallery() {
         </div>
       </div>
     </div>
+
+    {/* Image Expanded Modal */}
+    <AnimatePresence>
+      {expandedImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
+          onClick={closeImageExpanded}
+        >
+          {/* Close button - top right */}
+          <button
+            onClick={closeImageExpanded}
+            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
+            aria-label="Close"
+          >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Centered Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={expandedImage}
+              alt="Expanded agent view"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              style={{ imageRendering: '-webkit-optimize-contrast' }}
+            />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
 
@@ -655,7 +914,6 @@ export default function BuilderTabbed() {
 
   return (
     <div className="w-full scroll-mt-24 pb-16" style={{ paddingTop: isMobile ? '16px' : '0' }}>
-
       <div
         className="mx-auto"
         style={{
@@ -1618,7 +1876,7 @@ export default function BuilderTabbed() {
             {/* UI Builder Card */}
             <MobileBuilderCard
               id="mobile-builder-ui"
-              title="UI Builder"
+              title="Interface"
               subtitle="Build beautiful interfaces"
               description="Click, describe, or draw—we'll build it in real-time with live previews, responsive design, and beautiful animations built in."
               features={[
@@ -1627,6 +1885,42 @@ export default function BuilderTabbed() {
                 "Forms & input screens",
                 "Custom layouts & components"
               ]}
+              workflowSteps={tabs[0].workflowSteps}
+              chatMessages={tabs[0].chatMessages}
+              detailedContent={{
+                title: "Interface Builder",
+                description: "Build complete user interfaces through conversation—from dashboards to forms. Just describe what you need.",
+                capabilities: [
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>,
+                    title: "Dashboards",
+                    subtitle: "Revenue cards, charts, KPIs"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" /></svg>,
+                    title: "Data Tables",
+                    subtitle: "Sortable, filterable lists"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+                    title: "Forms",
+                    subtitle: "Input validation, multi-step"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>,
+                    title: "Custom Layouts",
+                    subtitle: "Drag-and-drop, responsive"
+                  }
+                ],
+                features: [
+                  "Real-time preview as you build",
+                  "Responsive design built-in",
+                  "Beautiful animations included",
+                  "Accessibility (WCAG AA) compliant",
+                  "Dark mode support"
+                ],
+                footer: "Point, click, or just describe it—we'll build it"
+              }}
               accentColor="#3B82F6"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1643,21 +1937,8 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="py-4 my-4 relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t-2 border-dashed border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <div className="px-4 bg-waygent-cream">
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
-                    <div className="flex gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="my-8">
+              <div className="w-full h-px bg-gray-200"></div>
             </div>
 
             {/* Data Builder Card */}
@@ -1672,6 +1953,40 @@ export default function BuilderTabbed() {
                 "Real-time data pipelines",
                 "Automatic data validation"
               ]}
+              detailedContent={{
+                title: "Data Management",
+                description: "Build your data infrastructure through conversation. Connect databases, APIs, and external tools with automatic schema mapping and real-time sync.",
+                capabilities: [
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>,
+                    title: "Database Schema",
+                    subtitle: "Auto-generate tables & relations"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
+                    title: "API Integration",
+                    subtitle: "REST, GraphQL, webhooks"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
+                    title: "Real-time Sync",
+                    subtitle: "Live data pipelines"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+                    title: "Validation",
+                    subtitle: "Type safety & constraints"
+                  }
+                ],
+                features: [
+                  "Connect PostgreSQL, MySQL, MongoDB",
+                  "Integrate with any REST/GraphQL API",
+                  "Import from CSV, Excel, Google Sheets",
+                  "Automatic data transformation",
+                  "Real-time change tracking"
+                ],
+                footer: "Connect any data source—we'll handle the rest"
+              }}
               accentColor="#10B981"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1688,21 +2003,8 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="py-4 my-4 relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t-2 border-dashed border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <div className="px-4 bg-waygent-cream">
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
-                    <div className="flex gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="my-8">
+              <div className="w-full h-px bg-gray-200"></div>
             </div>
 
             {/* Workflows Builder Card */}
@@ -1717,6 +2019,40 @@ export default function BuilderTabbed() {
                 "Cross-tool integrations",
                 "Real-time monitoring & alerts"
               ]}
+              detailedContent={{
+                title: "Workflow Automation",
+                description: "Design and deploy complex multi-step workflows. Connect triggers, add conditions, and automate actions across all your tools and data sources.",
+                capabilities: [
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
+                    title: "Triggers",
+                    subtitle: "Events, schedules, webhooks"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 16l2.879-2.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+                    title: "Conditions",
+                    subtitle: "If/else logic & branching"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>,
+                    title: "Actions",
+                    subtitle: "API calls, emails, updates"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
+                    title: "Monitoring",
+                    subtitle: "Real-time logs & alerts"
+                  }
+                ],
+                features: [
+                  "Visual workflow builder",
+                  "Connect any API or service",
+                  "Advanced conditional logic",
+                  "Error handling & retries",
+                  "Performance analytics"
+                ],
+                footer: "Automate anything—from simple tasks to complex processes"
+              }}
               accentColor="#8B5CF6"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1733,21 +2069,8 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="py-4 my-4 relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t-2 border-dashed border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <div className="px-4 bg-waygent-cream">
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-300">
-                    <div className="flex gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="my-8">
+              <div className="w-full h-px bg-gray-200"></div>
             </div>
 
             {/* Agents Builder Card */}
@@ -1762,6 +2085,40 @@ export default function BuilderTabbed() {
                 "24/7 autonomous operation",
                 "Full reasoning transparency"
               ]}
+              detailedContent={{
+                title: "AI Agent Platform",
+                description: "Build and deploy autonomous AI agents that understand your business. Train them on your knowledge base, integrate with your tools, and let them work alongside your team.",
+                capabilities: [
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
+                    title: "Custom Agents",
+                    subtitle: "Support, sales, operations"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>,
+                    title: "Knowledge Base",
+                    subtitle: "Train on your docs & data"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
+                    title: "Tool Integration",
+                    subtitle: "Access APIs & databases"
+                  },
+                  {
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+                    title: "Transparency",
+                    subtitle: "Full reasoning logs"
+                  }
+                ],
+                features: [
+                  "Natural language interaction",
+                  "Multi-modal support (text, voice, vision)",
+                  "Custom function calling",
+                  "Continuous learning from feedback",
+                  "Enterprise-grade security"
+                ],
+                footer: "Deploy AI agents that actually understand your business"
+              }}
               accentColor="#EC4899"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
