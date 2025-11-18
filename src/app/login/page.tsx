@@ -43,7 +43,7 @@ export default function LoginPage() {
         const { site_url, token } = data.message;
 
         // Redirect to provisioned site with auto-login token
-        window.location.href = `${site_url}/api/method/sentra_core.api.auto_login.auto_login?token=${token}`;
+        window.location.href = `${site_url}/api/method/sentra_core.api.user_auth.auto_login?token=${token}`;
       } else {
         setError(data.message?.error || "Login failed");
       }
