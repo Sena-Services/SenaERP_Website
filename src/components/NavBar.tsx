@@ -229,7 +229,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         }}
       >
         {/* Top Row - Logo/Back Button and Buttons */}
-        <div className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2`}>
+        <div className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-4`}>
         {/* LEFT SIDE - Logo or Back Button */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} pl-2 sm:pl-3 py-1.5`}>
           {showBackButton ? (

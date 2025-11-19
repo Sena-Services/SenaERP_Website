@@ -168,8 +168,8 @@ export default function BlogArticlePage() {
       <main className="min-h-screen bg-waygent-cream pt-16 relative">
         {/* Left Sidebar: Blog List - Positioned to the left of content */}
         <div className="hidden xl:block fixed top-24 z-10" style={{
-          left: 'calc(50% - 640px - 300px)',
-          width: '280px'
+          left: 'max(10px, calc(50% - 640px - 200px))',
+          width: 'clamp(180px, calc((100vw - 1350px) * 999), 240px)'
         }}>
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-gray-200/40" style={{ background: 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' }}>
@@ -177,26 +177,39 @@ export default function BlogArticlePage() {
                 All Blogs
               </h2>
             </div>
-            <div className="max-h-[500px] overflow-y-auto">
+            <nav className="p-2 max-h-[500px] overflow-y-auto">
               {allBlogs.map((blog) => {
                 const isActive = blog.blog_id === article?.blog_id || blog.name === article?.name;
                 return (
                   <Link
                     key={blog.blog_id || blog.name}
                     href={`/blog/${blog.blog_id || blog.name}`}
-                    className={`block p-4 border-b border-gray-100/50 transition-all ${
-                      isActive
-                        ? 'bg-waygent-blue/10 border-l-4 border-l-waygent-blue'
-                        : 'hover:bg-gray-50/50'
-                    }`}
+                    className="block px-4 py-3 rounded-lg transition-all duration-300 ease-out font-space-grotesk mb-1 border"
+                    style={{
+                      background: isActive ? 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' : 'transparent',
+                      border: isActive ? '1px solid #7AA5B5' : '1px solid transparent',
+                      boxShadow: isActive ? '0 2px 8px rgba(143, 183, 197, 0.4)' : 'none',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.background = 'rgba(143, 183, 197, 0.12)';
+                        e.currentTarget.style.border = '1px solid rgba(143, 183, 197, 0.25)';
+                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.border = '1px solid transparent';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
                   >
-                    <h3 className={`text-sm font-semibold font-space-grotesk mb-1 ${
-                      isActive ? 'text-waygent-blue' : 'text-gray-800'
-                    }`}>
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: isActive ? '#FFFFFF' : '#374151' }}>
                       {blog.title}
                     </h3>
                     {blog.published_date && (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs" style={{ color: isActive ? 'rgba(255, 255, 255, 0.9)' : '#6B7280' }}>
                         {new Date(blog.published_date).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
@@ -207,60 +220,63 @@ export default function BlogArticlePage() {
                   </Link>
                 );
               })}
-            </div>
+            </nav>
           </div>
         </div>
 
         {/* Main Content - Original positioning, full width */}
         <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-8">
           <article>
-              <div className="mb-6 px-8 sm:px-10 lg:px-12">
-              {/* Date and Author */}
-              <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-gray-400 font-space-grotesk mb-3">
-                {article.published_date && (
-                  <span>
-                    {new Date(article.published_date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                )}
-                {article.author && article.published_date && (
-                  <span>•</span>
-                )}
-                {article.author && (
-                  <span>{article.author}</span>
-                )}
-              </div>
-
-              {/* Title */}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 font-futura mb-3 leading-tight">
-                {article.title}
-              </h1>
-
-              {/* Description */}
-              {article.description && (
-                <p className="text-base text-gray-500 font-space-grotesk leading-relaxed italic">
-                  {article.description}
-                </p>
-              )}
-            </div>
-
-            {/* Content Card */}
-            <div
-              className="bg-white/60 backdrop-blur-sm rounded-3xl border border-white/40 shadow-lg px-8 sm:px-10 lg:px-12 pt-6 pb-8 sm:pb-10 lg:pb-12"
+            {/* Combined Card with Header and Content */}
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl border border-white/40 shadow-lg overflow-hidden"
               style={{
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
               }}
             >
-              {/* Content */}
-              {article.content && (
-                <div
-                  className="prose prose-lg max-w-none font-space-grotesk blog-content"
-                  dangerouslySetInnerHTML={{ __html: article.content }}
-                />
-              )}
+              {/* Header Section with Blue Background */}
+              <div className="px-8 sm:px-10 lg:px-12 py-6" style={{ backgroundColor: '#80AAB9' }}>
+                {/* Date and Author */}
+                <div className="flex items-center gap-2 text-xs uppercase tracking-wide font-space-grotesk mb-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                  {article.published_date && (
+                    <span>
+                      {new Date(article.published_date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                  )}
+                  {article.author && article.published_date && (
+                    <span>•</span>
+                  )}
+                  {article.author && (
+                    <span>{article.author}</span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-futura mb-3 leading-tight text-white">
+                  {article.title}
+                </h1>
+
+                {/* Description */}
+                {article.description && (
+                  <p className="text-base font-space-grotesk leading-relaxed italic text-white/90">
+                    {article.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Content Section */}
+              <div className="px-8 sm:px-10 lg:px-12 pt-6 pb-8 sm:pb-10 lg:pb-12">
+                {/* Content */}
+                {article.content && (
+                  <div
+                    className="prose prose-lg max-w-none font-space-grotesk blog-content"
+                    dangerouslySetInnerHTML={{ __html: article.content }}
+                  />
+                )}
+              </div>
             </div>
           </article>
         </div>

@@ -321,7 +321,14 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
         .blog-carousel::-webkit-scrollbar {
           display: none;
         }
-        @media (max-width: 1023px) {
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .blog-carousel {
+            padding-left: max(2rem, calc(50% - 200px));
+            padding-right: max(2rem, calc(50% - 200px));
+            gap: 2rem;
+          }
+        }
+        @media (max-width: 767px) {
           .blog-carousel {
             padding-left: max(1rem, calc(50% - 140px));
             padding-right: max(1rem, calc(50% - 140px));
@@ -399,22 +406,26 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
               >
                 {/* Create pages of 3 blogs each */}
                 {Array.from({ length: Math.ceil(Math.max(blogPosts.length, 3) / 3) }).map((_, pageIndex) => {
+                  const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024;
                   const postsInPage = blogPosts.slice(pageIndex * 3, (pageIndex * 3) + 3);
                   // Fill with placeholders if less than 3 posts
                   const itemsToShow = [...postsInPage];
-                  while (itemsToShow.length < 3 && pageIndex === 0) {
+                  // Only show placeholder on desktop, not on tablet
+                  while (itemsToShow.length < 3 && pageIndex === 0 && !isTablet) {
                     itemsToShow.push({ isPlaceholder: true, id: `placeholder-${itemsToShow.length}` } as any);
                   }
+                  // On tablet, limit to 2 cards
+                  const displayItems = isTablet ? itemsToShow.slice(0, 2) : itemsToShow;
 
                   return (
                   <div
                     key={pageIndex}
-                    className="flex-shrink-0 w-full grid gap-4 grid-cols-1 md:grid-cols-3 mx-auto px-4 md:px-0"
+                    className="flex-shrink-0 w-full grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto px-4 md:px-8"
                     style={{
-                      maxWidth: '720px'
+                      maxWidth: window.innerWidth >= 1024 ? '800px' : '600px'
                     }}
                   >
-                    {itemsToShow.map((post, index) => {
+                    {displayItems.map((post, index) => {
                       // Render placeholder card - hidden on mobile
                       if ((post as any).isPlaceholder) {
                         return (

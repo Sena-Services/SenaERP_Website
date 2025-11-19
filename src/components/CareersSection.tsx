@@ -14,11 +14,7 @@ type JobOpening = {
   posted_date: string;
 };
 
-type CareersSectionProps = {
-  onBackClick?: () => void;
-};
-
-export default function CareersSection({ onBackClick }: CareersSectionProps) {
+export default function CareersSection() {
   const [openings, setOpenings] = useState<JobOpening[]>([]);
   const [selectedJob, setSelectedJob] = useState<JobOpening | null>(null);
   const [loading, setLoading] = useState(true);
@@ -86,79 +82,71 @@ export default function CareersSection({ onBackClick }: CareersSectionProps) {
   }
 
   return (
-    <section className="px-6 sm:px-8 lg:px-12 py-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <h2
-            className="text-2xl md:text-3xl text-center"
+    <section className="relative">
+      {/* Left Sidebar: Job List - Positioned to the left of content */}
+      <div className="hidden xl:block fixed z-10" style={{
+        top: '67px',
+        left: 'max(10px, calc(50% - 640px - 200px))',
+        width: 'clamp(180px, calc((100vw - 1350px) * 999), 240px)'
+      }}>
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-gray-200/40" style={{ background: 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' }}>
+            <h2 className="text-sm font-bold text-white font-futura uppercase tracking-wide">
+              Open Positions ({openings.length})
+            </h2>
+          </div>
+          <nav className="p-2 max-h-[500px] overflow-y-auto">
+            {openings.map((job) => {
+              const isSelected = selectedJob?.name === job.name;
+              return (
+                <button
+                  key={job.name}
+                  onClick={() => setSelectedJob(job)}
+                  className="w-full text-left px-4 py-3 rounded-lg transition-all duration-300 ease-out font-space-grotesk mb-1 border cursor-pointer"
+                  style={{
+                    background: isSelected ? 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' : 'transparent',
+                    border: isSelected ? '1px solid #7AA5B5' : '1px solid transparent',
+                    boxShadow: isSelected ? '0 2px 8px rgba(143, 183, 197, 0.4)' : 'none',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.background = 'rgba(143, 183, 197, 0.12)';
+                      e.currentTarget.style.border = '1px solid rgba(143, 183, 197, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.border = '1px solid transparent';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }
+                  }}
+                >
+                  <div className="text-sm font-semibold" style={{ color: isSelected ? '#FFFFFF' : '#374151' }}>
+                    {job.title}
+                  </div>
+                  <div className="text-xs mt-1" style={{ color: isSelected ? 'rgba(255, 255, 255, 0.9)' : '#6B7280' }}>
+                    {job.department} • {job.positions_open} {job.positions_open === 1 ? 'position' : 'positions'}
+                  </div>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+
+      {/* Main Content - Centered, aligned with navbar */}
+      <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12">
+        {/* Job Details Card */}
+        {selectedJob && (
+          <div className="bg-white/60 backdrop-blur-sm rounded-3xl border border-white/40 shadow-lg overflow-hidden"
             style={{
-              fontFamily: "Georgia, 'Times New Roman', serif",
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-              color: "#2C1810",
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
             }}
           >
-            Join Our Team
-          </h2>
-        </div>
-
-        {/* Main Content: Vertical Tabs Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 lg:gap-8">
-          {/* Left: Vertical Tabs */}
-          <div className="md:sticky md:top-4 md:self-start">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="p-4 border-b border-gray-200" style={{ background: 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' }}>
-                <h2 className="text-sm font-bold text-white font-futura uppercase tracking-wide">
-                  Open Positions ({openings.length})
-                </h2>
-              </div>
-              <nav className="p-2">
-                {openings.map((job) => {
-                  const isSelected = selectedJob?.name === job.name;
-                  return (
-                    <button
-                      key={job.name}
-                      onClick={() => setSelectedJob(job)}
-                      className="w-full text-left px-4 py-3 rounded-lg transition-all duration-300 ease-out font-space-grotesk mb-1 border cursor-pointer"
-                      style={{
-                        background: isSelected ? 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' : 'transparent',
-                        border: isSelected ? '1px solid #7AA5B5' : '1px solid transparent',
-                        boxShadow: isSelected ? '0 2px 8px rgba(143, 183, 197, 0.4)' : 'none',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isSelected) {
-                          e.currentTarget.style.background = 'rgba(143, 183, 197, 0.12)';
-                          e.currentTarget.style.border = '1px solid rgba(143, 183, 197, 0.25)';
-                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.2)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isSelected) {
-                          e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.border = '1px solid transparent';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }
-                      }}
-                    >
-                      <div className="text-sm font-semibold" style={{ color: isSelected ? '#FFFFFF' : '#374151' }}>
-                        {job.title}
-                      </div>
-                      <div className="text-xs mt-1" style={{ color: isSelected ? 'rgba(255, 255, 255, 0.9)' : '#6B7280' }}>
-                        {job.department} • {job.positions_open} {job.positions_open === 1 ? 'position' : 'positions'}
-                      </div>
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-          </div>
-
-          {/* Right: Job Details */}
-          {selectedJob && (
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
               {/* Job Header */}
-              <div className="mb-6 p-6" style={{ background: 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' }}>
+              <div className="p-6" style={{ background: 'linear-gradient(135deg, #8FB7C5 0%, #7AA5B5 100%)' }}>
                 <h2 className="text-3xl font-bold text-white font-futura mb-4">
                   {selectedJob.title}
                 </h2>
@@ -185,8 +173,7 @@ export default function CareersSection({ onBackClick }: CareersSectionProps) {
                   </div>
                 </div>
               </div>
-              <div className="p-8">
-
+              <div className="px-8 pt-6 pb-8">
                 {/* Job Description */}
                 <div className="mb-8">
                   <div
@@ -209,7 +196,6 @@ export default function CareersSection({ onBackClick }: CareersSectionProps) {
               </div>
             </div>
           )}
-        </div>
       </div>
     </section>
   );
