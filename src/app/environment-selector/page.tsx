@@ -36,9 +36,9 @@ export default function EnvironmentSelectorPage() {
     setCurrentEnvironment(environmentName);
 
 
-    // Redirect to Frappe site
-    const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://senatest2.localhost:8080";
-    window.location.href = frappeUrl;
+    // Redirect to frontend application
+    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:8080";
+    window.location.href = frontendUrl;
   };
 
   if (isCheckingAuth) {

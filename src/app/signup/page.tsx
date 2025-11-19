@@ -43,7 +43,7 @@ export default function SignupPage() {
     try {
       // Call Frappe registration API
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000"}/api/method/crm.api.user_auth.register`,
+        `${process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000"}/api/method/sentra_core.api.user_auth.register`,
         {
           method: "POST",
           headers: {
