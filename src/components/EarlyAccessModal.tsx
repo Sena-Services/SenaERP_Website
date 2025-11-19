@@ -5,6 +5,13 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG } from "@/lib/config";
 
+// Extend window type for cleanup function
+declare global {
+  interface Window {
+    __modalScrollCleanup?: () => void;
+  }
+}
+
 interface EarlyAccessModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -27,6 +34,48 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
     setMounted(true);
     return () => setMounted(false);
   }, []);
+
+  // Debug: Log when isOpen changes
+  useEffect(() => {
+    console.log('🔍 EarlyAccessModal - isOpen changed:', isOpen);
+  }, [isOpen]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      console.log('🔒 Attempting to lock body scroll');
+
+      // Use a small delay to ensure modal is rendered first
+      const timer = setTimeout(() => {
+        console.log('🔒 Locking body scroll now');
+        const originalOverflow = document.body.style.overflow;
+        const originalPaddingRight = document.body.style.paddingRight;
+        const originalTouchAction = document.body.style.touchAction;
+
+        // Prevent scrollbar layout shift
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        document.body.style.overflow = 'hidden';
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        document.body.style.touchAction = 'none'; // Prevent touch scrolling on mobile
+
+        // Store cleanup function
+        window.__modalScrollCleanup = () => {
+          console.log('🔓 Unlocking body scroll');
+          document.body.style.overflow = originalOverflow;
+          document.body.style.paddingRight = originalPaddingRight;
+          document.body.style.touchAction = originalTouchAction;
+        };
+      }, 50); // Small delay to let modal render
+
+      return () => {
+        clearTimeout(timer);
+        if (window.__modalScrollCleanup) {
+          window.__modalScrollCleanup();
+          delete window.__modalScrollCleanup;
+        }
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen || !mounted) return null;
 
@@ -76,18 +125,31 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
     });
   };
 
-  const modalContent = (
-    <div className="fixed inset-0 z-[9999] overflow-y-auto">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-md"
-      />
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    console.log('🖱️ Backdrop clicked - target:', e.target);
+    console.log('🖱️ Backdrop clicked - currentTarget:', e.currentTarget);
+    onClose();
+  };
 
-      {/* Centering container */}
-      <div className="flex min-h-full items-center justify-center p-4">
-        {/* Modal */}
-        <div className="relative bg-white rounded-2xl sm:rounded-[32px] shadow-2xl max-w-4xl w-full overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-0">
+  const handleModalClick = (e: React.MouseEvent) => {
+    console.log('🖱️ Modal clicked - stopping propagation');
+    e.stopPropagation();
+  };
+
+  const modalContent = (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto touch-pan-y overscroll-contain"
+      onClick={handleBackdropClick}
+    >
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-md -z-10" />
+
+      {/* Modal */}
+      <div
+        className="relative bg-white rounded-2xl sm:rounded-[32px] shadow-2xl max-w-4xl w-full overflow-hidden my-auto z-10 max-h-[90vh] sm:max-h-[85vh] flex flex-col"
+        onClick={handleModalClick}
+      >
+        <div className="grid md:grid-cols-2 gap-0 overflow-y-auto touch-pan-y overscroll-contain">
           {/* Left side - Image */}
           <div className="relative hidden md:block bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9] min-h-[500px]">
             <Image
@@ -101,7 +163,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
           </div>
 
           {/* Right side - Form */}
-          <div className="p-5 sm:p-8 md:p-10">
+          <div className="p-5 sm:p-8 md:p-10 overflow-y-auto">
             {/* Close button */}
             <button
               onClick={onClose}
@@ -237,7 +299,6 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
               </div>
             </form>
           </div>
-        </div>
         </div>
       </div>
     </div>

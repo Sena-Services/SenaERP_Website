@@ -12,6 +12,10 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const [viewportHeight, setViewportHeight] = useState(900);
   const localContentRef = useRef<HTMLDivElement>(null);
   const contentRef = scrollRef || localContentRef;
+  const [isContentAtBottom, setIsContentAtBottom] = useState(false);
+  const scrollAttemptRef = useRef(0);
+  const lastScrollTopRef = useRef(0);
+  const isManualScrollRef = useRef(false); // Flag to prevent double-scroll from arrow click
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,8 +27,80 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Mobile: No JavaScript event interception!
-  // Let browser handle all scroll physics naturally for smooth momentum
+  // Mobile scroll exhaustion detection - detects when content reaches bottom and enables page scroll
+  useEffect(() => {
+    if (!isMobile || !contentRef.current) return;
+
+    const element = contentRef.current;
+    let touchStartY = 0;
+    let touchCurrentY = 0;
+    let isScrollingDown = false;
+    let hasTriggeredTransition = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+      touchCurrentY = touchStartY;
+      hasTriggeredTransition = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      touchCurrentY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchCurrentY;
+      isScrollingDown = deltaY > 0; // Positive delta = scrolling down
+
+      // Check if we're at bottom during the touch move
+      const { scrollTop, scrollHeight, clientHeight } = element;
+      const scrollBottom = scrollTop + clientHeight;
+      const isAtBottom = scrollBottom >= scrollHeight - 5;
+      const isScrollable = scrollHeight > clientHeight;
+
+      // If at bottom and trying to scroll down, prevent default and trigger transition
+      if ((!isScrollable || isAtBottom) && isScrollingDown && !hasTriggeredTransition) {
+        // Prevent rubber-band by stopping the event
+        e.preventDefault();
+        hasTriggeredTransition = true;
+
+        // Immediately trigger smooth transition
+        window.scrollBy({
+          top: window.innerHeight * 0.5,
+          behavior: 'smooth'
+        });
+      }
+    };
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = element;
+      const scrollBottom = scrollTop + clientHeight;
+      const isAtBottom = scrollBottom >= scrollHeight - 5; // 5px threshold
+
+      setIsContentAtBottom(isAtBottom);
+      lastScrollTopRef.current = scrollTop;
+    };
+
+    const handleTouchEnd = () => {
+      // Skip if arrow button was clicked or transition already triggered
+      if (isManualScrollRef.current || hasTriggeredTransition) {
+        isManualScrollRef.current = false;
+        hasTriggeredTransition = false;
+        return;
+      }
+    };
+
+    element.addEventListener('touchstart', handleTouchStart, { passive: true });
+    element.addEventListener('touchmove', handleTouchMove, { passive: false }); // NOT passive - need to preventDefault
+    element.addEventListener('touchend', handleTouchEnd, { passive: true });
+    element.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      element?.removeEventListener('touchstart', handleTouchStart);
+      element?.removeEventListener('touchmove', handleTouchMove);
+      element?.removeEventListener('touchend', handleTouchEnd);
+      element?.removeEventListener('scroll', handleScroll);
+    };
+  }, [isMobile, contentRef]);
+
+  // Mobile: Hybrid approach - native scroll with smart exhaustion detection
+  // Content scrolls first with momentum, then window takes over when exhausted
 
   // Scale content based on viewport height - fill space while staying responsive
   const getScaledValue = (baseValue: number) => {
@@ -47,25 +123,28 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
       style={{
         opacity: contentOpacity,
         pointerEvents: contentOpacity < 0.3 ? "none" : "auto",
-        // On mobile, cover ENTIRE viewport to capture all touches, padding pushes content down
+        // On mobile, stay within the painting image bounds (respect 6px padding + 8px border radius)
         position: isMobile ? 'absolute' : undefined,
-        top: isMobile ? 0 : undefined,
-        left: isMobile ? 0 : undefined,
-        right: isMobile ? 0 : undefined,
+        top: isMobile ? '6px' : undefined, // Match painting's top padding
+        left: isMobile ? '6px' : undefined, // Match painting's left padding
+        right: isMobile ? '6px' : undefined, // Match painting's right padding
         paddingLeft: isMobile ? '24px' : getScaledValue(40),
         paddingRight: isMobile ? '24px' : getScaledValue(40),
         paddingTop: isMobile ? '50vh' : `${topPadding}px`, // 50vh padding = content shows in bottom half
         paddingBottom: `${bottomPadding}px`,
         minHeight: isMobile ? undefined : '100%',
-        height: isMobile ? '100vh' : undefined, // FIXED height = 100vh to contain scroll
-        // Native scroll with iOS momentum and elastic overscroll
+        height: isMobile ? 'calc(100vh - 6px)' : undefined, // Height minus top padding to stay within bounds
+        // Native scroll with iOS momentum - CONTAIN prevents stuck rubber-band
         overflow: isMobile ? 'scroll' : undefined,
         overflowY: isMobile ? 'scroll' : undefined,
         WebkitOverflowScrolling: isMobile ? 'touch' : undefined,
-        overscrollBehavior: isMobile ? 'auto' : undefined, // Allow elastic bounce effect
+        overscrollBehavior: isMobile ? 'contain' : undefined, // CONTAIN: Prevents scroll chaining but no stuck rubber-band
         // Force iOS to recognize this as a scrollable area
         touchAction: isMobile ? 'pan-y' : undefined,
         zIndex: 10,
+        // Match the painting's rounded corners
+        borderTopLeftRadius: isMobile ? '8px' : undefined,
+        borderTopRightRadius: isMobile ? '8px' : undefined,
       }}
     >
       <div style={{
@@ -261,9 +340,11 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               viewBox="0 0 24 24"
               onClick={() => {
                 if (isMobile) {
-                  // Mobile: Scroll down one viewport height to show the next content
+                  // Set flag to prevent double-scroll from touch handler
+                  isManualScrollRef.current = true;
+                  // Mobile: Smooth scroll down (same effect as scroll exhaustion)
                   window.scrollBy({
-                    top: window.innerHeight,
+                    top: window.innerHeight * 0.5,
                     behavior: 'smooth'
                   });
                 } else {

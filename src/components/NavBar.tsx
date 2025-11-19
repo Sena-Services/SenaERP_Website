@@ -32,9 +32,13 @@ type NavBarProps = {
   showEnvironments?: boolean;
   showBlog?: boolean;
   showJoinUs?: boolean;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
+  blogPageTitle?: string;
+  blogPageAction?: string;
 };
 
-export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showEnvironments = false, showBlog = false, showJoinUs = false }: NavBarProps) {
+export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showEnvironments = false, showBlog = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -148,6 +152,12 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   // Track active section based on scroll position
   useEffect(() => {
     const updateActiveSection = () => {
+      // Don't update sections when modal is open
+      if (isModalOpen) {
+        console.log('⏸️ Skipping section update - modal is open');
+        return;
+      }
+
       const sectionIds = sections.map(s => s.id);
       const viewportCenter = window.scrollY + window.innerHeight / 2;
 
@@ -173,7 +183,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       window.removeEventListener('scroll', updateActiveSection);
       window.removeEventListener('resize', updateActiveSection);
     };
-  }, []);
+  }, [isModalOpen]);
 
   // Measure navbar height
   useEffect(() => {
@@ -218,17 +228,46 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           borderBottomRightRadius: '40px',
         }}
       >
-        {/* Top Row - Logo and Buttons */}
+        {/* Top Row - Logo/Back Button and Buttons */}
         <div className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2`}>
-        {/* LEFT SIDE - Logo */}
+        {/* LEFT SIDE - Logo or Back Button */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} pl-2 sm:pl-3 py-1.5`}>
-          <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
-          <span
-            className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
-          >
-            Sena
-          </span>
+          {showBackButton ? (
+            <button
+              onClick={onBackClick}
+              className="inline-flex items-center gap-2 text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk transition cursor-pointer text-sm"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Go back
+            </button>
+          ) : (
+            <>
+              <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
+              <span
+                className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
+              >
+                Sena
+              </span>
+            </>
+          )}
         </div>
+
+        {/* CENTER - Blog Page Title */}
+        {blogPageTitle && (
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <span className="text-sm font-semibold text-gray-700 font-space-grotesk uppercase tracking-wide">
+              {blogPageTitle}
+            </span>
+          </div>
+        )}
 
         {/* RIGHT SIDE */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.navToButtonGap}`}>
@@ -274,9 +313,13 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                   </div>
                 </Link> */}
 
-                {/* Get Early Access Button */}
+                {/* Get Early Access Button or Custom Action */}
                 <button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('🎯 Get Early Access button clicked - opening modal');
+                    setIsModalOpen(true);
+                  }}
                   className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold cursor-pointer outline-none leading-none focus-visible:outline-none"
                   style={{
                     background: '#8FB7C5',
@@ -295,7 +338,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.3)';
                   }}
                 >
-                  <span className="leading-none">Get Early Access</span>
+                  <span className="leading-none">{blogPageAction || "Get Early Access"}</span>
                 </button>
 
                 {/* Hamburger Menu Button - Mobile Only */}
@@ -609,7 +652,10 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         {/* Early Access Modal */}
         <EarlyAccessModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            console.log('🚪 NavBar - closing modal');
+            setIsModalOpen(false);
+          }}
           onSuccess={handleWaitlistSuccess}
         />
 

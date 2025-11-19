@@ -86,46 +86,21 @@ export default function CareersSection({ onBackClick }: CareersSectionProps) {
   }
 
   return (
-    <section className="px-4 sm:px-6 lg:px-8 py-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header with Back Button */}
+    <section className="px-6 sm:px-8 lg:px-12 py-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-center relative">
-            {onBackClick && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('Back button clicked');
-                  onBackClick();
-                }}
-                className="absolute left-0 inline-flex items-center gap-2 text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk transition px-4 py-2 rounded-lg hover:bg-waygent-blue/5 cursor-pointer z-10"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-                Go back
-              </button>
-            )}
-            <h2
-              className="text-2xl md:text-3xl text-center"
-              style={{
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                fontWeight: 400,
-                letterSpacing: "-0.02em",
-                color: "#2C1810",
-              }}
-            >
-              Join Our Team
-            </h2>
-          </div>
+          <h2
+            className="text-2xl md:text-3xl text-center"
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              color: "#2C1810",
+            }}
+          >
+            Join Our Team
+          </h2>
         </div>
 
         {/* Main Content: Vertical Tabs Layout */}

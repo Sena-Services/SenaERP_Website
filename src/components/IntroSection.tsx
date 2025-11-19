@@ -355,6 +355,8 @@ export default function IntroSection() {
                 top: 0,
                 left: 0,
                 right: 0,
+                padding: '6px',
+                paddingBottom: 0,
               }}
             >
               <img
@@ -364,6 +366,8 @@ export default function IntroSection() {
                 style={{
                   objectPosition: '88% 50%',
                   opacity: 0.80,
+                  borderTopLeftRadius: '8px',
+                  borderTopRightRadius: '8px',
                 }}
               />
             </div>

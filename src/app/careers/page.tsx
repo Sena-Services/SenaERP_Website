@@ -9,11 +9,17 @@ export default function CareersPage() {
 
   return (
     <>
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-[200]" style={{ width: "min(640px, 90vw)" }}>
-        <NavBar />
+      <div className="fixed left-0 right-0 top-0 z-[200] flex justify-center">
+        <div className="w-full max-w-4xl px-6 sm:px-8 lg:px-12">
+          <NavBar
+            showBackButton={true}
+            onBackClick={() => router.back()}
+            blogPageTitle="Careers"
+          />
+        </div>
       </div>
       <div className="bg-waygent-cream min-h-screen pt-16">
-        <CareersSection onBackClick={() => router.back()} />
+        <CareersSection />
       </div>
     </>
   );
