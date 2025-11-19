@@ -38,7 +38,7 @@ export async function checkAuth(): Promise<AuthResponse> {
       console.error = () => {};
 
       response = await fetch(
-        `${frappeUrl}/api/method/crm.api.user_auth.get_current_user`,
+        `${frappeUrl}/api/method/websitecms.api.user_auth.get_current_user`,
         {
           method: 'GET',
           credentials: 'include',
@@ -118,7 +118,7 @@ export async function logout(): Promise<boolean> {
   try {
     const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || 'http://localhost:8000';
     const response = await fetch(
-      `${frappeUrl}/api/method/crm.api.user_auth.logout`,
+      `${frappeUrl}/api/method/websitecms.api.user_auth.logout`,
       {
         method: 'POST',
         credentials: 'include',
