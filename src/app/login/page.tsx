@@ -21,12 +21,30 @@ export default function LoginPage() {
       // Call websitecms login API
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
 
+      // Step 1: Get CSRF token first
+      const csrfResponse = await fetch(
+        `${frappeUrl}/api/method/websitecms.api.user_auth.get_csrf_token`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const csrfData = await csrfResponse.json();
+      const csrfToken = csrfData.message?.csrf_token;
+
+      if (!csrfToken) {
+        throw new Error("Failed to get CSRF token");
+      }
+
+      // Step 2: Make login request with CSRF token
       const response = await fetch(
         `${frappeUrl}/api/method/websitecms.api.user_auth.login`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "X-Frappe-CSRF-Token": csrfToken,
           },
           credentials: "include",
           body: JSON.stringify({
