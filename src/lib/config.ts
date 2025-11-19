@@ -48,3 +48,6 @@ export function getFileUrl(filePath?: string | null): string | undefined {
   // Otherwise, prepend the base URL
   return `${API_CONFIG.BASE_URL}${filePath}`;
 }
+
+// Export the centralized API client
+export { frappeAPI } from './frappe-api-client';

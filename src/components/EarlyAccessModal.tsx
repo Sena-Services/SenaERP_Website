@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { getApiUrl, API_CONFIG } from "@/lib/config";
+import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
 // Extend window type for cleanup function
 declare global {
@@ -85,11 +85,8 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
     setError(null);
 
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.SUBMIT_WAITLIST), {
+      const response = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.SUBMIT_WAITLIST), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           full_name: formData.name,
           email: formData.email,

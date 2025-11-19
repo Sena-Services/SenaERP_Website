@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { getApiUrl, API_CONFIG } from "@/lib/config";
+import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
 type JobOpening = {
   name: string;
@@ -22,11 +22,8 @@ export default function CareersSection() {
   useEffect(() => {
     const fetchOpenings = async () => {
       try {
-        const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.GET_ACTIVE_OPENINGS), {
+        const response = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.GET_ACTIVE_OPENINGS), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
         });
 
         const result = await response.json();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { frappeAPI } from "@/lib/config";
 
 export interface Environment {
   name: string;
@@ -92,14 +93,10 @@ export default function EnvironmentSelector({
       setError(null);
 
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
-      const response = await fetch(
+      const response = await frappeAPI.call(
         `${frappeUrl}/api/method/sentra_core.sentra_core.doctype.erp_environment.erp_environment.get_active_environments`,
         {
           method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
 
@@ -140,14 +137,10 @@ export default function EnvironmentSelector({
       setError(null);
 
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
-      const response = await fetch(
+      const response = await frappeAPI.call(
         `${frappeUrl}/api/method/sentra_core.sentra_core.doctype.erp_environment.erp_environment.create_environment`,
         {
           method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({
             display_name: newEnvironment.displayName,
             description: newEnvironment.description,
@@ -202,14 +195,10 @@ export default function EnvironmentSelector({
       setError(null);
 
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
-      const response = await fetch(
+      const response = await frappeAPI.call(
         `${frappeUrl}/api/method/sentra_core.sentra_core.doctype.erp_environment.erp_environment.update_environment`,
         {
           method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({
             environment_name: editingEnvironment.name,
             display_name: newEnvironment.displayName,
@@ -251,14 +240,10 @@ export default function EnvironmentSelector({
       setError(null);
 
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
-      const response = await fetch(
+      const response = await frappeAPI.call(
         `${frappeUrl}/api/method/sentra_core.sentra_core.doctype.erp_environment.erp_environment.delete_environment`,
         {
           method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({
             environment_name: editingEnvironment.name,
           }),

@@ -3,7 +3,7 @@
 import React, { forwardRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getApiUrl, getFileUrl, API_CONFIG } from "@/lib/config";
+import { getApiUrl, getFileUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
 type BlogPost = {
   id: string;
@@ -166,11 +166,8 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
     // Fetch blog posts from the custom Website Blog API
     const fetchBlogs = async () => {
       try {
-        const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_BLOGS), {
+        const response = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_BLOGS), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({
             limit: 10
           })

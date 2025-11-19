@@ -14,7 +14,7 @@ import {
   useTransform,
 } from "framer-motion";
 import type { MotionValue } from "framer-motion";
-import { getApiUrl, API_CONFIG } from "@/lib/config";
+import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
 type EnvironmentMetric = {
   id: string;
@@ -104,11 +104,8 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
   useEffect(() => {
     const fetchEnvironments = async () => {
       try {
-        const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_ENVIRONMENTS), {
+        const response = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_ENVIRONMENTS), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({
             limit: 10
           })
