@@ -15,6 +15,7 @@ class FrappeAPIClient {
   /**
    * Get CSRF token for a specific domain
    * Caches tokens per domain and refreshes when expired
+   * Works for both guest and authenticated users
    */
   private async getCSRFToken(baseUrl: string): Promise<string> {
     const cached = this.tokens.get(baseUrl);
@@ -25,29 +26,27 @@ class FrappeAPIClient {
       return cached.token;
     }
 
-    // Fetch new token
+    // Fetch new token by loading the base page
+    // This works for guest users as Frappe embeds the CSRF token in the HTML
     try {
-      const response = await fetch(
-        `${baseUrl}/api/method/frappe.auth.get_logged_user`,
-        {
-          method: 'GET',
-          credentials: 'include', // Send cookies
-        }
-      );
+      const response = await fetch(`${baseUrl}`, {
+        method: 'GET',
+        credentials: 'include', // Send cookies
+      });
 
       if (!response.ok) {
-        throw new Error(`Failed to get CSRF token: ${response.status}`);
+        throw new Error(`Failed to fetch page for CSRF token: ${response.status}`);
       }
 
-      // Extract CSRF token from cookies
-      const cookies = document.cookie.split(';');
-      const csrfCookie = cookies.find(c => c.trim().startsWith('csrf_token='));
+      // Parse the HTML to extract the CSRF token
+      const html = await response.text();
+      const tokenMatch = html.match(/csrf_token\s*=\s*["']([^"']+)["']/);
 
-      if (!csrfCookie) {
-        throw new Error('CSRF token not found in cookies');
+      if (!tokenMatch || !tokenMatch[1]) {
+        throw new Error('CSRF token not found in page HTML');
       }
 
-      const token = csrfCookie.split('=')[1].trim();
+      const token = tokenMatch[1];
 
       // Cache the token
       this.tokens.set(baseUrl, {
