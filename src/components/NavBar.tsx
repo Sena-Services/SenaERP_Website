@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import UserAvatar from "./UserAvatar";
 import { checkAuth, type User } from "@/lib/auth";
 import { Database, Home } from "lucide-react";
 import EarlyAccessModal from "./EarlyAccessModal";
 import Toast from "./Toast";
+import PinwheelLogo from "./PinwheelLogo";
 
 const links: { href: string; label: string }[] = [
   // { href: "#features", label: "Features" },
@@ -250,7 +250,13 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
             </button>
           ) : (
             <>
-              <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
+              <PinwheelLogo
+                size={28}
+                animationDuration={10}
+                showStick={true}
+                filter="saturate(50%) brightness(90%)"
+                className="sm:scale-[1.14] md:scale-[1.29]"
+              />
               <span
                 className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
               >

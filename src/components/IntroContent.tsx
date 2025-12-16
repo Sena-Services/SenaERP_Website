@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import PinwheelLogo from './PinwheelLogo';
 
 type IntroContentProps = {
   contentOpacity: number;
@@ -155,26 +156,23 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: `${getScaledValue(8)}px`,
+          gap: `${getScaledValue(12)}px`,
           marginBottom: `${getScaledValue(8)}px`
         }}>
-          <img
-            src="/logo.png"
-            alt="Sena"
-            style={{
-              width: isMobile ? '32px' : `${getScaledValue(40)}px`,
-              height: isMobile ? '32px' : `${getScaledValue(40)}px`,
-              objectFit: 'contain',
-              filter: 'brightness(0) saturate(100%) invert(52%) sepia(18%) saturate(645%) hue-rotate(357deg) brightness(92%) contrast(87%)'
-            }}
+          <PinwheelLogo
+            size={isMobile ? 44 : getScaledValue(55)}
+            animationDuration={10}
+            showStick={true}
+            filter="sepia(100%) saturate(30%) brightness(80%) hue-rotate(-5deg)"
           />
           <span style={{
             fontFamily: "Georgia, serif",
-            fontSize: isMobile ? '0.875rem' : `${getScaledValue(16)}px`,
+            fontSize: isMobile ? '1.1rem' : `${getScaledValue(22)}px`,
             color: "#8b7355",
             textTransform: 'uppercase',
             letterSpacing: '0.15em',
-            fontWeight: 600
+            fontWeight: 600,
+            lineHeight: 1,
           }}>
             Sena
           </span>
