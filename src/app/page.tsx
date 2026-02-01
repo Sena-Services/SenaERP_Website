@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import IntroSection from "@/components/IntroSection";
 import MobileHowItWorks from "@/components/MobileHowItWorks";
@@ -14,8 +14,8 @@ import CoFoundersSection from "@/components/CoFoundersSection";
 import NavBar from "@/components/NavBar";
 import SidebarNav from "@/components/SidebarNav";
 
-
-export default function Home() {
+// Wrapper component to handle searchParams with Suspense
+function HomeContent() {
   const searchParams = useSearchParams();
   const introRef = useRef<HTMLDivElement>(null);
   const registryRef = useRef<HTMLElement>(null);
@@ -878,5 +878,14 @@ export default function Home() {
         }
       `}</style>
     </main>
+  );
+}
+
+// Default export wraps HomeContent in Suspense for useSearchParams
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-waygent-cream" />}>
+      <HomeContent />
+    </Suspense>
   );
 }
