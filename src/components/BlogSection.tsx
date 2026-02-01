@@ -317,17 +317,18 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
         .blog-carousel::-webkit-scrollbar {
           display: none;
         }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
         @media (min-width: 768px) and (max-width: 1023px) {
           .blog-carousel {
             padding-left: max(2rem, calc(50% - 200px));
             padding-right: max(2rem, calc(50% - 200px));
             gap: 2rem;
-          }
-        }
-        @media (max-width: 767px) {
-          .blog-carousel {
-            padding-left: max(1rem, calc(50% - 140px));
-            padding-right: max(1rem, calc(50% - 140px));
           }
         }
       `}</style>
@@ -384,136 +385,31 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
             </div>
           ) : (
             <>
-            <div
-              ref={carouselRef}
-              className="blog-carousel overflow-hidden py-8 md:py-4 relative"
-              style={{
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                marginBottom: '1.5rem',
-                zIndex: 10,
-              }}
-            >
-              {/* Real Carousel - All pages laid out horizontally */}
-              <div
-                className="flex transition-transform duration-700 ease-in-out"
-                style={{
-                  transform: `translateX(-${currentPage * 100}%)`,
-                }}
-              >
-                {/* Create pages of 3 blogs each */}
-                {Array.from({ length: Math.ceil(Math.max(blogPosts.length, 3) / 3) }).map((_, pageIndex) => {
-                  const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024;
-                  const postsInPage = blogPosts.slice(pageIndex * 3, (pageIndex * 3) + 3);
-                  // Fill with placeholders if less than 3 posts
-                  const itemsToShow = [...postsInPage];
-                  // Only show placeholder on desktop, not on tablet
-                  while (itemsToShow.length < 3 && pageIndex === 0 && !isTablet) {
-                    itemsToShow.push({ isPlaceholder: true, id: `placeholder-${itemsToShow.length}` } as any);
-                  }
-                  // On tablet, limit to 2 cards
-                  const displayItems = isTablet ? itemsToShow.slice(0, 2) : itemsToShow;
-
-                  return (
+            {/* Mobile: Horizontal swipe carousel */}
+            {isMobile ? (
+              <div className="relative" style={{ zIndex: 10 }}>
+                <div
+                  ref={carouselRef}
+                  className="overflow-x-auto pb-4 hide-scrollbar"
+                  style={{
+                    scrollSnapType: 'x mandatory',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    WebkitOverflowScrolling: 'touch',
+                  }}
+                >
                   <div
-                    key={pageIndex}
-                    className="flex-shrink-0 w-full grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto px-4 md:px-8"
+                    className="flex gap-4"
                     style={{
-                      maxWidth: window.innerWidth >= 1024 ? '800px' : '600px'
+                      width: 'max-content',
+                      paddingLeft: 'max(1rem, calc(50vw - 140px))',
+                      paddingRight: 'max(1rem, calc(50vw - 140px))',
                     }}
                   >
-                    {displayItems.map((post, index) => {
-                      // Render placeholder card - hidden on mobile
-                      if ((post as any).isPlaceholder) {
-                        return (
-                          <div
-                            key={(post as any).id}
-                            className="relative flex-col overflow-hidden rounded-3xl border-2 border-[#9CA3AF] bg-[#f6efe4] shadow-sm cursor-default hidden md:flex"
-                          >
-                            {/* Placeholder Visual */}
-                            <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden">
-                              {/* Content */}
-                              <div className="relative z-10 text-center px-6">
-                                {/* Icon */}
-                                <div className="relative w-20 h-20 mx-auto mb-4">
-                                  <div
-                                    className="absolute inset-0 rounded-2xl flex items-center justify-center"
-                                    style={{
-                                      background: 'rgba(44, 24, 16, 0.08)',
-                                    }}
-                                  >
-                                    <svg
-                                      className="w-10 h-10"
-                                      style={{ color: '#2C1810' }}
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
-                                      strokeWidth={1.5}
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
-                                      />
-                                    </svg>
-                                  </div>
-                                </div>
-
-                                <div
-                                  className="font-space-grotesk font-bold mb-1"
-                                  style={{
-                                    fontSize: '16px',
-                                    letterSpacing: '-0.02em',
-                                    color: '#2C1810'
-                                  }}
-                                >
-                                  Coming Soon
-                                </div>
-                                <div
-                                  className="font-space-grotesk text-gray-500"
-                                  style={{ fontSize: '11px', lineHeight: '1.4' }}
-                                >
-                                  More insights on the way
-                                </div>
-
-                                {/* Decorative dots */}
-                                <div className="flex items-center justify-center gap-1.5 mt-4">
-                                  <div
-                                    className="w-1.5 h-1.5 rounded-full animate-bounce"
-                                    style={{
-                                      background: '#2C1810',
-                                      animationDelay: '0ms',
-                                      animationDuration: '1500ms'
-                                    }}
-                                  />
-                                  <div
-                                    className="w-1.5 h-1.5 rounded-full animate-bounce"
-                                    style={{
-                                      background: '#2C1810',
-                                      animationDelay: '150ms',
-                                      animationDuration: '1500ms'
-                                    }}
-                                  />
-                                  <div
-                                    className="w-1.5 h-1.5 rounded-full animate-bounce"
-                                    style={{
-                                      background: '#2C1810',
-                                      animationDelay: '300ms',
-                                      animationDuration: '1500ms'
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-
-                      // Render actual blog post
-                      const actualPost = post as BlogPost;
+                    {blogPosts.map((post, index) => {
                       const isActive = index === activeCardIndex;
-                      const formattedDate = actualPost.published_date
-                        ? new Date(actualPost.published_date).toLocaleDateString('en-US', {
+                      const formattedDate = post.published_date
+                        ? new Date(post.published_date).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric'
@@ -522,82 +418,214 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
 
                       return (
                         <Link
-                    key={actualPost.id}
-                    href={`/blog/${actualPost.id}`}
-                    className={`group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-waygent-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer ${
-                      isMobile
-                        ? `w-[280px] flex-shrink-0 snap-center ${
+                          key={post.id}
+                          href={`/blog/${post.id}`}
+                          className={`group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-waygent-text-primary transition-all duration-300 cursor-pointer w-[280px] flex-shrink-0 ${
                             isActive
-                              ? 'border-[#9CA3AF] scale-105 shadow-xl opacity-100'
-                              : 'border-[#9CA3AF]/40 opacity-60 scale-95'
-                          }`
-                        : 'border-[#9CA3AF] hover:border-[#6B7280]'
-                    }`}
-                    onMouseEnter={() => setHoveredCardId(actualPost.id)}
-                    onMouseLeave={() => setHoveredCardId(null)}
-                  >
-                    {/* Image/Video Container - Perfect Square */}
-                    <div className="relative w-full aspect-square">
-                      <BlogVisual
-                        attachment={actualPost.attachment}
-                        isHovered={hoveredCardId === actualPost.id}
-                        isActive={isActive && typeof window !== 'undefined' && window.innerWidth < 768}
-                      />
-
-                      {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-
-                      {/* Title and Metadata Overlay with Glassmorphic Effect */}
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        {/* Glassmorphic background - translucent with blur */}
-                        <div
-                          className="absolute inset-0 backdrop-blur-lg"
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.25)',
-                            borderBottomLeftRadius: '16px',
-                            borderBottomRightRadius: '16px',
-                            border: '1px solid rgba(255, 255, 255, 0.18)',
-                            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.15)'
-                          }}
-                        />
-
-                        {/* Text content with shadow for readability */}
-                        <div className="relative z-10">
-                          <h3
-                            className="text-white font-bold leading-tight mb-1.5 transition-all duration-300 group-hover:text-waygent-cream line-clamp-2"
-                            style={{
-                              fontFamily: "Georgia, 'Times New Roman', serif",
-                              fontSize: isMobile ? '14px' : '13px',
-                              letterSpacing: '-0.01em',
-                              textShadow: '0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.8)',
-                            }}
-                          >
-                            {actualPost.title}
-                          </h3>
-
-                          {/* Author and Date - with text shadow */}
-                          <div
-                            className="flex items-center gap-2 text-white font-space-grotesk font-medium"
-                            style={{
-                              fontSize: '11px',
-                              textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)'
-                            }}
-                          >
-                            <span className="truncate">{actualPost.author}</span>
-                            <span className="opacity-70">•</span>
-                            <span className="flex-shrink-0">{formattedDate}</span>
+                              ? 'border-[#9CA3AF] shadow-xl'
+                              : 'border-[#9CA3AF]/60 shadow-md'
+                          }`}
+                          style={{ scrollSnapAlign: 'center' }}
+                          onMouseEnter={() => setHoveredCardId(post.id)}
+                          onMouseLeave={() => setHoveredCardId(null)}
+                        >
+                          <div className="relative w-full aspect-square">
+                            <BlogVisual
+                              attachment={post.attachment}
+                              isHovered={hoveredCardId === post.id}
+                              isActive={isActive}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                            <div className="absolute bottom-0 left-0 right-0 p-3">
+                              <div
+                                className="absolute inset-0 backdrop-blur-lg"
+                                style={{
+                                  background: 'rgba(255, 255, 255, 0.25)',
+                                  borderBottomLeftRadius: '16px',
+                                  borderBottomRightRadius: '16px',
+                                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                                  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.15)'
+                                }}
+                              />
+                              <div className="relative z-10">
+                                <h3
+                                  className="text-white font-bold leading-tight mb-1.5 line-clamp-2"
+                                  style={{
+                                    fontFamily: "Georgia, 'Times New Roman', serif",
+                                    fontSize: '14px',
+                                    letterSpacing: '-0.01em',
+                                    textShadow: '0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.8)',
+                                  }}
+                                >
+                                  {post.title}
+                                </h3>
+                                <div
+                                  className="flex items-center gap-2 text-white font-space-grotesk font-medium"
+                                  style={{ fontSize: '11px', textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)' }}
+                                >
+                                  <span className="truncate">{post.author}</span>
+                                  <span className="opacity-70">•</span>
+                                  <span className="flex-shrink-0">{formattedDate}</span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
                         </Link>
                       );
                     })}
                   </div>
-                  );
-                })}
+                </div>
+
+                {/* Mobile dot indicators */}
+                {blogPosts.length > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-4">
+                    {blogPosts.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === activeCardIndex
+                            ? 'bg-[#2C1810] scale-125'
+                            : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            ) : (
+              /* Desktop: Page-based carousel */
+              <div
+                ref={carouselRef}
+                className="blog-carousel overflow-hidden py-8 md:py-4 relative"
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  marginBottom: '1.5rem',
+                  zIndex: 10,
+                }}
+              >
+                <div
+                  className="flex transition-transform duration-700 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentPage * 100}%)`,
+                  }}
+                >
+                  {Array.from({ length: Math.ceil(Math.max(blogPosts.length, 3) / 3) }).map((_, pageIndex) => {
+                    const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024;
+                    const postsInPage = blogPosts.slice(pageIndex * 3, (pageIndex * 3) + 3);
+                    const itemsToShow = [...postsInPage];
+                    while (itemsToShow.length < 3 && pageIndex === 0 && !isTablet) {
+                      itemsToShow.push({ isPlaceholder: true, id: `placeholder-${itemsToShow.length}` } as any);
+                    }
+                    const displayItems = isTablet ? itemsToShow.slice(0, 2) : itemsToShow;
+
+                    return (
+                      <div
+                        key={pageIndex}
+                        className="flex-shrink-0 w-full grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto px-4 md:px-8"
+                        style={{
+                          maxWidth: typeof window !== 'undefined' && window.innerWidth >= 1024 ? '800px' : '600px'
+                        }}
+                      >
+                        {displayItems.map((post, index) => {
+                          if ((post as any).isPlaceholder) {
+                            return (
+                              <div
+                                key={(post as any).id}
+                                className="relative flex-col overflow-hidden rounded-3xl border-2 border-[#9CA3AF] bg-[#f6efe4] shadow-sm cursor-default hidden md:flex"
+                              >
+                                <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden">
+                                  <div className="relative z-10 text-center px-6">
+                                    <div className="relative w-20 h-20 mx-auto mb-4">
+                                      <div
+                                        className="absolute inset-0 rounded-2xl flex items-center justify-center"
+                                        style={{ background: 'rgba(44, 24, 16, 0.08)' }}
+                                      >
+                                        <svg className="w-10 h-10" style={{ color: '#2C1810' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                    <div className="font-space-grotesk font-bold mb-1" style={{ fontSize: '16px', letterSpacing: '-0.02em', color: '#2C1810' }}>
+                                      Coming Soon
+                                    </div>
+                                    <div className="font-space-grotesk text-gray-500" style={{ fontSize: '11px', lineHeight: '1.4' }}>
+                                      More insights on the way
+                                    </div>
+                                    <div className="flex items-center justify-center gap-1.5 mt-4">
+                                      <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#2C1810', animationDelay: '0ms', animationDuration: '1500ms' }} />
+                                      <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#2C1810', animationDelay: '150ms', animationDuration: '1500ms' }} />
+                                      <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#2C1810', animationDelay: '300ms', animationDuration: '1500ms' }} />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          const actualPost = post as BlogPost;
+                          const formattedDate = actualPost.published_date
+                            ? new Date(actualPost.published_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                            : '';
+
+                          return (
+                            <Link
+                              key={actualPost.id}
+                              href={`/blog/${actualPost.id}`}
+                              className="group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-waygent-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer border-[#9CA3AF] hover:border-[#6B7280]"
+                              onMouseEnter={() => setHoveredCardId(actualPost.id)}
+                              onMouseLeave={() => setHoveredCardId(null)}
+                            >
+                              <div className="relative w-full aspect-square">
+                                <BlogVisual
+                                  attachment={actualPost.attachment}
+                                  isHovered={hoveredCardId === actualPost.id}
+                                  isActive={false}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                                <div className="absolute bottom-0 left-0 right-0 p-3">
+                                  <div
+                                    className="absolute inset-0 backdrop-blur-lg"
+                                    style={{
+                                      background: 'rgba(255, 255, 255, 0.25)',
+                                      borderBottomLeftRadius: '16px',
+                                      borderBottomRightRadius: '16px',
+                                      border: '1px solid rgba(255, 255, 255, 0.18)',
+                                      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.15)'
+                                    }}
+                                  />
+                                  <div className="relative z-10">
+                                    <h3
+                                      className="text-white font-bold leading-tight mb-1.5 transition-all duration-300 group-hover:text-waygent-cream line-clamp-2"
+                                      style={{
+                                        fontFamily: "Georgia, 'Times New Roman', serif",
+                                        fontSize: '13px',
+                                        letterSpacing: '-0.01em',
+                                        textShadow: '0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.8)',
+                                      }}
+                                    >
+                                      {actualPost.title}
+                                    </h3>
+                                    <div
+                                      className="flex items-center gap-2 text-white font-space-grotesk font-medium"
+                                      style={{ fontSize: '11px', textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)' }}
+                                    >
+                                      <span className="truncate">{actualPost.author}</span>
+                                      <span className="opacity-70">•</span>
+                                      <span className="flex-shrink-0">{formattedDate}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Navigation Arrows and Page Indicators */}
             {!isMobile && blogPosts.length > 3 && (() => {

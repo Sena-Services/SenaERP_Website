@@ -423,17 +423,11 @@ export default function IntroSection() {
               pointerEvents: (scrollProgress > 0.9 || expandedCard) ? "auto" : "none", // Make interactive when expanded
             }}
           >
-            {/* Home/Back button - positioned above first card (original position) */}
-            {rotateProgress === 1 && !isHomeButtonFixed && (
+            {/* Home button - positioned in header when not expanded */}
+            {rotateProgress === 1 && !isHomeButtonFixed && !expandedCard && (
               <button
                 onClick={() => {
-                  if (expandedCard) {
-                    // When expanded, go back to cards view
-                    setExpandedCard(null);
-                  } else {
-                    // When not expanded, go back to intro
-                    window.dispatchEvent(new CustomEvent('resetHome'));
-                  }
+                  window.dispatchEvent(new CustomEvent('resetHome'));
                 }}
                 className="absolute flex items-center justify-center gap-2 text-gray-700 hover:text-white transition-all group cursor-pointer"
                 style={{
@@ -457,29 +451,15 @@ export default function IntroSection() {
                   e.currentTarget.style.borderColor = '#9CA3AF';
                 }}
               >
-                {expandedCard ? (
-                  // Back arrow when card is expanded
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
-                    <path
-                      d="M15 18L9 12L15 6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  // Home icon when not expanded
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
-                    <path
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
+                  <path
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </button>
             )}
 
@@ -523,7 +503,7 @@ export default function IntroSection() {
             id="cards-container"
             className="relative w-full h-full flex items-stretch transition-all duration-700 ease-out"
             style={{
-              gap: `${cardGap}px`,
+              gap: expandedCard ? '0px' : `${cardGap}px`,
               filter: 'none',
               perspective: "2000px",
               justifyContent: expandedCard === 'right' ? 'flex-end' : (expandedCard ? 'flex-start' : 'center'),
@@ -532,6 +512,78 @@ export default function IntroSection() {
               zIndex: 10,
             }}
           >
+            {/* Back button - appears next to cards when expanded */}
+            {expandedCard && expandedCard !== 'right' && (
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="absolute flex items-center justify-center text-gray-700 hover:text-white transition-all group cursor-pointer"
+                style={{
+                  left: '16px',
+                  top: '16px',
+                  zIndex: 100,
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: '#F5F1E8',
+                  border: '2px solid #9CA3AF',
+                  boxShadow: '0 2px 8px rgba(156, 163, 175, 0.2)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#8FB7C5';
+                  e.currentTarget.style.borderColor = '#7AA5B5';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#F5F1E8';
+                  e.currentTarget.style.borderColor = '#9CA3AF';
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
+                  <path
+                    d="M15 18L9 12L15 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
+            {/* Back button for right-expanded card - on the right side */}
+            {expandedCard === 'right' && (
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="absolute flex items-center justify-center text-gray-700 hover:text-white transition-all group cursor-pointer"
+                style={{
+                  right: '16px',
+                  top: '16px',
+                  zIndex: 100,
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: '#F5F1E8',
+                  border: '2px solid #9CA3AF',
+                  boxShadow: '0 2px 8px rgba(156, 163, 175, 0.2)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#8FB7C5';
+                  e.currentTarget.style.borderColor = '#7AA5B5';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#F5F1E8';
+                  e.currentTarget.style.borderColor = '#9CA3AF';
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:translate-x-1">
+                  <path
+                    d="M9 18L15 12L9 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
             <FlipCard
               cardWidth={cardWidth}
               currentWidthValue={currentWidthValue}
@@ -595,12 +647,10 @@ export default function IntroSection() {
             {/* Expanded detail content - rendered as flex sibling for proper alignment */}
             {expandedCard && (
               <div
-                ref={detailScrollRef}
                 style={{
                   flex: 1,
                   height: '100%',
-                  overflowY: 'auto',
-                  overflowX: 'hidden',
+                  overflow: 'hidden', // Clips the scrollbar at rounded corners
                   marginLeft: expandedCard === 'right' ? 0 : '-2px',
                   marginRight: expandedCard === 'right' ? '-2px' : 0,
                   borderTopLeftRadius: expandedCard === 'right' ? `${borderRadius}px` : 0,
@@ -612,10 +662,40 @@ export default function IntroSection() {
                   borderLeft: expandedCard === 'right' ? '2px solid #9CA3AF' : 'none',
                   borderRight: expandedCard === 'right' ? 'none' : '2px solid #9CA3AF',
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-                  padding: '24px 28px',
                   order: expandedCard === 'right' ? -1 : 1,
                 }}
               >
+                <div
+                  ref={detailScrollRef}
+                  className="detail-scroll-container"
+                  style={{
+                    height: '100%',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    padding: '24px 28px',
+                    paddingRight: '20px',
+                  }}
+                >
+                  {/* Modern scrollbar styles */}
+                  <style jsx>{`
+                    .detail-scroll-container {
+                      scrollbar-width: thin;
+                      scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar {
+                      width: 6px;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar-track {
+                      background: transparent;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar-thumb {
+                      background: rgba(156, 163, 175, 0.4);
+                      border-radius: 3px;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar-thumb:hover {
+                      background: rgba(156, 163, 175, 0.6);
+                    }
+                  `}</style>
                     {/* Content based on which card is expanded */}
                     {expandedCard === "left" && (
                       <div className="w-full">
@@ -625,13 +705,13 @@ export default function IntroSection() {
                           style={{
                             width: '40px',
                             height: '40px',
-                            background: '#3B82F6',
-                            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                            background: '#F5F1E8',
+                            border: '2px solid #9CA3AF',
                           }}
                         >
-                          <span className="text-white font-bold text-xl">1</span>
+                          <span className="font-bold text-lg" style={{ color: '#4682A0' }}>1</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#4682A0' }}>
                           Discovery
                         </h2>
                       </div>
@@ -640,9 +720,9 @@ export default function IntroSection() {
                       </p>
 
                       <div className="space-y-4">
-                        <div className="bg-blue-50/60 rounded-2xl p-4 border-2 border-blue-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                             </svg>
                             Voice & Text Conversations
@@ -650,23 +730,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">Talk naturally in 50+ languages. Whether you have a fuzzy vision or know exactly what you want, Sena meets you where you are.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Voice conversations with real-time understanding</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Text input for detailed requirements</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Intelligent questioning that uncovers what you really need</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-blue-50/60 rounded-2xl p-4 border-2 border-blue-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             Multimodal Input
@@ -674,23 +754,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">Upload documents, images, videos, links, and websites. Sena processes everything to deeply understand your operations.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Existing SOPs, process documents, spreadsheets</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Screenshots of current systems</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Deep web search capabilities</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-blue-50/60 rounded-2xl p-4 border-2 border-blue-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             Parallel Team Discovery
@@ -698,19 +778,19 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">Discovery can happen in parallel with multiple users across your company's hierarchy. Everyone's input gets consolidated.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Founders share vision, managers share processes, staff share daily tasks</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-blue-500 mt-0.5">→</span>
+                              <span className="text-[#4682A0] mt-0.5">→</span>
                               <span>Consolidates all perspectives into unified requirements</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-blue-50/60 rounded-2xl p-4 border-2 border-blue-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                             </svg>
                             Business Requirements Document
@@ -729,13 +809,13 @@ export default function IntroSection() {
                           style={{
                             width: '40px',
                             height: '40px',
-                            background: '#8B5CF6',
-                            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+                            background: '#F5F1E8',
+                            border: '2px solid #9CA3AF',
                           }}
                         >
-                          <span className="text-white font-bold text-xl">2</span>
+                          <span className="font-bold text-lg" style={{ color: '#826496' }}>2</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#826496' }}>
                           Build
                         </h2>
                       </div>
@@ -744,9 +824,9 @@ export default function IntroSection() {
                       </p>
 
                       <div className="space-y-4">
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                             </svg>
                             Builder Agent
@@ -754,23 +834,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">Your dedicated AI that reads the BRD and assembles a complete custom system—database, logic, migrations, integrations.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span>Pulls modules from the Registry, doesn't code from scratch</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span>Combines multiple building blocks for your use case</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span>Customizes everything to your specific requirements</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
                             The Registry
@@ -778,23 +858,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">An open-source, well-indexed library of building blocks—the Builder's toolbox.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span><strong>Modules:</strong> accounts, inventory, travel, HR, and more</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span><strong>Agents:</strong> pre-trained agents like accounts agent, TA agent</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span><strong>Connectors:</strong> Tally, WhatsApp, Stripe, Shopify, and more</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             Human-in-the-Loop (when needed)
@@ -802,23 +882,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">AI today isn't perfect. When the Builder can't fulfill something from the Registry alone, we have a system.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span>Builder creates a ticket for missing functionality</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span>Developer community picks it up and builds it</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
                               <span>Solution goes back into the Registry</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                             The Flywheel Effect
@@ -837,13 +917,13 @@ export default function IntroSection() {
                           style={{
                             width: '40px',
                             height: '40px',
-                            background: '#EC4899',
-                            boxShadow: '0 4px 12px rgba(236, 72, 153, 0.3)',
+                            background: '#F5F1E8',
+                            border: '2px solid #9CA3AF',
                           }}
                         >
-                          <span className="text-white font-bold text-xl">3</span>
+                          <span className="font-bold text-lg" style={{ color: '#B4646E' }}>3</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#B4646E' }}>
                           Manage Agents
                         </h2>
                       </div>
@@ -852,9 +932,9 @@ export default function IntroSection() {
                       </p>
 
                       <div className="space-y-4">
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                             </svg>
                             Agent Builder
@@ -862,23 +942,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">Most agent builders are too technical for business owners or too simple for developers. We built for both.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span><strong>Autonomy slider:</strong> plain English on one end, full code control on the other</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Define state, graph logic, and model prompts with full control</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Deep ERP integration—agents know your system's current state</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                             </svg>
                             Automated Testing Framework
@@ -886,23 +966,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">Building agents is easy. Making them reliable is hard. We provide the framework to ship agents that actually work.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Generate test data, run it through the agent</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Test tool calling, token usage, hallucination levels</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>See how the graph is traversed, how many tokens used</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                             Fine-Tuning
@@ -910,23 +990,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">We don't just prompt models, we fine-tune them for repeatable tasks.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Better efficiency, sharper tool-calling</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Agents that just know what to do for your business</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Every interaction makes your agents smarter</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
                             Command Center
@@ -934,23 +1014,23 @@ export default function IntroSection() {
                           <p className="text-gray-700 text-sm leading-relaxed mb-2">The daily driver screen for users. Where your agents live and talk to you.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Agents report what they did, ask permission for next steps</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Mobile-first—this is what people see on their phones</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
                               <span>Deep links into the ERP desk when you need to drill down</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                             Runtime Evolution
@@ -960,6 +1040,7 @@ export default function IntroSection() {
                         </div>
                       </div>
                     )}
+                </div>
               </div>
             )}
           </div>
@@ -983,8 +1064,8 @@ export default function IntroSection() {
         </div>
       </div>
 
-      {/* Fixed Home button - appears at top when scrolling down past How it Works */}
-      {isHomeButtonFixed && rotateProgress === 1 && (() => {
+      {/* Fixed Home button - appears at top when scrolling down past How it Works, hidden when card is expanded */}
+      {isHomeButtonFixed && rotateProgress === 1 && !expandedCard && (() => {
         // Calculate the same left position as the original button
         // Container is centered with max-width 1280px
         const containerWidth = Math.min(maxContainerWidth, viewportWidth - viewportPadding);
@@ -994,11 +1075,7 @@ export default function IntroSection() {
         return (
           <button
             onClick={() => {
-              if (expandedCard) {
-                setExpandedCard(null);
-              } else {
-                window.dispatchEvent(new CustomEvent('resetHome'));
-              }
+              window.dispatchEvent(new CustomEvent('resetHome'));
             }}
             className="fixed flex items-center justify-center gap-2 text-gray-700 hover:text-white transition-all group cursor-pointer"
             style={{
@@ -1021,27 +1098,15 @@ export default function IntroSection() {
               e.currentTarget.style.borderColor = '#9CA3AF';
             }}
           >
-            {expandedCard ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
-                <path
-                  d="M15 18L9 12L15 6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
-                <path
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
+              <path
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         );
       })()}

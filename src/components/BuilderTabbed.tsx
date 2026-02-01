@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 // import UIBuilderDemo from "./UIBuilderDemo"; // REMOVED: Interfaces tab
 import DataBuilderDemo from "./DataBuilderDemo";
@@ -35,54 +36,59 @@ type ChatMessage = {
   status?: string;
 };
 
-// Color themes for each tab - ALL BLUE
+// Color themes for each tab - Earthy teal to match sidebar (#8FB7C5)
 const tabThemes = {
   brd: {
-    primary: '#3B82F6', // blue-600
-    light: '#EFF6FF', // blue-50
-    border: '#BFDBFE', // blue-200
-    ring: 'rgba(59, 130, 246, 0.5)',
+    primary: '#8FB7C5', // muted teal (matches sidebar)
+    light: '#F5F1E8', // cream
+    border: '#9CA3AF', // gray border
+    ring: 'rgba(143, 183, 197, 0.3)',
+    text: '#374151', // dark text for contrast
   },
   data: {
-    primary: '#3B82F6', // blue-600
-    light: '#EFF6FF', // blue-50
-    border: '#BFDBFE', // blue-200
-    ring: 'rgba(59, 130, 246, 0.5)',
+    primary: '#8FB7C5', // muted teal (matches sidebar)
+    light: '#F5F1E8', // cream
+    border: '#9CA3AF', // gray border
+    ring: 'rgba(143, 183, 197, 0.3)',
+    text: '#374151',
   },
   workflows: {
-    primary: '#3B82F6', // blue-600
-    light: '#EFF6FF', // blue-50
-    border: '#BFDBFE', // blue-200
-    ring: 'rgba(59, 130, 246, 0.5)',
+    primary: '#8FB7C5', // muted teal (matches sidebar)
+    light: '#F5F1E8', // cream
+    border: '#9CA3AF', // gray border
+    ring: 'rgba(143, 183, 197, 0.3)',
+    text: '#374151',
   },
   agents: {
-    primary: '#3B82F6', // blue-600
-    light: '#EFF6FF', // blue-50
-    border: '#BFDBFE', // blue-200
-    ring: 'rgba(59, 130, 246, 0.5)',
+    primary: '#8FB7C5', // muted teal (matches sidebar)
+    light: '#F5F1E8', // cream
+    border: '#9CA3AF', // gray border
+    ring: 'rgba(143, 183, 197, 0.3)',
+    text: '#374151',
   },
 };
 
 const tabs: Tab[] = [
-  {
-    id: "brd",
-    label: "BRD",
-    subtitle: "Define your business requirements.",
-    agentTitle: "Discovery Agent",
-    agentDescription: "The Discovery Agent captures everything about your business through conversation—processes, data, integrations, and goals. It generates a comprehensive Business Requirements Document that becomes the blueprint for your custom ERP system.",
-    workflowSteps: [
-      { id: "discover", label: "Discover business needs", status: "complete" },
-      { id: "analyze", label: "Analyze requirements", status: "complete" },
-      { id: "generate", label: "Generate BRD", status: "loading" },
-      { id: "review", label: "Review recommendations" },
-      { id: "approve", label: "Approve & build" },
-    ],
-    chatMessages: [
-      { id: "1", type: "agent", text: "Tell me about your business operations" },
-      { id: "2", type: "user", text: "We're a manufacturing company with 50 employees..." },
-      { id: "3", type: "agent", text: "Generating your BRD with recommended modules and agents..." },
-    ],
-  },
+  // BRD tab hidden for now
+  // {
+  //   id: "brd",
+  //   label: "BRD",
+  //   subtitle: "Define your business requirements.",
+  //   agentTitle: "Discovery Agent",
+  //   agentDescription: "The Discovery Agent captures everything about your business through conversation—processes, data, integrations, and goals. It generates a comprehensive Business Requirements Document that becomes the blueprint for your custom ERP system.",
+  //   workflowSteps: [
+  //     { id: "discover", label: "Discover business needs", status: "complete" },
+  //     { id: "analyze", label: "Analyze requirements", status: "complete" },
+  //     { id: "generate", label: "Generate BRD", status: "loading" },
+  //     { id: "review", label: "Review recommendations" },
+  //     { id: "approve", label: "Approve & build" },
+  //   ],
+  //   chatMessages: [
+  //     { id: "1", type: "agent", text: "Tell me about your business operations" },
+  //     { id: "2", type: "user", text: "We're a manufacturing company with 50 employees..." },
+  //     { id: "3", type: "agent", text: "Generating your BRD with recommended modules and agents..." },
+  //   ],
+  // },
   {
     id: "data",
     label: "Data",
@@ -193,7 +199,7 @@ const chatMessageVariants = {
 // Interface Gallery Component
 function InterfaceGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const images = [
     { src: "/images/interfaces-dashbaord.png", alt: "Analytics Dashboard" },
     { src: "/images/interface-form.png", alt: "Customer Form" },
@@ -209,23 +215,41 @@ function InterfaceGallery() {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  const openImageExpanded = (imageUrl: string) => {
-    setExpandedImage(imageUrl);
+  const openImageExpanded = () => {
+    setIsExpanded(true);
   };
 
   const closeImageExpanded = () => {
-    setExpandedImage(null);
+    setIsExpanded(false);
   };
 
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
+
+  // Keyboard navigation when expanded
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      } else if (e.key === 'Escape') {
+        setIsExpanded(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded, currentIndex, images.length]);
 
   return (
     <>
       <div className="relative flex flex-col h-full gap-3">
         {/* Image Container - rounded, no visible border */}
         <div
-          onClick={() => openImageExpanded(images[currentIndex].src)}
+          onClick={openImageExpanded}
           className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
           style={{ backgroundColor: '#FCFCFA' }}
         >
@@ -240,19 +264,18 @@ function InterfaceGallery() {
               key={currentIndex}
               src={images[currentIndex].src}
               alt={images[currentIndex].alt}
-              className="w-auto rounded-xl cursor-pointer"
+              className="w-auto cursor-pointer"
               style={{
                 maxHeight: '340px',
                 height: 'auto',
                 border: '2px solid #9CA3AF',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                borderRadius: '16px',
+                boxShadow: '0 4px 16px rgba(139, 119, 89, 0.12)'
               }}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.3 }}
-              onClick={() => openImageExpanded(images[currentIndex].src)}
             />
           </AnimatePresence>
         </div>
@@ -263,14 +286,14 @@ function InterfaceGallery() {
           <button
             onClick={goToPrev}
             disabled={!hasPrev}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
               hasPrev
-                ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer'
                 : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
             }`}
             aria-label="Previous interface"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -281,9 +304,9 @@ function InterfaceGallery() {
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                   idx === currentIndex
-                    ? 'bg-waygent-blue scale-125'
+                    ? 'bg-[#8FB7C5] scale-125'
                     : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
                 }`}
                 aria-label={`Go to image ${idx + 1}`}
@@ -294,14 +317,14 @@ function InterfaceGallery() {
           <button
             onClick={goToNext}
             disabled={!hasNext}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
               hasNext
-                ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer'
                 : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
             }`}
             aria-label="Next interface"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -314,47 +337,82 @@ function InterfaceGallery() {
       </div>
     </div>
 
-    {/* Image Expanded Modal */}
-    <AnimatePresence>
-      {expandedImage && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
-          onClick={closeImageExpanded}
-        >
-          {/* Close button - top right */}
-          <button
-            onClick={closeImageExpanded}
-            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
-            aria-label="Close"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Centered Image */}
+    {/* Image Expanded Modal - Rendered via Portal */}
+    {typeof document !== 'undefined' && createPortal(
+      <AnimatePresence>
+        {isExpanded && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="max-w-[90vw] max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+            onClick={closeImageExpanded}
           >
-            <img
-              src={expandedImage}
-              alt="Expanded interface"
-              className="max-w-full max-h-[90vh] object-contain rounded-lg"
-              style={{ imageRendering: '-webkit-optimize-contrast' }}
-            />
+            {/* Close button - top right */}
+            <button
+              onClick={closeImageExpanded}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+              aria-label="Close"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Previous button */}
+            {hasPrev && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goToPrev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+                aria-label="Previous"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Next button */}
+            {hasNext && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goToNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+                aria-label="Next"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Centered Image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-[90vw] max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={images[currentIndex].src}
+                alt={images[currentIndex].alt}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
+              />
+            </motion.div>
+
+            {/* Page indicator */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
+              {currentIndex + 1} / {images.length}
+            </div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>,
+      document.body
+    )}
     </>
   );
 }
@@ -362,7 +420,7 @@ function InterfaceGallery() {
 // Data Gallery Component - Same design as Interface
 function DataGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const images = [
     { src: "/images/data-fields.png", alt: "Data Fields" },
     { src: "/images/data-create.png", alt: "Data Create" },
@@ -372,26 +430,38 @@ function DataGallery() {
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
-  const openImageExpanded = (imageUrl: string) => {
-    setExpandedImage(imageUrl);
-  };
-
-  const closeImageExpanded = () => {
-    setExpandedImage(null);
-  };
+  const openImageExpanded = () => setIsExpanded(true);
+  const closeImageExpanded = () => setIsExpanded(false);
 
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
+
+  // Keyboard navigation when expanded
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      } else if (e.key === 'Escape') {
+        setIsExpanded(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded, currentIndex, images.length]);
 
   return (
     <>
       <div className="relative flex flex-col h-full gap-3">
         <div
-          onClick={() => openImageExpanded(images[currentIndex].src)}
+          onClick={openImageExpanded}
           className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
           style={{ backgroundColor: '#FCFCFA' }}
         >
-          {/* Subtle view hint */}
           <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
               <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
@@ -402,19 +472,18 @@ function DataGallery() {
               key={currentIndex}
               src={images[currentIndex].src}
               alt={images[currentIndex].alt}
-              className="w-auto rounded-xl cursor-pointer"
+              className="w-auto cursor-pointer"
               style={{
                 maxHeight: '340px',
                 height: 'auto',
                 border: '2px solid #9CA3AF',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                borderRadius: '16px',
+                boxShadow: '0 4px 16px rgba(139, 119, 89, 0.12)'
               }}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.3 }}
-              onClick={() => openImageExpanded(images[currentIndex].src)}
             />
           </AnimatePresence>
         </div>
@@ -424,12 +493,12 @@ function DataGallery() {
           <button
             onClick={goToPrev}
             disabled={!hasPrev}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-              hasPrev ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
+              hasPrev ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
             }`}
             aria-label="Previous"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -439,8 +508,8 @@ function DataGallery() {
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  idx === currentIndex ? 'bg-waygent-blue scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  idx === currentIndex ? 'bg-[#8FB7C5] scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
                 }`}
                 aria-label={`Go to image ${idx + 1}`}
               />
@@ -450,12 +519,12 @@ function DataGallery() {
           <button
             onClick={goToNext}
             disabled={!hasNext}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-              hasNext ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
+              hasNext ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
             }`}
             aria-label="Next"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -467,47 +536,71 @@ function DataGallery() {
       </div>
     </div>
 
-    {/* Image Expanded Modal */}
-    <AnimatePresence>
-      {expandedImage && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
-          onClick={closeImageExpanded}
-        >
-          {/* Close button - top right */}
-          <button
-            onClick={closeImageExpanded}
-            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
-            aria-label="Close"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Centered Image */}
+    {/* Image Expanded Modal - Rendered via Portal */}
+    {typeof document !== 'undefined' && createPortal(
+      <AnimatePresence>
+        {isExpanded && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="max-w-[90vw] max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+            onClick={closeImageExpanded}
           >
-            <img
-              src={expandedImage}
-              alt="Expanded data view"
-              className="max-w-full max-h-[90vh] object-contain rounded-lg"
-              style={{ imageRendering: '-webkit-optimize-contrast' }}
-            />
+            <button
+              onClick={closeImageExpanded}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+              aria-label="Close"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            {hasPrev && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goToPrev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            {hasNext && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goToNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-[90vw] max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={images[currentIndex].src}
+                alt={images[currentIndex].alt}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
+              />
+            </motion.div>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
+              {currentIndex + 1} / {images.length}
+            </div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>,
+      document.body
+    )}
     </>
   );
 }
@@ -515,7 +608,7 @@ function DataGallery() {
 // Workflows Gallery Component - Same design as Interface
 function WorkflowsGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const images = [
     { src: "/images/workflow-summary.png", alt: "Workflow Summary" },
     { src: "/images/workflow-detailed.png", alt: "Workflow Detailed" }
@@ -524,26 +617,38 @@ function WorkflowsGallery() {
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
-  const openImageExpanded = (imageUrl: string) => {
-    setExpandedImage(imageUrl);
-  };
-
-  const closeImageExpanded = () => {
-    setExpandedImage(null);
-  };
+  const openImageExpanded = () => setIsExpanded(true);
+  const closeImageExpanded = () => setIsExpanded(false);
 
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
+
+  // Keyboard navigation when expanded
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      } else if (e.key === 'Escape') {
+        setIsExpanded(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded, currentIndex, images.length]);
 
   return (
     <>
       <div className="relative flex flex-col h-full gap-3">
         <div
-          onClick={() => openImageExpanded(images[currentIndex].src)}
+          onClick={openImageExpanded}
           className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
           style={{ backgroundColor: '#FCFCFA' }}
         >
-          {/* Subtle view hint */}
           <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
               <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
@@ -554,19 +659,18 @@ function WorkflowsGallery() {
               key={currentIndex}
               src={images[currentIndex].src}
               alt={images[currentIndex].alt}
-              className="w-auto rounded-xl cursor-pointer"
+              className="w-auto cursor-pointer"
               style={{
                 maxHeight: '340px',
                 height: 'auto',
                 border: '2px solid #9CA3AF',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                borderRadius: '16px',
+                boxShadow: '0 4px 16px rgba(139, 119, 89, 0.12)'
               }}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.3 }}
-              onClick={() => openImageExpanded(images[currentIndex].src)}
             />
           </AnimatePresence>
         </div>
@@ -576,12 +680,12 @@ function WorkflowsGallery() {
           <button
             onClick={goToPrev}
             disabled={!hasPrev}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-              hasPrev ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
+              hasPrev ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
             }`}
             aria-label="Previous"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -591,8 +695,8 @@ function WorkflowsGallery() {
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  idx === currentIndex ? 'bg-waygent-blue scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  idx === currentIndex ? 'bg-[#8FB7C5] scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
                 }`}
                 aria-label={`Go to image ${idx + 1}`}
               />
@@ -602,12 +706,12 @@ function WorkflowsGallery() {
           <button
             onClick={goToNext}
             disabled={!hasNext}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-              hasNext ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
+              hasNext ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
             }`}
             aria-label="Next"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -619,47 +723,71 @@ function WorkflowsGallery() {
       </div>
     </div>
 
-    {/* Image Expanded Modal */}
-    <AnimatePresence>
-      {expandedImage && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
-          onClick={closeImageExpanded}
-        >
-          {/* Close button - top right */}
-          <button
-            onClick={closeImageExpanded}
-            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
-            aria-label="Close"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Centered Image */}
+    {/* Image Expanded Modal - Rendered via Portal */}
+    {typeof document !== 'undefined' && createPortal(
+      <AnimatePresence>
+        {isExpanded && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="max-w-[90vw] max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+            onClick={closeImageExpanded}
           >
-            <img
-              src={expandedImage}
-              alt="Expanded workflow view"
-              className="max-w-full max-h-[90vh] object-contain rounded-lg"
-              style={{ imageRendering: '-webkit-optimize-contrast' }}
-            />
+            <button
+              onClick={closeImageExpanded}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+              aria-label="Close"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            {hasPrev && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goToPrev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            {hasNext && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goToNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-[90vw] max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={images[currentIndex].src}
+                alt={images[currentIndex].alt}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
+              />
+            </motion.div>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
+              {currentIndex + 1} / {images.length}
+            </div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>,
+      document.body
+    )}
     </>
   );
 }
@@ -667,7 +795,7 @@ function WorkflowsGallery() {
 // Agents Gallery Component - Same design as Interface
 function AgentsGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const images = [
     { src: "/images/agents-role.jpeg", alt: "Agent Role Configuration" },
     { src: "/images/agents-greeting.jpeg", alt: "Agent Greeting Stages" },
@@ -678,22 +806,35 @@ function AgentsGallery() {
   const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
-  const openImageExpanded = (imageUrl: string) => {
-    setExpandedImage(imageUrl);
-  };
-
-  const closeImageExpanded = () => {
-    setExpandedImage(null);
-  };
+  const openImageExpanded = () => setIsExpanded(true);
+  const closeImageExpanded = () => setIsExpanded(false);
 
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < images.length - 1;
+
+  // Keyboard navigation when expanded
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      } else if (e.key === 'Escape') {
+        setIsExpanded(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded, currentIndex, images.length]);
 
   return (
     <>
       <div className="relative flex flex-col h-full gap-3">
         <div
-          onClick={() => openImageExpanded(images[currentIndex].src)}
+          onClick={openImageExpanded}
           className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
           style={{ backgroundColor: '#FCFCFA' }}
         >
@@ -713,107 +854,146 @@ function AgentsGallery() {
                 maxHeight: '340px',
                 height: 'auto',
                 border: '2px solid #9CA3AF',
-              borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-            }}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => openImageExpanded(images[currentIndex].src)}
-          />
-        </AnimatePresence>
-      </div>
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.3 }}
+              onClick={openImageExpanded}
+            />
+          </AnimatePresence>
+        </div>
 
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={goToPrev}
-            disabled={!hasPrev}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-              hasPrev ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Previous"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={goToPrev}
+              disabled={!hasPrev}
+              className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer ${
+                hasPrev ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-[#374151] hover:scale-105' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+              }`}
+              aria-label="Previous"
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-          <div className="flex items-center gap-2">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  idx === currentIndex ? 'bg-waygent-blue scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
-                }`}
-                aria-label={`Go to image ${idx + 1}`}
-              />
-            ))}
+            <div className="flex items-center gap-2">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    idx === currentIndex ? 'bg-[#8FB7C5] scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                  }`}
+                  aria-label={`Go to image ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={goToNext}
+              disabled={!hasNext}
+              className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer ${
+                hasNext ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-[#374151] hover:scale-105' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
+              }`}
+              aria-label="Next"
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
 
-          <button
-            onClick={goToNext}
-            disabled={!hasNext}
-            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-              hasNext ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Next"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="text-xs text-gray-600 font-futura">
-          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
+          <div className="text-xs text-gray-600 font-futura">
+            Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    {/* Image Expanded Modal */}
-    <AnimatePresence>
-      {expandedImage && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
-          onClick={closeImageExpanded}
-        >
-          {/* Close button - top right */}
-          <button
-            onClick={closeImageExpanded}
-            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
-            aria-label="Close"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      {/* Image Expanded Modal - Rendered via Portal */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
+              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+              onClick={closeImageExpanded}
+            >
+              {/* Close button - top right */}
+              <button
+                onClick={closeImageExpanded}
+                className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+                aria-label="Close"
+              >
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
 
-          {/* Centered Image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="max-w-[90vw] max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={expandedImage}
-              alt="Expanded agent view"
-              className="max-w-full max-h-[90vh] object-contain rounded-lg"
-              style={{ imageRendering: '-webkit-optimize-contrast' }}
-            />
-          </motion.div>
-        </motion.div>
+              {/* Previous button */}
+              {hasPrev && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToPrev();
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+                  aria-label="Previous image"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Next button */}
+              {hasNext && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNext();
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
+                  aria-label="Next image"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Centered Image */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+                className="max-w-[90vw] max-h-[90vh]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={images[currentIndex].src}
+                  alt={images[currentIndex].alt}
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                  style={{ imageRendering: '-webkit-optimize-contrast' }}
+                />
+              </motion.div>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
+                {currentIndex + 1} / {images.length}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
-    </AnimatePresence>
     </>
   );
 }
@@ -821,7 +1001,7 @@ function AgentsGallery() {
 export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [isMobile, setIsMobile] = useState(false);
-  const [activeBuilderTab, setActiveBuilderTab] = useState("brd"); // BRD is now the first tab
+  const [activeBuilderTab, setActiveBuilderTab] = useState("data"); // Data is now the first tab
   const [viewportHeight, setViewportHeight] = useState(900);
   const [showDetails, setShowDetails] = useState(true);
 
@@ -882,7 +1062,7 @@ export default function BuilderTabbed() {
     if (!isMobile) return;
 
     const handleScroll = () => {
-      const sections = ['brd', 'data', 'workflows', 'agents']; // BRD is now the first tab
+      const sections = ['data', 'workflows', 'agents']; // Data is now the first tab (BRD hidden)
       const scrollPosition = window.scrollY + window.innerHeight / 2; // Use middle of viewport
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -947,52 +1127,38 @@ export default function BuilderTabbed() {
         {/* Desktop White Container with Tabs and Content */}
         <div className="hidden md:block bg-white rounded-[2rem] overflow-hidden relative" style={{
           border: '2px solid #9CA3AF',
-          boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0 12px 40px -8px rgba(139, 119, 89, 0.12), 0 4px 16px -4px rgba(139, 119, 89, 0.08)',
           zIndex: 10
         }}>
           {/* Tabs at Top with Description - All in same container */}
           <div className="bg-waygent-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
-            {/* Tabs Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
+            {/* Tabs Grid - Centered with 3 tabs */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-3 mb-2 max-w-3xl mx-auto">
               {tabs.map((tab, index) => (
                 <motion.button
                   key={tab.id}
                   onClick={() => {
                     setActiveTab(tab);
                   }}
-                  className={`relative px-3 py-2 text-left rounded-lg cursor-pointer overflow-hidden ${
+                  className={`relative px-4 py-3 text-left rounded-xl cursor-pointer overflow-hidden transition-all duration-200 ${
                     activeTab.id === tab.id
-                      ? ""
-                      : "bg-white hover:bg-waygent-cream border border-gray-200/50"
+                      ? "bg-[#8FB7C5]"
+                      : "bg-[#F5F1E8] hover:bg-[#EBE7DE] border-2 border-[#9CA3AF]"
                   }`}
                   style={activeTab.id === tab.id ? {
-                    boxShadow: `0 6px 15px -3px ${tabThemes[tab.id as keyof typeof tabThemes].ring}, 0 3px 8px -2px ${tabThemes[tab.id as keyof typeof tabThemes].ring}`
+                    boxShadow: '0 2px 8px -2px rgba(139, 119, 89, 0.2)'
                   } : {
-                    boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04)'
+                    boxShadow: 'none'
                   }}
-                  whileHover={{ scale: activeTab.id === tab.id ? 1 : 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: activeTab.id === tab.id ? 1 : 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                  {activeTab.id === tab.id && (
-                    <motion.div
-                      className="absolute inset-0 rounded-lg"
-                      style={{ backgroundColor: tabThemes[tab.id as keyof typeof tabThemes].primary }}
-                      layoutId="activeTabBackground"
-                      initial={false}
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 35,
-                        mass: 0.8
-                      }}
-                    />
-                  )}
                   <div className="relative z-10 flex items-start gap-3">
                     <div className="flex-1 min-w-0">
                       <div
                         className={`font-futura font-bold text-sm mb-1 ${
-                          activeTab.id === tab.id ? "text-white" : "text-waygent-text-primary"
+                          activeTab.id === tab.id ? "text-white" : "text-[#6B7280]"
                         }`}
                         style={{ letterSpacing: "-0.02em" }}
                       >
@@ -1000,7 +1166,7 @@ export default function BuilderTabbed() {
                       </div>
                       <div
                         className={`text-xs font-futura ${
-                          activeTab.id === tab.id ? "text-white/90" : "text-waygent-text-secondary"
+                          activeTab.id === tab.id ? "text-white/80" : "text-[#9CA3AF]"
                         }`}
                         style={{ letterSpacing: "-0.01em" }}
                       >
@@ -1062,131 +1228,95 @@ export default function BuilderTabbed() {
                   )}
                   {activeTab.id === 'data' && (
                     <>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.data.light}80`,
-                        borderColor: `${tabThemes.data.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.data.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                         </svg>
-                        <span className="font-medium">Any database</span>
+                        <span className="font-medium text-[10px]">Any database</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.data.light}80`,
-                        borderColor: `${tabThemes.data.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.data.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <span className="font-medium">Auto schemas</span>
+                        <span className="font-medium text-[10px]">Auto schemas</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.data.light}80`,
-                        borderColor: `${tabThemes.data.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.data.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
-                        <span className="font-medium">Secure & validated</span>
+                        <span className="font-medium text-[10px]">Secure & validated</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.data.light}80`,
-                        borderColor: `${tabThemes.data.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.data.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        <span className="font-medium">Real-time sync</span>
+                        <span className="font-medium text-[10px]">Real-time sync</span>
                       </div>
                     </>
                   )}
                   {activeTab.id === 'workflows' && (
                     <>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.workflows.light}80`,
-                        borderColor: `${tabThemes.workflows.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.workflows.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
-                        <span className="font-medium">Event triggers</span>
+                        <span className="font-medium text-[10px]">Event triggers</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.workflows.light}80`,
-                        borderColor: `${tabThemes.workflows.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.workflows.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                         </svg>
-                        <span className="font-medium">Branching logic</span>
+                        <span className="font-medium text-[10px]">Branching logic</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.workflows.light}80`,
-                        borderColor: `${tabThemes.workflows.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.workflows.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        <span className="font-medium">Auto retry</span>
+                        <span className="font-medium text-[10px]">Auto retry</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.workflows.light}80`,
-                        borderColor: `${tabThemes.workflows.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.workflows.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
-                        <span className="font-medium">Monitor & logs</span>
+                        <span className="font-medium text-[10px]">Monitor & logs</span>
                       </div>
                     </>
                   )}
                   {activeTab.id === 'agents' && (
                     <>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.agents.light}80`,
-                        borderColor: `${tabThemes.agents.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.agents.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
-                        <span className="font-medium">Custom training</span>
+                        <span className="font-medium text-[10px]">Custom training</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.agents.light}80`,
-                        borderColor: `${tabThemes.agents.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.agents.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <span className="font-medium">Tool access</span>
+                        <span className="font-medium text-[10px]">Tool access</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.agents.light}80`,
-                        borderColor: `${tabThemes.agents.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.agents.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <span className="font-medium">Human oversight</span>
+                        <span className="font-medium text-[10px]">Human oversight</span>
                       </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.agents.light}80`,
-                        borderColor: `${tabThemes.agents.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.agents.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
+                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span className="font-medium">Full audit trail</span>
+                        <span className="font-medium text-[10px]">Full audit trail</span>
                       </div>
                     </>
                   )}
                   </div>
 
                   {/* Toggle pill - Show for all tabs */}
-                  <div className="relative inline-flex items-center bg-gray-100 rounded-full p-1 border border-gray-200">
+                  <div className="relative inline-flex items-center bg-[#F5F1E8] rounded-lg p-0.5 border border-[#D1D5DB] cursor-pointer">
                     {/* Sliding indicator */}
                     <motion.div
-                      className="absolute rounded-full shadow-sm"
+                      className="absolute rounded-md"
                       animate={{
                         x: showDetails ? '0%' : 'calc(100% - 2px)',
                       }}
@@ -1198,19 +1328,19 @@ export default function BuilderTabbed() {
                         mass: 0.8
                       }}
                       style={{
-                        height: 'calc(100% - 8px)',
-                        width: 'calc(50% - 2px)',
-                        top: '4px',
-                        left: '4px',
-                        backgroundColor: '#3B82F6'
+                        height: 'calc(100% - 4px)',
+                        width: 'calc(50% - 1px)',
+                        top: '2px',
+                        left: '2px',
+                        backgroundColor: '#8FB7C5'
                       }}
                     />
 
                     {/* Details button */}
                     <button
                       onClick={() => setShowDetails(true)}
-                      className={`relative z-10 px-3 py-1 rounded-full text-[10px] font-medium transition-colors duration-200 ${
-                        showDetails ? 'text-white' : 'text-gray-600'
+                      className={`relative z-10 px-3 py-1 rounded-md text-[10px] font-semibold transition-colors duration-200 cursor-pointer ${
+                        showDetails ? 'text-white' : 'text-[#6B7280]'
                       }`}
                       style={{ width: '50%' }}
                     >
@@ -1220,8 +1350,8 @@ export default function BuilderTabbed() {
                     {/* Animation button */}
                     <button
                       onClick={() => setShowDetails(false)}
-                      className={`relative z-10 px-3 py-1 rounded-full text-[10px] font-medium transition-colors duration-200 ${
-                        !showDetails ? 'text-white' : 'text-gray-600'
+                      className={`relative z-10 px-3 py-1 rounded-md text-[10px] font-semibold transition-colors duration-200 cursor-pointer ${
+                        !showDetails ? 'text-white' : 'text-[#6B7280]'
                       }`}
                       style={{ width: '50%' }}
                     >
@@ -1237,7 +1367,7 @@ export default function BuilderTabbed() {
           <div
             className="h-[380px] xl:h-[420px] 2xl:h-[460px] overflow-hidden relative"
             style={{
-              backgroundColor: '#F7F9FC'
+              backgroundColor: '#FAFAF8'
             }}
           >
             {/* Description area that slides down like a curtain/screen */}
@@ -1683,7 +1813,7 @@ export default function BuilderTabbed() {
                               step.status === "complete"
                                 ? "bg-white/80 shadow-sm border border-gray-100"
                                 : step.status === "loading"
-                                ? "bg-white shadow-lg ring-2 ring-waygent-blue/50"
+                                ? "bg-white shadow-lg ring-2 ring-[#8FB7C5]/50"
                                 : "bg-white/40 border border-gray-100/50"
                             }`}
                             whileHover={{ scale: 1.02, x: 4 }}
@@ -1693,7 +1823,7 @@ export default function BuilderTabbed() {
                               step.status === "complete"
                                 ? "bg-green-100 text-green-600"
                                 : step.status === "loading"
-                                ? "bg-waygent-blue/10 text-waygent-blue"
+                                ? "bg-[#8FB7C5]/20 text-[#5B8A8A]"
                                 : "bg-gray-100 text-gray-400"
                             }`}>
                               {step.status === "complete" && (
@@ -1739,9 +1869,9 @@ export default function BuilderTabbed() {
                                   animate={{ opacity: [0.4, 1, 0.4] }}
                                   transition={{ duration: 1.5, repeat: Infinity }}
                                 >
-                                  <div className="w-1.5 h-1.5 rounded-full bg-waygent-blue" />
-                                  <div className="w-1.5 h-1.5 rounded-full bg-waygent-blue" />
-                                  <div className="w-1.5 h-1.5 rounded-full bg-waygent-blue" />
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#8FB7C5]" />
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#8FB7C5]" />
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#8FB7C5]" />
                                 </motion.div>
                               </motion.div>
                             )}
@@ -1774,7 +1904,7 @@ export default function BuilderTabbed() {
                       transition={{ delay: 0.15 }}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-waygent-blue flex items-center justify-center text-white shadow-sm">
+                        <div className="w-9 h-9 rounded-full bg-[#8FB7C5] flex items-center justify-center text-white shadow-sm">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                           </svg>
@@ -1830,7 +1960,7 @@ export default function BuilderTabbed() {
                             className={`px-4 py-3 rounded-2xl max-w-[85%] font-futura ${
                               message.type === "agent"
                                 ? "bg-white text-gray-800 rounded-tl-sm shadow-sm border border-gray-100"
-                                : "bg-waygent-blue text-white rounded-tr-sm shadow-sm"
+                                : "bg-[#8FB7C5] text-white rounded-tr-sm shadow-sm"
                             }`}
                             style={{ letterSpacing: "-0.01em" }}
                           >
@@ -1850,10 +1980,10 @@ export default function BuilderTabbed() {
                       <input
                         type="text"
                         placeholder="Ask"
-                        className="w-full px-4 py-3.5 pr-12 rounded-xl bg-white border border-gray-200 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-waygent-blue focus:border-transparent transition-all font-futura shadow-sm"
+                        className="w-full px-4 py-3.5 pr-12 rounded-xl bg-white border border-gray-200 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8FB7C5] focus:border-transparent transition-all font-futura shadow-sm"
                         style={{ letterSpacing: "-0.01em" }}
                       />
-                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-waygent-blue transition-colors">
+                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#5B8A8A] transition-colors">
                         <svg
                           className="w-5 h-5"
                           fill="none"
@@ -1881,8 +2011,8 @@ export default function BuilderTabbed() {
         {/* Mobile Builder - Show all tabs stacked vertically with separators */}
         {isMobile && (
           <div className="md:hidden w-full px-4">
-            {/* BRD Builder Card */}
-            <MobileBuilderCard
+            {/* BRD Builder Card - Hidden for now */}
+            {/* <MobileBuilderCard
               id="mobile-builder-brd"
               title="BRD"
               subtitle="Define your business requirements"
@@ -1944,10 +2074,9 @@ export default function BuilderTabbed() {
               }}
             />
 
-            {/* Section Divider */}
             <div className="my-8">
               <div className="w-full h-px bg-gray-200"></div>
-            </div>
+            </div> */}
 
             {/* Data Builder Card */}
             <MobileBuilderCard
@@ -1960,6 +2089,11 @@ export default function BuilderTabbed() {
                 "API & third-party integrations",
                 "Real-time data pipelines",
                 "Automatic data validation"
+              ]}
+              screenshots={[
+                { src: "/images/data-fields.png", alt: "Data Fields" },
+                { src: "/images/data-create.png", alt: "Data Create" },
+                { src: "/images/data-records.png", alt: "Data Records" }
               ]}
               detailedContent={{
                 title: "Data Management",
@@ -1995,7 +2129,7 @@ export default function BuilderTabbed() {
                 ],
                 footer: "Connect any data source—we'll handle the rest"
               }}
-              accentColor="#10B981"
+              accentColor="#8FB7C5"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
@@ -2011,8 +2145,8 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="my-8">
-              <div className="w-full h-px bg-gray-200"></div>
+            <div className="my-6 flex items-center justify-center">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#9CA3AF] to-transparent"></div>
             </div>
 
             {/* Workflows Builder Card */}
@@ -2026,6 +2160,10 @@ export default function BuilderTabbed() {
                 "Conditional logic & branching",
                 "Cross-tool integrations",
                 "Real-time monitoring & alerts"
+              ]}
+              screenshots={[
+                { src: "/images/workflow-summary.png", alt: "Workflow Summary" },
+                { src: "/images/workflow-detailed.png", alt: "Workflow Detailed" }
               ]}
               detailedContent={{
                 title: "Workflow Automation",
@@ -2061,7 +2199,7 @@ export default function BuilderTabbed() {
                 ],
                 footer: "Automate anything—from simple tasks to complex processes"
               }}
-              accentColor="#8B5CF6"
+              accentColor="#8FB7C5"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -2077,8 +2215,8 @@ export default function BuilderTabbed() {
             />
 
             {/* Section Divider */}
-            <div className="my-8">
-              <div className="w-full h-px bg-gray-200"></div>
+            <div className="my-6 flex items-center justify-center">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#9CA3AF] to-transparent"></div>
             </div>
 
             {/* Agents Builder Card */}
@@ -2092,6 +2230,12 @@ export default function BuilderTabbed() {
                 "Train on your documentation",
                 "24/7 autonomous operation",
                 "Full reasoning transparency"
+              ]}
+              screenshots={[
+                { src: "/images/agents-role.jpeg", alt: "Agent Role Configuration" },
+                { src: "/images/agents-greeting.jpeg", alt: "Agent Greeting Stages" },
+                { src: "/images/agents-personality.jpeg", alt: "Agent Personality Settings" },
+                { src: "/images/agents-mode.jpeg", alt: "Agent Mode Configuration" }
               ]}
               detailedContent={{
                 title: "AI Agent Platform",
@@ -2127,7 +2271,7 @@ export default function BuilderTabbed() {
                 ],
                 footer: "Deploy AI agents that actually understand your business"
               }}
-              accentColor="#EC4899"
+              accentColor="#8FB7C5"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

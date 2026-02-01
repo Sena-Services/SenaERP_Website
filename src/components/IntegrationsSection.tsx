@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, forwardRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import Image from "next/image";
 
 type Integration = {
@@ -37,6 +37,11 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
   const [viewportWidth, setViewportWidth] = useState<number>(1920);
   const activeIntegration = integrations.find((int) => int.id === activeId && !int.disabled);
+
+  // Mobile carousel state
+  const [mobileCardIndex, setMobileCardIndex] = useState(0);
+  const [mobileExpandedFeatures, setMobileExpandedFeatures] = useState(false);
+  const mobileCarouselX = useMotionValue(0);
 
   const imageRef = useRef<HTMLDivElement>(null);
   const [arrowPositions, setArrowPositions] = useState({
@@ -287,6 +292,99 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
   const fontSizes = getCardFontSizes();
   const showDescription = shouldShowDescription();
 
+  // Mobile carousel calculations
+  const mobileCardWidth = Math.min(viewportWidth - 48, 340); // Card width with padding
+  const mobileCardGap = 16;
+
+  // Sync activeId with mobile card index
+  useEffect(() => {
+    if (isMobile) {
+      const integration = enabledNativeIntegrations[mobileCardIndex];
+      if (integration) {
+        setActiveId(integration.id);
+      }
+    }
+  }, [mobileCardIndex, isMobile, enabledNativeIntegrations]);
+
+  // Handle mobile swipe
+  const handleMobileDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const threshold = 50;
+    const velocity = info.velocity.x;
+    const offset = info.offset.x;
+
+    let newIndex = mobileCardIndex;
+
+    if (offset < -threshold || velocity < -500) {
+      newIndex = Math.min(mobileCardIndex + 1, enabledNativeIntegrations.length - 1);
+    } else if (offset > threshold || velocity > 500) {
+      newIndex = Math.max(mobileCardIndex - 1, 0);
+    }
+
+    setMobileCardIndex(newIndex);
+    setMobileExpandedFeatures(false); // Collapse features when swiping
+    const targetX = -newIndex * (mobileCardWidth + mobileCardGap);
+    animate(mobileCarouselX, targetX, { type: "spring", stiffness: 300, damping: 30 });
+  };
+
+  // Navigate to specific card on mobile
+  const goToMobileCard = (index: number) => {
+    setMobileCardIndex(index);
+    setMobileExpandedFeatures(false);
+    const targetX = -index * (mobileCardWidth + mobileCardGap);
+    animate(mobileCarouselX, targetX, { type: "spring", stiffness: 300, damping: 30 });
+  };
+
+  // Get feature cards for an integration
+  const getFeatureCards = (integrationId: string) => {
+    switch (integrationId) {
+      case 'whatsapp':
+        return [
+          { title: '24/7 Automated Response', description: 'AI agents instantly understand and respond to customer queries.', icon: 'chat', color: 'green', tags: ['Real-time', 'NLP'] },
+          { title: 'ERP Data Integration', description: 'Pull live data from your ERP, CRM, and inventory systems.', icon: 'chip', color: 'green', tags: ['Live Data', 'Multi-Source'] },
+          { title: 'Smart Order Processing', description: 'Handle complete transactions via chat, from inquiries to payment.', icon: 'check', color: 'green', tags: ['End-to-End', 'Payments'] },
+        ];
+      case 'instagram':
+        return [
+          { title: 'DM & Comment Automation', description: 'AI responds to every DM and comment instantly, 24/7.', icon: 'message', color: 'pink', tags: ['Auto-Reply', 'Engagement'] },
+          { title: 'Social Commerce', description: 'Convert followers with AI-powered product recommendations.', icon: 'shop', color: 'pink', tags: ['Shopping', 'Sales'] },
+          { title: 'Lead Qualification', description: 'AI identifies high-intent users and routes qualified leads.', icon: 'users', color: 'pink', tags: ['Lead Gen', 'CRM Sync'] },
+        ];
+      case 'gmail':
+        return [
+          { title: 'AI Inbox Management', description: 'Categorize, prioritize, and route emails intelligently.', icon: 'mail', color: 'blue', tags: ['Smart Sort', 'Auto-Tag'] },
+          { title: 'Context-Aware Replies', description: 'Generate personalized responses using templates and data.', icon: 'chat', color: 'blue', tags: ['Templates', 'Personalized'] },
+          { title: 'CRM Integration', description: 'Email interactions sync automatically to your CRM.', icon: 'chart', color: 'blue', tags: ['Auto-Sync', 'Analytics'] },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  // Render feature icon
+  const renderFeatureIcon = (icon: string, color: string) => {
+    const colorClass = color === 'green' ? 'text-green-600' : color === 'pink' ? 'text-pink-600' : 'text-blue-600';
+    const bgClass = color === 'green' ? 'bg-green-100' : color === 'pink' ? 'bg-pink-100' : 'bg-blue-100';
+
+    const iconPaths: Record<string, string> = {
+      chat: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
+      chip: 'M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z',
+      check: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+      message: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+      shop: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z',
+      users: 'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z',
+      mail: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+      chart: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+    };
+
+    return (
+      <div className={`rounded-lg ${bgClass} flex items-center justify-center flex-shrink-0 w-8 h-8`}>
+        <svg className={colorClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" d={iconPaths[icon] || iconPaths.chat} />
+        </svg>
+      </div>
+    );
+  };
+
   return (
     <section ref={ref} id="integrations" className="scroll-mt-24 pb-8" style={{ paddingTop: isMobile ? '16px' : '0' }}>
       <div
@@ -323,7 +421,182 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           </p>
         </div>
 
-        <div className={`flex flex-col gap-2 md:gap-3 ${isMobile ? 'px-4' : ''}`}>
+        {/* MOBILE LAYOUT */}
+        {isMobile ? (
+          <div className="flex flex-col gap-4">
+            {/* Native Integrations Header */}
+            <div className="px-4">
+              <div className="flex items-center gap-2 mb-3 justify-center">
+                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+                <h3 className="text-xs font-futura tracking-wide text-waygent-blue uppercase font-semibold">Native Integrations</h3>
+                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+              </div>
+            </div>
+
+            {/* Mobile Swipeable Carousel */}
+            <div className="overflow-hidden">
+              <motion.div
+                className="flex"
+                style={{ x: mobileCarouselX, gap: `${mobileCardGap}px`, paddingLeft: '24px', paddingRight: '24px' }}
+                drag="x"
+                dragConstraints={{ left: -((enabledNativeIntegrations.length - 1) * (mobileCardWidth + mobileCardGap)), right: 0 }}
+                onDragEnd={handleMobileDragEnd}
+                dragElastic={0.1}
+              >
+                {enabledNativeIntegrations.map((integration, index) => {
+                  const features = getFeatureCards(integration.id);
+                  const isExpanded = mobileCardIndex === index && mobileExpandedFeatures;
+                  const colorMap: Record<string, { bg: string; border: string; text: string; tagBg: string; tagText: string }> = {
+                    whatsapp: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', tagBg: 'bg-green-100', tagText: 'text-green-700' },
+                    instagram: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-700', tagBg: 'bg-pink-100', tagText: 'text-pink-700' },
+                    gmail: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', tagBg: 'bg-blue-100', tagText: 'text-blue-700' },
+                  };
+                  const colors = colorMap[integration.id] || colorMap.whatsapp;
+
+                  return (
+                    <motion.div
+                      key={integration.id}
+                      className="flex-shrink-0 bg-white rounded-xl border-2 border-gray-300 overflow-hidden"
+                      style={{ width: mobileCardWidth }}
+                      layout
+                    >
+                      {/* Card Header */}
+                      <div className="p-4 pb-3">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center">
+                            <img src={integration.iconUrl} alt={integration.name} className="w-6 h-6 object-contain" />
+                          </div>
+                          <h4 className="font-semibold text-gray-900 font-futura text-lg">{integration.name}</h4>
+                        </div>
+
+                        {/* Mini description */}
+                        <p className="text-gray-600 text-sm font-futura leading-relaxed mb-3">
+                          {integration.id === 'whatsapp' && "AI agents handle customer conversations automatically, 24/7."}
+                          {integration.id === 'instagram' && "Automate DM and comment responses while maintaining your brand voice."}
+                          {integration.id === 'gmail' && "AI reads, understands, and replies to emails on your behalf."}
+                        </p>
+                      </div>
+
+                      {/* Screenshot - smaller on mobile */}
+                      <div
+                        className="mx-4 mb-3 rounded-lg overflow-hidden border border-gray-200"
+                        onClick={() => openImageExpanded(integration.screenshot)}
+                      >
+                        <Image
+                          src={integration.screenshot}
+                          alt={`${integration.name} preview`}
+                          width={600}
+                          height={400}
+                          quality={80}
+                          className="w-full h-auto"
+                          style={{ maxHeight: '180px', objectFit: 'cover', objectPosition: 'top' }}
+                        />
+                      </div>
+
+                      {/* Expandable Features Section */}
+                      <div className="px-4 pb-4">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (mobileCardIndex === index) {
+                              setMobileExpandedFeatures(!mobileExpandedFeatures);
+                            }
+                          }}
+                          className={`w-full py-2.5 px-4 rounded-lg font-futura font-medium text-sm flex items-center justify-center gap-2 transition-all ${colors.bg} ${colors.border} border ${colors.text}`}
+                        >
+                          {isExpanded ? 'Hide Features' : 'View Features'}
+                          <motion.svg
+                            animate={{ rotate: isExpanded ? 180 : 0 }}
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </motion.svg>
+                        </button>
+
+                        {/* Expanded Features */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="pt-3 flex flex-col gap-2.5">
+                                {features.map((feature, fIndex) => (
+                                  <div
+                                    key={fIndex}
+                                    className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                                  >
+                                    <div className="flex items-start gap-3">
+                                      {renderFeatureIcon(feature.icon, feature.color)}
+                                      <div className="flex-1 min-w-0">
+                                        <h5 className="font-semibold text-gray-900 text-sm mb-1">{feature.title}</h5>
+                                        <p className="text-gray-600 text-xs leading-relaxed mb-2">{feature.description}</p>
+                                        <div className="flex flex-wrap gap-1.5">
+                                          {feature.tags.map((tag, tIndex) => (
+                                            <span key={tIndex} className={`px-2 py-0.5 ${colors.tagBg} ${colors.tagText} rounded-full text-xs`}>
+                                              {tag}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </div>
+
+            {/* Dot indicators */}
+            <div className="flex justify-center gap-2 mt-1">
+              {enabledNativeIntegrations.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToMobileCard(index)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    mobileCardIndex === index
+                      ? 'bg-waygent-blue scale-125'
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* 3rd Party Integrations - Horizontal scroll on mobile */}
+            <div className="mt-4">
+              <div className="flex items-center gap-2 mb-3 justify-center px-4">
+                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+                <h3 className="text-xs font-futura tracking-wide text-waygent-blue uppercase font-semibold">3rd Party</h3>
+                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+              </div>
+              <div className="flex justify-center px-4">
+                <div className="flex gap-3 pb-2">
+                  {thirdPartyIntegrations.map((integration) => (
+                    <div key={integration.id} className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center hover:border-waygent-blue/40 transition-all">
+                        <img src={integration.iconUrl} alt={integration.name} className="w-7 h-7 object-contain" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* DESKTOP LAYOUT */
+          <div className="flex flex-col gap-2 md:gap-3">
           {/* Native Integrations */}
           <div className="md:px-0">
             <div className="flex items-center gap-2 mb-3 justify-center">
@@ -339,7 +612,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   <div key={integration.id} className="relative">
                     <button
                       onClick={() => handleIntegrationClick(integration.id)}
-                      className="group flex flex-col items-center gap-2"
+                      className="group flex flex-col items-center gap-2 cursor-pointer"
                     >
                       <div
                         className={`relative flex items-center justify-center w-14 h-14 md:w-12 md:h-12 rounded-lg backdrop-blur-sm border transition-all duration-200 ease-out ${
@@ -479,7 +752,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   >
                   {activeIntegration.id === 'whatsapp' && (
                     <>
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-green-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-green-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -499,7 +772,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         </div>
                       </div>
 
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-green-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-green-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -521,7 +794,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         </div>
                       </div>
 
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-green-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-green-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -546,7 +819,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   )}
                   {activeIntegration.id === 'instagram' && (
                     <>
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-pink-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-pink-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -568,7 +841,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         </div>
                       </div>
 
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-pink-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-pink-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -590,7 +863,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         </div>
                       </div>
 
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-pink-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-pink-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -615,7 +888,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   )}
                   {activeIntegration.id === 'gmail' && (
                     <>
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -637,7 +910,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         </div>
                       </div>
 
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -659,7 +932,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                         </div>
                       </div>
 
-                      <div className="bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all" style={{ padding: cardPadding }}>
+                      <div className="bg-white border-2 border-gray-400 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all" style={{ padding: cardPadding }}>
                         <div className="flex items-start" style={{ gap: fontSizes.gap }}>
                           <div className="rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0" style={{ width: fontSizes.iconSize, height: fontSizes.iconSize }}>
                             <svg className="text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ width: '50%', height: '50%' }}>
@@ -688,7 +961,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             </div>
           </div>
 
-          {/* 3rd Party Integrations - Below everything */}
+          {/* 3rd Party Integrations - Below everything (Desktop) */}
           <div className="md:px-0 mt-4 md:mt-4">
             <div className="flex items-center gap-2 mb-3 justify-center">
               <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
@@ -716,6 +989,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* Simple Image Expanded Modal */}

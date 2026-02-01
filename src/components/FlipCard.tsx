@@ -38,23 +38,23 @@ const getVideoHeightPercentage = () => {
   return 65;
 };
 
-// Get card-specific color based on position (matching MobileHowItWorks)
+// Get card-specific color based on position - refined earthy palette with more richness
 const getCardColor = (position: "left" | "center" | "right") => {
   switch (position) {
     case 'left':
       return {
-        rgb: '59, 130, 246',    // Blue
-        hex: '#3B82F6',
+        rgb: '70, 130, 160',    // Richer teal blue
+        hex: '#4682A0',
       };
     case 'center':
       return {
-        rgb: '139, 92, 246',    // Purple
-        hex: '#8B5CF6',
+        rgb: '130, 100, 150',   // Actual purple with warmth
+        hex: '#826496',
       };
     case 'right':
       return {
-        rgb: '236, 72, 153',    // Pink
-        hex: '#EC4899',
+        rgb: '180, 100, 110',   // Warm rose with presence
+        hex: '#B4646E',
       };
   }
 };
@@ -159,22 +159,22 @@ export default function FlipCard({
   // When expanded, override video height to 100%
   const finalVideoHeight = isExpanded ? 100 : videoHeightPercentage;
 
-  // When card is expanded, pause video and show static desaturated state
+  // When card is expanded, pause video and show refined color state
   useEffect(() => {
     if (isExpanded && videoRef.current) {
-      // Keep the desaturated aesthetic when expanded
-      videoRef.current.style.filter = 'grayscale(90%) brightness(0.85) contrast(0.7)';
+      // Keep refined aesthetic when expanded
+      videoRef.current.style.filter = 'grayscale(40%) brightness(0.92) contrast(0.85) sepia(10%)';
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
       if (overlayRef.current) {
-        overlayRef.current.style.opacity = '1';
+        overlayRef.current.style.opacity = '0.6';
       }
     } else if (!isExpanded && videoRef.current) {
-      videoRef.current.style.filter = 'grayscale(90%) brightness(0.85) contrast(0.7)';
+      videoRef.current.style.filter = 'grayscale(40%) brightness(0.92) contrast(0.85) sepia(10%)';
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
       if (overlayRef.current) {
-        overlayRef.current.style.opacity = '1';
+        overlayRef.current.style.opacity = '0.6';
       }
     }
   }, [isExpanded]);
@@ -184,7 +184,7 @@ export default function FlipCard({
     setIsHovered(true);
     if (videoRef.current) {
       const video = videoRef.current;
-      video.style.filter = 'grayscale(60%) brightness(1) contrast(0.9)';
+      video.style.filter = 'grayscale(20%) brightness(1) contrast(0.95) sepia(5%)';
       video.playbackRate = 0.65; // Slow down the video
 
       // Ensure video is loaded before playing
@@ -197,21 +197,21 @@ export default function FlipCard({
       }
     }
     if (overlayRef.current) {
-      overlayRef.current.style.opacity = '0.2';
+      overlayRef.current.style.opacity = '0.1';
     }
   };
 
   const handleMouseLeave = () => {
-    // Reset to static state on mouse leave
+    // Reset to refined static state on mouse leave
     setIsHovered(false);
     if (videoRef.current) {
-      videoRef.current.style.filter = 'grayscale(90%) brightness(0.85) contrast(0.7)';
+      videoRef.current.style.filter = 'grayscale(40%) brightness(0.92) contrast(0.85) sepia(10%)';
       videoRef.current.playbackRate = 1; // Reset playback rate
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
     if (overlayRef.current) {
-      overlayRef.current.style.opacity = '1';
+      overlayRef.current.style.opacity = '0.6';
     }
   };
 
@@ -295,29 +295,27 @@ export default function FlipCard({
           transform: `rotateY(180deg) ${isHovered && canClick && !isExpanded ? 'translateY(-8px)' : 'translateY(0)'}`,
           cursor: canClick ? 'pointer' : 'default',
           boxSizing: 'border-box',
-          // When expanded, keep shadow constant. Only change shadow on hover in normal view
+          // When expanded, keep shadow constant. Only change shadow on hover in normal view - more muted, earthy shadows
           boxShadow: isHovered && canClick && !isExpanded
-            ? '0 28px 80px -16px rgba(0, 0, 0, 0.25), 0 16px 40px -12px rgba(0, 0, 0, 0.15)'
-            : '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
+            ? '0 20px 40px -12px rgba(80, 60, 40, 0.15), 0 8px 20px -8px rgba(80, 60, 40, 0.1)'
+            : '0 8px 24px -8px rgba(80, 60, 40, 0.1), 0 4px 12px -4px rgba(80, 60, 40, 0.06)',
           transition: 'all 0.3s ease-out',
           ...borderRadiusStyle,
-          // Solid white background to completely cover the grid
-          backgroundColor: '#FFFFFF',
+          // Earthy cream background
+          backgroundColor: '#FAF8F5',
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={() => canClick && !isExpanded && onCardClick()} // Don't allow closing when expanded
       >
-        {/* Gradient overlay on top of solid background */}
+        {/* Subtle warm tint overlay - very minimal */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             ...borderRadiusStyle,
             background: `linear-gradient(180deg,
-              rgba(${getCardColor(position).rgb}, 0.08) 0%,
-              rgba(${getCardColor(position).rgb}, 0.06) ${videoHeightPercentage * 0.5}%,
-              rgba(${getCardColor(position).rgb}, 0.04) ${videoHeightPercentage}%,
-              rgba(${getCardColor(position).rgb}, 0.02) ${videoHeightPercentage + 10}%,
+              rgba(245, 240, 230, 0.3) 0%,
+              rgba(245, 240, 230, 0.15) 50%,
               transparent 100%)`,
             zIndex: 0,
           }}
@@ -345,7 +343,7 @@ export default function FlipCard({
             ref={videoRef}
             className="absolute w-full h-full transition-all duration-300"
             style={{
-              filter: 'grayscale(90%) brightness(0.85) contrast(0.7)',
+              filter: 'grayscale(40%) brightness(0.92) contrast(0.85) sepia(10%)',
               display: 'block',
               objectFit: 'cover',
               objectPosition: position === "left"
@@ -371,24 +369,25 @@ export default function FlipCard({
           >
             <source src={videoSrc} type="video/mp4" />
           </video>
-          {/* Overlay to further desaturate */}
+          {/* Subtle warm overlay for cohesion */}
           <div
             ref={overlayRef}
-            className="absolute inset-0 bg-gray-400/20 pointer-events-none transition-opacity duration-300"
+            className="absolute inset-0 pointer-events-none transition-opacity duration-300"
             style={{
-              mixBlendMode: 'saturation',
+              background: 'rgba(250, 245, 235, 0.25)',
+              mixBlendMode: 'soft-light',
+              opacity: 0.6,
             }}
           />
 
-          {/* Balanced colored gradient overlay - noticeable but not overpowering */}
+          {/* Subtle color gradient - adds character without being glossy */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background: `linear-gradient(180deg,
-                rgba(${getCardColor(position).rgb}, 0.16) 0%,
-                rgba(${getCardColor(position).rgb}, 0.13) 35%,
-                rgba(${getCardColor(position).rgb}, 0.10) 65%,
-                rgba(${getCardColor(position).rgb}, 0.06) 85%,
+                rgba(${getCardColor(position).rgb}, 0.12) 0%,
+                rgba(${getCardColor(position).rgb}, 0.08) 40%,
+                rgba(${getCardColor(position).rgb}, 0.04) 70%,
                 transparent 100%)`,
             }}
           />
@@ -400,7 +399,7 @@ export default function FlipCard({
             className="flex flex-col px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3 relative overflow-y-auto"
             style={{
               height: `${100 - finalVideoHeight}%`,
-              background: '#FFFFFF', // Solid white to cover grid
+              background: '#FAF8F5', // Earthy cream to cover grid
               position: 'relative',
               scrollbarWidth: 'none', // Firefox - hide scrollbar
               msOverflowStyle: 'none', // IE/Edge - hide scrollbar
@@ -412,20 +411,19 @@ export default function FlipCard({
               display: none;
             }
           `}</style>
-          {/* Gentle gradient overlay at top of content for seamless transition */}
+          {/* Very subtle warm transition */}
           <div
             className="absolute top-0 left-0 right-0 pointer-events-none"
             style={{
-              height: '50%',
+              height: '30%',
               background: `linear-gradient(to bottom,
-                rgba(${getCardColor(position).rgb}, 0.05) 0%,
-                rgba(${getCardColor(position).rgb}, 0.03) 50%,
+                rgba(245, 240, 230, 0.4) 0%,
                 transparent 100%)`,
               zIndex: 0,
             }}
           />
 
-          {/* Step number and title */}
+          {/* Step number and title - matching sidebar border discipline */}
           <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-1.5 relative z-10 flex-shrink-0">
             <div
               className="flex items-center justify-center rounded-full"
@@ -433,11 +431,14 @@ export default function FlipCard({
                 width: '22px',
                 height: '22px',
                 flexShrink: 0,
-                background: getCardColor(position).hex,
-                boxShadow: 'none',
+                background: '#F5F1E8',
+                border: '2px solid #9CA3AF',
               }}
             >
-              <span className="text-white font-semibold text-xs sm:text-sm">
+              <span
+                className="font-bold text-[10px] sm:text-xs"
+                style={{ color: getCardColor(position).hex }}
+              >
                 {cardNumber}
               </span>
             </div>
@@ -605,7 +606,7 @@ export default function FlipCard({
           </div>
 
           {/* Footer - Click to learn more */}
-          <div className="mt-auto pt-1 relative z-10 flex-shrink-0" style={{ borderTop: `1px solid rgba(${getCardColor(position).rgb}, 0.15)`, background: '#FFFFFF' }}>
+          <div className="mt-auto pt-1 relative z-10 flex-shrink-0" style={{ borderTop: `1px solid rgba(180, 170, 160, 0.2)`, background: '#FAF8F5' }}>
             {canClick && !isExpanded && (
               <div className="flex items-center justify-center gap-1 transition-all duration-300 group-hover:gap-1.5">
                 <span className="font-medium text-[9px] sm:text-[10px]" style={{ color: getCardColor(position).hex }}>

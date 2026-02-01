@@ -65,7 +65,6 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   const isOnEnvironmentSelector = pathname === "/environment-selector";
 
   const builderTabs = [
-    { id: "ui", label: "Interface", subtitle: "Build beautiful interfaces" },
     { id: "data", label: "Data", subtitle: "Connect and transform" },
     { id: "workflows", label: "Workflows", subtitle: "Automate processes" },
     { id: "agents", label: "Agents", subtitle: "Deploy AI agents" },
@@ -223,11 +222,14 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     <>
       <header className="w-full">
         <nav
-          className={`flex flex-col bg-[#F5F1E8]/80 border-2 border-[#9CA3AF] border-t-0 backdrop-blur-md max-w-7xl mx-auto overflow-hidden`}
+          className={`flex flex-col bg-[#F5F1E8] border-2 border-[#9CA3AF] border-t-0 backdrop-blur-md max-w-7xl mx-auto`}
         style={{
-          boxShadow: '0 4px 12px -2px rgba(139, 119, 89, 0.12), 0 2px 6px -1px rgba(139, 119, 89, 0.08)',
-          borderBottomLeftRadius: '32px',
-          borderBottomRightRadius: '32px',
+          boxShadow: isMobileMenuOpen
+            ? '0 8px 24px -4px rgba(139, 119, 89, 0.15)'
+            : '0 4px 12px -2px rgba(139, 119, 89, 0.12), 0 2px 6px -1px rgba(139, 119, 89, 0.08)',
+          borderBottomLeftRadius: '24px',
+          borderBottomRightRadius: '24px',
+          overflow: 'hidden',
         }}
       >
         {/* Top Row - Logo/Back Button and Buttons */}
@@ -268,9 +270,9 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           )}
         </div>
 
-        {/* CENTER - Blog Page Title */}
+        {/* CENTER - Blog Page Title (hidden on mobile to avoid overlap with Early Access) */}
         {blogPageTitle && (
-          <div className="absolute left-1/2 transform -translate-x-1/2">
+          <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
             <span className="text-sm font-semibold text-gray-700 font-space-grotesk uppercase tracking-wide">
               {blogPageTitle}
             </span>
@@ -468,7 +470,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 {/* Compact Tab Selector - No Subtitles */}
                 <div className="px-3 pb-2">
                   <div
-                    className="grid grid-cols-4 rounded-xl overflow-hidden"
+                    className="grid grid-cols-3 rounded-xl overflow-hidden max-w-xs mx-auto"
                     style={{
                       background: 'rgba(255, 255, 255, 0.4)',
                       border: '1px solid rgba(0, 0, 0, 0.08)',
@@ -616,51 +618,59 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           </>
         )}
 
-        {/* Mobile Dropdown Menu - INSIDE THE NAV - PART OF THE SAME COMPONENT */}
+        {/* Mobile Dropdown Menu - Redesigned with earthy theme */}
         {isMobileMenuOpen && (
-          <div className="md:hidden w-full px-4 pt-3 pb-3 border-t border-white/20">
-            <ul className="space-y-1.5">
+          <div
+            className="md:hidden w-full px-3 pt-2 pb-3"
+            style={{
+              borderTop: '1px solid rgba(156, 163, 175, 0.3)',
+            }}
+          >
+            {/* Two-column grid for compact layout */}
+            <div className="grid grid-cols-2 gap-2">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const step = (index + 1).toString().padStart(2, "0");
 
                 return (
-                  <li key={section.id}>
-                    <button
-                      onClick={() => handleSectionClick(section.id)}
-                      className={`group relative flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ease-out cursor-pointer border ${
-                        !isActive && 'hover:bg-white/50 hover:border-white/40'
-                      } ${
-                        isActive ? 'bg-waygent-orange shadow-lg border-waygent-orange' : 'bg-white/30 backdrop-blur-sm border-white/30'
-                      }`}
+                  <button
+                    key={section.id}
+                    onClick={() => handleSectionClick(section.id)}
+                    className="group relative flex items-center gap-2 text-left transition-all duration-200 ease-out cursor-pointer"
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: '12px',
+                      background: isActive ? '#8FB7C5' : '#F5F1E8',
+                      border: isActive ? '2px solid #7AA5B5' : '2px solid #D1D5DB',
+                    }}
+                  >
+                    {/* Number circle */}
+                    <span
+                      className="text-[10px] font-bold flex-shrink-0 flex items-center justify-center font-space-grotesk"
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        color: isActive ? '#FFFFFF' : '#6B7280',
+                        background: isActive ? 'rgba(255,255,255,0.25)' : '#FFFFFF',
+                        border: isActive ? '1.5px solid rgba(255,255,255,0.4)' : '1.5px solid #9CA3AF',
+                      }}
                     >
-                      <span
-                        className="text-xs font-bold tracking-wide transition-colors duration-200 w-7 h-7 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-lg"
-                        style={{
-                          color: isActive ? 'white' : '#1F2937',
-                          background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.6)',
-                          lineHeight: '1',
-                        }}
-                      >
-                        {step}
-                      </span>
-                      <span
-                        className={`flex-1 text-sm font-bold transition-all duration-200 flex items-center whitespace-nowrap font-space-grotesk ${
-                          !isActive && 'group-hover:text-waygent-orange'
-                        }`}
-                        style={{
-                          color: isActive ? 'white' : '#1F2937',
-                          transform: isActive ? 'translateX(2px)' : 'translateX(0)',
-                          lineHeight: '1.4',
-                        }}
-                      >
-                        {section.label}
-                      </span>
-                    </button>
-                  </li>
+                      {step}
+                    </span>
+                    {/* Label */}
+                    <span
+                      className="flex-1 text-xs font-semibold font-space-grotesk truncate"
+                      style={{
+                        color: isActive ? '#FFFFFF' : '#374151',
+                      }}
+                    >
+                      {section.label}
+                    </span>
+                  </button>
                 );
               })}
-            </ul>
+            </div>
           </div>
         )}
         </nav>
@@ -668,9 +678,14 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         {/* Backdrop when menu is open */}
         {isMobileMenuOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm"
+            className="lg:hidden fixed inset-0"
             onClick={() => setIsMobileMenuOpen(false)}
-            style={{ top: `${navbarHeight}px`, zIndex: -1 }}
+            style={{
+              top: `${navbarHeight}px`,
+              zIndex: -1,
+              background: 'rgba(44, 24, 16, 0.15)',
+              backdropFilter: 'blur(2px)',
+            }}
           />
         )}
 

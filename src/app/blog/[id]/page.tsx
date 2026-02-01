@@ -99,11 +99,11 @@ export default function BlogArticlePage() {
             />
           </div>
         </div>
-        <main className="min-h-screen bg-waygent-cream pt-16">
-          <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
-            <div className="flex items-center justify-center py-12 min-h-[400px]">
+        <main className="min-h-screen bg-waygent-cream pt-20 sm:pt-16">
+          <div className="max-w-4xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-16">
+            <div className="flex items-center justify-center py-12 min-h-[300px] sm:min-h-[400px]">
               <div className="flex flex-col items-center gap-4">
-                <div className="relative w-16 h-16">
+                <div className="relative w-12 h-12 sm:w-16 sm:h-16">
                   <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
                   <div className="absolute inset-0 border-4 border-waygent-orange border-t-transparent rounded-full animate-spin"></div>
                 </div>
@@ -128,10 +128,10 @@ export default function BlogArticlePage() {
             />
           </div>
         </div>
-        <main className="min-h-screen bg-waygent-cream pt-16">
-          <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+        <main className="min-h-screen bg-waygent-cream pt-20 sm:pt-16">
+          <div className="max-w-4xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-16">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900 font-futura mb-4">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 font-futura mb-4">
                 {error || "Article not found"}
               </h1>
               <button
@@ -165,7 +165,7 @@ export default function BlogArticlePage() {
           />
         </div>
       </div>
-      <main className="min-h-screen bg-waygent-cream pt-16 relative">
+      <main className="min-h-screen bg-waygent-cream pt-20 sm:pt-16 relative">
         {/* Left Sidebar: Blog List - Positioned to the left of content */}
         <div className="hidden xl:block fixed top-24 z-10" style={{
           left: 'max(10px, calc(50% - 640px - 200px))',
@@ -225,18 +225,18 @@ export default function BlogArticlePage() {
         </div>
 
         {/* Main Content - Original positioning, full width */}
-        <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-8">
+        <div className="max-w-4xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 py-4 sm:py-8">
           <article>
             {/* Combined Card with Header and Content */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl border border-white/40 shadow-lg overflow-hidden"
+            <div className="bg-white/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/40 shadow-lg overflow-hidden"
               style={{
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
               }}
             >
               {/* Header Section with Blue Background */}
-              <div className="px-8 sm:px-10 lg:px-12 py-6" style={{ backgroundColor: '#80AAB9' }}>
+              <div className="px-4 sm:px-8 md:px-10 lg:px-12 py-4 sm:py-6" style={{ backgroundColor: '#80AAB9' }}>
                 {/* Date and Author */}
-                <div className="flex items-center gap-2 text-xs uppercase tracking-wide font-space-grotesk mb-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-[10px] sm:text-xs uppercase tracking-wide font-space-grotesk mb-2 sm:mb-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                   {article.published_date && (
                     <span>
                       {new Date(article.published_date).toLocaleDateString("en-US", {
@@ -255,24 +255,24 @@ export default function BlogArticlePage() {
                 </div>
 
                 {/* Title */}
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-futura mb-3 leading-tight text-white">
+                <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-futura mb-2 sm:mb-3 leading-tight text-white">
                   {article.title}
                 </h1>
 
                 {/* Description */}
                 {article.description && (
-                  <p className="text-base font-space-grotesk leading-relaxed italic text-white/90">
+                  <p className="text-sm sm:text-base font-space-grotesk leading-relaxed italic text-white/90">
                     {article.description}
                   </p>
                 )}
               </div>
 
               {/* Content Section */}
-              <div className="px-8 sm:px-10 lg:px-12 pt-6 pb-8 sm:pb-10 lg:pb-12">
+              <div className="px-4 sm:px-8 md:px-10 lg:px-12 pt-4 sm:pt-6 pb-6 sm:pb-8 md:pb-10 lg:pb-12">
                 {/* Content */}
                 {article.content && (
                   <div
-                    className="prose prose-lg max-w-none font-space-grotesk blog-content"
+                    className="prose prose-sm sm:prose-lg max-w-none font-space-grotesk blog-content"
                     dangerouslySetInnerHTML={{ __html: article.content }}
                   />
                 )}

@@ -1,68 +1,45 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 
 export default function MobileHowItWorks() {
   const [isMobile, setIsMobile] = useState(false);
+  const [currentCard, setCurrentCard] = useState(0);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const x = useMotionValue(0);
+  const [containerWidth, setContainerWidth] = useState(0);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
+    setContainerWidth(window.innerWidth);
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setContainerWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Set up intersection observer to play videos when in view
+  // Play video when it becomes current
   useEffect(() => {
     if (!isMobile) return;
 
-    const observers: IntersectionObserver[] = [];
+    videoRefs.current.forEach((video, idx) => {
+      if (!video) return;
+      video.playbackRate = 0.7;
 
-    // Small delay to ensure videos are loaded
-    const setupTimer = setTimeout(() => {
-      videoRefs.current.forEach((video, idx) => {
-        if (!video) return;
-
-        // Set slow playback rate
-        video.playbackRate = 0.7;
-
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                console.log(`Video ${idx + 1} in view, attempting to play`);
-                // Force load and play
-                video.load();
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                  playPromise
-                    .then(() => {
-                      console.log(`Video ${idx + 1} playing successfully`);
-                      video.playbackRate = 0.7;
-                    })
-                    .catch(err => console.log(`Video ${idx + 1} play error:`, err));
-                }
-              } else {
-                video.pause();
-              }
-            });
-          },
-          {
-            threshold: 0.2, // Play when 20% visible
-            rootMargin: '100px', // Start loading earlier
-          }
-        );
-
-        observer.observe(video);
-        observers.push(observer);
-      });
-    }, 200);
-
-    return () => {
-      clearTimeout(setupTimer);
-      observers.forEach(observer => observer.disconnect());
-    };
-  }, [isMobile]);
+      if (idx === currentCard && expandedCard === null) {
+        video.play().catch(err => console.log('Play error:', err));
+      } else {
+        video.pause();
+      }
+    });
+  }, [currentCard, isMobile, expandedCard]);
 
   const cards = [
     {
@@ -70,26 +47,41 @@ export default function MobileHowItWorks() {
       title: "Discovery",
       description: "Talk to Sena naturally—voice, text, any language. It understands your business and generates a complete Business Requirements Document.",
       videoSrc: "/videos/card1.mp4",
-      bg: "#f6efe4",
+      color: '#4682A0',
+      colorRgb: '70, 130, 160',
       details: {
         heading: "Discovery",
-        intro: "Traditional ERP: consultants, months of development, thousands of dollars. We automate the entire lifecycle. The Discovery Agent talks to people across your organization.",
-        features: [
+        intro: "Traditional ERP: consultants, months of development, thousands of dollars, and still unsatisfactory. We automate the entire lifecycle.",
+        sections: [
           {
-            title: "Voice & Text",
-            description: "Conversations in 50+ languages, voice or text"
+            icon: "mic",
+            title: "Voice & Text Conversations",
+            description: "Talk naturally in 50+ languages. Whether you have a fuzzy vision or know exactly what you want, Sena meets you where you are.",
+            bullets: [
+              "Voice conversations with real-time understanding",
+              "Text input for detailed requirements",
+              "Intelligent questioning that uncovers what you really need"
+            ]
           },
           {
+            icon: "document",
             title: "Multimodal Input",
-            description: "Upload docs, images, videos, links"
+            description: "Upload documents, images, videos, links, and websites. Sena processes everything to deeply understand your operations.",
+            bullets: [
+              "Existing SOPs, process documents, spreadsheets",
+              "Screenshots of current systems",
+              "Deep web search capabilities"
+            ]
           },
           {
-            title: "Team Discovery",
-            description: "Parallel conversations across your hierarchy"
-          },
-          {
-            title: "BRD Generation",
-            description: "Complete requirements document, you review and approve"
+            icon: "team",
+            title: "Parallel Team Discovery",
+            description: "The Discovery Agent talks to people across your organization—founders, managers, staff—in their own language.",
+            bullets: [
+              "Separate conversations with each stakeholder",
+              "Automatic conflict resolution",
+              "Complete picture from all perspectives"
+            ]
           }
         ]
       }
@@ -99,26 +91,41 @@ export default function MobileHowItWorks() {
       title: "Build",
       description: "The Builder Agent pulls the right modules from our Registry and assembles your custom ERP—database, logic, integrations.",
       videoSrc: "/videos/card2.mp4",
-      bg: "#f5f2e9",
+      color: '#826496',
+      colorRgb: '130, 100, 150',
       details: {
         heading: "Build",
-        intro: "Once your BRD is approved, the Builder Agent takes over. It doesn't write from scratch—it pulls modules from the Registry and customizes them.",
-        features: [
+        intro: "Once your BRD is approved, the Builder Agent takes over. It doesn't write everything from scratch—it pulls the right modules from our Registry.",
+        sections: [
           {
+            icon: "code",
             title: "Builder Agent",
-            description: "Reads BRD, assembles database, logic, migrations"
+            description: "Your dedicated AI that reads the BRD and assembles a complete custom system—database, logic, migrations, integrations.",
+            bullets: [
+              "Pulls modules from the Registry",
+              "Combines building blocks for your use case",
+              "Customizes everything to your requirements"
+            ]
           },
           {
+            icon: "grid",
             title: "The Registry",
-            description: "Open-source library: modules, agents, connectors"
+            description: "An open-source library of pre-built modules, agents, and connectors that the Builder Agent draws from.",
+            bullets: [
+              "Inventory management, invoicing, CRM modules",
+              "Pre-built integrations for popular tools",
+              "Community-contributed components"
+            ]
           },
           {
-            title: "Human-in-Loop",
-            description: "Developer community fills Registry gaps"
-          },
-          {
+            icon: "refresh",
             title: "Flywheel Effect",
-            description: "Every build makes the platform smarter"
+            description: "Every build makes the platform smarter. Modules get refined, new patterns emerge, and the Registry grows.",
+            bullets: [
+              "Continuous improvement from every deployment",
+              "Shared learnings across all businesses",
+              "Your ERP benefits from collective intelligence"
+            ]
           }
         ]
       }
@@ -128,314 +135,398 @@ export default function MobileHowItWorks() {
       title: "Manage Agents",
       description: "Your AI agents run operations tirelessly. Build, test, and deploy agents that get smarter with every interaction.",
       videoSrc: "/videos/card3.mp4",
-      bg: "#f6f2fb",
+      color: '#B4646E',
+      colorRgb: '180, 100, 110',
       details: {
         heading: "Manage Agents",
         intro: "Now that you have a custom ERP, who operates it? AI Agents—virtual employees running your operations tirelessly.",
-        features: [
+        sections: [
           {
+            icon: "slider",
             title: "Agent Builder",
-            description: "Autonomy slider: plain English to full code control"
+            description: "Most agent builders are too technical or too simple. We built for both with an autonomy slider.",
+            bullets: [
+              "Plain English on one end, full code on the other",
+              "Non-technical users can build powerful agents",
+              "Developers get complete control when needed"
+            ]
           },
           {
+            icon: "test",
             title: "Testing Framework",
-            description: "Test tool calling, tokens, hallucinations"
+            description: "Test your agents before deployment. Catch issues with tool calling, token usage, and hallucinations.",
+            bullets: [
+              "Simulate real scenarios",
+              "Track token consumption",
+              "Validate agent responses"
+            ]
           },
           {
-            title: "Fine-Tuning",
-            description: "Agents get smarter for your specific business"
-          },
-          {
-            title: "Command Center",
-            description: "Agents report, ask permission, you approve"
+            icon: "brain",
+            title: "Runtime Evolution",
+            description: "If an agent encounters a new task it can't handle, it proposes a plan, you approve it, and the system grows.",
+            bullets: [
+              "Agents learn from every interaction",
+              "Fine-tuned for your specific business",
+              "Your ERP evolves without touching code"
+            ]
           }
         ]
       }
     }
   ];
 
-  // Don't render on desktop
+  const cardWidth = containerWidth - 48;
+  const cardGap = 16;
+
+  const handleDragEnd = (event: any, info: any) => {
+    if (expandedCard !== null) return; // Disable swipe when expanded
+
+    const threshold = 50;
+    const velocity = info.velocity.x;
+    const offset = info.offset.x;
+
+    if (offset < -threshold || velocity < -500) {
+      if (currentCard < cards.length - 1) {
+        setCurrentCard(currentCard + 1);
+      }
+    } else if (offset > threshold || velocity > 500) {
+      if (currentCard > 0) {
+        setCurrentCard(currentCard - 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const targetX = -currentCard * (cardWidth + cardGap);
+    animate(x, targetX, { type: "spring", stiffness: 300, damping: 30 });
+  }, [currentCard, cardWidth, cardGap, x]);
+
+  const getIcon = (iconName: string, color: string) => {
+    const icons: { [key: string]: React.ReactNode } = {
+      mic: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        </svg>
+      ),
+      document: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      team: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+      code: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+      ),
+      grid: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+      ),
+      refresh: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      ),
+      slider: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+        </svg>
+      ),
+      test: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      ),
+      brain: (
+        <svg className="w-4 h-4" fill="none" stroke={color} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+      ),
+    };
+    return icons[iconName] || null;
+  };
+
   if (!isMobile) return null;
 
   return (
-    <div className="w-full relative pt-4" id="how-it-works" style={{ backgroundColor: '#F5F1E8' }}>
-      {/* Section Header - Only on Mobile */}
-      {isMobile && (
-        <div className="text-center px-4 pb-8">
-          <h2
-            style={{
-              fontFamily: "Georgia, 'Times New Roman', serif",
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-              color: "#2C1810",
-              fontSize: "32px",
-              marginBottom: "8px",
-            }}
-          >
-            How it <span style={{ fontStyle: "italic" }}>works</span>?
-          </h2>
-          <p
-            style={{
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              fontWeight: 500,
-              fontSize: "14px",
-              color: "#6B7280",
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Three simple steps
-          </p>
-        </div>
-      )}
-
-      {/* Cards Container with Padding */}
-      <div className="relative px-4 pb-6" style={{ zIndex: 10 }}>
-        {cards.map((card, index) => (
-        <div
-          key={card.number}
-          className="relative mb-8 last:mb-0"
+    <div className="w-full relative py-8 overflow-hidden" id="how-it-works" style={{ backgroundColor: '#F5F1E8' }}>
+      {/* Section Header */}
+      <div className="text-center px-4 pb-6">
+        <h2
+          style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontWeight: 400,
+            letterSpacing: "-0.02em",
+            color: "#2C1810",
+            fontSize: "28px",
+            marginBottom: "4px",
+          }}
         >
-          {/* Card Container with modern styling */}
-          <div
-            className="relative rounded-3xl overflow-hidden shadow-lg"
-          >
-            {/* Video Section - Compact with gradient overlay */}
-            <div className="w-full h-[45vh] relative overflow-hidden">
-              <video
-                ref={(el) => {
-                  videoRefs.current[index] = el;
-                }}
-                src={card.videoSrc}
-                loop
-                muted
-                playsInline
-                preload="auto"
-                className="w-full h-full object-cover"
-                style={{
-                  objectPosition: 'center 50%',
-                  filter: 'grayscale(90%) brightness(0.85) contrast(0.7)',
-                }}
-              />
+          How it <span style={{ fontStyle: "italic" }}>works</span>?
+        </h2>
+        <p
+          style={{
+            fontFamily: "system-ui, -apple-system, sans-serif",
+            fontWeight: 500,
+            fontSize: "13px",
+            color: "#6B7280",
+          }}
+        >
+          Swipe to explore
+        </p>
+      </div>
 
-              {/* Overlay to further desaturate - matching desktop */}
-              <div
-                className="absolute inset-0 bg-gray-400/20 pointer-events-none"
-                style={{
-                  mixBlendMode: 'saturation',
-                }}
-              />
-
-              {/* Colored gradient overlay for each card */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: index === 0
-                    ? 'linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)'
-                    : index === 1
-                    ? 'linear-gradient(180deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 100%)'
-                    : 'linear-gradient(180deg, rgba(236, 72, 153, 0.15) 0%, rgba(236, 72, 153, 0.05) 50%, transparent 100%)',
-                }}
-              />
-
-              {/* Floating card number badge with shadow */}
-              <div
-                className="absolute top-4 left-4 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  backdropFilter: 'blur(10px)',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  transform: 'translateZ(20px)',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Georgia, serif",
-                    fontSize: "24px",
-                    fontWeight: 700,
-                    color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                  }}
-                >
-                  {card.number}
-                </span>
-              </div>
-            </div>
-
-            {/* Content Section with glassmorphism */}
-            <div
-              className="relative px-5 py-6 cursor-pointer"
+      {/* Swipeable Cards Container */}
+      <div
+        ref={containerRef}
+        className="relative"
+        style={{ touchAction: expandedCard !== null ? 'pan-y' : 'pan-y' }}
+      >
+        <motion.div
+          className="flex"
+          style={{
+            x,
+            paddingLeft: '24px',
+            gap: `${cardGap}px`,
+          }}
+          drag={expandedCard === null ? "x" : false}
+          dragConstraints={{
+            left: -((cards.length - 1) * (cardWidth + cardGap)),
+            right: 0,
+          }}
+          dragElastic={0.1}
+          onDragEnd={handleDragEnd}
+        >
+          {cards.map((card, index) => (
+            <motion.div
+              key={card.number}
+              className="flex-shrink-0 rounded-3xl overflow-hidden"
               style={{
-                background: '#F5F1E8',
+                width: cardWidth,
+                background: '#FAF8F5',
+                border: '2px solid #9CA3AF',
+                boxShadow: '0 8px 24px -8px rgba(80, 60, 40, 0.12)',
               }}
-              onClick={() => setExpandedCard(expandedCard === index ? null : index)}
+              layout
             >
-              {/* Compact Title with accent */}
-              <div className="mb-4">
-                <div
-                  className="inline-block px-3 py-1 rounded-full mb-2 text-xs font-bold tracking-wider"
+              {/* Video Section - shrinks when expanded */}
+              <motion.div
+                className="w-full relative overflow-hidden"
+                animate={{ height: expandedCard === index ? '15vh' : '40vh' }}
+                transition={{ duration: 0.3 }}
+              >
+                <video
+                  ref={(el) => { videoRefs.current[index] = el; }}
+                  src={card.videoSrc}
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  className="w-full h-full object-cover"
                   style={{
-                    background: index === 0
-                      ? 'rgba(59, 130, 246, 0.1)'
-                      : index === 1
-                      ? 'rgba(139, 92, 246, 0.1)'
-                      : 'rgba(236, 72, 153, 0.1)',
-                    color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
+                    objectPosition: 'center 50%',
+                    filter: 'grayscale(40%) brightness(0.92) contrast(0.85) sepia(10%)',
+                  }}
+                />
+
+                {/* Overlays */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: 'rgba(250, 245, 235, 0.2)',
+                    mixBlendMode: 'soft-light',
+                  }}
+                />
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: `linear-gradient(180deg, rgba(${card.colorRgb}, 0.12) 0%, rgba(${card.colorRgb}, 0.06) 50%, transparent 100%)`,
+                  }}
+                />
+
+                {/* Card number badge */}
+                <div
+                  className="absolute top-3 left-3 w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{
+                    background: '#F5F1E8',
+                    border: '2px solid #9CA3AF',
                   }}
                 >
-                  STEP {card.number}
-                </div>
-                <div className="flex items-center justify-between">
-                  <h3
-                    className="text-2xl font-bold leading-tight"
+                  <span
                     style={{
-                      fontFamily: "Georgia, 'Times New Roman', serif",
-                      color: "#1F2937",
+                      fontFamily: "Georgia, serif",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      color: card.color,
                     }}
                   >
-                    {card.details.heading}
-                  </h3>
-                  {/* Expand/Collapse Icon */}
-                  <motion.div
-                    animate={{ rotate: expandedCard === index ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex-shrink-0 ml-2"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      style={{
-                        color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                      }}
-                    >
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                  </motion.div>
+                    {card.number}
+                  </span>
                 </div>
-              </div>
 
-              <p
-                className="text-sm leading-relaxed mb-4"
+                {/* Back button when expanded */}
+                {expandedCard === index && (
+                  <button
+                    onClick={() => setExpandedCard(null)}
+                    className="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{
+                      background: '#F5F1E8',
+                      border: '2px solid #9CA3AF',
+                    }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </motion.div>
+
+              {/* Content Section */}
+              <div
+                className="relative px-4 py-4 overflow-y-auto"
                 style={{
-                  fontFamily: "system-ui, -apple-system, sans-serif",
-                  color: "#6B7280",
-                  lineHeight: "1.6",
+                  background: '#FAF8F5',
+                  maxHeight: expandedCard === index ? '55vh' : 'auto',
                 }}
               >
-                {card.description}
-              </p>
+                <AnimatePresence mode="wait">
+                  {expandedCard !== index ? (
+                    // Collapsed view
+                    <motion.div
+                      key="collapsed"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <h3
+                        className="text-lg font-bold leading-tight mb-2"
+                        style={{
+                          fontFamily: "Georgia, 'Times New Roman', serif",
+                          color: card.color,
+                        }}
+                      >
+                        {card.details.heading}
+                      </h3>
+                      <p
+                        className="text-sm leading-relaxed mb-3"
+                        style={{ color: "#6B7280" }}
+                      >
+                        {card.description}
+                      </p>
 
-              {/* Expandable Content */}
-              <AnimatePresence initial={false}>
-                {expandedCard === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    style={{ overflow: "hidden" }}
-                  >
-                    {/* Mode-specific content for Card 1 - Compact cards */}
-                    {card.details.modes && (
-                      <div className="space-y-3 mt-4">
-                        {card.details.modes.map((mode, modeIndex) => (
+                      <button
+                        onClick={() => setExpandedCard(index)}
+                        className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2"
+                        style={{
+                          background: `rgba(${card.colorRgb}, 0.1)`,
+                          color: card.color,
+                        }}
+                      >
+                        <span className="text-sm font-semibold">Learn more</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </button>
+                    </motion.div>
+                  ) : (
+                    // Expanded view with rich details
+                    <motion.div
+                      key="expanded"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="space-y-3"
+                    >
+                      <h3
+                        className="text-lg font-bold leading-tight"
+                        style={{
+                          fontFamily: "Georgia, 'Times New Roman', serif",
+                          color: card.color,
+                        }}
+                      >
+                        {card.details.heading}
+                      </h3>
+                      <p className="text-xs leading-relaxed" style={{ color: "#6B7280" }}>
+                        {card.details.intro}
+                      </p>
+
+                      {/* Detailed sections */}
+                      <div className="space-y-3 pt-2">
+                        {card.details.sections.map((section, sectionIndex) => (
                           <div
-                            key={modeIndex}
-                            className="rounded-2xl p-4"
+                            key={sectionIndex}
+                            className="rounded-xl p-3"
                             style={{
-                              background: 'rgba(255, 255, 255, 0.6)',
-                              border: '1px solid rgba(0, 0, 0, 0.05)',
+                              background: `rgba(${card.colorRgb}, 0.06)`,
+                              border: `1px solid rgba(${card.colorRgb}, 0.15)`,
                             }}
                           >
-                            <h4
-                              className="text-base font-bold mb-1 flex items-center gap-2"
-                              style={{
-                                fontFamily: "system-ui, sans-serif",
-                                color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                              }}
-                            >
-                              <span>{mode.title}</span>
+                            <h4 className="font-bold text-sm mb-1.5 flex items-center gap-2" style={{ color: card.color }}>
+                              {getIcon(section.icon, card.color)}
+                              {section.title}
                             </h4>
-                            <p
-                              className="text-xs leading-relaxed mb-2"
-                              style={{
-                                fontFamily: "system-ui, -apple-system, sans-serif",
-                                color: "#6B7280",
-                              }}
-                            >
-                              {mode.description}
+                            <p className="text-xs leading-relaxed mb-2" style={{ color: "#6B7280" }}>
+                              {section.description}
                             </p>
-                            <ul className="space-y-1.5">
-                              {mode.features.map((feature, featureIndex) => (
-                                <li key={featureIndex} className="flex items-start gap-2">
-                                  <div
-                                    className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
-                                    style={{
-                                      background: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                                    }}
-                                  />
-                                  <span
-                                    className="text-xs"
-                                    style={{
-                                      fontFamily: "system-ui, -apple-system, sans-serif",
-                                      color: "#4B5563",
-                                    }}
-                                  >
-                                    {feature}
-                                  </span>
+                            <ul className="space-y-1">
+                              {section.bullets.map((bullet, bulletIndex) => (
+                                <li key={bulletIndex} className="flex items-start gap-1.5 text-xs" style={{ color: "#4B5563" }}>
+                                  <span style={{ color: card.color }} className="mt-0.5">→</span>
+                                  <span>{bullet}</span>
                                 </li>
                               ))}
                             </ul>
                           </div>
                         ))}
                       </div>
-                    )}
 
-                    {/* Feature list for Cards 2 & 3 - Grid layout */}
-                    {card.details.features && !card.details.modes && (
-                      <div className="grid grid-cols-2 gap-3 mt-4">
-                        {card.details.features.map((feature, featureIndex) => (
-                          <div
-                            key={featureIndex}
-                            className="p-3 rounded-xl"
-                            style={{
-                              background: 'rgba(255, 255, 255, 0.6)',
-                              border: '1px solid rgba(0, 0, 0, 0.05)',
-                            }}
-                          >
-                            <h4
-                              className="font-bold mb-1 text-xs"
-                              style={{
-                                fontFamily: "system-ui, -apple-system, sans-serif",
-                                color: index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#EC4899',
-                              }}
-                            >
-                              {feature.title}
-                            </h4>
-                            <p
-                              className="text-[11px] leading-tight"
-                              style={{
-                                fontFamily: "system-ui, -apple-system, sans-serif",
-                                color: "#6B7280",
-                              }}
-                            >
-                              {feature.description}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-      ))}
+                      <button
+                        onClick={() => setExpandedCard(null)}
+                        className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 mt-2"
+                        style={{
+                          background: `rgba(${card.colorRgb}, 0.1)`,
+                          color: card.color,
+                        }}
+                      >
+                        <span className="text-sm font-semibold">Show less</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: 'rotate(180deg)' }}>
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Dot Indicators */}
+      <div className="flex justify-center gap-2 mt-6">
+        {cards.map((card, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setCurrentCard(index);
+              setExpandedCard(null);
+            }}
+            className="transition-all duration-300"
+            style={{
+              width: currentCard === index ? '24px' : '8px',
+              height: '8px',
+              borderRadius: '4px',
+              background: currentCard === index ? card.color : '#D1D5DB',
+            }}
+          />
+        ))}
       </div>
     </div>
   );

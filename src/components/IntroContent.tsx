@@ -15,6 +15,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const contentRef = scrollRef || localContentRef;
   const [isContentAtBottom, setIsContentAtBottom] = useState(false);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const scrollAttemptRef = useRef(0);
   const lastScrollTopRef = useRef(0);
   const isManualScrollRef = useRef(false); // Flag to prevent double-scroll from arrow click
@@ -100,6 +103,50 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
       element?.removeEventListener('scroll', handleScroll);
     };
   }, [isMobile, contentRef]);
+
+  // Video hover play/pause control
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isVideoHovered && isVideoReady) {
+      video.currentTime = 0;
+      video.muted = true; // Start muted (required for autoplay)
+      video.play().then(() => {
+        // Unmute after playback starts - this works in most browsers after user interaction
+        video.muted = false;
+      }).catch(() => {});
+    } else if (!isVideoHovered) {
+      video.pause();
+      video.currentTime = 0;
+      video.muted = true;
+    }
+  }, [isVideoHovered, isVideoReady]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Hover handlers with debounce to prevent flicker
+  const handleVideoHoverEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setIsVideoHovered(true);
+  };
+
+  const handleVideoHoverLeave = () => {
+    // Small delay before hiding to prevent flicker when moving between elements
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsVideoHovered(false);
+    }, 100);
+  };
 
   // Mobile: Hybrid approach - native scroll with smart exhaustion detection
   // Content scrolls first with momentum, then window takes over when exhausted
@@ -325,8 +372,8 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             marginTop: `${getScaledValue(12)}px`,
             position: 'relative',
           }}
-          onMouseEnter={() => setIsVideoHovered(true)}
-          onMouseLeave={() => setIsVideoHovered(false)}
+          onMouseEnter={handleVideoHoverEnter}
+          onMouseLeave={handleVideoHoverLeave}
         >
           <a
             href="https://www.youtube.com/watch?v=VAZctriaoUg"
@@ -334,7 +381,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             rel="noopener noreferrer"
             onClick={() => setIsVideoHovered(false)}
             style={{
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
               cursor: 'pointer',
@@ -366,81 +413,109 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             </svg>
           </a>
 
-          {/* Video preview overlay */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              paddingTop: '8px',
-              width: isMobile ? '200px' : `${getScaledValue(280)}px`,
-              opacity: isVideoHovered ? 1 : 0,
-              transform: isVideoHovered ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              pointerEvents: isVideoHovered ? 'auto' : 'none',
-              zIndex: 100,
-            }}
-            onMouseEnter={() => setIsVideoHovered(true)}
-            onMouseLeave={() => setIsVideoHovered(false)}
-          >
-            <a
-              href="https://www.youtube.com/watch?v=VAZctriaoUg"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setIsVideoHovered(false)}
+          {/* Video preview popup */}
+          {!isMobile && (
+            <div
               style={{
-                display: 'block',
-                borderRadius: `${getScaledValue(12)}px`,
-                overflow: 'hidden',
-                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08)',
-                textDecoration: 'none',
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: '4px',
+                width: `${getScaledValue(280)}px`,
+                opacity: isVideoHovered ? 1 : 0,
+                visibility: isVideoHovered ? 'visible' : 'hidden',
+                transform: isVideoHovered ? 'translateY(0) scale(1)' : 'translateY(-8px) scale(0.97)',
+                transition: 'opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease',
+                zIndex: 100,
               }}
             >
-              {/* Video preview */}
+              {/* Invisible bridge to maintain hover when moving to preview */}
               <div style={{
-                position: 'relative',
-                overflow: 'hidden',
-              }}>
-                <video
-                  src="/videos/sena-preview.mp4"
-                  loop
-                  playsInline
-                  muted
-                  ref={(el) => {
-                    if (el) {
-                      if (isVideoHovered) {
-                        el.play().then(() => {
-                          // Unmute after play starts (works around autoplay restrictions)
-                          el.muted = false;
-                        }).catch(() => {});
-                      } else {
-                        el.pause();
-                        el.currentTime = 0;
-                        el.muted = true;
-                      }
-                    }
-                  }}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    height: 'auto',
+                position: 'absolute',
+                top: '-8px',
+                left: 0,
+                width: '100%',
+                height: '12px',
+              }} />
+
+              <a
+                href="https://www.youtube.com/watch?v=VAZctriaoUg"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsVideoHovered(false)}
+                style={{
+                  display: 'block',
+                  borderRadius: `${getScaledValue(12)}px`,
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1)',
+                  textDecoration: 'none',
+                  background: '#000',
+                }}
+              >
+                <div style={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  aspectRatio: '16/9',
+                }}>
+                  <video
+                    ref={videoRef}
+                    src="/videos/sena-preview.mp4"
+                    loop
+                    playsInline
+                    muted
+                    preload="auto"
+                    onCanPlayThrough={() => setIsVideoReady(true)}
+                    onLoadedData={() => setIsVideoReady(true)}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                  {/* Play icon overlay when video not playing */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(0,0,0,0.2)',
+                    opacity: isVideoHovered && isVideoReady ? 0 : 1,
+                    transition: 'opacity 0.3s ease',
                     pointerEvents: 'none',
-                  }}
-                />
-                {/* Sena text overlay */}
-                <span style={{
-                  position: 'absolute',
-                  bottom: '12px',
-                  left: '12px',
-                  fontFamily: "'Tangerine', cursive",
-                  fontSize: '28px',
-                  color: 'white',
-                  pointerEvents: 'none',
-                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
-                }}>Sena</span>
-              </div>
-            </a>
-          </div>
+                  }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.9)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                    }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#333">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  {/* Sena text overlay */}
+                  <span style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    left: '10px',
+                    fontFamily: "'Tangerine', cursive",
+                    fontSize: '24px',
+                    color: 'white',
+                    pointerEvents: 'none',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.6)',
+                  }}>Sena</span>
+                </div>
+              </a>
+            </div>
+          )}
         </div>
 
         <div style={{ marginTop: `${getScaledValue(10)}px`, paddingTop: `${getScaledValue(10)}px`, position: 'relative' }}>

@@ -19,9 +19,25 @@ export interface Environment {
   agents_count?: number;
 }
 
+export interface RegistryItem {
+  name: string;
+  display_name: string;
+  description: string;
+  icon: string;
+  summary: string;
+  bullets: string[];
+  docTypes?: string[];
+  tools?: string[];
+  widgets?: string[];
+  providers?: string[];
+  includes?: string[];
+}
+
 interface EnvironmentSelectorProps {
   currentEnvironment?: string;
   onEnvironmentSelect?: (environmentName: string) => void;
+  onRegistryItemSelect?: (item: RegistryItem | null) => void;
+  selectedRegistryItem?: string | null;
   initialEnvironments?: Environment[];
   readOnly?: boolean;
   previewMode?: boolean;
@@ -30,6 +46,8 @@ interface EnvironmentSelectorProps {
 export default function EnvironmentSelector({
   currentEnvironment,
   onEnvironmentSelect = () => {},
+  onRegistryItemSelect,
+  selectedRegistryItem,
   initialEnvironments,
   readOnly = false,
   previewMode = false,
@@ -40,6 +58,7 @@ export default function EnvironmentSelector({
     initialEnvironments ?? [],
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<"horizontal" | "industry" | "agents">("horizontal");
 
   // State - Create/Edit Dialog
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -64,6 +83,262 @@ export default function EnvironmentSelector({
     "Your words, our workflows",
     "Describe it, deploy it",
   ];
+
+  // Registry Data by Category
+  const horizontalModules = [
+    {
+      name: "accounts",
+      display_name: "Accounts",
+      description: "Financial management - ledgers, invoicing, payments, reconciliation",
+      icon: "accounts",
+      summary: "Complete financial management system with double-entry accounting, multi-currency support, and automated reconciliation. Handles everything from daily transactions to year-end closing.",
+      bullets: ["Chart of accounts with unlimited hierarchy", "Journal entries with auto-reversal", "Bank reconciliation with smart matching", "GST/VAT compliant tax templates", "Multi-currency with real-time rates", "Aging reports and cash flow forecasting"],
+      docTypes: ["Account", "Journal Entry", "Payment Entry", "Invoice", "Bank Account", "Bank Transaction", "Tax Template"]
+    },
+    {
+      name: "sales",
+      display_name: "Sales",
+      description: "Revenue operations - quotations, orders, pricing",
+      icon: "sales",
+      summary: "End-to-end sales pipeline from lead to cash. Create quotations, convert to orders, and track fulfillment with real-time margin visibility.",
+      bullets: ["Quotation builder with templates", "Sales order workflow management", "Dynamic pricing and discount rules", "Sales invoice generation", "Commission tracking", "Revenue analytics dashboard"],
+      docTypes: ["Quotation", "Sales Order", "Sales Invoice", "Price List", "Pricing Rule"]
+    },
+    {
+      name: "purchasing",
+      display_name: "Purchasing",
+      description: "Procurement - purchase orders, supplier management",
+      icon: "purchasing",
+      summary: "Streamlined procurement from requisition to payment. Compare supplier quotes, manage approvals, and track deliveries with complete cost visibility.",
+      bullets: ["Purchase requisition workflow", "RFQ and supplier comparison", "Purchase order approvals", "Goods receipt tracking", "Three-way matching", "Supplier performance scoring"],
+      docTypes: ["Purchase Order", "Purchase Invoice", "Purchase Receipt", "Supplier Quotation", "Request for Quotation"]
+    },
+    {
+      name: "contacts",
+      display_name: "Contacts",
+      description: "People & organizations - customers, suppliers, leads",
+      icon: "contacts",
+      summary: "Unified contact management for all your business relationships. Track customers, suppliers, and leads with complete interaction history and segmentation.",
+      bullets: ["Customer and supplier profiles", "Lead capture and scoring", "Contact hierarchy management", "Address book with geo-coding", "Communication history", "Custom fields and tags"],
+      docTypes: ["Customer", "Supplier", "Lead", "Contact", "Address"]
+    },
+    {
+      name: "marketing",
+      display_name: "Marketing",
+      description: "Campaigns & outreach - email campaigns, lead nurturing",
+      icon: "marketing",
+      summary: "Multi-channel marketing automation to nurture leads and engage customers. Design campaigns, track performance, and optimize conversion.",
+      bullets: ["Email campaign builder", "Newsletter management", "Lead scoring rules", "Campaign ROI tracking", "A/B testing support", "Drip campaign automation"],
+      docTypes: ["Campaign", "Email Template", "Newsletter", "Lead Score", "Email Queue"]
+    },
+    {
+      name: "support",
+      display_name: "Support",
+      description: "Helpdesk & ticketing - issues, SLAs, resolution tracking",
+      icon: "support",
+      summary: "Customer support ticketing with SLA management. Route issues, track resolution times, and maintain service quality standards.",
+      bullets: ["Ticket creation and assignment", "SLA policies and escalation", "Issue categorization", "Response templates", "Customer satisfaction surveys", "Support analytics"],
+      docTypes: ["Ticket", "SLA", "Issue Category", "Response Template", "Escalation Rule"]
+    },
+    {
+      name: "inventory",
+      display_name: "Inventory",
+      description: "Stock management - items, warehouses, stock movements",
+      icon: "inventory",
+      summary: "Real-time inventory tracking across multiple warehouses. Manage stock levels, batch tracking, and valuations with automated reorder points.",
+      bullets: ["Multi-warehouse management", "Batch and serial tracking", "Stock valuation (FIFO/LIFO/Average)", "Reorder level alerts", "Stock transfer and adjustment", "Inventory aging analysis"],
+      docTypes: ["Item", "Stock Entry", "Warehouse", "Stock Ledger", "Batch", "Serial No"]
+    },
+    {
+      name: "assets",
+      display_name: "Assets",
+      description: "Fixed asset management - depreciation, tracking, disposals",
+      icon: "assets",
+      summary: "Complete fixed asset lifecycle management from acquisition to disposal. Track depreciation, maintenance schedules, and asset locations.",
+      bullets: ["Asset categorization", "Multiple depreciation methods", "Maintenance scheduling", "Asset movement tracking", "Disposal and write-off", "Insurance and warranty tracking"],
+      docTypes: ["Asset", "Asset Category", "Depreciation Schedule", "Asset Movement", "Asset Maintenance"]
+    },
+    {
+      name: "hr",
+      display_name: "HR",
+      description: "People management - employees, attendance, leaves, payroll",
+      icon: "hr",
+      summary: "Human resource management from hire to retire. Handle attendance, leave management, payroll processing, and employee self-service.",
+      bullets: ["Employee master with documents", "Attendance and timesheet", "Leave application workflow", "Payroll with tax calculation", "Department and designation", "Employee self-service portal"],
+      docTypes: ["Employee", "Attendance", "Leave Application", "Payroll Entry", "Department", "Salary Structure"]
+    },
+    {
+      name: "workspace",
+      display_name: "Workspace",
+      description: "Work coordination - projects, tasks, calendar, notes",
+      icon: "workspace",
+      summary: "Collaborative workspace for project management and team coordination. Plan projects, assign tasks, and track progress with integrated calendars.",
+      bullets: ["Project planning and tracking", "Task assignment and deadlines", "Calendar and event management", "Notes and documentation", "File attachments", "Activity logs and comments"],
+      docTypes: ["Project", "Task", "Event", "Note", "File", "Comment", "Reminder"]
+    },
+  ];
+
+  const industryModules = [
+    {
+      name: "travel",
+      display_name: "Travel",
+      description: "Travel agencies, tour operators - trips, bookings, itineraries",
+      icon: "travel",
+      summary: "Complete travel business solution for agencies, tour operators, and DMCs. Manage trips, bookings, itineraries, and traveler information in one place.",
+      bullets: ["Trip and package management", "Multi-segment booking (flights, hotels, activities)", "Day-wise itinerary builder", "Traveler document management", "Supplier and vendor management", "Costing and margin tracking", "Voucher and document generation"],
+      docTypes: ["Trip", "Package", "Booking", "Itinerary", "Traveler", "Guide", "Voucher"],
+      includes: ["accounts", "sales", "contacts", "support", "workspace"]
+    },
+    {
+      name: "manufacturing",
+      display_name: "Manufacturing",
+      description: "Factories, job shops - production planning, quality control",
+      icon: "manufacturing",
+      summary: "Production management for discrete and process manufacturing. Plan production, manage BOMs, track work orders, and ensure quality compliance.",
+      bullets: ["Bill of Materials (BOM) management", "Production planning and scheduling", "Work order tracking", "Workstation and routing", "Quality inspection checkpoints", "Scrap and rework handling", "Subcontracting support"],
+      docTypes: ["BOM", "Work Order", "Production Plan", "Workstation", "Quality Inspection", "Job Card"],
+      includes: ["accounts", "sales", "purchasing", "inventory", "workspace", "hr"]
+    },
+  ];
+
+  const agentConfigs = [
+    {
+      name: "llm_models",
+      display_name: "LLM Models",
+      description: "Claude, GPT-4, Gemini - AI models for agent intelligence",
+      icon: "llm",
+      summary: "Pre-configured language models that power agent intelligence. Choose the right model for each task based on capability, speed, and cost.",
+      bullets: ["Claude 3.5 Sonnet for complex reasoning", "GPT-4o for vision and multimodal tasks", "Gemini 1.5 for long context", "Haiku/Flash for quick responses", "Open source options for on-premise", "Automatic model selection by task"],
+      providers: ["Anthropic", "OpenAI", "Google", "Open Source"]
+    },
+    {
+      name: "core_tools",
+      display_name: "Core Tools",
+      description: "CRUD, queries, email, notifications, file management",
+      icon: "core_tools",
+      summary: "Fundamental tools that every agent needs. Database operations, file handling, and communication primitives that form the backbone of agent capabilities.",
+      bullets: ["DocType CRUD operations", "Query builder for complex searches", "Email sending via SMTP/API", "Push notification delivery", "File upload and management", "PDF generation", "Task scheduling"],
+      tools: ["doctype_crud", "query_builder", "email_sender", "notification_sender", "file_manager", "pdf_generator", "scheduler"]
+    },
+    {
+      name: "research_tools",
+      display_name: "Research Tools",
+      description: "Web search, document reader, image analyzer, OCR",
+      icon: "research",
+      summary: "Information gathering and analysis tools. Search the web, read documents, analyze images, and extract data from any source.",
+      bullets: ["Web search integration", "PDF and document parsing", "Image analysis and understanding", "Video content extraction", "Website scraping", "OCR text extraction", "Audio transcription"],
+      tools: ["web_search", "document_reader", "image_analyzer", "video_analyzer", "url_scraper", "ocr_reader", "audio_transcriber"]
+    },
+    {
+      name: "communication_tools",
+      display_name: "Communication",
+      description: "Email, SMS, WhatsApp, push notifications",
+      icon: "communication",
+      summary: "Multi-channel communication tools for customer engagement. Reach users via their preferred channel with consistent messaging.",
+      bullets: ["Email via SMTP and APIs", "SMS through multiple providers", "WhatsApp Business API", "Push notifications", "Voice calls via Twilio", "Channel preference management"],
+      tools: ["email_sender", "sms_sender", "whatsapp_sender", "notification_sender", "call_maker"]
+    },
+    {
+      name: "content_tools",
+      display_name: "Content Generation",
+      description: "Text, images, PDFs, reports, QR codes",
+      icon: "content",
+      summary: "Creative content generation tools powered by AI. Generate text, images, documents, and reports automatically.",
+      bullets: ["AI text generation", "Image creation (DALL-E, Midjourney)", "PDF document builder", "Word/Excel generation", "Report with charts", "QR code creation"],
+      tools: ["text_generator", "image_generator", "pdf_generator", "document_generator", "report_generator", "qr_code_generator"]
+    },
+    {
+      name: "verification_tools",
+      display_name: "Verification",
+      description: "Email, phone, GSTIN, PAN, bank account verification",
+      icon: "verification",
+      summary: "Identity and data verification tools for compliance. Validate customer information against authoritative sources.",
+      bullets: ["Email deliverability check", "Phone number validation", "GSTIN verification", "PAN verification", "Bank account validation", "Address standardization", "Aadhaar verification"],
+      tools: ["email_verifier", "phone_verifier", "gstin_verifier", "pan_verifier", "bank_account_verifier", "address_verifier"]
+    },
+    {
+      name: "finance_tools",
+      display_name: "Finance Tools",
+      description: "Payments, invoicing, currency, tax calculations",
+      icon: "finance",
+      summary: "Financial operation tools for transactions and calculations. Process payments, generate invoices, and handle tax computations.",
+      bullets: ["Payment gateway integration", "Invoice generation", "Currency conversion", "GST/VAT calculation", "Bank reconciliation", "EMI calculations"],
+      tools: ["payment_processor", "invoice_generator", "currency_converter", "tax_calculator", "bank_reconciler", "emi_calculator"]
+    },
+    {
+      name: "display_widgets",
+      display_name: "Display Widgets",
+      description: "Cards, tables, charts, maps, timelines",
+      icon: "display",
+      summary: "UI components for presenting information. Rich display widgets that agents use to show data beautifully in the Agent Workshop.",
+      bullets: ["Card and card list views", "Sortable data tables", "Bar, line, and pie charts", "Interactive maps", "Timeline displays", "Progress indicators", "Image galleries"],
+      widgets: ["card", "card_list", "table", "chart_bar", "chart_line", "chart_pie", "map", "timeline", "progress"]
+    },
+    {
+      name: "input_widgets",
+      display_name: "Input Widgets",
+      description: "Forms, date pickers, dropdowns, file uploads",
+      icon: "input",
+      summary: "Interactive input components for collecting user data. Form widgets that make it easy for users to provide information to agents.",
+      bullets: ["Quick reply buttons", "Text input fields", "Date and time pickers", "Dropdown selection", "Multi-select options", "File upload", "Location picker"],
+      widgets: ["quick_reply", "text_input", "date_picker", "date_range", "dropdown", "multi_select", "file_upload", "location_picker"]
+    },
+  ];
+
+  // Icon component for registry items
+  const getItemIcon = (iconName: string) => {
+    const icons: Record<string, JSX.Element> = {
+      // Horizontal modules
+      accounts: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      sales: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
+      purchasing: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>,
+      contacts: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>,
+      marketing: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>,
+      support: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+      inventory: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>,
+      assets: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
+      hr: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
+      workspace: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>,
+      // Industry modules
+      travel: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      manufacturing: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+      // Agent configs
+      llm: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>,
+      core_tools: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+      research: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
+      communication: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
+      content: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>,
+      verification: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>,
+      finance: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>,
+      display: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>,
+      input: <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>,
+    };
+    return icons[iconName] || <svg className="w-4 h-4 text-waygent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>;
+  };
+
+  // Get items based on active category
+  const getCategoryItems = () => {
+    switch (activeCategory) {
+      case "horizontal":
+        return horizontalModules;
+      case "industry":
+        return industryModules;
+      case "agents":
+        return agentConfigs;
+      default:
+        return horizontalModules;
+    }
+  };
+
+  const categoryItems = getCategoryItems();
+
+  // Filter category items by search
+  const filteredCategoryItems = searchQuery.trim()
+    ? categoryItems.filter((item) => {
+        const query = searchQuery.trim().toLowerCase();
+        return item.display_name.toLowerCase().includes(query) || item.description.toLowerCase().includes(query);
+      })
+    : categoryItems;
 
   // Computed - Filtered Environments
   const filteredEnvironments = searchQuery.trim()
@@ -556,12 +831,12 @@ export default function EnvironmentSelector({
         {/* Main Content */}
         {!error && (
           <div
-            className={`flex flex-col items-center h-full px-4 ${
+            className={`flex flex-col items-center h-full px-4 overflow-hidden ${
               activeEnvironments.length > 0 ? "py-3" : "pt-6"
             }`}
           >
             <div
-              className={`w-full max-w-3xl flex flex-col h-full`}
+              className={`w-full max-w-3xl flex flex-col h-full overflow-hidden`}
             >
               {/* Hero Section */}
               <div className={`text-center flex-shrink-0 ${previewMode ? 'mb-2 mt-3' : 'mb-4'}`}>
@@ -586,8 +861,8 @@ export default function EnvironmentSelector({
                 </div>
               </div>
 
-              {/* Search Bar */}
-              {activeEnvironments.length >= 4 && (
+              {/* Search Bar - Always show */}
+              {(
                 <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-2' : 'mb-4'}`}>
                   <div className={`relative ${previewMode ? 'w-3/4' : 'w-3/4'}`}>
                     <svg
@@ -607,103 +882,93 @@ export default function EnvironmentSelector({
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       type="text"
-                      placeholder="Search environments..."
+                      placeholder="Search registry..."
                       className="search-input"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Environment Cards */}
-              {activeEnvironments.length > 0 && (
+              {/* Category Tabs */}
+              <div className={`flex-shrink-0 flex justify-center w-full ${previewMode ? 'mb-3' : 'mb-4'}`}>
+                <div className={`inline-flex gap-0.5 p-1 bg-white rounded-full border border-gray-200 shadow-sm ${previewMode ? 'text-[10px]' : 'text-xs'}`}>
+                  <button
+                    onClick={() => setActiveCategory("horizontal")}
+                    className={`cursor-pointer px-2.5 py-1 rounded-full font-medium transition-all ${
+                      activeCategory === "horizontal"
+                        ? "bg-waygent-blue text-white shadow-sm"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                  >
+                    Horizontal
+                  </button>
+                  <button
+                    onClick={() => setActiveCategory("industry")}
+                    className={`cursor-pointer px-2.5 py-1 rounded-full font-medium transition-all ${
+                      activeCategory === "industry"
+                        ? "bg-waygent-blue text-white shadow-sm"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                  >
+                    Industry
+                  </button>
+                  <button
+                    onClick={() => setActiveCategory("agents")}
+                    className={`cursor-pointer px-2.5 py-1 rounded-full font-medium transition-all ${
+                      activeCategory === "agents"
+                        ? "bg-waygent-blue text-white shadow-sm"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                  >
+                    Agents
+                  </button>
+                </div>
+              </div>
+
+              {/* Registry Items Cards */}
+              {filteredCategoryItems.length > 0 && (
                 <div
-                  className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex items-center py-2`}
-                  style={{ pointerEvents: 'auto', minHeight: 0 }}
+                  className={`overflow-y-auto overflow-x-hidden custom-scrollbar py-2 px-1`}
+                  style={{ pointerEvents: 'auto', minHeight: '150px', maxHeight: '280px' }}
                 >
                   <div
-                    className={`grid gap-2 md:grid-cols-2 w-full ${
-                      activeEnvironments.length === 1 ? "single-env-grid" : ""
-                    }`}
+                    className={`grid gap-2 md:grid-cols-2 w-full`}
                     style={{ pointerEvents: 'auto' }}
                   >
-                    {filteredEnvironments.map((env) => (
+                    {filteredCategoryItems.map((item) => (
                       <div
-                        key={env.name}
-                        data-environment-card={env.name}
+                        key={item.name}
+                        data-environment-card={item.name}
                         onClick={() => {
-                          selectEnvironment(env.name);
+                          if (onRegistryItemSelect) {
+                            if (selectedRegistryItem === item.name) {
+                              onRegistryItemSelect(null);
+                            } else {
+                              onRegistryItemSelect(item as RegistryItem);
+                            }
+                          }
                         }}
                         className={`group cursor-pointer environment-card ${
-                          env.name === currentEnvironment ? "environment-card-selected" : ""
-                        } ${
-                          activeEnvironments.length === 1 ? "single-environment-card" : ""
+                          selectedRegistryItem === item.name ? "environment-card-selected" : ""
                         }`}
                         style={{ pointerEvents: 'auto' }}
                       >
-                        {/* Edit Icon */}
-                        {!readOnly && !previewMode && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEditDialog(env);
-                            }}
-                            className="edit-icon-button"
-                            title="Edit environment"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                              />
-                            </svg>
-                          </button>
-                        )}
-
                         {/* Card Content */}
-                        <div
-                          className={previewMode ? "environment-card-clickable cursor-pointer" : "environment-card-clickable"}
-                        >
+                        <div className="environment-card-clickable cursor-pointer">
                           <div className="flex items-start gap-2 environment-card-inner">
                             <div className="flex-shrink-0 flex items-center justify-center">
-                              <svg
-                                className={`w-4 h-4 transition-colors duration-200 ${
-                                  env.name === currentEnvironment
-                                    ? "text-blue-600"
-                                    : "text-gray-600"
-                                }`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                                />
-                              </svg>
+                              {getItemIcon(item.icon)}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 mb-0.5">
-                                <h3
-                                  className={`font-medium text-xs transition-colors duration-200 ${
-                                    env.name === currentEnvironment
-                                      ? "text-blue-900"
-                                      : "text-gray-800"
-                                  }`}
-                                >
-                                  {env.display_name || env.environment_name || env.name}
+                                <h3 className={`font-medium text-xs transition-colors duration-200 ${
+                                  selectedRegistryItem === item.name ? "text-blue-900" : "text-gray-800"
+                                }`}>
+                                  {item.display_name}
                                 </h3>
                               </div>
                               <p className="env-description">
-                                {env.description || "ERP Environment"}
+                                {item.description}
                               </p>
                             </div>
                           </div>
@@ -712,7 +977,7 @@ export default function EnvironmentSelector({
                     ))}
 
                     {/* No Search Results */}
-                    {searchQuery && filteredEnvironments.length === 0 && (
+                    {searchQuery && filteredCategoryItems.length === 0 && (
                       <div className="col-span-2 text-center py-8">
                         <svg
                           className="w-12 h-12 mx-auto text-gray-400 mb-3"
@@ -728,7 +993,7 @@ export default function EnvironmentSelector({
                           />
                         </svg>
                         <p className="text-sm text-gray-500">
-                          No environments found matching &quot;{searchQuery}&quot;
+                          No items found matching &quot;{searchQuery}&quot;
                         </p>
                       </div>
                     )}
@@ -821,6 +1086,7 @@ export default function EnvironmentSelector({
           height: 100%;
           position: relative;
           z-index: 1;
+          overflow: hidden;
         }
 
         /* Tagline Animation */
@@ -1171,16 +1437,11 @@ export default function EnvironmentSelector({
         /* Custom Scrollbar */
         .custom-scrollbar {
           scrollbar-width: thin;
-          scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-        }
-
-        .preview-zoom .custom-scrollbar {
-          overflow: visible;
+          scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
+          width: 5px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
@@ -1188,15 +1449,12 @@ export default function EnvironmentSelector({
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(0, 0, 0, 0.15);
-          border-radius: 4px;
-          border: 2px solid transparent;
-          background-clip: content-box;
+          background: rgba(0, 0, 0, 0.25);
+          border-radius: 3px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(0, 0, 0, 0.25);
-          background-clip: content-box;
+          background: rgba(0, 0, 0, 0.4);
         }
 
         /* Dialog Styles */
