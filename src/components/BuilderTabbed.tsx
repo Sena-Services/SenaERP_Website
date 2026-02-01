@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import UIBuilderDemo from "./UIBuilderDemo";
+// import UIBuilderDemo from "./UIBuilderDemo"; // REMOVED: Interfaces tab
 import DataBuilderDemo from "./DataBuilderDemo";
 import WorkflowsBuilderDemo from "./WorkflowsBuilderDemo";
 import AgentsBuilderDemo from "./AgentsBuilderDemo";
 import MobileBuilderCard from "./MobileBuilderCard";
-import MobileUIBuilderDemo from "./MobileUIBuilderDemo";
+// import MobileUIBuilderDemo from "./MobileUIBuilderDemo"; // REMOVED: Interfaces tab
 import MobileWorkflowsBuilderDemo from "./MobileWorkflowsBuilderDemo";
 import MobileDataBuilderDemo from "./MobileDataBuilderDemo";
 import MobileAgentsBuilderDemo from "./MobileAgentsBuilderDemo";
@@ -37,7 +37,7 @@ type ChatMessage = {
 
 // Color themes for each tab - ALL BLUE
 const tabThemes = {
-  ui: {
+  brd: {
     primary: '#3B82F6', // blue-600
     light: '#EFF6FF', // blue-50
     border: '#BFDBFE', // blue-200
@@ -65,22 +65,22 @@ const tabThemes = {
 
 const tabs: Tab[] = [
   {
-    id: "ui",
-    label: "Interfaces",
-    subtitle: "Build beautiful interfaces.",
-    agentTitle: "Interface Builder",
-    agentDescription: "Build complete user interfaces through conversation. From dashboards and data tables to forms and custom layouts—just describe what you need, and watch it build in real-time with live previews, responsive design, and beautiful animations built in.",
+    id: "brd",
+    label: "BRD",
+    subtitle: "Define your business requirements.",
+    agentTitle: "Discovery Agent",
+    agentDescription: "The Discovery Agent captures everything about your business through conversation—processes, data, integrations, and goals. It generates a comprehensive Business Requirements Document that becomes the blueprint for your custom ERP system.",
     workflowSteps: [
-      { id: "understand", label: "Understand request", status: "complete" },
-      { id: "generate", label: "Generate layout", status: "complete" },
-      { id: "style", label: "Apply styling", status: "complete" },
-      { id: "animate", label: "Add animations", status: "loading" },
-      { id: "preview", label: "Render preview" },
+      { id: "discover", label: "Discover business needs", status: "complete" },
+      { id: "analyze", label: "Analyze requirements", status: "complete" },
+      { id: "generate", label: "Generate BRD", status: "loading" },
+      { id: "review", label: "Review recommendations" },
+      { id: "approve", label: "Approve & build" },
     ],
     chatMessages: [
-      { id: "1", type: "user", text: "Create a dashboard with revenue cards and charts" },
-      { id: "2", type: "agent", text: "Building your dashboard with 3 metric cards and a revenue chart..." },
-      { id: "3", type: "agent", text: "Dashboard ready! Added smooth animations and responsive layout." },
+      { id: "1", type: "agent", text: "Tell me about your business operations" },
+      { id: "2", type: "user", text: "We're a manufacturing company with 50 employees..." },
+      { id: "3", type: "agent", text: "Generating your BRD with recommended modules and agents..." },
     ],
   },
   {
@@ -821,7 +821,7 @@ function AgentsGallery() {
 export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [isMobile, setIsMobile] = useState(false);
-  const [activeBuilderTab, setActiveBuilderTab] = useState("ui");
+  const [activeBuilderTab, setActiveBuilderTab] = useState("brd"); // BRD is now the first tab
   const [viewportHeight, setViewportHeight] = useState(900);
   const [showDetails, setShowDetails] = useState(true);
 
@@ -882,7 +882,7 @@ export default function BuilderTabbed() {
     if (!isMobile) return;
 
     const handleScroll = () => {
-      const sections = ['ui', 'data', 'workflows', 'agents'];
+      const sections = ['brd', 'data', 'workflows', 'agents']; // BRD is now the first tab
       const scrollPosition = window.scrollY + window.innerHeight / 2; // Use middle of viewport
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -945,9 +945,10 @@ export default function BuilderTabbed() {
         </div>
 
         {/* Desktop White Container with Tabs and Content */}
-        <div className="hidden md:block bg-white rounded-[2rem] overflow-hidden" style={{
+        <div className="hidden md:block bg-white rounded-[2rem] overflow-hidden relative" style={{
           border: '2px solid #9CA3AF',
-          boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
+          boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
+          zIndex: 10
         }}>
           {/* Tabs at Top with Description - All in same container */}
           <div className="bg-waygent-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
@@ -1028,35 +1029,34 @@ export default function BuilderTabbed() {
                 {/* Compact single-row badges with details button */}
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex flex-wrap gap-1.5 text-[11px] text-gray-700 font-futura">
-                  {activeTab.id === 'ui' && (
+                  {activeTab.id === 'brd' && (
                     <>
                       <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.ui.light}80`,
-                        borderColor: `${tabThemes.ui.border}80`
+                        backgroundColor: `${tabThemes.brd.light}80`,
+                        borderColor: `${tabThemes.brd.border}80`
                       }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.ui.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.brd.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span className="font-medium">Live preview</span>
+                        <span className="font-medium">Auto-generated</span>
                       </div>
                       <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.ui.light}80`,
-                        borderColor: `${tabThemes.ui.border}80`
+                        backgroundColor: `${tabThemes.brd.light}80`,
+                        borderColor: `${tabThemes.brd.border}80`
                       }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.ui.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.brd.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                         </svg>
-                        <span className="font-medium">Component library</span>
+                        <span className="font-medium">Conversational</span>
                       </div>
                       <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.ui.light}80`,
-                        borderColor: `${tabThemes.ui.border}80`
+                        backgroundColor: `${tabThemes.brd.light}80`,
+                        borderColor: `${tabThemes.brd.border}80`
                       }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.ui.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.brd.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="font-medium">Accessible</span>
+                        <span className="font-medium">One-click approve</span>
                       </div>
                     </>
                   )}
@@ -1266,60 +1266,60 @@ export default function BuilderTabbed() {
                 }}
                 transition={{ duration: 0.4, delay: showDetails ? 0.4 : 0 }}
               >
-                {activeTab.id === 'ui' && (
+                {activeTab.id === 'brd' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
                     {/* Left: Compact info */}
                     <div className="space-y-3">
                       {/* Header */}
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Interface Builder</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Discovery Agent</h3>
                         <p className="text-sm text-gray-600 leading-snug font-futura">
-                          Production-ready interfaces from conversation. Component registry + custom layouts.
+                          Captures your business requirements through conversation. Generates a complete BRD.
                         </p>
                       </div>
 
-                      {/* Core Components - Compact list */}
+                      {/* BRD Contains - Compact list */}
                       <div className="space-y-1.5">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Components</div>
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">BRD Contains</div>
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 text-sm">
                             <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
-                            <span className="text-gray-900 font-medium">Data Tables</span>
-                            <span className="text-xs text-gray-500">Sort, filter, pagination</span>
+                            <span className="text-gray-900 font-medium">Business Summary</span>
+                            <span className="text-xs text-gray-500">What we learned</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
                             <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                             </svg>
-                            <span className="text-gray-900 font-medium">Charts & Graphs</span>
-                            <span className="text-xs text-gray-500">Time series, forecasts</span>
+                            <span className="text-gray-900 font-medium">Data Schema</span>
+                            <span className="text-xs text-gray-500">Recommended DocTypes</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
                             <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
-                            <span className="text-gray-900 font-medium">Forms</span>
-                            <span className="text-xs text-gray-500">Validation, multi-step</span>
+                            <span className="text-gray-900 font-medium">Module Registry</span>
+                            <span className="text-xs text-gray-500">Pre-built modules</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
                             <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a2 1 0 01-1-1v-6z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span className="text-gray-900 font-medium">Dashboards</span>
-                            <span className="text-xs text-gray-500">Metrics, KPIs</span>
+                            <span className="text-gray-900 font-medium">AI Agents</span>
+                            <span className="text-xs text-gray-500">Suggested agents</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
                             <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                             </svg>
-                            <span className="text-gray-900 font-medium">Modals & Dialogs</span>
-                            <span className="text-xs text-gray-500">Drawers, sheets</span>
+                            <span className="text-gray-900 font-medium">Integrations</span>
+                            <span className="text-xs text-gray-500">External systems</span>
                           </div>
                         </div>
                         <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
-                          + Navigation, Tabs, Dropdowns, Tooltips, Notifications, and 90+ more
+                          One-click approval triggers system build
                         </div>
                       </div>
 
@@ -1331,32 +1331,39 @@ export default function BuilderTabbed() {
                             <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs text-gray-700">Real-time preview as you build</span>
+                            <span className="text-xs text-gray-700">Voice, text, docs, images supported</span>
                           </div>
                           <div className="flex items-start gap-2">
                             <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs text-gray-700">Pull from registry or create custom</span>
+                            <span className="text-xs text-gray-700">Industry best practices built-in</span>
                           </div>
                           <div className="flex items-start gap-2">
                             <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs text-gray-700">Fully customizable styling system</span>
+                            <span className="text-xs text-gray-700">Web search for context enrichment</span>
                           </div>
                           <div className="flex items-start gap-2">
                             <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs text-gray-700">Responsive, accessible by default</span>
+                            <span className="text-xs text-gray-700">Editable before approval</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Right: Image Gallery with Navigation */}
-                    <InterfaceGallery />
+                    {/* Right: BRD Preview placeholder */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
+                      <div className="text-center">
+                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p className="text-sm text-gray-500 font-futura">BRD Preview</p>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -1633,8 +1640,9 @@ export default function BuilderTabbed() {
                 transition={{ duration: 0.4 }}
                 className="h-full"
               >
-                {activeTab.id === "ui" ? (
-                  <UIBuilderDemo />
+                {/* BRD tab uses DataBuilderDemo as placeholder for now */}
+                {activeTab.id === "brd" ? (
+                  <DataBuilderDemo />
                 ) : activeTab.id === "data" ? (
                   <DataBuilderDemo />
                 ) : activeTab.id === "workflows" ? (
@@ -1873,65 +1881,65 @@ export default function BuilderTabbed() {
         {/* Mobile Builder - Show all tabs stacked vertically with separators */}
         {isMobile && (
           <div className="md:hidden w-full px-4">
-            {/* UI Builder Card */}
+            {/* BRD Builder Card */}
             <MobileBuilderCard
-              id="mobile-builder-ui"
-              title="Interface"
-              subtitle="Build beautiful interfaces"
-              description="Click, describe, or draw—we'll build it in real-time with live previews, responsive design, and beautiful animations built in."
+              id="mobile-builder-brd"
+              title="BRD"
+              subtitle="Define your business requirements"
+              description="The Discovery Agent captures your business through conversation—processes, data, integrations, and goals. It generates a comprehensive Business Requirements Document."
               features={[
-                "Dashboards & analytics screens",
-                "Data tables & lists",
-                "Forms & input screens",
-                "Custom layouts & components"
+                "Business process mapping",
+                "Data schema recommendations",
+                "Module suggestions from registry",
+                "AI agent recommendations"
               ]}
               workflowSteps={tabs[0].workflowSteps}
               chatMessages={tabs[0].chatMessages}
               detailedContent={{
-                title: "Interface Builder",
-                description: "Build complete user interfaces through conversation—from dashboards to forms. Just describe what you need.",
+                title: "Discovery Agent",
+                description: "Captures your business requirements through conversation. Generates a complete BRD that becomes the blueprint for your custom ERP.",
                 capabilities: [
                   {
-                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>,
-                    title: "Dashboards",
-                    subtitle: "Revenue cards, charts, KPIs"
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>,
+                    title: "Business Summary",
+                    subtitle: "What we learned"
                   },
                   {
-                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" /></svg>,
-                    title: "Data Tables",
-                    subtitle: "Sortable, filterable lists"
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg>,
+                    title: "Data Schema",
+                    subtitle: "Recommended DocTypes"
                   },
                   {
-                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
-                    title: "Forms",
-                    subtitle: "Input validation, multi-step"
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>,
+                    title: "Module Registry",
+                    subtitle: "Pre-built modules"
                   },
                   {
-                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>,
-                    title: "Custom Layouts",
-                    subtitle: "Drag-and-drop, responsive"
+                    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
+                    title: "AI Agents",
+                    subtitle: "Suggested agents"
                   }
                 ],
                 features: [
-                  "Real-time preview as you build",
-                  "Responsive design built-in",
-                  "Beautiful animations included",
-                  "Accessibility (WCAG AA) compliant",
-                  "Dark mode support"
+                  "Voice, text, docs, images supported",
+                  "Industry best practices built-in",
+                  "Web search for context enrichment",
+                  "Editable before approval",
+                  "One-click approval triggers build"
                 ],
-                footer: "Point, click, or just describe it—we'll build it"
+                footer: "Describe your business—we'll generate the blueprint"
               }}
               accentColor="#3B82F6"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               }
-              demoComponent={<MobileUIBuilderDemo />}
+              demoComponent={<MobileDataBuilderDemo />}
               onVisibilityChange={(isVisible) => {
                 if (isVisible) {
-                  setActiveBuilderTab("ui");
-                  window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'ui' } }));
+                  setActiveBuilderTab("brd");
+                  window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'brd' } }));
                 }
               }}
             />

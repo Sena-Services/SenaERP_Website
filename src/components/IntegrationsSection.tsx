@@ -294,7 +294,8 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
         style={{
           maxWidth: isMobile ? '100%' : 'min(1280px, calc(100vw - 320px))',
           paddingLeft: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
-          paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))'
+          paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
+          zIndex: 10,
         }}
       >
         <div className="mt-4 mb-2 md:mb-3 text-center px-4 md:px-0">

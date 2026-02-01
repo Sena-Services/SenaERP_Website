@@ -67,91 +67,87 @@ export default function MobileHowItWorks() {
   const cards = [
     {
       number: 1,
-      title: "Talk to Sena",
-      description: "Share your workflows, challenges, and goals. Sena asks the right questions to understand exactly what you need—no technical jargon required.",
+      title: "Discovery",
+      description: "Talk to Sena naturally—voice, text, any language. It understands your business and generates a complete Business Requirements Document.",
       videoSrc: "/videos/card1.mp4",
       bg: "#f6efe4",
       details: {
-        heading: "Talk to Sena",
-        intro: "Sena is your AI co-founder who helps you build custom ERP systems through natural conversation. Choose between Discovery Mode for collaborative exploration or Express Mode for direct control.",
-        modes: [
+        heading: "Discovery",
+        intro: "Traditional ERP: consultants, months of development, thousands of dollars. We automate the entire lifecycle. The Discovery Agent talks to people across your organization.",
+        features: [
           {
-            title: "Discovery Mode (Voice)",
-            description: "Have a natural conversation with Sena in your preferred language. She'll ask insightful questions like a co-founder or analyst to deeply understand your operations.",
-            features: [
-              "Multilingual voice conversations in 50+ languages",
-              "Proactive questioning to uncover hidden requirements",
-              "Deep understanding of your business processes",
-              "Collaborative requirement building"
-            ]
+            title: "Voice & Text",
+            description: "Conversations in 50+ languages, voice or text"
           },
           {
-            title: "Express Mode (Text)",
-            description: "Know exactly what you want? Use Express Mode to tell Sena your requirements directly and get instant results without back-and-forth.",
-            features: [
-              "Direct text-based interface for precise control",
-              "Specify exact requirements and features",
-              "Instant system generation",
-              "Zero unnecessary conversation"
-            ]
+            title: "Multimodal Input",
+            description: "Upload docs, images, videos, links"
+          },
+          {
+            title: "Team Discovery",
+            description: "Parallel conversations across your hierarchy"
+          },
+          {
+            title: "BRD Generation",
+            description: "Complete requirements document, you review and approve"
           }
         ]
       }
     },
     {
       number: 2,
-      title: "Review & Refine",
-      description: "Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and ensure it's exactly right.",
+      title: "Build",
+      description: "The Builder Agent pulls the right modules from our Registry and assembles your custom ERP—database, logic, integrations.",
       videoSrc: "/videos/card2.mp4",
       bg: "#f5f2e9",
       details: {
-        heading: "Review & Refine",
-        intro: "Walk through every detail of your system before going live. Make changes, ask questions, and iterate in real-time until everything is exactly right.",
+        heading: "Build",
+        intro: "Once your BRD is approved, the Builder Agent takes over. It doesn't write from scratch—it pulls modules from the Registry and customizes them.",
         features: [
           {
-            title: "Visual Preview",
-            description: "See exactly how your system looks and works before deployment"
+            title: "Builder Agent",
+            description: "Reads BRD, assembles database, logic, migrations"
           },
           {
-            title: "Interactive Editing",
-            description: "Click to edit any table, workflow, or interface element"
+            title: "The Registry",
+            description: "Open-source library: modules, agents, connectors"
           },
           {
-            title: "Real-Time Updates",
-            description: "See changes instantly as you make modifications"
+            title: "Human-in-Loop",
+            description: "Developer community fills Registry gaps"
           },
           {
-            title: "Unlimited Iterations",
-            description: "Refine and perfect your system with no limits"
+            title: "Flywheel Effect",
+            description: "Every build makes the platform smarter"
           }
         ]
       }
     },
     {
       number: 3,
-      title: "Go Live",
-      description: "One click and your custom ERP is live. Your team can start using it immediately—no setup, no installation, no complexity.",
+      title: "Manage Agents",
+      description: "Your AI agents run operations tirelessly. Build, test, and deploy agents that get smarter with every interaction.",
       videoSrc: "/videos/card3.mp4",
       bg: "#f6f2fb",
       details: {
-        heading: "Go Live",
-        intro: "One click and your custom ERP is live. Your team can start using it immediately with no setup, installation, or technical complexity.",
+        heading: "Manage Agents",
+        intro: "Now that you have a custom ERP, who operates it? AI Agents—virtual employees running your operations tirelessly.",
         features: [
           {
-            title: "Instant Deployment",
-            description: "Deploy to production with a single click - no DevOps required"
+            title: "Agent Builder",
+            description: "Autonomy slider: plain English to full code control"
           },
           {
-            title: "Immediate Access",
-            description: "Your team gets instant access - just share the link"
+            title: "Testing Framework",
+            description: "Test tool calling, tokens, hallucinations"
           },
           {
-            title: "Cloud Infrastructure",
-            description: "Fully managed, scalable cloud hosting included"
+            title: "Fine-Tuning",
+            description: "Agents get smarter for your specific business"
           },
           {
-            title: "Enterprise Security",
-            description: "Bank-level security, compliance, and data protection"
+            title: "Command Center",
+            description: "Agents report, ask permission, you approve"
           }
         ]
       }
@@ -162,7 +158,7 @@ export default function MobileHowItWorks() {
   if (!isMobile) return null;
 
   return (
-    <div className="w-full relative pt-4" id="how-it-works" style={{ backgroundColor: '#FAF9F5' }}>
+    <div className="w-full relative pt-4" id="how-it-works" style={{ backgroundColor: '#F5F1E8' }}>
       {/* Section Header - Only on Mobile */}
       {isMobile && (
         <div className="text-center px-4 pb-8">
@@ -193,7 +189,7 @@ export default function MobileHowItWorks() {
       )}
 
       {/* Cards Container with Padding */}
-      <div className="relative px-4 pb-6">
+      <div className="relative px-4 pb-6" style={{ zIndex: 10 }}>
         {cards.map((card, index) => (
         <div
           key={card.number}
@@ -268,7 +264,7 @@ export default function MobileHowItWorks() {
             <div
               className="relative px-5 py-6 cursor-pointer"
               style={{
-                background: '#FAF9F5',
+                background: '#F5F1E8',
               }}
               onClick={() => setExpandedCard(expandedCard === index ? null : index)}
             >

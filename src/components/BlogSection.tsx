@@ -209,11 +209,10 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
               if (isVideo) {
                 const link = document.createElement('link');
                 link.rel = 'preload';
-                link.as = 'video';
+                link.as = 'fetch';
                 link.href = attachment;
-                link.type = 'video/mp4';
+                link.crossOrigin = 'anonymous';
                 document.head.appendChild(link);
-                console.log('Preloading video:', attachment);
               }
             }
           });
@@ -392,6 +391,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
                 marginBottom: '1.5rem',
+                zIndex: 10,
               }}
             >
               {/* Real Carousel - All pages laid out horizontally */}
@@ -428,7 +428,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                         return (
                           <div
                             key={(post as any).id}
-                            className="relative flex-col overflow-hidden rounded-2xl border border-gray-200 bg-[#f6efe4] shadow-sm cursor-default hidden md:flex"
+                            className="relative flex-col overflow-hidden rounded-3xl border-2 border-[#9CA3AF] bg-[#f6efe4] shadow-sm cursor-default hidden md:flex"
                           >
                             {/* Placeholder Visual */}
                             <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden">
@@ -524,14 +524,14 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                         <Link
                     key={actualPost.id}
                     href={`/blog/${actualPost.id}`}
-                    className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-white text-waygent-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer ${
+                    className={`group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-waygent-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer ${
                       isMobile
                         ? `w-[280px] flex-shrink-0 snap-center ${
                             isActive
-                              ? 'border-waygent-orange scale-105 shadow-xl opacity-100'
-                              : 'border-waygent-light-blue/40 opacity-60 scale-95'
+                              ? 'border-[#9CA3AF] scale-105 shadow-xl opacity-100'
+                              : 'border-[#9CA3AF]/40 opacity-60 scale-95'
                           }`
-                        : 'border-waygent-light-blue/40 hover:border-waygent-blue/40'
+                        : 'border-[#9CA3AF] hover:border-[#6B7280]'
                     }`}
                     onMouseEnter={() => setHoveredCardId(actualPost.id)}
                     onMouseLeave={() => setHoveredCardId(null)}

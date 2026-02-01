@@ -20,8 +20,9 @@ const sections = [
   { id: "how-it-works", label: "How it Works" },
   { id: "builder", label: "Builder" },
   { id: "integrations", label: "Integrations" },
-  { id: "environments", label: "Environments" },
+  { id: "registry", label: "Registry" },
   { id: "blog", label: "Blog" },
+  { id: "cofounders", label: "CoFounders" },
   { id: "join-us", label: "Join Us" },
 ];
 
@@ -29,8 +30,9 @@ type NavBarProps = {
   showHowItWorks?: boolean;
   showBuilder?: boolean;
   showIntegrations?: boolean;
-  showEnvironments?: boolean;
+  showRegistry?: boolean;
   showBlog?: boolean;
+  showCoFounders?: boolean;
   showJoinUs?: boolean;
   showBackButton?: boolean;
   onBackClick?: () => void;
@@ -38,7 +40,7 @@ type NavBarProps = {
   blogPageAction?: string;
 };
 
-export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showEnvironments = false, showBlog = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
+export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showRegistry = false, showBlog = false, showCoFounders = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -204,7 +206,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     navbarPadding: "py-0.5", // keep compact
 
     // LOGO CONTROLS
-    logoGap: "gap-[.005rem]", // Space between logo and text: 'gap-1', 'gap-4', etc.
+    logoGap: "gap-2", // Space between logo and text: 'gap-1', 'gap-4', etc.
     logoSize: "width={40} height={40}", // Logo image size (change both width and height)
     logoTextSize: "text-xl", // Logo text size: 'text-xl', 'text-3xl', etc.
 
@@ -221,11 +223,11 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     <>
       <header className="w-full">
         <nav
-          className={`flex flex-col bg-white/10 border-2 border-white/20 border-t-0 backdrop-blur-md max-w-7xl mx-auto overflow-hidden`}
+          className={`flex flex-col bg-[#F5F1E8]/80 border-2 border-[#9CA3AF] border-t-0 backdrop-blur-md max-w-7xl mx-auto overflow-hidden`}
         style={{
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          borderBottomLeftRadius: '40px',
-          borderBottomRightRadius: '40px',
+          boxShadow: '0 4px 12px -2px rgba(139, 119, 89, 0.12), 0 2px 6px -1px rgba(139, 119, 89, 0.08)',
+          borderBottomLeftRadius: '32px',
+          borderBottomRightRadius: '32px',
         }}
       >
         {/* Top Row - Logo/Back Button and Buttons */}
@@ -300,7 +302,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 {/* <Link
                   href="/login"
                   className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border cursor-pointer outline-none leading-none font-space-grotesk hover:border-waygent-orange/60 hover:text-waygent-orange focus-visible:outline-none"
-                  style={{ borderColor: '#E5E7EB', backgroundColor: '#FAF9F5', color: '#6B7280' }}
+                  style={{ borderColor: '#E5E7EB', backgroundColor: '#F5F1E8', color: '#6B7280' }}
                 >
                   <span className="leading-none">Log In</span>
                 </Link> */}
@@ -330,7 +332,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                   style={{
                     background: '#8FB7C5',
                     border: '1px solid #7AA5B5',
-                    borderRadius: '1.5rem',
+                    borderRadius: '9999px',
                     color: '#FFFFFF',
                     fontFamily: 'system-ui, -apple-system, sans-serif',
                     boxShadow: '0 2px 8px rgba(143, 183, 197, 0.3)',
@@ -544,7 +546,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
               </div>
             )}
 
-            {showEnvironments && (
+            {showRegistry && (
               <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
                 <h2
                   style={{
@@ -556,7 +558,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     marginBottom: "0px",
                   }}
                 >
-                  Environments
+                  Registry
                 </h2>
               </div>
             )}
@@ -574,6 +576,23 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                   }}
                 >
                   Blog
+                </h2>
+              </div>
+            )}
+
+            {showCoFounders && (
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "16px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  CoFounders
                 </h2>
               </div>
             )}

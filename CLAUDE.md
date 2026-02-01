@@ -1,1 +1,2 @@
-- pls donot run dev servers ; we are already running the website in localhost:3000 dont add new ones
+- avoid running dev servers automatically, but start them when the user explicitly asks
+- website typically runs on localhost:3000

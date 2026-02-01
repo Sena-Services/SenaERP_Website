@@ -14,6 +14,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const localContentRef = useRef<HTMLDivElement>(null);
   const contentRef = scrollRef || localContentRef;
   const [isContentAtBottom, setIsContentAtBottom] = useState(false);
+  const [isVideoHovered, setIsVideoHovered] = useState(false);
   const scrollAttemptRef = useRef(0);
   const lastScrollTopRef = useRef(0);
   const isManualScrollRef = useRef(false); // Flag to prevent double-scroll from arrow click
@@ -184,14 +185,14 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             fontSize: isMobile ? '2.75rem' : `${getScaledValue(58)}px`,
             fontWeight: 700,
             letterSpacing: '0.015em',
-            marginBottom: `${getScaledValue(8)}px`,
+            marginBottom: `${getScaledValue(2)}px`,
             lineHeight: 1.3,
             textRendering: 'optimizeLegibility',
             WebkitFontSmoothing: 'antialiased',
             textShadow: isMobile ? '0 3px 12px rgba(255, 255, 255, 1), 0 2px 8px rgba(255, 255, 255, 0.95), 0 1px 4px rgba(0, 0, 0, 0.3)' : undefined,
           }}
         >
-          Compose your business like a painting
+          Speak your business into existence
         </h1>
         <p
           style={{
@@ -199,7 +200,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             color: isMobile ? "#4a3d30" : "#8b7355",
             fontStyle: "normal",
             fontSize: isMobile ? '0.875rem' : `${getScaledValue(18)}px`,
-            marginTop: `${getScaledValue(4)}px`,
+            marginTop: `${getScaledValue(0)}px`,
             lineHeight: 1.5,
             letterSpacing: '0.02em',
             fontWeight: 500,
@@ -210,58 +211,239 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         </p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: `${getScaledValue(10)}px`, position: 'relative', marginTop: `${getScaledValue(15)}px`, paddingTop: `${getScaledValue(15)}px` }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: `${getScaledValue(12)}px`, position: 'relative', marginTop: `${getScaledValue(15)}px`, paddingTop: `${getScaledValue(20)}px` }}>
+        {/* Mission Statement label with fading line */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          width: isMobile ? '100px' : `${getScaledValue(200)}px`,
-          height: '1px',
-          background: 'linear-gradient(to right, rgba(139, 115, 85, 0.6), transparent)'
-        }}></div>
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${getScaledValue(10)}px`,
+        }}>
+          <span style={{
+            fontFamily: "Georgia, serif",
+            color: "#6B5744",
+            fontSize: isMobile ? '8px' : `${getScaledValue(10)}px`,
+            textTransform: 'uppercase',
+            letterSpacing: "0.15em",
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
+          }}>Mission Statement</span>
+          <div style={{
+            width: isMobile ? '60px' : `${getScaledValue(120)}px`,
+            height: '1px',
+            background: 'linear-gradient(to right, rgba(139, 115, 85, 0.6), transparent)'
+          }}></div>
+        </div>
+
+        {/* Intro paragraph */}
         <p
           style={{
             fontFamily: "Georgia, serif",
             color: isMobile ? "#3d3226" : "#6b5d4f",
-            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
+            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(15)}px`,
             lineHeight: 1.6,
             fontWeight: isMobile ? 500 : 400,
+            margin: 0,
             textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.2)' : undefined,
           }}
         >
-          We believe your ERP should be a direct extension of how your business actually operates. Not locked into
-          rigid templates, never trapped in boxes someone else designed.
+          Sena is the agentic enterprise platform where businesses can become AI-first. To achieve this, we're rethinking ERPs from first principles — built on three pillars:
         </p>
 
-        <p
+        {/* Three Pillars */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: `${getScaledValue(12)}px`, marginTop: `${getScaledValue(4)}px` }}>
+          {/* Pillar 1: Custom ERP */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: `${getScaledValue(10)}px` }}>
+            <span style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#5a4938" : "#8b7355",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(15)}px`,
+              fontWeight: 600,
+              minWidth: isMobile ? '22px' : `${getScaledValue(26)}px`,
+              flexShrink: 0,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
+            }}>01</span>
+            <p style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#3d3226" : "#6b5d4f",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(15)}px`,
+              lineHeight: 1.6,
+              margin: 0,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85)' : undefined,
+            }}><strong>Custom ERP</strong> : Your ERP should be a direct extension of how your business actually operates. Not locked into rigid templates, never trapped in boxes someone else designed.</p>
+          </div>
+
+          {/* Pillar 2: AI Agents */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: `${getScaledValue(10)}px` }}>
+            <span style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#5a4938" : "#8b7355",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(15)}px`,
+              fontWeight: 600,
+              minWidth: isMobile ? '22px' : `${getScaledValue(26)}px`,
+              flexShrink: 0,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
+            }}>02</span>
+            <p style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#3d3226" : "#6b5d4f",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(15)}px`,
+              lineHeight: 1.6,
+              margin: 0,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85)' : undefined,
+            }}><strong>AI Agents</strong> : An ERP isn't just a system of records. It's a workstation where humans and AI agents collaborate — virtual employees running your operations, tirelessly.</p>
+          </div>
+
+          {/* Pillar 3: Democratized Access */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: `${getScaledValue(10)}px` }}>
+            <span style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#5a4938" : "#8b7355",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(15)}px`,
+              fontWeight: 600,
+              minWidth: isMobile ? '22px' : `${getScaledValue(26)}px`,
+              flexShrink: 0,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
+            }}>03</span>
+            <p style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#3d3226" : "#6b5d4f",
+              fontSize: isMobile ? '0.8125rem' : `${getScaledValue(15)}px`,
+              lineHeight: 1.6,
+              margin: 0,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85)' : undefined,
+            }}><strong>Democratized Access</strong> : Zero technical skills required. Whether you're a founder or a manager, you hold the brush. If you can describe it, you can build it.</p>
+          </div>
+        </div>
+
+        {/* Watch our video link with hover preview */}
+        <div
           style={{
-            fontFamily: "Georgia, serif",
-            color: isMobile ? "#3d3226" : "#6b5d4f",
-            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
-            lineHeight: 1.6,
-            fontWeight: isMobile ? 500 : 400,
-            textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.2)' : undefined,
+            marginTop: `${getScaledValue(12)}px`,
+            position: 'relative',
           }}
+          onMouseEnter={() => setIsVideoHovered(true)}
+          onMouseLeave={() => setIsVideoHovered(false)}
         >
-          Sena is where that system is assembled from modular pieces: data models, workflows, interfaces, and AI agents,
-          all wired into the tools your team already uses.
+          <a
+            href="https://www.youtube.com/watch?v=VAZctriaoUg"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setIsVideoHovered(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              textDecoration: 'none',
+            }}
+          >
+            <span style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#5a4938" : "#8b7355",
+              fontSize: isMobile ? '0.75rem' : `${getScaledValue(13)}px`,
+              fontWeight: 500,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
+            }}>Watch our intro video</span>
+            <svg
+              width={isMobile ? 14 : getScaledValue(16)}
+              height={isMobile ? 14 : getScaledValue(16)}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={isMobile ? "#5a4938" : "#8b7355"}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                transform: isVideoHovered ? 'translateX(3px)' : 'translateX(0)',
+                transition: 'transform 0.2s ease',
+              }}
+            >
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
 
-        </p>
+          {/* Video preview overlay */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              paddingTop: '8px',
+              width: isMobile ? '200px' : `${getScaledValue(280)}px`,
+              opacity: isVideoHovered ? 1 : 0,
+              transform: isVideoHovered ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              pointerEvents: isVideoHovered ? 'auto' : 'none',
+              zIndex: 100,
+            }}
+            onMouseEnter={() => setIsVideoHovered(true)}
+            onMouseLeave={() => setIsVideoHovered(false)}
+          >
+            <a
+              href="https://www.youtube.com/watch?v=VAZctriaoUg"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsVideoHovered(false)}
+              style={{
+                display: 'block',
+                borderRadius: `${getScaledValue(12)}px`,
+                overflow: 'hidden',
+                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08)',
+                textDecoration: 'none',
+              }}
+            >
+              {/* Video preview */}
+              <div style={{
+                position: 'relative',
+                overflow: 'hidden',
+              }}>
+                <video
+                  src="/videos/sena-preview.mp4"
+                  loop
+                  playsInline
+                  muted
+                  ref={(el) => {
+                    if (el) {
+                      if (isVideoHovered) {
+                        el.play().then(() => {
+                          // Unmute after play starts (works around autoplay restrictions)
+                          el.muted = false;
+                        }).catch(() => {});
+                      } else {
+                        el.pause();
+                        el.currentTime = 0;
+                        el.muted = true;
+                      }
+                    }
+                  }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    height: 'auto',
+                    pointerEvents: 'none',
+                  }}
+                />
+                {/* Sena text overlay */}
+                <span style={{
+                  position: 'absolute',
+                  bottom: '12px',
+                  left: '12px',
+                  fontFamily: "'Tangerine', cursive",
+                  fontSize: '28px',
+                  color: 'white',
+                  pointerEvents: 'none',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}>Sena</span>
+              </div>
+            </a>
+          </div>
+        </div>
 
-        <p
-          style={{
-            fontFamily: "Georgia, serif",
-            color: isMobile ? "#3d3226" : "#6b5d4f",
-            fontSize: isMobile ? '0.8125rem' : `${getScaledValue(16)}px`,
-            lineHeight: 1.6,
-            fontWeight: isMobile ? 500 : 400,
-            textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.2)' : undefined,
-          }}
-        >
-          Choose from a marketplace of pre-built environments to jumpstart your build, or generate exactly what you need in real-time—on request.
-        </p>
-
-        <div style={{ marginTop: `${getScaledValue(15)}px`, paddingTop: `${getScaledValue(15)}px`, position: 'relative' }}>
+        <div style={{ marginTop: `${getScaledValue(10)}px`, paddingTop: `${getScaledValue(10)}px`, position: 'relative' }}>
           <div style={{
             position: 'absolute',
             top: 0,
@@ -288,10 +470,11 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             flexDirection: 'column',
             gap: `${getScaledValue(9)}px`,
             padding: isMobile ? '12px' : `${getScaledValue(16)}px`,
-            borderRadius: isMobile ? '8px' : `${getScaledValue(12)}px`,
-            background: "rgba(255,255,255,0.15)",
+            borderRadius: isMobile ? '16px' : `${getScaledValue(24)}px`,
+            background: "rgba(255,255,255,0.4)",
             backdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.25)",
+            border: "2px solid #9CA3AF",
+            boxShadow: '0 4px 12px rgba(156, 163, 175, 0.15)',
           }}
         >
           <p
@@ -304,7 +487,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               fontWeight: 600,
             }}
           >
-            Built for creators, not corporations
+            The ERP you'll never touch
           </p>
           <p
             style={{
@@ -314,9 +497,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               lineHeight: 1.6,
             }}
           >
-            No rigid workflows. No endless configuration. No armies of
-            consultants. Just you, your vision, and an intelligent system
-            that grows with your imagination.
+            No dashboards to navigate. No databases to manage. Just tell your agents what you need. They'll handle the rest—and get smarter with every interaction.
           </p>
           <div className="h-px bg-gray-400/40 w-full" style={{ marginTop: `${getScaledValue(7)}px` }}></div>
           <div className="flex items-center justify-between" style={{ paddingTop: `${getScaledValue(7)}px` }}>
@@ -328,7 +509,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                 fontSize: isMobile ? '10px' : `${getScaledValue(13.5)}px`,
               }}
             >
-              Begin composing your masterpiece
+              Meet your new operations team
             </p>
             <svg
               className="text-gray-600 animate-bounce cursor-pointer"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import styles from "./SidebarNav.module.css";
 
 type Section = {
   id: string;
@@ -11,13 +12,6 @@ type SidebarNavProps = {
   sections: Section[];
 };
 
-type IndicatorState = {
-  top: number;
-  height: number;
-};
-
-const INITIAL_INDICATOR: IndicatorState = { top: 0, height: 0 };
-
 export default function SidebarNav({ sections }: SidebarNavProps) {
   const sectionIds = useMemo(
     () => sections.map((section) => section.id),
@@ -25,7 +19,7 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   );
 
   const [activeSection, setActiveSection] = useState(sectionIds[0] ?? "");
-  const [indicator, setIndicator] = useState<IndicatorState>(INITIAL_INDICATOR);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const rafId = useRef<number | null>(null);
   const activeSectionRef = useRef(activeSection);
@@ -47,18 +41,15 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   const updateActiveSection = useCallback(() => {
     if (sectionIds.length === 0) return;
 
-    // Skip detection if we're actively navigating
     if (isNavigatingRef.current) {
       return;
     }
 
-    // Check if we're at the bottom of the page
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = window.scrollY;
     const clientHeight = window.innerHeight;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10; // 10px threshold
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
 
-    // If at bottom, select the last section
     if (isAtBottom) {
       const lastId = sectionIds[sectionIds.length - 1]!;
       if (lastId !== activeSectionRef.current) {
@@ -68,17 +59,14 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       return;
     }
 
-    // Use top-based detection: find which section's anchor is currently past the top of viewport
-    const navbarOffset = 200; // Account for navbar + padding
+    const navbarOffset = 200;
     const scrollPosition = window.scrollY + navbarOffset;
 
     let activeId = sectionIds[0]!;
 
-    // Special case: if we're very near the top, always select first section
     if (window.scrollY < 100) {
       activeId = sectionIds[0]!;
     } else {
-      // Go through sections in order and find the last one whose top is above scroll position
       for (let i = 0; i < sectionIds.length; i++) {
         const id = sectionIds[i]!;
         const element = document.getElementById(id);
@@ -87,11 +75,9 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         const rect = element.getBoundingClientRect();
         const elementTop = window.scrollY + rect.top;
 
-        // If this section's top is above our scroll position, it's the active one
         if (elementTop <= scrollPosition) {
           activeId = id;
         } else {
-          // Once we find a section below our scroll position, stop
           break;
         }
       }
@@ -103,36 +89,11 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
     }
   }, [sectionIds]);
 
-  const updateIndicator = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const button = itemRefs.current[activeSectionRef.current] ?? null;
-    if (!button) {
-      setIndicator(INITIAL_INDICATOR);
-      return;
-    }
-
-    const containerRect = container.getBoundingClientRect();
-    const buttonRect = button.getBoundingClientRect();
-
-    const top = buttonRect.top - containerRect.top + container.scrollTop;
-    const height = buttonRect.height;
-
-    setIndicator((prev) => {
-      if (Math.abs(prev.top - top) < 0.5 && Math.abs(prev.height - height) < 0.5) {
-        return prev;
-      }
-      return { top, height };
-    });
-  }, []);
-
   useEffect(() => {
     const schedule = () => {
       if (rafId.current) cancelAnimationFrame(rafId.current);
       rafId.current = requestAnimationFrame(() => {
         updateActiveSection();
-        updateIndicator();
       });
     };
 
@@ -150,50 +111,24 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
       window.removeEventListener("resize", schedule);
       container?.removeEventListener("scroll", schedule);
     };
-  }, [updateActiveSection, updateIndicator]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(updateIndicator, 0);
-    return () => window.clearTimeout(timer);
-  }, [activeSection, updateIndicator]);
-
-  // Reset all button styles when active section changes
-  useEffect(() => {
-    Object.entries(itemRefs.current).forEach(([id, button]) => {
-      if (button && id !== activeSection) {
-        button.style.background = 'transparent';
-        button.style.border = '1px solid transparent';
-        button.style.transform = 'translateX(0)';
-        button.style.boxShadow = 'none';
-      }
-    });
-  }, [activeSection]);
+  }, [updateActiveSection]);
 
   const handleClick = (id: string) => {
-    // Set navigating flag to prevent detection from overriding
     isNavigatingRef.current = true;
 
-    // Force set the active section BEFORE scrolling
     activeSectionRef.current = id;
     setActiveSection(id);
-    updateIndicator();
 
     let targetPosition = 0;
 
-    // Special handling for intro (home) - reset to top and notify to unlock animations
     const isHomeSection = sections.findIndex(s => s.id === id) === 0;
     if (isHomeSection) {
       targetPosition = 0;
-      // Dispatch event to reset the home lock
       window.dispatchEvent(new CustomEvent('resetHome'));
-    }
-    // Special handling for how-it-works - scroll to the intro section position
-    else if (id === "how-it-works") {
-      // The "how-it-works" cards should be fully split and rotated
-      // 900 (shrink) + 400 (split) + 800 (rotate) = 2100px
+    } else if (id === "how-it-works") {
       const introSection = document.getElementById("intro");
       if (introSection) {
-        targetPosition = introSection.offsetTop + 2100; // Full animation complete
+        targetPosition = introSection.offsetTop + 2100;
       }
     } else {
       const target = document.getElementById(id);
@@ -202,38 +137,31 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
         isNavigatingRef.current = false;
         return;
       }
-      // Builder section needs to scroll more to the top to show header properly
       const navbarHeight = id === "builder" ? 80 : 90;
       targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
     }
 
-
-    // Smooth scroll animation
     window.scrollTo({
       top: targetPosition,
       behavior: "smooth",
     });
 
-
-    // Re-enable detection after navigation completes
     setTimeout(() => {
       isNavigatingRef.current = false;
     }, 1000);
   };
 
-  // Get responsive scale based on viewport width
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
     const updateScale = () => {
       const width = window.innerWidth;
       if (width >= 1024) {
-        setScale(1); // Full size at 1024px and above
+        setScale(1);
       } else if (width >= 768) {
-        // Scale from 0.6 at 768px to 1 at 1024px
         setScale(0.6 + ((width - 768) / (1024 - 768)) * 0.4);
       } else {
-        setScale(0); // Hide below 768px
+        setScale(0);
       }
     };
 
@@ -245,25 +173,16 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   if (scale === 0) return null;
 
   return (
-    <aside className="fixed left-0 top-1/2 z-50 transform group" style={{ transform: 'translateY(-50%)' }}>
-      <div className="w-auto" style={{ transform: `scale(${scale})`, transformOrigin: 'left center' }}>
-        <nav aria-label="Section index" className="relative">
-          <div
-            ref={scrollContainerRef}
-            className="relative flex max-h-[72vh] flex-col overflow-y-auto pl-1.5 pr-1.5 py-2 transition-all duration-300 ease-out w-auto group-hover:pr-2"
-            style={{
-              background: 'transparent',
-              scrollbarWidth: 'none', // Firefox
-              msOverflowStyle: 'none', // IE/Edge
-            }}
-          >
-            <style jsx>{`
-              div::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style>
-
-            <ul className="relative flex flex-col gap-1 text-waygent-text-secondary font-space-grotesk">
+    <aside
+      className={`${styles.sidebar} ${isExpanded ? styles.expanded : styles.collapsed}`}
+      style={{ transform: 'translateY(-50%)' }}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+    >
+      <div className={styles.scaleWrapper} style={{ transform: `scale(${scale})`, transformOrigin: 'left center' }}>
+        <nav aria-label="Section index" className={styles.nav}>
+          <div ref={scrollContainerRef} className={styles.scrollContainer}>
+            <ul className={styles.list}>
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const isFirstSection = index === 0;
@@ -279,46 +198,13 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={section.label}
                       onClick={() => handleClick(section.id)}
-                      className="group/item relative flex items-center gap-3 p-2 text-left transition-all duration-300 ease-out focus-visible:outline-none cursor-pointer w-[40px] group-hover:w-[160px] h-10 rounded-md"
-                      style={{
-                        background: isActive
-                          ? '#8FB7C5'
-                          : 'transparent',
-                        border: isActive
-                          ? '1px solid #7AA5B5'
-                          : '1px solid transparent',
-                        boxShadow: isActive
-                          ? '0 2px 8px rgba(143, 183, 197, 0.3)'
-                          : 'none',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isActive) {
-                          e.currentTarget.style.background = 'rgba(143, 183, 197, 0.12)';
-                          e.currentTarget.style.border = '1px solid rgba(143, 183, 197, 0.25)';
-                          e.currentTarget.style.transform = 'translateX(4px)';
-                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.2)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive) {
-                          e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.border = '1px solid transparent';
-                          e.currentTarget.style.transform = 'translateX(0)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }
-                      }}
+                      className={`${styles.button} ${isActive ? styles.buttonActive : ''}`}
                     >
-                      {/* Home icon for first section, step number for rest */}
-                      <span
-                        className="text-[11px] font-bold tracking-wider transition-all duration-200 w-6 h-6 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-full"
-                        style={{
-                          color: isActive ? '#FFFFFF' : '#6B7280',
-                          background: isActive ? '#6A94A3' : 'rgba(143, 183, 197, 0.15)',
-                        }}
-                      >
+                      {/* Circle with icon/number */}
+                      <span className={`${styles.circle} ${isActive ? styles.circleActive : ''}`}>
                         {isFirstSection ? (
                           <svg
-                            className="w-3.5 h-3.5"
+                            className={styles.homeIcon}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -331,18 +217,12 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
                             />
                           </svg>
                         ) : (
-                          step
+                          <span className={styles.stepNumber}>{step}</span>
                         )}
                       </span>
 
-                      {/* Label text */}
-                      <span
-                        className="text-[11px] font-semibold transition-all duration-300 flex items-center whitespace-nowrap overflow-hidden opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-[200px] font-space-grotesk"
-                        style={{
-                          color: isActive ? '#FFFFFF' : '#374151',
-                          fontWeight: isActive ? '700' : '600',
-                        }}
-                      >
+                      {/* Label text - only visible when expanded */}
+                      <span className={styles.label}>
                         {section.label}
                       </span>
                     </button>

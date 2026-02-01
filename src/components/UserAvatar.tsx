@@ -75,7 +75,7 @@ export default function UserAvatar({ user, onLogout }: UserAvatarProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg border py-1 z-50 font-space-grotesk" style={{ backgroundColor: '#FAF9F5', borderColor: '#E5E7EB' }}>
+        <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg border py-1 z-50 font-space-grotesk" style={{ backgroundColor: '#F5F1E8', borderColor: '#E5E7EB' }}>
           {/* User Info Section */}
           <div className="px-4 py-3" style={{ borderBottom: '1px solid #EEF2FF' }}>
             <div className="flex items-center gap-3">

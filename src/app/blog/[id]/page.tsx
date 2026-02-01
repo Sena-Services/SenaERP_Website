@@ -35,7 +35,7 @@ export default function BlogArticlePage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleBackClick = () => {
-    router.back();
+    router.push('/?section=how-it-works');
   };
 
   useEffect(() => {

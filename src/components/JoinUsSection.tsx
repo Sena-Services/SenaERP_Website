@@ -86,11 +86,13 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
           paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundColor: '#F5F3E8',
+          border: '2px solid #9CA3AF',
           minHeight: isMobile ? '400px' : `${getResponsiveValue(320)}px`,
           height: 'auto',
           maxHeight: isMobile ? 'none' : `${getResponsiveValue(400)}px`,
           overflow: 'hidden',
           borderRadius: isMobile ? '24px' : `${getResponsiveValue(40)}px`,
+          zIndex: 10,
         }}
       >
         {/* Bottom left corner image */}

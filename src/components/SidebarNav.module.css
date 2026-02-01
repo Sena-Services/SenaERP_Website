@@ -1,0 +1,192 @@
+/* Sidebar container */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  z-index: 50;
+}
+
+.scaleWrapper {
+  width: auto;
+}
+
+.nav {
+  position: relative;
+  background: #F5F1E8;
+  border: 2px solid #9CA3AF;
+  border-left: none;
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+  box-shadow: 4px 0 12px -2px rgba(139, 119, 89, 0.12), 2px 0 6px -1px rgba(139, 119, 89, 0.08);
+}
+
+.scrollContainer {
+  position: relative;
+  display: flex;
+  max-height: 72vh;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 12px 8px;
+  background: transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  transition: padding 0.3s ease-out;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Button styles */
+.button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  text-align: left;
+  transition: all 0.3s ease-out;
+  outline: none;
+  cursor: pointer;
+  height: 36px;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+}
+
+.button:hover {
+  background: rgba(143, 183, 197, 0.4);
+}
+
+/* Circle (icon container) */
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  border-radius: 9999px;
+  border: 2px solid #9CA3AF;
+  transition: all 0.2s ease-out;
+  font-family: 'Space Grotesk', sans-serif;
+
+  /* Default: inactive state */
+  background: #F5F1E8;
+  color: #6B7280;
+}
+
+.circle:hover {
+  background: #8FB7C5;
+  color: #FFFFFF;
+}
+
+.homeIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.stepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Label text */
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #6B7280;
+}
+
+/* ========================================
+   COLLAPSED STATE
+   ======================================== */
+.collapsed .scrollContainer {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.collapsed .button {
+  width: 36px;
+}
+
+.collapsed .label {
+  opacity: 0;
+  max-width: 0;
+}
+
+/* Active circle when COLLAPSED: teal background */
+.collapsed .circleActive {
+  background: #8FB7C5;
+  color: #FFFFFF;
+}
+
+/* Active button when collapsed: no special background */
+.collapsed .buttonActive {
+  background: transparent;
+}
+
+.collapsed .buttonActive:hover {
+  background: transparent;
+}
+
+/* ========================================
+   EXPANDED STATE
+   ======================================== */
+.expanded .scrollContainer {
+  padding-left: 8px;
+  padding-right: 12px;
+}
+
+.expanded .button {
+  width: 160px;
+}
+
+.expanded .label {
+  opacity: 1;
+  max-width: 200px;
+}
+
+/* Active button when EXPANDED: teal pill background */
+.expanded .buttonActive {
+  background: #8FB7C5;
+}
+
+.expanded .buttonActive:hover {
+  background: #8FB7C5;
+}
+
+/* Active circle when EXPANDED: white background */
+.expanded .circleActive {
+  background: #FFFFFF;
+  color: #374151;
+}
+
+/* Active label styling */
+.buttonActive .label {
+  color: #374151;
+  font-weight: 700;
+}

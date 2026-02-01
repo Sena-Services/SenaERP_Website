@@ -1,25 +1,29 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import IntroSection from "@/components/IntroSection";
 import MobileHowItWorks from "@/components/MobileHowItWorks";
 import BuilderTabbed from "@/components/BuilderTabbed";
-import LandingEnvironments from "@/components/LandingEnvironments";
+import LandingRegistry from "@/components/LandingRegistry";
 import IntegrationsSection from "@/components/IntegrationsSection";
 // import PricingSection from "@/components/PricingSection";
 import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
+import CoFoundersSection from "@/components/CoFoundersSection";
 import NavBar from "@/components/NavBar";
 import SidebarNav from "@/components/SidebarNav";
 
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const introRef = useRef<HTMLDivElement>(null);
-  const environmentsRef = useRef<HTMLElement>(null);
+  const registryRef = useRef<HTMLElement>(null);
   const integrationsRef = useRef<HTMLElement>(null);
   const builderRef = useRef<HTMLDivElement>(null);
   // const pricingRef = useRef<HTMLElement>(null);
   const blogRef = useRef<HTMLElement>(null);
+  const cofoundersRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
   const [showNavigation, setShowNavigation] = useState(false);
   const sidebarSections = [
@@ -27,18 +31,29 @@ export default function Home() {
     { id: "how-it-works", label: "How it works" },
     { id: "builder", label: "Builder" },
     { id: "integrations", label: "Integrations" },
-    { id: "environments", label: "Environments" },
+    { id: "registry", label: "Registry" },
     { id: "blog", label: "Blog" },
     // { id: "pricing", label: "Pricing" },
+    { id: "cofounders", label: "CoFounders" },
     { id: "join-us", label: "Join Our Team" },
   ];
 
-  // Scroll to top on page load/refresh
+  // Scroll to top on page load/refresh, or skip intro if section param is present
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    const section = searchParams.get('section');
+    if (section === 'how-it-works') {
+      // Skip intro and go directly to "how it works" section
+      // Use a small delay to ensure the page is ready
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('triggerIntroSequence'));
+        setShowNavigation(true);
+      }, 100);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [searchParams]);
 
-  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'environments' | 'blog' | 'join-us' | 'other'>('other');
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'registry' | 'blog' | 'cofounders' | 'join-us' | 'other'>('other');
 
   useEffect(() => {
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
@@ -65,15 +80,17 @@ export default function Home() {
         const howItWorksEl = document.getElementById('how-it-works');
         const builderEl = document.getElementById('builder');
         const integrationsEl = document.getElementById('integrations');
-        const environmentsEl = document.getElementById('environments');
+        const registryEl = document.getElementById('registry');
         const blogEl = document.getElementById('blog');
+        const cofoundersEl = document.getElementById('cofounders');
         const joinUsEl = document.getElementById('join-us');
 
         // Get all section positions
         const sections = [
           { id: 'join-us', el: joinUsEl },
+          { id: 'cofounders', el: cofoundersEl },
           { id: 'blog', el: blogEl },
-          { id: 'environments', el: environmentsEl },
+          { id: 'registry', el: registryEl },
           { id: 'integrations', el: integrationsEl },
           { id: 'builder', el: builderEl },
           { id: 'how-it-works', el: howItWorksEl },
@@ -127,17 +144,17 @@ export default function Home() {
     // Define snap points and zones
     const getSnapPoints = () => {
       const introSection = introRef.current;
-      const environmentsSection = environmentsRef.current;
+      const registrySection = registryRef.current;
       const builderSection = builderRef.current;
 
-      if (!introSection || !environmentsSection) return {
+      if (!introSection || !registrySection) return {
         initial: 0,
         unitedCard: 0,
         splitZoneStart: 0,
         splitZoneEnd: 0,
         autoTriggerPoint: 0,
         rotated: 0,
-        environments: 0,
+        registry: 0,
         builder: 0,
       };
 
@@ -150,7 +167,7 @@ export default function Home() {
         splitZoneEnd: introTop + 900 + 400,
         autoTriggerPoint: introTop + 900 + 400 * 0.8, // 80% through split
         rotated: introTop + 900 + 400 + 800,
-        environments: environmentsSection.offsetTop,
+        registry: registrySection.offsetTop,
         builder: builderSection?.offsetTop || 0,
       };
     };
@@ -449,10 +466,13 @@ export default function Home() {
       introSequencePlayed = true;
       manualScrollEnabled = true;
       autoRotateTriggered = false;
+      hasLeftHome = true; // Mark that user has left home section (prevents scrolling back up)
       // Jump directly to the rotated position (where 3 cards are visible)
       window.scrollTo({ top: points.rotated, behavior: 'auto' });
       // Trigger scroll event to update sidebar
       window.dispatchEvent(new Event('scroll'));
+      // Dispatch event so sidebar knows home is locked
+      window.dispatchEvent(new CustomEvent('homeLeft'));
     };
 
     window.addEventListener('triggerIntroSequence', handleTriggerIntro);
@@ -502,17 +522,53 @@ export default function Home() {
 
     window.addEventListener('resetHome', handleResetHome);
 
-    // Use requestAnimationFrame for smooth clamping without jitter
+    // Smooth bounce effect when scrolling past the boundary
     let clampAnimationFrame: number | null = null;
+    let bounceVelocity = 0;
+    let isBouncing = false;
+    let lastScrollY = window.scrollY;
+
     const clampScrollPosition = () => {
       if (hasLeftHome) {
         const points = getSnapPoints();
         const minScroll = points.rotated;
         const currentScroll = window.scrollY;
 
-        // If below threshold, clamp to minimum
+        // Calculate scroll velocity
+        const scrollDelta = currentScroll - lastScrollY;
+        lastScrollY = currentScroll;
+
+        // If below threshold, apply smooth bounce
         if (currentScroll < minScroll) {
-          window.scrollTo(0, minScroll);
+          const overscroll = minScroll - currentScroll;
+
+          if (!isBouncing) {
+            // Start bounce - capture the velocity
+            isBouncing = true;
+            bounceVelocity = Math.min(overscroll * 0.15, 8); // Proportional to overscroll, capped
+          }
+
+          // Spring physics: accelerate back towards boundary
+          const springForce = overscroll * 0.12; // Spring stiffness
+          const damping = 0.85; // Damping factor
+
+          bounceVelocity = (bounceVelocity + springForce) * damping;
+
+          // Apply the bounce
+          const newScroll = currentScroll + bounceVelocity;
+
+          // If we're close enough and moving slowly, snap to final position
+          if (Math.abs(minScroll - newScroll) < 1 && Math.abs(bounceVelocity) < 0.5) {
+            window.scrollTo(0, minScroll);
+            isBouncing = false;
+            bounceVelocity = 0;
+          } else {
+            window.scrollTo(0, Math.min(newScroll, minScroll));
+          }
+        } else {
+          // Reset bounce state when above threshold
+          isBouncing = false;
+          bounceVelocity = 0;
         }
       }
       clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
@@ -542,7 +598,12 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative bg-waygent-cream text-waygent-text-primary">
+    <main className="relative text-waygent-text-primary">
+      {/* Base background color layer - at the very back */}
+      <div
+        className="fixed inset-0"
+        style={{ zIndex: -2, backgroundColor: '#F5F1E8' }}
+      />
       {/* Fixed NavBar at top - only show when not on home */}
       {showNavigation && (
         <div
@@ -556,8 +617,9 @@ export default function Home() {
             showHowItWorks={currentSection === 'how-it-works'}
             showBuilder={currentSection === 'builder'}
             showIntegrations={currentSection === 'integrations'}
-            showEnvironments={currentSection === 'environments'}
+            showRegistry={currentSection === 'registry'}
             showBlog={currentSection === 'blog'}
+            showCoFounders={currentSection === 'cofounders'}
             showJoinUs={currentSection === 'join-us'}
           />
         </div>
@@ -570,16 +632,16 @@ export default function Home() {
         </div>
       )}
 
-      <div ref={introRef}>
+      <div ref={introRef} className="relative">
         <IntroSection />
       </div>
 
       {/* Mobile How It Works - only shows on mobile */}
       <MobileHowItWorks />
 
-      {/* Section Divider between How It Works and Builder - only shows on mobile */}
-      <div className="w-full md:hidden" style={{
-        background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+      {/* Section Divider between How It Works and Builder */}
+      <div className="w-full relative" style={{
+        background: `linear-gradient(to bottom, #F5F1E8 0%, #F5F1E8 50%, #EDE7DC 50%, #EDE7DC 100%)`,
         paddingTop: '8px',
         paddingBottom: '8px'
       }}>
@@ -593,17 +655,17 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="w-full relative z-1">
+      <div className="w-full relative">
         <div className="flex min-h-screen flex-1 flex-col">
           <div className="flex-1 flex flex-col relative">
             {/* Builder - Color 2 */}
-            <div id="builder" style={{ backgroundColor: '#F0EFE9' }}>
+            <div id="builder" style={{ backgroundColor: '#EDE7DC' }}>
               <BuilderTabbed />
             </div>
 
             {/* Section Divider & Color Transition */}
             <div className="w-full" style={{
-              background: `linear-gradient(to bottom, #F0EFE9 0%, #F0EFE9 50%, #FAF9F5 50%, #FAF9F5 100%)`,
+              background: `linear-gradient(to bottom, #EDE7DC 0%, #EDE7DC 50%, #F5F1E8 50%, #F5F1E8 100%)`,
               paddingTop: '8px',
               paddingBottom: '8px'
             }}>
@@ -618,13 +680,13 @@ export default function Home() {
             </div>
 
             {/* Integrations - Color 1 */}
-            <div id="integrations" style={{ backgroundColor: '#FAF9F5' }}>
+            <div id="integrations" style={{ backgroundColor: '#F5F1E8' }}>
               <IntegrationsSection ref={integrationsRef} />
             </div>
 
             {/* Section Divider & Color Transition */}
             <div className="w-full" style={{
-              background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+              background: `linear-gradient(to bottom, #F5F1E8 0%, #F5F1E8 50%, #EDE7DC 50%, #EDE7DC 100%)`,
               paddingTop: '8px',
               paddingBottom: '8px'
             }}>
@@ -638,15 +700,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Environments - Color 2 */}
-            <div id="environments" style={{ backgroundColor: '#F0EFE9' }}>
-              <LandingEnvironments ref={environmentsRef} />
+            {/* Registry - Color 2 */}
+            <div id="registry" style={{ backgroundColor: '#EDE7DC' }}>
+              <LandingRegistry ref={registryRef} />
             </div>
           </div>
 
           {/* Section Divider & Color Transition */}
           <div className="w-full" style={{
-            background: `linear-gradient(to bottom, #F0EFE9 0%, #F0EFE9 50%, #FAF9F5 50%, #FAF9F5 100%)`,
+            background: `linear-gradient(to bottom, #EDE7DC 0%, #EDE7DC 50%, #F5F1E8 50%, #F5F1E8 100%)`,
             paddingTop: '8px',
             paddingBottom: '8px'
           }}>
@@ -661,13 +723,13 @@ export default function Home() {
           </div>
 
           {/* Blog - Color 1 */}
-          <div id="blog" style={{ backgroundColor: '#FAF9F5' }}>
+          <div id="blog" style={{ backgroundColor: '#F5F1E8' }}>
             <BlogSection ref={blogRef} />
           </div>
 
           {/* Section Divider & Color Transition */}
           <div className="w-full" style={{
-            background: `linear-gradient(to bottom, #FAF9F5 0%, #FAF9F5 50%, #F0EFE9 50%, #F0EFE9 100%)`,
+            background: `linear-gradient(to bottom, #F5F1E8 0%, #F5F1E8 50%, #EDE7DC 50%, #EDE7DC 100%)`,
             paddingTop: '8px',
             paddingBottom: '8px'
           }}>
@@ -681,12 +743,140 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Join Us - Color 2 */}
-          <div id="join-us" style={{ backgroundColor: '#F0EFE9' }}>
+          {/* CoFounders - Color 2 */}
+          <div id="cofounders" style={{ backgroundColor: '#EDE7DC' }}>
+            <CoFoundersSection ref={cofoundersRef} />
+          </div>
+
+          {/* Section Divider & Color Transition */}
+          <div className="w-full" style={{
+            background: `linear-gradient(to bottom, #EDE7DC 0%, #EDE7DC 50%, #F5F1E8 50%, #F5F1E8 100%)`,
+            paddingTop: '8px',
+            paddingBottom: '8px'
+          }}>
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300/40"></div>
+              </div>
+              <div className="relative px-4">
+                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Join Us - Color 1 */}
+          <div id="join-us" style={{ backgroundColor: '#F5F1E8' }}>
             <JoinUsSection ref={joinUsRef} />
           </div>
         </div>
       </div>
+
+      {/* ====== BACKGROUND TEXTURES - Rendered LAST to ensure they appear on top ====== */}
+
+      {/* Grid pattern - subtle background grid (above section bg, below cards) */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{ zIndex: 5, opacity: 0.04 }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(120, 100, 80, 0.6) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(120, 100, 80, 0.6) 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px',
+          }}
+        />
+      </div>
+
+      {/* Floating orbs layer - soft color washes */}
+      <div
+        className="fixed inset-0 pointer-events-none overflow-hidden"
+        style={{ zIndex: 10, opacity: 0.35 }}
+      >
+        {/* Moving gradient orbs */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: '900px',
+            height: '900px',
+            background: 'radial-gradient(circle, rgba(143, 183, 197, 0.5) 0%, transparent 60%)',
+            top: '-10%',
+            left: '-15%',
+            filter: 'blur(120px)',
+            animation: 'float1 20s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: '1000px',
+            height: '1000px',
+            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.4) 0%, transparent 60%)',
+            top: '25%',
+            right: '-20%',
+            filter: 'blur(120px)',
+            animation: 'float2 25s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: '800px',
+            height: '800px',
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 60%)',
+            bottom: '10%',
+            left: '0%',
+            filter: 'blur(120px)',
+            animation: 'float3 18s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: '850px',
+            height: '850px',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 60%)',
+            bottom: '30%',
+            right: '-5%',
+            filter: 'blur(120px)',
+            animation: 'float1 22s ease-in-out infinite reverse',
+          }}
+        />
+      </div>
+
+      {/* Noise grain overlay - subtle texture */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{ zIndex: 15, opacity: 0.08 }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        />
+      </div>
+
+      {/* CSS Keyframes for floating animation */}
+      <style jsx global>{`
+        @keyframes float1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(60px, -50px) scale(1.05); }
+          50% { transform: translate(-50px, 60px) scale(0.95); }
+          75% { transform: translate(50px, 50px) scale(1.02); }
+        }
+        @keyframes float2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-70px, 50px) scale(1.05); }
+          66% { transform: translate(60px, -60px) scale(0.95); }
+        }
+        @keyframes float3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(55px, -55px) scale(1.08); }
+        }
+      `}</style>
     </main>
   );
 }

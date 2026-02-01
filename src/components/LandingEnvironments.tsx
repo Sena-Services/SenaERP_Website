@@ -247,7 +247,8 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           style={{
             maxWidth: isMobile ? '100%' : 'min(1280px, calc(100vw - 320px))',
             paddingLeft: isMobile ? '16px' : 'max(16px, min(32px, 2vw))',
-            paddingRight: isMobile ? '16px' : 'max(16px, min(32px, 2vw))'
+            paddingRight: isMobile ? '16px' : 'max(16px, min(32px, 2vw))',
+            zIndex: 10,
           }}
         >
           <div className="mt-4 mb-4 md:mb-6 text-center px-4 md:px-0">
@@ -309,11 +310,12 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           paddingRight: 'max(16px, min(32px, 2vw))'
         }}
       >
-        <div className="hidden [@media(min-width:900px)]:grid [@media(min-width:900px)]:grid-cols-2 gap-4 xl:gap-6">
+        <div className="hidden [@media(min-width:900px)]:grid [@media(min-width:900px)]:grid-cols-2 gap-4 xl:gap-6" style={{ position: 'relative', zIndex: 10 }}>
           {/* Left side - EnvironmentSelector */}
           <div className="relative h-[480px] rounded-[24px] bg-white group transition-all duration-300 overflow-y-auto custom-scrollbar" style={{
             border: '2px solid #9CA3AF',
-            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)'
+            boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
+            zIndex: 10,
           }}>
             {/* Interactive indicator badge */}
             <div className="absolute top-3 right-3 z-10 px-2 py-1 bg-white/80 backdrop-blur-sm border border-gray-300 text-gray-600 text-[10px] font-medium rounded-md shadow-sm flex items-center justify-center gap-1 pointer-events-none opacity-70">
@@ -340,7 +342,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
           </div>
 
           {/* Right side - Content that changes on click */}
-          <div className="relative h-[480px] pr-3 flex flex-col">
+          <div className="relative h-[480px] pr-3 flex flex-col bg-[#EDE7DC]" style={{ zIndex: 10 }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeEnvironment?.id || 'initial'}
@@ -538,7 +540,7 @@ const LandingEnvironments = forwardRef<HTMLElement>(function LandingEnvironments
       </div>
 
       {/* Mobile: Horizontal scrolling carousel */}
-      <div className="[@media(min-width:900px)]:hidden mt-12">
+      <div className="[@media(min-width:900px)]:hidden mt-12" style={{ position: 'relative', zIndex: 10 }}>
         <div ref={carouselRef} className="overflow-x-auto hide-scrollbar px-4 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
           <div className="flex gap-4" style={{ width: 'max-content' }}>
             {environments.map((environment, index) => {

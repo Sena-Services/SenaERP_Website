@@ -70,7 +70,7 @@ export default function EnvironmentSelectorPage() {
 
   if (isCheckingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#FAF9F5]">
+      <div className="fixed inset-0 flex items-center justify-center bg-[#F5F1E8]">
         <div className="text-center">
           <div className="mb-4">
             <svg
@@ -103,7 +103,7 @@ export default function EnvironmentSelectorPage() {
     <div
       className="min-h-screen"
       style={{
-        background: "#FAF9F5",
+        background: "#F5F1E8",
       }}
     >
       <NavBar />

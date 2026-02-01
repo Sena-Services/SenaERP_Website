@@ -229,13 +229,14 @@ export default function FlipCard({
         : 0; // Center stays in place
 
   // Set z-index based on position - each card needs its own layer when split
+  // Base of 10 to ensure cards are above the background grid (z-index 5)
   const getZIndex = () => {
-    if (isExpanded) return 10;
+    if (isExpanded) return 20;
     // When cards are split, give each a unique z-index so they don't overlap
-    if (position === "left") return 3;
-    if (position === "center") return 2;
-    if (position === "right") return 1;
-    return 1;
+    if (position === "left") return 13;
+    if (position === "center") return 12;
+    if (position === "right") return 11;
+    return 11;
   };
 
   return (
@@ -244,11 +245,7 @@ export default function FlipCard({
       style={{
         width: `${cardWidth}px`,
         height: "100%",
-        transform: `translateX(${translateX}px) rotateY(${rotateProgress * 180}deg) ${
-          isExpanded
-            ? 'scale(1.05) translateY(0)' // Don't move card up when expanded, keep it in place
-            : 'scale(1) translateY(0)'
-        }`,
+        transform: `translateX(${translateX}px) rotateY(${rotateProgress * 180}deg)`,
         transformStyle: "preserve-3d",
         // Add shadow during split to emphasize separation
         boxShadow: 'none',
@@ -297,7 +294,6 @@ export default function FlipCard({
           // When expanded, no lift effect on hover. Only in normal "how it works" view
           transform: `rotateY(180deg) ${isHovered && canClick && !isExpanded ? 'translateY(-8px)' : 'translateY(0)'}`,
           cursor: canClick ? 'pointer' : 'default',
-          border: '2px solid #9CA3AF',
           boxSizing: 'border-box',
           // When expanded, keep shadow constant. Only change shadow on hover in normal view
           boxShadow: isHovered && canClick && !isExpanded
@@ -305,18 +301,27 @@ export default function FlipCard({
             : '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
           transition: 'all 0.3s ease-out',
           ...borderRadiusStyle,
-          // Balanced gradient - just right amount of color
-          background: `linear-gradient(180deg,
-            rgba(${getCardColor(position).rgb}, 0.08) 0%,
-            rgba(${getCardColor(position).rgb}, 0.06) ${videoHeightPercentage * 0.5}%,
-            rgba(${getCardColor(position).rgb}, 0.04) ${videoHeightPercentage}%,
-            rgba(${getCardColor(position).rgb}, 0.02) ${videoHeightPercentage + 10}%,
-            rgba(255, 255, 255, 0.98) 100%)`,
+          // Solid white background to completely cover the grid
+          backgroundColor: '#FFFFFF',
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={() => canClick && !isExpanded && onCardClick()} // Don't allow closing when expanded
       >
+        {/* Gradient overlay on top of solid background */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            ...borderRadiusStyle,
+            background: `linear-gradient(180deg,
+              rgba(${getCardColor(position).rgb}, 0.08) 0%,
+              rgba(${getCardColor(position).rgb}, 0.06) ${videoHeightPercentage * 0.5}%,
+              rgba(${getCardColor(position).rgb}, 0.04) ${videoHeightPercentage}%,
+              rgba(${getCardColor(position).rgb}, 0.02) ${videoHeightPercentage + 10}%,
+              transparent 100%)`,
+            zIndex: 0,
+          }}
+        />
         {/* Video section - full height when expanded */}
         <div
           className="relative w-full overflow-hidden"
@@ -333,6 +338,7 @@ export default function FlipCard({
               : 'linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.8) 85%, rgba(0,0,0,0.4) 95%, transparent 100%)',
             borderBottomLeftRadius: isExpanded && position === "left" ? `${borderRadius - 2}px` : 0,
             borderBottomRightRadius: isExpanded && position === "right" ? `${borderRadius - 2}px` : 0,
+            backgroundColor: '#f5f0e6', // Solid background to cover grid
           }}
         >
           <video
@@ -394,7 +400,7 @@ export default function FlipCard({
             className="flex flex-col px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3 relative overflow-y-auto"
             style={{
               height: `${100 - finalVideoHeight}%`,
-              background: 'transparent',
+              background: '#FFFFFF', // Solid white to cover grid
               position: 'relative',
               scrollbarWidth: 'none', // Firefox - hide scrollbar
               msOverflowStyle: 'none', // IE/Edge - hide scrollbar
@@ -457,17 +463,17 @@ export default function FlipCard({
           >
             {position === "left" && (
               <>
-                Choose your path: have a conversation with Sena or tell it exactly what you need. Either way, it's <span style={{ color: getCardColor(position).hex }}>always business-friendly</span> with zero technical jargon.
+                Talk to Sena naturally—voice, text, any language. It understands your business and generates a complete <span style={{ color: getCardColor(position).hex }}>Business Requirements Document</span>.
               </>
             )}
             {position === "center" && (
               <>
-                Walk through every table, workflow, and interface Sena built for you. Make changes, ask questions, and ensure it's <span style={{ color: getCardColor(position).hex }}>exactly right</span>.
+                The Builder Agent pulls the right modules from our <span style={{ color: getCardColor(position).hex }}>Registry</span> and assembles your custom ERP—database, logic, integrations.
               </>
             )}
             {position === "right" && (
               <>
-                One click and your custom ERP is live. Your team can start using it immediately—<span style={{ color: getCardColor(position).hex }}>no setup, no installation</span>, no complexity.
+                Your AI agents run operations tirelessly. Build, test, and deploy agents that <span style={{ color: getCardColor(position).hex }}>get smarter</span> with every interaction.
               </>
             )}
           </p>
@@ -476,34 +482,41 @@ export default function FlipCard({
           <div className="space-y-1.5 sm:space-y-2 relative z-10 flex-1 overflow-hidden">
             {position === "left" && (
               <>
-                {/* Two modes - simplified */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="rounded-full"
-                      style={{
-                        width: '5px',
-                        height: '5px',
-                        flexShrink: 0,
-                        background: getCardColor(position).hex,
-                      }}
-                    />
-                    <span className="font-semibold text-[10px] sm:text-xs" style={{ color: getCardColor(position).hex }}>DISCOVERY MODE</span>
-                    <span className="text-gray-500 text-[9px] sm:text-[10px]">Voice conversations</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="rounded-full"
-                      style={{
-                        width: '5px',
-                        height: '5px',
-                        flexShrink: 0,
-                        background: getCardColor(position).hex,
-                      }}
-                    />
-                    <span className="font-semibold text-[10px] sm:text-xs" style={{ color: getCardColor(position).hex }}>EXPRESS MODE</span>
-                    <span className="text-gray-500 text-[9px] sm:text-[10px]">Direct text input</span>
-                  </div>
+                <div className="flex items-start gap-2">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: getCardColor(position).hex,
+                    }}
+                  />
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Voice & text in 50+ languages</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: getCardColor(position).hex,
+                    }}
+                  />
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Upload docs, images, videos</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div
+                    className="rounded-full mt-1"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: getCardColor(position).hex,
+                    }}
+                  />
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Parallel conversations across teams</span>
                 </div>
               </>
             )}
@@ -520,7 +533,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Live preview of all changes</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Open-source Registry of modules</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -532,7 +545,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Interactive workflow builder</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Builder Agent customizes for you</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -544,9 +557,8 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Unlimited iterations</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Developer community fills gaps</span>
                 </div>
-          
               </>
             )}
 
@@ -562,7 +574,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">One-click deployment</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Agent builder with autonomy slider</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -574,7 +586,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Instant team access</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Automated testing framework</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -586,26 +598,14 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Cloud-hosted infrastructure</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div
-                    className="rounded-full mt-1"
-                    style={{
-                      width: '5px',
-                      height: '5px',
-                      flexShrink: 0,
-                      background: getCardColor(position).hex,
-                    }}
-                  />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Enterprise-grade security</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Fine-tuning for your business</span>
                 </div>
               </>
             )}
           </div>
 
           {/* Footer - Click to learn more */}
-          <div className="mt-auto pt-1 relative z-10 flex-shrink-0" style={{ borderTop: `1px solid rgba(${getCardColor(position).rgb}, 0.15)` }}>
+          <div className="mt-auto pt-1 relative z-10 flex-shrink-0" style={{ borderTop: `1px solid rgba(${getCardColor(position).rgb}, 0.15)`, background: '#FFFFFF' }}>
             {canClick && !isExpanded && (
               <div className="flex items-center justify-center gap-1 transition-all duration-300 group-hover:gap-1.5">
                 <span className="font-medium text-[9px] sm:text-[10px]" style={{ color: getCardColor(position).hex }}>
@@ -625,6 +625,17 @@ export default function FlipCard({
           </div>
         </div>
         )}
+
+        {/* Border overlay - sits on top of everything to ensure border is visible */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            border: rotateProgress === 1 ? '2px solid #9CA3AF' : '2px solid transparent',
+            transition: 'border-color 0.15s ease-out',
+            ...borderRadiusStyle,
+            zIndex: 20,
+          }}
+        />
       </div>
     </div>
   );
