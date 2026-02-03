@@ -5,7 +5,7 @@
  * Environment Setup:
  * Set NEXT_PUBLIC_API_BASE_URL in your .env.local file:
  * - Production: https://senamarketing.senaerp.com
- * - Local: http://sentrav0.1.localhost:8000
+ * - Local: http://localhost:8000
  */
 
 // Get API base URL from environment variable or use production as fallback
