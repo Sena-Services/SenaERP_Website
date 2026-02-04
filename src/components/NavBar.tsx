@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
-import UserAvatar from "./UserAvatar";
-import { checkAuth, type User } from "@/lib/auth";
-import { Database, Home } from "lucide-react";
 import EarlyAccessModal from "./EarlyAccessModal";
 import Toast from "./Toast";
 import PinwheelLogo from "./PinwheelLogo";
@@ -41,9 +37,6 @@ type NavBarProps = {
 };
 
 export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showRegistry = false, showBlog = false, showCoFounders = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
-  const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -61,8 +54,6 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     window.addEventListener('updateBuilderTab' as any, handleUpdateBuilderTab);
     return () => window.removeEventListener('updateBuilderTab' as any, handleUpdateBuilderTab);
   }, []);
-
-  const isOnEnvironmentSelector = pathname === "/environment-selector";
 
   const builderTabs = [
     { id: "data", label: "Data", subtitle: "Connect and transform" },
@@ -120,18 +111,6 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       });
     }
   };
-
-  useEffect(() => {
-    const verifyAuth = async () => {
-      const authResult = await checkAuth();
-      if (authResult.authenticated && authResult.user) {
-        setUser(authResult.user);
-      }
-      setIsCheckingAuth(false);
-    };
-
-    verifyAuth();
-  }, []);
 
   // Close mobile menu on scroll
   useEffect(() => {
@@ -298,9 +277,8 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
           {/* CTA Buttons or Logged In Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {!user && (
-              <>
-                {/* Commented out Login and Sign Up buttons */}
+            <>
+              {/* Commented out Login and Sign Up buttons */}
                 {/* <Link
                   href="/login"
                   className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border cursor-pointer outline-none leading-none font-space-grotesk hover:border-waygent-orange/60 hover:text-waygent-orange focus-visible:outline-none"
@@ -368,64 +346,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     }`}
                   />
                 </button>
-              </>
-            )}
-
-            {user && (
-              <>
-                {/* Environment/Home Button */}
-                <Link
-                  href={isOnEnvironmentSelector ? "/" : "/environment-selector"}
-                  className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 ease-out whitespace-nowrap cursor-pointer outline-none leading-none font-space-grotesk focus-visible:outline-none"
-                  style={{
-                    background: 'rgba(255,255,255,0.15)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255,255,255,0.25)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
-                  }}
-                >
-                  {isOnEnvironmentSelector ? (
-                    <>
-                      <Home className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-gray-900" />
-                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-gray-900">Home</span>
-                    </>
-                  ) : (
-                    <>
-                      <Database className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-gray-900" />
-                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-gray-900">ERP Environment</span>
-                    </>
-                  )}
-                </Link>
-
-                {/* User Avatar */}
-                <UserAvatar user={user} />
-
-                {/* Hamburger Menu Button - Mobile Only */}
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden flex flex-col justify-center items-center w-8 h-8 gap-[3px] focus:outline-none ml-2"
-                  aria-label="Toggle menu"
-                >
-                  <span
-                    className={`w-5 h-[2px] bg-waygent-text-primary transition-all duration-300 ease-in-out ${
-                      isMobileMenuOpen ? 'rotate-45 translate-y-[5px]' : ''
-                    }`}
-                  />
-                  <span
-                    className={`w-5 h-[2px] bg-waygent-text-primary transition-all duration-300 ease-in-out ${
-                      isMobileMenuOpen ? '-rotate-45 -translate-y-[5px]' : ''
-                    }`}
-                  />
-                </button>
-              </>
-            )}
+            </>
           </div>
         </div>
         </div>
