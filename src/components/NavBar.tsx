@@ -697,6 +697,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
             setIsModalOpen(false);
           }}
           onSuccess={handleWaitlistSuccess}
+          accessType="product"
         />
 
         {/* Toast Notification */}

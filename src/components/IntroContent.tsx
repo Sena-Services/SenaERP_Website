@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import PinwheelLogo from './PinwheelLogo';
+import EarlyAccessModal from './EarlyAccessModal';
+import Toast from './Toast';
 
 type IntroContentProps = {
   contentOpacity: number;
@@ -15,9 +17,14 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const contentRef = scrollRef || localContentRef;
   const [isContentAtBottom, setIsContentAtBottom] = useState(false);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
+  const [isPdfHovered, setIsPdfHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
+  const [isPitchDeckModalOpen, setIsPitchDeckModalOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const videoHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pdfHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const scrollAttemptRef = useRef(0);
   const lastScrollTopRef = useRef(0);
   const isManualScrollRef = useRef(false); // Flag to prevent double-scroll from arrow click
@@ -126,25 +133,42 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
+      if (videoHoverTimeoutRef.current) {
+        clearTimeout(videoHoverTimeoutRef.current);
+      }
+      if (pdfHoverTimeoutRef.current) {
+        clearTimeout(pdfHoverTimeoutRef.current);
       }
     };
   }, []);
 
   // Hover handlers with debounce to prevent flicker
   const handleVideoHoverEnter = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = null;
+    if (videoHoverTimeoutRef.current) {
+      clearTimeout(videoHoverTimeoutRef.current);
+      videoHoverTimeoutRef.current = null;
     }
     setIsVideoHovered(true);
   };
 
   const handleVideoHoverLeave = () => {
-    // Small delay before hiding to prevent flicker when moving between elements
-    hoverTimeoutRef.current = setTimeout(() => {
+    videoHoverTimeoutRef.current = setTimeout(() => {
       setIsVideoHovered(false);
+    }, 100);
+  };
+
+  // PDF hover handlers
+  const handlePdfHoverEnter = () => {
+    if (pdfHoverTimeoutRef.current) {
+      clearTimeout(pdfHoverTimeoutRef.current);
+      pdfHoverTimeoutRef.current = null;
+    }
+    setIsPdfHovered(true);
+  };
+
+  const handlePdfHoverLeave = () => {
+    pdfHoverTimeoutRef.current = setTimeout(() => {
+      setIsPdfHovered(false);
     }, 100);
   };
 
@@ -366,24 +390,264 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           </div>
         </div>
 
-        {/* Watch our video link with hover preview */}
-        <div
-          style={{
-            marginTop: `${getScaledValue(12)}px`,
-            position: 'relative',
-          }}
-          onMouseEnter={handleVideoHoverEnter}
-          onMouseLeave={handleVideoHoverLeave}
-        >
-          <a
-            href="https://www.youtube.com/watch?v=VAZctriaoUg"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => setIsVideoHovered(false)}
+        {/* Links section - aligned */}
+        <div style={{
+          marginTop: `${getScaledValue(12)}px`,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: `${getScaledValue(4)}px`,
+        }}>
+          {/* Watch our video link with hover preview */}
+          <div
+            style={{ position: 'relative' }}
+            onMouseEnter={handleVideoHoverEnter}
+            onMouseLeave={handleVideoHoverLeave}
+          >
+            <a
+              href="https://www.youtube.com/watch?v=VAZctriaoUg"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsVideoHovered(false)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                textDecoration: 'none',
+              }}
+            >
+              <span style={{
+                fontFamily: "Georgia, serif",
+                color: isMobile ? "#5a4938" : "#8b7355",
+                fontSize: isMobile ? '0.75rem' : `${getScaledValue(13)}px`,
+                fontWeight: 500,
+                textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
+                width: isMobile ? '180px' : `${getScaledValue(210)}px`,
+              }}>Watch our intro video</span>
+              <svg
+                width={isMobile ? 14 : getScaledValue(16)}
+                height={isMobile ? 14 : getScaledValue(16)}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={isMobile ? "#5a4938" : "#8b7355"}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  transform: isVideoHovered ? 'translateX(3px)' : 'translateX(0)',
+                  transition: 'transform 0.2s ease',
+                }}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+
+            {/* Video preview popup - positioned to the right */}
+            {!isMobile && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: `${getScaledValue(235)}px`,
+                  transform: isVideoHovered ? 'translateY(-50%) scale(1)' : 'translateY(-50%) translateX(-8px) scale(0.97)',
+                  width: `${getScaledValue(280)}px`,
+                  opacity: isVideoHovered ? 1 : 0,
+                  visibility: isVideoHovered ? 'visible' : 'hidden',
+                  transition: 'opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease',
+                  zIndex: 100,
+                }}
+              >
+                <a
+                  href="https://www.youtube.com/watch?v=VAZctriaoUg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsVideoHovered(false)}
+                  style={{
+                    display: 'block',
+                    borderRadius: `${getScaledValue(12)}px`,
+                    overflow: 'hidden',
+                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1)',
+                    textDecoration: 'none',
+                    background: '#000',
+                  }}
+                >
+                  <div style={{
+                    position: 'relative',
+                    overflow: 'hidden',
+                    aspectRatio: '16/9',
+                  }}>
+                    <video
+                      ref={videoRef}
+                      src="/videos/sena-preview.mp4"
+                      loop
+                      playsInline
+                      muted
+                      preload="auto"
+                      onCanPlayThrough={() => setIsVideoReady(true)}
+                      onLoadedData={() => setIsVideoReady(true)}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                    {/* Play icon overlay when video not playing */}
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'rgba(0,0,0,0.2)',
+                      opacity: isVideoHovered && isVideoReady ? 0 : 1,
+                      transition: 'opacity 0.3s ease',
+                      pointerEvents: 'none',
+                    }}>
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.9)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                      }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#333">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                    </div>
+                    {/* Sena text overlay */}
+                    <span style={{
+                      position: 'absolute',
+                      bottom: '10px',
+                      left: '10px',
+                      fontFamily: "'Tangerine', cursive",
+                      fontSize: '24px',
+                      color: 'white',
+                      pointerEvents: 'none',
+                      textShadow: '0 2px 8px rgba(0,0,0,0.6)',
+                    }}>Sena</span>
+                  </div>
+                  {/* Click to watch caption */}
+                  <div style={{
+                    padding: '8px 12px',
+                    background: 'rgba(90, 73, 56, 0.9)',
+                    fontFamily: "Georgia, serif",
+                    fontSize: '11px',
+                    color: 'rgba(255,255,255,0.9)',
+                    textAlign: 'center',
+                    letterSpacing: '0.03em',
+                  }}>
+                    Click to watch full video
+                  </div>
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* View one pager link with hover preview */}
+          <div
+            style={{ position: 'relative' }}
+            onMouseEnter={handlePdfHoverEnter}
+            onMouseLeave={handlePdfHoverLeave}
+          >
+            <a
+              href="/one-pager"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                textDecoration: 'none',
+              }}
+            >
+              <span style={{
+                fontFamily: "Georgia, serif",
+                color: isMobile ? "#5a4938" : "#8b7355",
+                fontSize: isMobile ? '0.75rem' : `${getScaledValue(13)}px`,
+                fontWeight: 500,
+                textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
+                width: isMobile ? '180px' : `${getScaledValue(210)}px`,
+              }}>View our one pager</span>
+              <svg
+                width={isMobile ? 14 : getScaledValue(16)}
+                height={isMobile ? 14 : getScaledValue(16)}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={isMobile ? "#5a4938" : "#8b7355"}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  transform: isPdfHovered ? 'translateX(3px)' : 'translateX(0)',
+                  transition: 'transform 0.2s ease',
+                }}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+
+            {/* PDF preview popup - positioned to the right */}
+            {!isMobile && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: `${getScaledValue(235)}px`,
+                  transform: isPdfHovered ? 'translateY(-50%) scale(1)' : 'translateY(-50%) translateX(-8px) scale(0.97)',
+                  width: `${getScaledValue(200)}px`,
+                  opacity: isPdfHovered ? 1 : 0,
+                  visibility: isPdfHovered ? 'visible' : 'hidden',
+                  transition: 'opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease',
+                  zIndex: 100,
+                }}
+              >
+                <a
+                  href="/one-pager"
+                  style={{
+                    display: 'block',
+                    borderRadius: `${getScaledValue(12)}px`,
+                    overflow: 'hidden',
+                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1)',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {/* PDF preview - using image thumbnail */}
+                  <img
+                    src="/documents/sena-one-pager-thumb.png"
+                    alt="Sena One Pager Preview"
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      height: 'auto',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                  {/* Click to view caption */}
+                  <div style={{
+                    padding: '8px 12px',
+                    background: 'rgba(90, 73, 56, 0.9)',
+                    fontFamily: "Georgia, serif",
+                    fontSize: '11px',
+                    color: 'rgba(255,255,255,0.9)',
+                    textAlign: 'center',
+                    letterSpacing: '0.03em',
+                  }}>
+                    Click to view & download
+                  </div>
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* Request access to pitch deck link */}
+          <div
+            onClick={() => setIsPitchDeckModalOpen(true)}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
               cursor: 'pointer',
               textDecoration: 'none',
             }}
@@ -394,7 +658,8 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               fontSize: isMobile ? '0.75rem' : `${getScaledValue(13)}px`,
               fontWeight: 500,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
-            }}>Watch our intro video</span>
+              width: isMobile ? '180px' : `${getScaledValue(210)}px`,
+            }}>Request access to pitch deck</span>
             <svg
               width={isMobile ? 14 : getScaledValue(16)}
               height={isMobile ? 14 : getScaledValue(16)}
@@ -404,118 +669,10 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              style={{
-                transform: isVideoHovered ? 'translateX(3px)' : 'translateX(0)',
-                transition: 'transform 0.2s ease',
-              }}
             >
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </a>
-
-          {/* Video preview popup */}
-          {!isMobile && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                marginTop: '4px',
-                width: `${getScaledValue(280)}px`,
-                opacity: isVideoHovered ? 1 : 0,
-                visibility: isVideoHovered ? 'visible' : 'hidden',
-                transform: isVideoHovered ? 'translateY(0) scale(1)' : 'translateY(-8px) scale(0.97)',
-                transition: 'opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease',
-                zIndex: 100,
-              }}
-            >
-              {/* Invisible bridge to maintain hover when moving to preview */}
-              <div style={{
-                position: 'absolute',
-                top: '-8px',
-                left: 0,
-                width: '100%',
-                height: '12px',
-              }} />
-
-              <a
-                href="https://www.youtube.com/watch?v=VAZctriaoUg"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsVideoHovered(false)}
-                style={{
-                  display: 'block',
-                  borderRadius: `${getScaledValue(12)}px`,
-                  overflow: 'hidden',
-                  boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1)',
-                  textDecoration: 'none',
-                  background: '#000',
-                }}
-              >
-                <div style={{
-                  position: 'relative',
-                  overflow: 'hidden',
-                  aspectRatio: '16/9',
-                }}>
-                  <video
-                    ref={videoRef}
-                    src="/videos/sena-preview.mp4"
-                    loop
-                    playsInline
-                    muted
-                    preload="auto"
-                    onCanPlayThrough={() => setIsVideoReady(true)}
-                    onLoadedData={() => setIsVideoReady(true)}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                  {/* Play icon overlay when video not playing */}
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'rgba(0,0,0,0.2)',
-                    opacity: isVideoHovered && isVideoReady ? 0 : 1,
-                    transition: 'opacity 0.3s ease',
-                    pointerEvents: 'none',
-                  }}>
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.9)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                    }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#333">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  {/* Sena text overlay */}
-                  <span style={{
-                    position: 'absolute',
-                    bottom: '10px',
-                    left: '10px',
-                    fontFamily: "'Tangerine', cursive",
-                    fontSize: '24px',
-                    color: 'white',
-                    pointerEvents: 'none',
-                    textShadow: '0 2px 8px rgba(0,0,0,0.6)',
-                  }}>Sena</span>
-                </div>
-              </a>
-            </div>
-          )}
+          </div>
         </div>
 
         <div style={{ marginTop: `${getScaledValue(10)}px`, paddingTop: `${getScaledValue(10)}px`, position: 'relative' }}>
@@ -584,7 +741,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                 fontSize: isMobile ? '10px' : `${getScaledValue(13.5)}px`,
               }}
             >
-              Meet your new operations team
+              Scroll to meet your new operations team
             </p>
             <svg
               className="text-gray-600 animate-bounce cursor-pointer"
@@ -617,6 +774,26 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           </div>
         </div>
       </div>
+
+      {/* Pitch Deck Modal */}
+      <EarlyAccessModal
+        isOpen={isPitchDeckModalOpen}
+        onClose={() => setIsPitchDeckModalOpen(false)}
+        onSuccess={(message) => {
+          setToastMessage(message);
+          setShowToast(true);
+        }}
+        title="Request Pitch Deck Access"
+        subtitle="Fill out the form and we'll send you our pitch deck"
+        accessType="pitchdeck"
+      />
+
+      {/* Toast */}
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 }

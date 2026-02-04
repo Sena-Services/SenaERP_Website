@@ -16,14 +16,18 @@ interface EarlyAccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (message: string) => void;
+  title?: string;
+  subtitle?: string;
+  accessType?: "product" | "pitchdeck";
 }
 
-export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAccessModalProps) {
+export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "Get Early Access", subtitle = "Join the waitlist and be among the first to experience Sena", accessType = "product" }: EarlyAccessModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     companyName: "",
     email: "",
     phone: "",
+    message: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,6 +96,8 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
           email: formData.email,
           company_name: formData.companyName,
           phone: formData.phone,
+          message: formData.message,
+          access_type: accessType,
         })
       });
 
@@ -102,7 +108,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
         onSuccess(result.message.message || "Successfully added to waitlist!");
 
         // Reset form and close modal
-        setFormData({ name: "", companyName: "", email: "", phone: "" });
+        setFormData({ name: "", companyName: "", email: "", phone: "", message: "" });
         onClose();
       } else {
         setError(result.message?.message || result.message?.error || "Failed to submit. Please try again.");
@@ -115,7 +121,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -150,7 +156,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
           {/* Left side - Image */}
           <div className="relative hidden md:block bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9] min-h-[500px]">
             <Image
-              src="/earlyaccess.png"
+              src="/screenshots/early-access.png"
               alt="Early Access"
               fill
               sizes="(max-width: 768px) 0vw, 50vw"
@@ -181,10 +187,10 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
             {/* Header */}
             <div className="mb-4 sm:mb-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 font-futura mb-2">
-                Get Early Access
+                {title}
               </h2>
               <p className="text-xs sm:text-sm text-gray-600 font-space-grotesk">
-                Join the waitlist and be among the first to experience Sena
+                {subtitle}
               </p>
             </div>
 
@@ -217,26 +223,6 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
                 />
               </div>
 
-              {/* Company Name */}
-              <div>
-                <label
-                  htmlFor="companyName"
-                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
-                >
-                  Company Name *
-                </label>
-                <input
-                  type="text"
-                  id="companyName"
-                  name="companyName"
-                  required
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
-                  placeholder="Acme Inc."
-                />
-              </div>
-
               {/* Email */}
               <div>
                 <label
@@ -257,23 +243,60 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess }: EarlyAc
                 />
               </div>
 
+              {/* Company Name */}
+              <div>
+                <label
+                  htmlFor="companyName"
+                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
+                >
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  id="companyName"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                  placeholder="Acme Inc."
+                />
+              </div>
+
               {/* Phone */}
               <div>
                 <label
                   htmlFor="phone"
                   className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
                 >
-                  Phone *
+                  Phone
                 </label>
                 <input
                   type="tel"
                   id="phone"
                   name="phone"
-                  required
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                   placeholder="+1 (555) 000-0000"
+                />
+              </div>
+
+              {/* Message */}
+              <div>
+                <label
+                  htmlFor="message"
+                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk resize-none"
+                  placeholder="Tell us a bit about yourself"
                 />
               </div>
 
