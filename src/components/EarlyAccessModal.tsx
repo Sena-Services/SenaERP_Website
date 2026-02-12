@@ -4,13 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
-
-// Extend window type for cleanup function
-declare global {
-  interface Window {
-    __modalScrollCleanup?: () => void;
-  }
-}
+import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 
 interface EarlyAccessModalProps {
   isOpen: boolean;
@@ -39,47 +33,9 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
     return () => setMounted(false);
   }, []);
 
-  // Debug: Log when isOpen changes
-  useEffect(() => {
-    console.log('🔍 EarlyAccessModal - isOpen changed:', isOpen);
-  }, [isOpen]);
-
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      console.log('🔒 Attempting to lock body scroll');
-
-      // Use a small delay to ensure modal is rendered first
-      const timer = setTimeout(() => {
-        console.log('🔒 Locking body scroll now');
-        const originalOverflow = document.body.style.overflow;
-        const originalPaddingRight = document.body.style.paddingRight;
-        const originalTouchAction = document.body.style.touchAction;
-
-        // Prevent scrollbar layout shift
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        document.body.style.overflow = 'hidden';
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
-        document.body.style.touchAction = 'none'; // Prevent touch scrolling on mobile
-
-        // Store cleanup function
-        window.__modalScrollCleanup = () => {
-          console.log('🔓 Unlocking body scroll');
-          document.body.style.overflow = originalOverflow;
-          document.body.style.paddingRight = originalPaddingRight;
-          document.body.style.touchAction = originalTouchAction;
-        };
-      }, 50); // Small delay to let modal render
-
-      return () => {
-        clearTimeout(timer);
-        if (window.__modalScrollCleanup) {
-          window.__modalScrollCleanup();
-          delete window.__modalScrollCleanup;
-        }
-      };
-    }
-  }, [isOpen]);
+  // Lock background scroll while modal is open (Early Access + Pitch Deck)
+  // This prevents the outer page from scrolling even if the modal content scrolls.
+  useLockBodyScroll(isOpen);
 
   if (!isOpen || !mounted) return null;
 
@@ -129,19 +85,16 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
-    console.log('🖱️ Backdrop clicked - target:', e.target);
-    console.log('🖱️ Backdrop clicked - currentTarget:', e.currentTarget);
     onClose();
   };
 
   const handleModalClick = (e: React.MouseEvent) => {
-    console.log('🖱️ Modal clicked - stopping propagation');
     e.stopPropagation();
   };
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto touch-pan-y overscroll-contain"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4"
       onClick={handleBackdropClick}
     >
       {/* Backdrop */}
@@ -149,24 +102,24 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
 
       {/* Modal */}
       <div
-        className="relative bg-white rounded-2xl sm:rounded-[32px] shadow-2xl max-w-4xl w-full overflow-hidden my-auto z-10 max-h-[90vh] sm:max-h-[85vh] flex flex-col"
+        className="relative bg-white rounded-2xl sm:rounded-[32px] shadow-2xl max-w-4xl w-full z-10 max-h-[92dvh] flex flex-col overflow-y-auto overscroll-contain touch-pan-y"
         onClick={handleModalClick}
       >
-        <div className="grid md:grid-cols-2 gap-0 overflow-y-auto touch-pan-y overscroll-contain">
+        <div className="grid lg:grid-cols-2 gap-0 flex-1 min-h-0">
           {/* Left side - Image */}
-          <div className="relative hidden md:block bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9] min-h-[500px]">
+          <div className="relative hidden lg:block bg-gradient-to-br from-[#EBE5D9] to-[#f5f2e9] h-full min-h-0">
             <Image
               src="/screenshots/early-access.png"
               alt="Early Access"
               fill
-              sizes="(max-width: 768px) 0vw, 50vw"
+              sizes="(max-width: 1024px) 0vw, 50vw"
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
 
           {/* Right side - Form */}
-          <div className="p-5 sm:p-8 md:p-10 overflow-y-auto">
+          <div className="p-4 sm:p-6 lg:p-8">
             {/* Close button */}
             <button
               onClick={onClose}
@@ -185,17 +138,17 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
             </button>
 
             {/* Header */}
-            <div className="mb-4 sm:mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 font-futura mb-2">
+            <div className="mb-3 sm:mb-5 pr-10">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 font-futura mb-1.5">
                 {title}
               </h2>
-              <p className="text-xs sm:text-sm text-gray-600 font-space-grotesk">
+              <p className="text-[11px] sm:text-sm text-gray-600 font-space-grotesk leading-snug">
                 {subtitle}
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
               {/* Error Message */}
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -203,89 +156,95 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                 </div>
               )}
 
-              {/* Name */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
-                >
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
-                  placeholder="John Doe"
-                />
+              {/* First row: Name + Email */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {/* Name */}
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-[11px] sm:text-sm font-semibold text-gray-700 mb-1 font-space-grotesk"
+                  >
+                    Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-[11px] sm:text-sm font-semibold text-gray-700 mb-1 font-space-grotesk"
+                  >
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    placeholder="john@example.com"
+                  />
+                </div>
               </div>
 
-              {/* Email */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
-                >
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
-                  placeholder="john@example.com"
-                />
-              </div>
+              {/* Second row: Company + Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {/* Company Name */}
+                <div>
+                  <label
+                    htmlFor="companyName"
+                    className="block text-[11px] sm:text-sm font-semibold text-gray-700 mb-1 font-space-grotesk"
+                  >
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    id="companyName"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    placeholder="Acme Inc."
+                  />
+                </div>
 
-              {/* Company Name */}
-              <div>
-                <label
-                  htmlFor="companyName"
-                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
-                >
-                  Company Name
-                </label>
-                <input
-                  type="text"
-                  id="companyName"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
-                  placeholder="Acme Inc."
-                />
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
-                >
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
-                  placeholder="+1 (555) 000-0000"
-                />
+                {/* Phone */}
+                <div>
+                  <label
+                    htmlFor="phone"
+                    className="block text-[11px] sm:text-sm font-semibold text-gray-700 mb-1 font-space-grotesk"
+                  >
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    placeholder="+1 (555) 000-0000"
+                  />
+                </div>
               </div>
 
               {/* Message */}
               <div>
                 <label
                   htmlFor="message"
-                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-1.5 font-space-grotesk"
+                  className="block text-[11px] sm:text-sm font-semibold text-gray-700 mb-1 font-space-grotesk"
                 >
                   Message
                 </label>
@@ -294,25 +253,25 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  rows={3}
-                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk resize-none"
+                  rows={2}
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk resize-none"
                   placeholder="Tell us a bit about yourself"
                 />
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
+              <div className="flex gap-2 sm:gap-3 pt-2 sm:pt-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="hidden sm:flex flex-1 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all font-space-grotesk items-center justify-center"
+                  className="flex-1 px-4 py-2 sm:px-6 sm:py-2.5 text-sm sm:text-base border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all font-space-grotesk items-center justify-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:flex-1 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-waygent-orange border-2 border-waygent-orange text-black font-semibold rounded-lg hover:bg-waygent-orange/90 transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:flex-1 px-4 py-2 sm:px-6 sm:py-2.5 text-sm sm:text-base bg-waygent-orange border-2 border-waygent-orange text-black font-semibold rounded-lg hover:bg-waygent-orange/90 transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </button>
