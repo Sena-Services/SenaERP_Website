@@ -27,6 +27,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [alsoRequest, setAlsoRequest] = useState(accessType === "pitchdeck");
 
   useEffect(() => {
     setMounted(true);
@@ -39,10 +40,16 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
 
   if (!isOpen || !mounted) return null;
 
+  // Map prop values to backend-expected values
+  const accessTypeMap = { product: "Product", pitchdeck: "Pitch Deck" } as const;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+
+    const backendAccessType = accessTypeMap[accessType];
+    const otherBackendType = accessType === "product" ? accessTypeMap.pitchdeck : accessTypeMap.product;
 
     try {
       const response = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.SUBMIT_WAITLIST), {
@@ -53,18 +60,38 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
           company_name: formData.companyName,
           phone: formData.phone,
           message: formData.message,
-          access_type: accessType,
+          access_type: backendAccessType,
         })
       });
 
       const result = await response.json();
 
       if (result.message?.success) {
+        // If checkbox is checked, also submit for the other access type
+        if (alsoRequest) {
+          try {
+            await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.SUBMIT_WAITLIST), {
+              method: 'POST',
+              body: JSON.stringify({
+                full_name: formData.name,
+                email: formData.email,
+                company_name: formData.companyName,
+                phone: formData.phone,
+                message: formData.message,
+                access_type: otherBackendType,
+              })
+            });
+          } catch {
+            // Silently ignore — primary submission succeeded
+          }
+        }
+
         // Call parent success handler to show toast
         onSuccess(result.message.message || "Successfully added to waitlist!");
 
         // Reset form and close modal
         setFormData({ name: "", companyName: "", email: "", phone: "", message: "" });
+        setAlsoRequest(accessType === "pitchdeck");
         onClose();
       } else {
         setError(result.message?.message || result.message?.error || "Failed to submit. Please try again.");
@@ -258,6 +285,21 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                   placeholder="Tell us a bit about yourself"
                 />
               </div>
+
+              {/* Cross-request checkbox */}
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={alsoRequest}
+                  onChange={(e) => setAlsoRequest(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 text-waygent-orange focus:ring-waygent-orange cursor-pointer accent-[#b8860b]"
+                />
+                <span className="text-[11px] sm:text-sm text-gray-600 font-space-grotesk">
+                  {accessType === "product"
+                    ? "I'm also interested in the pitch deck"
+                    : "Also join the product early access waitlist"}
+                </span>
+              </label>
 
               {/* Buttons */}
               <div className="flex gap-2 sm:gap-3 pt-2 sm:pt-3">
