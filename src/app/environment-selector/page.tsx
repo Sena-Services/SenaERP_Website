@@ -39,7 +39,7 @@ export default function EnvironmentSelectorPage() {
       // Get user's site URL from backend
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
       const response = await fetch(
-        `${frappeUrl}/api/method/websitecms.api.user_auth.get_user_site_url`,
+        `${frappeUrl}/api/method/senaerp_platform.api.user_auth.get_user_site_url`,
         {
           method: "GET",
           credentials: "include",

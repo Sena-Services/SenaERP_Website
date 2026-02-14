@@ -18,12 +18,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Call websitecms login API
+      // Call senaerp_platform login API
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
 
       // Step 1: Get CSRF token first
       const csrfResponse = await fetch(
-        `${frappeUrl}/api/method/websitecms.api.user_auth.get_csrf_token`,
+        `${frappeUrl}/api/method/senaerp_platform.api.user_auth.get_csrf_token`,
         {
           method: "GET",
           credentials: "include",
@@ -39,7 +39,7 @@ export default function LoginPage() {
 
       // Step 2: Make login request with CSRF token
       const response = await fetch(
-        `${frappeUrl}/api/method/websitecms.api.user_auth.login`,
+        `${frappeUrl}/api/method/senaerp_platform.api.user_auth.login`,
         {
           method: "POST",
           headers: {
