@@ -11,9 +11,9 @@ export const metadata: Metadata = {
   title: "Sena",
   description: "Sena: AI-centred B2B travel platform",
   icons: {
-    icon: "/logo.ico",
-    shortcut: "/logo.ico",
-    apple: "/logo.png",
+    icon: "/sena-logo-pinwheel.png",
+    shortcut: "/sena-logo-pinwheel.png",
+    apple: "/sena-logo-pinwheel.png",
   },
 };
 
