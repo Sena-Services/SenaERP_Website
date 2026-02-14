@@ -395,11 +395,11 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           marginTop: `${getScaledValue(12)}px`,
           display: 'flex',
           flexDirection: 'column',
-          gap: `${getScaledValue(4)}px`,
+          gap: `${getScaledValue(10)}px`,
         }}>
           {/* Watch our video link with hover preview */}
           <div
-            style={{ position: 'relative' }}
+            style={{ position: 'relative', display: 'flex' }}
             onMouseEnter={handleVideoHoverEnter}
             onMouseLeave={handleVideoHoverLeave}
           >
@@ -417,18 +417,18 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             >
               <span style={{
                 fontFamily: "Georgia, serif",
-                color: isMobile ? "#5a4938" : "#8b7355",
-                fontSize: isMobile ? '0.75rem' : `${getScaledValue(13)}px`,
+                color: isMobile ? "#5a4938" : "#7a5f3a",
+                fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
                 fontWeight: 500,
-                textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
-                width: isMobile ? '180px' : `${getScaledValue(210)}px`,
+                textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
+                width: isMobile ? '200px' : `${getScaledValue(240)}px`,
               }}>Watch our intro video</span>
               <svg
-                width={isMobile ? 14 : getScaledValue(16)}
-                height={isMobile ? 14 : getScaledValue(16)}
+                width={isMobile ? 16 : getScaledValue(18)}
+                height={isMobile ? 16 : getScaledValue(18)}
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke={isMobile ? "#5a4938" : "#8b7355"}
+                stroke={isMobile ? "#5a4938" : "#7a5f3a"}
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -550,7 +550,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
 
           {/* View one pager link with hover preview */}
           <div
-            style={{ position: 'relative' }}
+            style={{ position: 'relative', display: 'flex' }}
             onMouseEnter={handlePdfHoverEnter}
             onMouseLeave={handlePdfHoverLeave}
           >
@@ -565,18 +565,18 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             >
               <span style={{
                 fontFamily: "Georgia, serif",
-                color: isMobile ? "#5a4938" : "#8b7355",
-                fontSize: isMobile ? '0.75rem' : `${getScaledValue(13)}px`,
+                color: isMobile ? "#5a4938" : "#7a5f3a",
+                fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
                 fontWeight: 500,
-                textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
-                width: isMobile ? '180px' : `${getScaledValue(210)}px`,
+                textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
+                width: isMobile ? '200px' : `${getScaledValue(240)}px`,
               }}>View our one pager</span>
               <svg
-                width={isMobile ? 14 : getScaledValue(16)}
-                height={isMobile ? 14 : getScaledValue(16)}
+                width={isMobile ? 16 : getScaledValue(18)}
+                height={isMobile ? 16 : getScaledValue(18)}
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke={isMobile ? "#5a4938" : "#8b7355"}
+                stroke={isMobile ? "#5a4938" : "#7a5f3a"}
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -635,7 +635,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                     textAlign: 'center',
                     letterSpacing: '0.03em',
                   }}>
-                    Click to view & download
+                    Click to view full pdf
                   </div>
                 </a>
               </div>
@@ -654,18 +654,18 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           >
             <span style={{
               fontFamily: "Georgia, serif",
-              color: isMobile ? "#5a4938" : "#8b7355",
-              fontSize: isMobile ? '0.75rem' : `${getScaledValue(13)}px`,
+              color: isMobile ? "#5a4938" : "#7a5f3a",
+              fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
               fontWeight: 500,
-              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : undefined,
-              width: isMobile ? '180px' : `${getScaledValue(210)}px`,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
+              width: isMobile ? '200px' : `${getScaledValue(240)}px`,
             }}>Request access to pitch deck</span>
             <svg
-              width={isMobile ? 14 : getScaledValue(16)}
-              height={isMobile ? 14 : getScaledValue(16)}
+              width={isMobile ? 16 : getScaledValue(18)}
+              height={isMobile ? 16 : getScaledValue(18)}
               viewBox="0 0 24 24"
               fill="none"
-              stroke={isMobile ? "#5a4938" : "#8b7355"}
+              stroke={isMobile ? "#5a4938" : "#7a5f3a"}
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
