@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import PinwheelLogo from './PinwheelLogo';
 import EarlyAccessModal from './EarlyAccessModal';
 import Toast from './Toast';
@@ -228,7 +229,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: `${getScaledValue(12)}px`,
+          gap: `${getScaledValue(4)}px`,
           marginBottom: `${getScaledValue(8)}px`
         }}>
           <PinwheelLogo
@@ -237,17 +238,17 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             showStick={true}
             filter="sepia(100%) saturate(30%) brightness(80%) hue-rotate(-5deg)"
           />
-          <span style={{
-            fontFamily: "Georgia, serif",
-            fontSize: isMobile ? '1.1rem' : `${getScaledValue(22)}px`,
-            color: "#8b7355",
-            textTransform: 'uppercase',
-            letterSpacing: '0.15em',
-            fontWeight: 600,
-            lineHeight: 1,
-          }}>
-            Sena
-          </span>
+          <Image
+            src="/sena-wordmark.png"
+            alt="Sena"
+            width={200}
+            height={50}
+            style={{
+              height: isMobile ? '32px' : `${getScaledValue(44)}px`,
+              width: 'auto',
+              filter: 'sepia(100%) saturate(30%) brightness(80%) hue-rotate(-5deg)',
+            }}
+          />
         </div>
         <h1
           style={{

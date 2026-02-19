@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import EarlyAccessModal from "./EarlyAccessModal";
 import Toast from "./Toast";
+import Image from "next/image";
 import PinwheelLogo from "./PinwheelLogo";
 
 const links: { href: string; label: string }[] = [
@@ -240,11 +241,13 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 filter="saturate(50%) brightness(90%)"
                 className="sm:scale-[1.14] md:scale-[1.29]"
               />
-              <span
-                className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
-              >
-                Sena
-              </span>
+              <Image
+                src="/sena-wordmark.png"
+                alt="Sena"
+                width={120}
+                height={28}
+                className="h-6 sm:h-7 w-auto"
+              />
             </>
           )}
         </div>
