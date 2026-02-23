@@ -18,7 +18,7 @@ interface EarlyAccessModalProps {
 export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "Get Early Access", subtitle = "Join the waitlist and be among the first to experience Sena", accessType = "product" }: EarlyAccessModalProps) {
   const [formData, setFormData] = useState({
     name: "",
-    companyName: "",
+    siteName: "",
     email: "",
     phone: "",
     message: "",
@@ -57,7 +57,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
         body: JSON.stringify({
           full_name: formData.name,
           email: formData.email,
-          company_name: formData.companyName,
+          company_name: formData.siteName,
           phone: formData.phone,
           message: formData.message,
           access_type: backendAccessType,
@@ -75,7 +75,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
               body: JSON.stringify({
                 full_name: formData.name,
                 email: formData.email,
-                company_name: formData.companyName,
+                company_name: formData.siteName,
                 phone: formData.phone,
                 message: formData.message,
                 access_type: otherBackendType,
@@ -90,7 +90,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
         onSuccess(result.message.message || "Successfully added to waitlist!");
 
         // Reset form and close modal
-        setFormData({ name: "", companyName: "", email: "", phone: "", message: "" });
+        setFormData({ name: "", siteName: "", email: "", phone: "", message: "" });
         setAlsoRequest(accessType === "pitchdeck");
         onClose();
       } else {
@@ -226,24 +226,25 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                 </div>
               </div>
 
-              {/* Second row: Company + Phone */}
+              {/* Second row: Site Name + Phone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                {/* Company Name */}
+                {/* Site Name */}
                 <div>
                   <label
-                    htmlFor="companyName"
+                    htmlFor="siteName"
                     className="block text-[11px] sm:text-sm font-semibold text-gray-700 mb-1 font-space-grotesk"
                   >
-                    Company Name
+                    Site Name *
                   </label>
                   <input
                     type="text"
-                    id="companyName"
-                    name="companyName"
-                    value={formData.companyName}
+                    id="siteName"
+                    name="siteName"
+                    value={formData.siteName}
                     onChange={handleChange}
                     className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
-                    placeholder="Acme Inc."
+                    placeholder="e.g. acme, john"
+                    required
                   />
                 </div>
 
