@@ -60,6 +60,9 @@ function HomeContent() {
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
       const handleMobileScroll = () => {
+        // Skip when body scroll is locked (e.g. modal open) — position:fixed resets scrollY to 0
+        if (document.body.style.position === 'fixed') return;
+
         const introSection = introRef.current;
         if (!introSection) return;
 
