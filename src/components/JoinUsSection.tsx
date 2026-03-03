@@ -11,7 +11,8 @@ const socialLinks = [
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
       </svg>
     ),
-    href: "#",
+    href: "https://twitter.com/aakashchid",
+    comingSoon: false,
   },
   {
     name: "LinkedIn",
@@ -20,7 +21,8 @@ const socialLinks = [
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
       </svg>
     ),
-    href: "#",
+    href: "https://linkedin.com/in/aakash-chid-k",
+    comingSoon: false,
   },
   {
     name: "GitHub",
@@ -30,6 +32,7 @@ const socialLinks = [
       </svg>
     ),
     href: "#",
+    comingSoon: true,
   },
   {
     name: "Discord",
@@ -39,12 +42,14 @@ const socialLinks = [
       </svg>
     ),
     href: "#",
+    comingSoon: true,
   },
 ];
 
 const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref) {
   const [viewportHeight, setViewportHeight] = useState(900);
   const [isMobile, setIsMobile] = useState(false);
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -86,11 +91,13 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
           paddingRight: isMobile ? '0' : 'max(16px, min(32px, 2vw))',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundColor: '#F5F3E8',
+          border: '2px solid #9CA3AF',
           minHeight: isMobile ? '400px' : `${getResponsiveValue(320)}px`,
           height: 'auto',
           maxHeight: isMobile ? 'none' : `${getResponsiveValue(400)}px`,
           overflow: 'hidden',
           borderRadius: isMobile ? '24px' : `${getResponsiveValue(40)}px`,
+          zIndex: 10,
         }}
       >
         {/* Bottom left corner image */}
@@ -175,20 +182,52 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
               style={{ gap: isMobile ? '12px' : `${getResponsiveValue(16)}px` }}
             >
               {socialLinks.map((social) => (
-                <Link
-                  key={social.name}
-                  href={social.href}
-                  aria-label={social.name}
-                  className="group relative flex items-center justify-center rounded-full bg-white/70 backdrop-blur-md border border-gray-200/50 shadow-md hover:shadow-xl hover:bg-white transition-all duration-300 hover:-translate-y-1"
-                  style={{
-                    width: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
-                    height: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
-                  }}
-                >
-                  <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
-                    {social.icon}
-                  </span>
-                </Link>
+                <div key={social.name} className="relative">
+                  {social.comingSoon ? (
+                    <button
+                      onClick={() => {
+                        setShowTooltip(social.name);
+                        setTimeout(() => setShowTooltip(null), 2000);
+                      }}
+                      aria-label={social.name}
+                      className="group relative flex items-center justify-center rounded-full bg-white/70 backdrop-blur-md border border-gray-200/50 shadow-md hover:shadow-xl hover:bg-white transition-all duration-300 hover:-translate-y-1"
+                      style={{
+                        width: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
+                        height: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
+                      }}
+                    >
+                      <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
+                        {social.icon}
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.name}
+                      className="group relative flex items-center justify-center rounded-full bg-white/70 backdrop-blur-md border border-gray-200/50 shadow-md hover:shadow-xl hover:bg-white transition-all duration-300 hover:-translate-y-1"
+                      style={{
+                        width: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
+                        height: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
+                      }}
+                    >
+                      <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
+                        {social.icon}
+                      </span>
+                    </Link>
+                  )}
+                  {/* Coming soon tooltip */}
+                  {showTooltip === social.name && (
+                    <div
+                      className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-lg"
+                      style={{ fontFamily: 'system-ui, sans-serif' }}
+                    >
+                      Coming soon!
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
 
@@ -233,6 +272,29 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             >
               Remote-friendly · Competitive benefits · Growing team
             </p>
+
+            {/* Legal Links */}
+            <div
+              className="flex items-center justify-center gap-2 font-futura text-gray-500"
+              style={{
+                fontSize: isMobile ? '10px' : `${getResponsiveValue(11)}px`,
+                paddingTop: isMobile ? '8px' : `${getResponsiveValue(8)}px`,
+              }}
+            >
+              <Link
+                href="/privacy-policy"
+                className="hover:text-gray-700 transition-colors underline"
+              >
+                Privacy Policy
+              </Link>
+              <span>·</span>
+              <Link
+                href="/terms-and-conditions"
+                className="hover:text-gray-700 transition-colors underline"
+              >
+                Terms & Conditions
+              </Link>
+            </div>
           </div>
         </div>
       </div>

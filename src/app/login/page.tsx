@@ -18,15 +18,33 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Call Frappe login API
+      // Call senaerp_platform login API
       const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
 
+      // Step 1: Get CSRF token first
+      const csrfResponse = await fetch(
+        `${frappeUrl}/api/method/senaerp_platform.api.user_auth.get_csrf_token`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const csrfData = await csrfResponse.json();
+      const csrfToken = csrfData.message?.csrf_token;
+
+      if (!csrfToken) {
+        throw new Error("Failed to get CSRF token");
+      }
+
+      // Step 2: Make login request with CSRF token
       const response = await fetch(
-        `${frappeUrl}/api/method/crm.api.user_auth.login`,
+        `${frappeUrl}/api/method/senaerp_platform.api.user_auth.login`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "X-Frappe-CSRF-Token": csrfToken,
           },
           credentials: "include",
           body: JSON.stringify({
@@ -39,8 +57,11 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.message?.success) {
-        // Use Next.js router for client-side navigation
-        router.push("/environment-selector");
+        // Get site URL and token from response
+        const { site_url, token } = data.message;
+
+        // Redirect to provisioned site with auto-login token
+        window.location.href = `${site_url}/api/method/sentra_core.api.user_auth.auto_login?token=${token}`;
       } else {
         setError(data.message?.error || "Login failed");
       }
@@ -131,7 +152,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
             </div>
@@ -147,7 +168,7 @@ export default function LoginPage() {
             className="block w-full text-center py-3 border-2 border-waygent-orange text-waygent-orange rounded-lg font-medium hover:bg-orange-50 transition duration-200"
           >
             Create Account
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>

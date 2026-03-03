@@ -30,20 +30,47 @@ export default function EnvironmentSelectorPage() {
     verifyAuth();
   }, [router]);
 
-  const handleEnvironmentSelect = (environmentName: string) => {
+  const handleEnvironmentSelect = async (environmentName: string) => {
     // Save environment to localStorage
     saveEnvironment(environmentName);
     setCurrentEnvironment(environmentName);
 
+    try {
+      // Get user's site URL from backend
+      const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
+      const response = await fetch(
+        `${frappeUrl}/api/method/senaerp_platform.api.user_auth.get_user_site_url`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    // Redirect to Frappe site
-    const frappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://senatest2.localhost:8080";
-    window.location.href = frappeUrl;
+      if (!response.ok) {
+        throw new Error("Failed to get site URL");
+      }
+
+      const data = await response.json();
+
+      if (data.message?.success && data.message?.site_url) {
+        // Redirect to user's provisioned site
+        window.location.href = data.message.site_url;
+      } else {
+        alert(`Failed to get site URL: ${data.message?.error || 'Unknown error'}`);
+        console.error("API Error:", data.message);
+      }
+    } catch (error) {
+      console.error("Error getting site URL:", error);
+      alert(`Failed to connect to API: ${error}`);
+    }
   };
 
   if (isCheckingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#FAF9F5]">
+      <div className="fixed inset-0 flex items-center justify-center bg-[#F5F1E8]">
         <div className="text-center">
           <div className="mb-4">
             <svg
@@ -76,7 +103,7 @@ export default function EnvironmentSelectorPage() {
     <div
       className="min-h-screen"
       style={{
-        background: "#FAF9F5",
+        background: "#F5F1E8",
       }}
     >
       <NavBar />

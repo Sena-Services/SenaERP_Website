@@ -43,7 +43,7 @@ export default function SignupPage() {
     try {
       // Call Frappe registration API
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000"}/api/method/crm.api.user_auth.register`,
+        `${process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000"}/api/method/sentra_core.api.user_auth.register`,
         {
           method: "POST",
           headers: {
@@ -167,7 +167,7 @@ export default function SignupPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Company (Optional)
+                Site Name *
               </label>
               <input
                 name="company"
@@ -175,7 +175,8 @@ export default function SignupPage() {
                 value={formData.company}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
-                placeholder="Your Company"
+                placeholder="e.g. acme, john"
+                required
                 disabled={loading}
               />
             </div>

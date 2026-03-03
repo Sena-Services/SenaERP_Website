@@ -40,6 +40,8 @@ export default function IntroSection() {
   const [viewportHeight, setViewportHeight] = useState(900);
   const [expandedCard, setExpandedCard] = useState<ExpandedCard>(null);
   const [animationLocked, setAnimationLocked] = useState(false);
+  const [isHomeButtonFixed, setIsHomeButtonFixed] = useState(false);
+  const headerRef = useRef<HTMLDivElement | null>(null);
 
   // Listen for intro navigation to reset content scroll
   useEffect(() => {
@@ -52,6 +54,29 @@ export default function IntroSection() {
     window.addEventListener('resetIntroScroll', handleIntroNavigation);
     return () => window.removeEventListener('resetIntroScroll', handleIntroNavigation);
   }, []);
+
+  // Track when home button should be fixed at top
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current && rotateProgress === 1) {
+        const headerRect = headerRef.current.getBoundingClientRect();
+        // Use hysteresis to prevent flickering:
+        // - Fix when header goes above 70px (scrolling down)
+        // - Unfix when header comes back below 90px (scrolling up - needs more scroll to unfix)
+        if (!isHomeButtonFixed && headerRect.top < 70) {
+          setIsHomeButtonFixed(true);
+        } else if (isHomeButtonFixed && headerRect.top > 90) {
+          setIsHomeButtonFixed(false);
+        }
+      } else {
+        setIsHomeButtonFixed(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Check initial state
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [rotateProgress, isHomeButtonFixed]);
 
   // Ensure detail card scroll always works without interference
   useEffect(() => {
@@ -269,9 +294,12 @@ export default function IntroSection() {
   let extraTopSpace = 0;
   if (viewportHeight <= 720) {
     extraTopSpace = getResponsiveValue(60);
+  } else if (viewportHeight <= 760) {
+    // Increase space for 720-760px range
+    extraTopSpace = getResponsiveValue(60 + ((viewportHeight - 720) / (760 - 720)) * 20);
   } else if (viewportHeight <= 1000) {
-    // Gradually reduce from 60 to 30 between 720px and 1000px
-    extraTopSpace = getResponsiveValue(60 - ((viewportHeight - 720) / (1000 - 720)) * 30);
+    // Gradually reduce from 80 to 30 between 760px and 1000px
+    extraTopSpace = getResponsiveValue(80 - ((viewportHeight - 760) / (1000 - 760)) * 50);
   } else {
     // Keep some space for screens above 1000px
     extraTopSpace = getResponsiveValue(30);
@@ -352,17 +380,33 @@ export default function IntroSection() {
                 top: 0,
                 left: 0,
                 right: 0,
+                padding: '6px',
+                paddingBottom: 0,
+                zIndex: 10,
               }}
             >
-              <img
-                src="/illustrations/monet-intro.png"
-                alt="Monet painting background"
-                className="w-full h-full object-cover"
+              <div
                 style={{
-                  objectPosition: '88% 50%',
-                  opacity: 0.80,
+                  width: '100%',
+                  height: '100%',
+                  border: '2px solid #9CA3AF',
+                  borderBottom: 'none',
+                  borderTopLeftRadius: '16px',
+                  borderTopRightRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 12px rgba(156, 163, 175, 0.15)',
                 }}
-              />
+              >
+                <img
+                  src="/illustrations/monet-intro.png"
+                  alt="Monet painting background"
+                  className="w-full h-full object-cover"
+                  style={{
+                    objectPosition: '88% 50%',
+                    opacity: 0.80,
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -371,6 +415,7 @@ export default function IntroSection() {
 
           {/* Title that appears when card shrinks (before split) - keep showing even when card is expanded */}
           <div
+            ref={headerRef}
             className="absolute left-0 right-0 z-10"
             style={{
               top: `${-getResponsiveValue(140)}px`,
@@ -378,55 +423,43 @@ export default function IntroSection() {
               pointerEvents: (scrollProgress > 0.9 || expandedCard) ? "auto" : "none", // Make interactive when expanded
             }}
           >
-            {/* Home/Back button - positioned at the very left */}
-            {rotateProgress === 1 && (
+            {/* Home button - positioned in header when not expanded */}
+            {rotateProgress === 1 && !isHomeButtonFixed && !expandedCard && (
               <button
                 onClick={() => {
-                  if (expandedCard) {
-                    // When expanded, go back to cards view
-                    setExpandedCard(null);
-                  } else {
-                    // When not expanded, go back to intro
-                    window.dispatchEvent(new CustomEvent('resetHome'));
-                  }
+                  window.dispatchEvent(new CustomEvent('resetHome'));
                 }}
-                className="absolute flex items-center justify-center gap-2 text-gray-700 hover:text-gray-900 transition-all group cursor-pointer hover:bg-gray-100/50"
+                className="absolute flex items-center justify-center gap-2 text-gray-700 hover:text-white transition-all group cursor-pointer"
                 style={{
-                  left: '0',
+                  left: `${currentPadding}px`,
                   top: '50%',
                   transform: 'translateY(-50%)',
                   zIndex: 1000,
                   width: '48px',
                   height: '48px',
                   borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.3)',
-                  border: '2px solid rgba(156, 163, 175, 0.3)',
-                  backdropFilter: 'blur(8px)',
+                  background: '#F5F1E8',
+                  border: '2px solid #9CA3AF',
+                  boxShadow: '0 2px 8px rgba(156, 163, 175, 0.2)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#8FB7C5';
+                  e.currentTarget.style.borderColor = '#7AA5B5';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#F5F1E8';
+                  e.currentTarget.style.borderColor = '#9CA3AF';
                 }}
               >
-                {expandedCard ? (
-                  // Back arrow when card is expanded
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
-                    <path
-                      d="M15 18L9 12L15 6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  // Home icon when not expanded
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
-                    <path
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
+                  <path
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </button>
             )}
 
@@ -444,32 +477,113 @@ export default function IntroSection() {
               >
                 How it <span style={{ fontStyle: "italic" }}>works</span>?
               </h2>
-              <p
-                className="text-gray-700 font-futura mx-auto"
-                style={{
-                  letterSpacing: "-0.01em",
-                  fontSize: viewportWidth < 768 ? '14px' : '16px',
-                  marginTop: '0',
-                }}
-              >
-                Three simple steps to build your custom ERP
-              </p>
+      
             </div>
           </div>
+
+          {/* Outer border wrapper - only visible when fully on main screen (no transition) */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              border: '2px solid #9CA3AF',
+              borderRadius: `${borderRadius}px`,
+              boxShadow: '0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -8px rgba(0, 0, 0, 0.08)',
+              // Only show when completely stable on main screen - hide during ANY transition
+              opacity: (scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0) ? 1 : 0,
+              // Fast fade out (no delay), slow fade in (with delay to wait for width animation)
+              transition: (scrollProgress === 0 && splitProgress === 0 && rotateProgress === 0)
+                ? 'opacity 200ms ease-out 600ms' // Delay showing by 600ms to let width settle
+                : 'opacity 100ms ease-out 0ms',  // Hide immediately with no delay
+              zIndex: 15,
+            }}
+          />
 
           {/* Always show 3 cards, but when splitProgress = 0, they're flush together with no gap */}
           <div
             id="cards-container"
-            className="relative w-full h-full flex items-center transition-all duration-700 ease-out"
+            className="relative w-full h-full flex items-stretch transition-all duration-700 ease-out"
             style={{
-              gap: `${cardGap}px`,
+              gap: expandedCard ? '0px' : `${cardGap}px`,
               filter: 'none',
               perspective: "2000px",
               justifyContent: expandedCard === 'right' ? 'flex-end' : (expandedCard ? 'flex-start' : 'center'),
               paddingLeft: expandedCard && expandedCard !== 'right' ? '80px' : '0',
               paddingRight: expandedCard === 'right' ? '80px' : '0',
+              zIndex: 10,
             }}
           >
+            {/* Back button - appears next to cards when expanded */}
+            {expandedCard && expandedCard !== 'right' && (
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="absolute flex items-center justify-center text-gray-700 hover:text-white transition-all group cursor-pointer"
+                style={{
+                  left: '16px',
+                  top: '16px',
+                  zIndex: 100,
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: '#F5F1E8',
+                  border: '2px solid #9CA3AF',
+                  boxShadow: '0 2px 8px rgba(156, 163, 175, 0.2)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#8FB7C5';
+                  e.currentTarget.style.borderColor = '#7AA5B5';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#F5F1E8';
+                  e.currentTarget.style.borderColor = '#9CA3AF';
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:-translate-x-1">
+                  <path
+                    d="M15 18L9 12L15 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
+            {/* Back button for right-expanded card - on the right side */}
+            {expandedCard === 'right' && (
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="absolute flex items-center justify-center text-gray-700 hover:text-white transition-all group cursor-pointer"
+                style={{
+                  right: '16px',
+                  top: '16px',
+                  zIndex: 100,
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: '#F5F1E8',
+                  border: '2px solid #9CA3AF',
+                  boxShadow: '0 2px 8px rgba(156, 163, 175, 0.2)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#8FB7C5';
+                  e.currentTarget.style.borderColor = '#7AA5B5';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#F5F1E8';
+                  e.currentTarget.style.borderColor = '#9CA3AF';
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="transition-transform group-hover:translate-x-1">
+                  <path
+                    d="M9 18L15 12L9 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
             <FlipCard
               cardWidth={cardWidth}
               currentWidthValue={currentWidthValue}
@@ -484,7 +598,7 @@ export default function IntroSection() {
               videoBg="bg-[#f6efe4]"
               videoPosition="center 40%"
               cardNumber={1}
-              cardTitle="Talk to Sena"
+              cardTitle="Discovery"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "left" ? null : "left")}
@@ -504,7 +618,7 @@ export default function IntroSection() {
               videoBg="bg-[#f5f2e9]"
               videoPosition="center 45%"
               cardNumber={2}
-              cardTitle="Review & Refine"
+              cardTitle="Build"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "center" ? null : "center")}
@@ -524,112 +638,64 @@ export default function IntroSection() {
               videoBg="bg-[#f6f2fb]"
               videoPosition="center 80%"
               cardNumber={3}
-              cardTitle="Go Live"
+              cardTitle="Manage Agents"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "right" ? null : "right")}
             />
-          </div>
 
-          {/* Expanded content - positioned relative to main container (not cards container) */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              transition: 'opacity 600ms ease-out',
-              opacity: expandedCard ? 1 : 0,
-              pointerEvents: 'none',
-            }}
-          >
+            {/* Expanded detail content - rendered as flex sibling for proper alignment */}
             {expandedCard && (
               <div
-                className={`absolute pointer-events-auto flex items-center`}
                 style={{
-                  width: '48%',
-                  height: `calc(${currentHeightValue}px + 35px)`, // Add 40px total height (20px top + 20px bottom)
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  // Position calculation from main container edge:
-                  // Main container has currentPadding on both sides
-                  // Cards container adds 80px padding when expanded
-                  // Card width is cardWidth
-                  // Detail should start right after the card with small gap
-                  [expandedCard === 'right' ? 'right' : 'left']: expandedCard === 'right'
-                    ? `calc(${currentPadding}px + 80px + ${cardWidth}px + 7px)` // Right card: move detail 7px right (small gap, no overlap)
-                    : expandedCard === 'center'
-                      ? `calc(${currentPadding}px + 80px + ${cardWidth}px + 12px)` // Center card: move detail 12px right (more gap)
-                      : `calc(${currentPadding}px + 80px + ${cardWidth}px + 7px)`, // Left card: move detail 7px right (small gap)
-                  transition: 'all 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  opacity: expandedCard ? 1 : 0,
+                  flex: 1,
+                  height: '100%',
+                  overflow: 'hidden', // Clips the scrollbar at rounded corners
+                  marginLeft: expandedCard === 'right' ? 0 : '-2px',
+                  marginRight: expandedCard === 'right' ? '-2px' : 0,
+                  borderTopLeftRadius: expandedCard === 'right' ? `${borderRadius}px` : 0,
+                  borderBottomLeftRadius: expandedCard === 'right' ? `${borderRadius}px` : 0,
+                  borderTopRightRadius: expandedCard === 'right' ? 0 : `${borderRadius}px`,
+                  borderBottomRightRadius: expandedCard === 'right' ? 0 : `${borderRadius}px`,
+                  background: 'rgba(252, 249, 243, 0.95)',
+                  border: '2px solid #9CA3AF',
+                  borderLeft: expandedCard === 'right' ? '2px solid #9CA3AF' : 'none',
+                  borderRight: expandedCard === 'right' ? 'none' : '2px solid #9CA3AF',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+                  order: expandedCard === 'right' ? -1 : 1,
                 }}
               >
-                {/* Content box - cool glassmorphism effect with gradient backdrop */}
                 <div
-                  className="w-full h-full flex items-center relative overflow-hidden"
+                  ref={detailScrollRef}
+                  className="detail-scroll-container"
                   style={{
-                    // For right card, round the LEFT side. For left/center cards, round the RIGHT side
-                    borderTopLeftRadius: expandedCard === 'right' ? `${borderRadius}px` : '0',
-                    borderBottomLeftRadius: expandedCard === 'right' ? `${borderRadius}px` : '0',
-                    borderTopRightRadius: expandedCard === 'right' ? '0' : `${borderRadius}px`,
-                    borderBottomRightRadius: expandedCard === 'right' ? '0' : `${borderRadius}px`,
-                    animation: expandedCard ? 'slideInContent 700ms cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
-                    // Warm cream tint instead of pure white - matches the site's aesthetic better
-                    background: 'rgba(252, 249, 243, 0.92)',
-                    backdropFilter: 'blur(20px) saturate(180%)',
-                    WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                    boxShadow: expandedCard === 'right'
-                      ? `
-                        -8px 8px 32px rgba(0, 0, 0, 0.12),
-                        -2px 2px 8px rgba(0, 0, 0, 0.08),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-                        inset 0 -1px 0 rgba(0, 0, 0, 0.05)
-                      `
-                      : `
-                        0 8px 32px rgba(0, 0, 0, 0.12),
-                        0 2px 8px rgba(0, 0, 0, 0.08),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-                        inset 0 -1px 0 rgba(0, 0, 0, 0.05)
-                      `,
+                    height: '100%',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    padding: '24px 28px',
+                    paddingRight: '20px',
                   }}
                 >
-                  {/* Scrollable content wrapper with proper padding */}
-                  <div
-                    ref={detailScrollRef}
-                    className="w-full h-full overflow-y-auto pl-8 pr-6 py-8 custom-scrollbar"
-                    style={{
-                      scrollbarWidth: 'thin', // Firefox - thin scrollbar
-                      scrollbarColor: 'rgba(156, 163, 175, 0.6) rgba(156, 163, 175, 0.1)', // gray thumb, light track
-                    }}
-                  >
-                    {/* Custom scrollbar styles for Chrome/Safari/Edge */}
-                    <style jsx>{`
-                      .custom-scrollbar::-webkit-scrollbar {
-                        width: 10px;
-                      }
-                      .custom-scrollbar::-webkit-scrollbar-track {
-                        background: rgba(156, 163, 175, 0.1);
-                        border-radius: 10px;
-                        margin: 8px 0;
-                      }
-                      .custom-scrollbar::-webkit-scrollbar-thumb {
-                        background: rgba(156, 163, 175, 0.5);
-                        border-radius: 10px;
-                        border: 2px solid transparent;
-                        background-clip: padding-box;
-                      }
-                      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                        background: rgba(156, 163, 175, 0.7);
-                        background-clip: padding-box;
-                      }
-                      .custom-scrollbar::-webkit-scrollbar-thumb:active {
-                        background: rgba(156, 163, 175, 0.9);
-                        background-clip: padding-box;
-                      }
-                    `}</style>
-
+                  {/* Modern scrollbar styles */}
+                  <style jsx>{`
+                    .detail-scroll-container {
+                      scrollbar-width: thin;
+                      scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar {
+                      width: 6px;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar-track {
+                      background: transparent;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar-thumb {
+                      background: rgba(156, 163, 175, 0.4);
+                      border-radius: 3px;
+                    }
+                    .detail-scroll-container::-webkit-scrollbar-thumb:hover {
+                      background: rgba(156, 163, 175, 0.6);
+                    }
+                  `}</style>
                     {/* Content based on which card is expanded */}
                     {expandedCard === "left" && (
                       <div className="w-full">
@@ -639,81 +705,97 @@ export default function IntroSection() {
                           style={{
                             width: '40px',
                             height: '40px',
-                            background: '#3B82F6',
-                            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                            background: '#F5F1E8',
+                            border: '2px solid #9CA3AF',
                           }}
                         >
-                          <span className="text-white font-bold text-xl">1</span>
+                          <span className="font-bold text-lg" style={{ color: '#4682A0' }}>1</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                          Talk to Sena
+                        <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#4682A0' }}>
+                          Discovery
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Sena speaks your language—literally. Whether a founder with a fuzzy vision or a seasoned domain expert who knows what he wants, just talk naturally. Sena understands your business, asks the right questions, and transforms conversations into working software.
+                        Traditional ERP: consultants, months of development, thousands of dollars, and still unsatisfactory. We automate the entire lifecycle. The Discovery Agent talks to people across your organization—founders, managers, staff—in your own language.
                       </p>
 
-                      <div className="space-y-5">
-                        <div className="bg-blue-50/60 rounded-2xl p-5 border-2 border-blue-100">
-                          <div className="flex items-center gap-2 mb-3">
-                            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="space-y-4">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
+                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                             </svg>
-                            <h3 className="text-lg font-bold text-blue-700">Discovery Mode</h3>
-                            <span className="ml-auto text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Voice</span>
-                          </div>
-                          <p className="text-gray-700 mb-3 text-sm leading-relaxed">
-                            Have a natural conversation about your business. Sena guides you through discovery with thoughtful questions—no technical expertise needed, just share how your business works.
-                          </p>
-                          <ul className="space-y-2.5">
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Conversational discovery in 50+ languages</span>
+                            Voice & Text Conversations
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Talk naturally in 50+ languages. Whether you have a fuzzy vision or know exactly what you want, Sena meets you where you are.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Voice conversations with real-time understanding</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Intelligent questioning that uncovers what you really need</span>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Text input for detailed requirements</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Builds your complete system architecture from your answers</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Perfect for teams building their first custom ERP</span>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Intelligent questioning that uncovers what you really need</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-blue-50/60 rounded-2xl p-5 border-2 border-blue-100">
-                          <div className="flex items-center gap-2 mb-3">
-                            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
+                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <h3 className="text-lg font-bold text-blue-700">Express Mode</h3>
-                            <span className="ml-auto text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Text</span>
-                          </div>
-                          <p className="text-gray-700 mb-3 text-sm leading-relaxed">
-                            Already know your requirements? Describe your complete workflow in text and Sena builds it instantly. Fast, direct, and powerful.
-                          </p>
-                          <ul className="space-y-2.5">
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Write your complete workflow in plain language</span>
+                            Multimodal Input
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Upload documents, images, videos, links, and websites. Sena processes everything to deeply understand your operations.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Existing SOPs, process documents, spreadsheets</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Instant system generation from your description</span>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Screenshots of current systems</span>
                             </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Streamlined process for clear use cases</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">Perfect for teams who know exactly what they want</span>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Deep web search capabilities</span>
                             </li>
                           </ul>
+                        </div>
+
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
+                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Parallel Team Discovery
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Discovery can happen in parallel with multiple users across your company's hierarchy. Everyone's input gets consolidated.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Founders share vision, managers share processes, staff share daily tasks</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Consolidates all perspectives into unified requirements</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
+                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            Business Requirements Document
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed">After taking in all the information, Sena generates a complete BRD—exactly what it learned and what it's going to build. You review and approve before anything gets built.</p>
                         </div>
                         </div>
                       </div>
@@ -727,149 +809,101 @@ export default function IntroSection() {
                           style={{
                             width: '40px',
                             height: '40px',
-                            background: '#8B5CF6',
-                            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+                            background: '#F5F1E8',
+                            border: '2px solid #9CA3AF',
                           }}
                         >
-                          <span className="text-white font-bold text-xl">2</span>
+                          <span className="font-bold text-lg" style={{ color: '#826496' }}>2</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                          Review & Refine
+                        <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#826496' }}>
+                          Build
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Walk through your complete business system—every workflow, every integration, every automation. This isn't about tweaking buttons—it's about validating your entire business logic before it goes live.
+                        Once your BRD is approved, the Builder Agent takes over. It doesn't write everything from scratch—it pulls the right modules from our Registry and customizes them to your specific needs.
                       </p>
 
                       <div className="space-y-4">
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                             </svg>
-                            Complete Business Workflows
+                            Builder Agent
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Preview your end-to-end processes—from lead capture to invoice generation, from inventory management to customer support.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Your dedicated AI that reads the BRD and assembles a complete custom system—database, logic, migrations, integrations.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Test approval chains and conditional routing</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Pulls modules from the Registry, doesn't code from scratch</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Validate business rules and data validations</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Combines multiple building blocks for your use case</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>See how notifications and alerts flow through your team</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Customizes everything to your specific requirements</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
-                            Live Data & Dashboards
+                            The Registry
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Visualize your business metrics and KPIs exactly as your team will see them in production.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">An open-source, well-indexed library of building blocks—the Builder's toolbox.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Real-time analytics and reporting views</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span><strong>Modules:</strong> accounts, inventory, travel, HR, and more</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Role-based dashboards for different team members</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span><strong>Agents:</strong> pre-trained agents like accounts agent, TA agent</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Custom charts, tables, and data visualizations</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span><strong>Connectors:</strong> Tally, WhatsApp, Stripe, Shopify, and more</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
-                            Integration Testing
+                            Human-in-the-Loop (when needed)
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Verify connections to your existing tools—Stripe, Shopify, Slack, email, calendars, and more.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">AI today isn't perfect. When the Builder can't fulfill something from the Registry alone, we have a system.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Test data sync between your ERP and external systems</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Builder creates a ticket for missing functionality</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Preview automated actions triggered by external events</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Developer community picks it up and builds it</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Validate API calls and webhook configurations</span>
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Solution goes back into the Registry</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                            Permissions & Access Control
-                          </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Review who can see and do what—test your security model before your team logs in.</p>
-                          <ul className="space-y-1 text-xs text-gray-600">
-                            <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Preview each role's view: manager, employee, admin</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Validate data visibility and edit permissions</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>Test approval hierarchies and delegation rules</span>
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
-                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
-                            Conversational Refinement
-                          </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Don't like something? Keep talking to Sena. Make changes through natural conversation.</p>
-                          <ul className="space-y-1 text-xs text-gray-600">
-                            <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>"Add a step where managers approve expenses over $500"</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>"Send Slack notifications when inventory is low"</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-purple-500 mt-0.5">→</span>
-                              <span>"Change the customer portal layout to show orders first"</span>
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div className="bg-purple-50/60 rounded-2xl p-4 border-2 border-purple-100">
-                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            Unlimited Iterations
+                            The Flywheel Effect
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed">This is your system. Refine it as many times as you need—no extra cost, no complaints, no limits.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed">Every new module built feeds back into the Registry. The next customer who asks for something similar? The Builder just pulls it. The platform gets richer for everyone, every single day.</p>
                         </div>
                         </div>
                       </div>
@@ -883,162 +917,129 @@ export default function IntroSection() {
                           style={{
                             width: '40px',
                             height: '40px',
-                            background: '#EC4899',
-                            boxShadow: '0 4px 12px rgba(236, 72, 153, 0.3)',
+                            background: '#F5F1E8',
+                            border: '2px solid #9CA3AF',
                           }}
                         >
-                          <span className="text-white font-bold text-xl">3</span>
+                          <span className="font-bold text-lg" style={{ color: '#B4646E' }}>3</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                          Go Live
+                        <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#B4646E' }}>
+                          Manage Agents
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Hit deploy and your entire operation goes live. No implementation phase, no IT department, no months of setup. Your team logs in and starts working—day one, minute one.
+                        Now that you have a custom ERP, who operates it? AI Agents—virtual employees running your operations tirelessly. Build agents that don't just respond, but actually work for you.
                       </p>
 
                       <div className="space-y-4">
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            Agent Builder
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Most agent builders are too technical for business owners or too simple for developers. We built for both.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span><strong>Autonomy slider:</strong> plain English on one end, full code control on the other</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Define state, graph logic, and model prompts with full control</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Deep ERP integration—agents know your system's current state</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
+                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            Automated Testing Framework
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Building agents is easy. Making them reliable is hard. We provide the framework to ship agents that actually work.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Generate test data, run it through the agent</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Test tool calling, token usage, hallucination levels</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>See how the graph is traversed, how many tokens used</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
+                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
-                            One-Click Production Deploy
+                            Fine-Tuning
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Traditional ERP deployment takes months. You'll do it in seconds—literally click a button and go live.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">We don't just prompt models, we fine-tune them for repeatable tasks.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Zero DevOps or infrastructure configuration</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Better efficiency, sharper tool-calling</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Automatic SSL certificates and domain setup</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Agents that just know what to do for your business</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Production-grade environment from the start</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Every interaction makes your agents smarter</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
-                            Instant Team Onboarding
+                            Command Center
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Your team doesn't need training manuals or IT support. The system is intuitive because it's built for how they work.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">The daily driver screen for users. Where your agents live and talk to you.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Share a link—everyone's in, with the right permissions</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Agents report what they did, ask permission for next steps</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Mobile-responsive: works on phones, tablets, desktops</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Mobile-first—this is what people see on their phones</span>
                             </li>
                             <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Role-based access means everyone sees what they need</span>
+                              <span className="text-[#B4646E] mt-0.5">→</span>
+                              <span>Deep links into the ERP desk when you need to drill down</span>
                             </li>
                           </ul>
                         </div>
 
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                            </svg>
-                            Enterprise Infrastructure Included
-                          </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">We handle all the infrastructure complexity—you get enterprise-grade hosting without the enterprise headaches.</p>
-                          <ul className="space-y-1 text-xs text-gray-600">
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Auto-scaling: handles 10 users or 10,000 users seamlessly</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Automated daily backups with point-in-time recovery</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>99.9% uptime SLA with global CDN distribution</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>24/7 monitoring and automatic issue resolution</span>
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
-                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                            Security & Compliance Built-In
-                          </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Enterprise security from day one—not something you bolt on later when you get audited.</p>
-                          <ul className="space-y-1 text-xs text-gray-600">
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>End-to-end encryption: data encrypted at rest and in transit</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>SOC 2, GDPR, HIPAA compliance frameworks ready</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Multi-factor authentication and SSO integration</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Complete audit logs for every action in the system</span>
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
-                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            Continuous Evolution
+                            Runtime Evolution
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Going live isn't the end—it's the beginning. Keep evolving your system as your business grows.</p>
-                          <ul className="space-y-1 text-xs text-gray-600">
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Push updates instantly—no downtime or maintenance windows</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Add new workflows, integrations, or features anytime</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-pink-500 mt-0.5">→</span>
-                              <span>Version control: roll back changes if something goes wrong</span>
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div className="bg-pink-50/60 rounded-2xl p-4 border-2 border-pink-100">
-                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Zero Time to Value
-                          </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed">Traditional ERPs measure implementation in months or years. You measure it in hours—from first conversation to production.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed">If an agent encounters a new task it can't handle, it doesn't break. It proposes a plan, you approve it, the Builder creates it, and the system grows. Your ERP literally evolves alongside your business—without you ever touching a line of code.</p>
                         </div>
                         </div>
                       </div>
                     )}
-                  </div>
                 </div>
               </div>
             )}
@@ -1055,13 +1056,60 @@ export default function IntroSection() {
               opacity: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? contentOpacity : 0,
               transition: "opacity 600ms ease-out 200ms",
               pointerEvents: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? "auto" : "none",
-              zIndex: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? 10 : -1,
+              zIndex: splitProgress === 0 && rotateProgress === 0 && scrollProgress === 0 ? 20 : -1,
             }}
           >
             <IntroContent contentOpacity={1} scrollRef={contentScrollRef} />
           </div>
         </div>
       </div>
+
+      {/* Fixed Home button - appears at top when scrolling down past How it Works, hidden when card is expanded */}
+      {isHomeButtonFixed && rotateProgress === 1 && !expandedCard && (() => {
+        // Calculate the same left position as the original button
+        // Container is centered with max-width 1280px
+        const containerWidth = Math.min(maxContainerWidth, viewportWidth - viewportPadding);
+        const containerLeftEdge = (viewportWidth - containerWidth) / 2;
+        const fixedButtonLeft = containerLeftEdge + builderPadding;
+
+        return (
+          <button
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('resetHome'));
+            }}
+            className="fixed flex items-center justify-center gap-2 text-gray-700 hover:text-white transition-all group cursor-pointer"
+            style={{
+              left: `${fixedButtonLeft}px`,
+              top: '5px',
+              zIndex: 250,
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: '#F5F1E8',
+              border: '2px solid #9CA3AF',
+              boxShadow: '0 2px 8px rgba(156, 163, 175, 0.2)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#8FB7C5';
+              e.currentTarget.style.borderColor = '#7AA5B5';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#F5F1E8';
+              e.currentTarget.style.borderColor = '#9CA3AF';
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
+              <path
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        );
+      })()}
     </section>
   );
 }

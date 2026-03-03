@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import UserAvatar from "./UserAvatar";
-import { checkAuth, type User } from "@/lib/auth";
-import { Database, Home } from "lucide-react";
 import EarlyAccessModal from "./EarlyAccessModal";
 import Toast from "./Toast";
+import Image from "next/image";
+import PinwheelLogo from "./PinwheelLogo";
 
 const links: { href: string; label: string }[] = [
   // { href: "#features", label: "Features" },
@@ -20,7 +17,9 @@ const sections = [
   { id: "how-it-works", label: "How it Works" },
   { id: "builder", label: "Builder" },
   { id: "integrations", label: "Integrations" },
-  { id: "environments", label: "Environments" },
+  { id: "registry", label: "Registry" },
+  { id: "blog", label: "Blog" },
+  { id: "cofounders", label: "CoFounders" },
   { id: "join-us", label: "Join Us" },
 ];
 
@@ -28,14 +27,17 @@ type NavBarProps = {
   showHowItWorks?: boolean;
   showBuilder?: boolean;
   showIntegrations?: boolean;
-  showEnvironments?: boolean;
+  showRegistry?: boolean;
+  showBlog?: boolean;
+  showCoFounders?: boolean;
   showJoinUs?: boolean;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
+  blogPageTitle?: string;
+  blogPageAction?: string;
 };
 
-export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showEnvironments = false, showJoinUs = false }: NavBarProps) {
-  const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showRegistry = false, showBlog = false, showCoFounders = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -54,10 +56,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     return () => window.removeEventListener('updateBuilderTab' as any, handleUpdateBuilderTab);
   }, []);
 
-  const isOnEnvironmentSelector = pathname === "/environment-selector";
-
   const builderTabs = [
-    { id: "ui", label: "UI", subtitle: "Build beautiful interfaces" },
     { id: "data", label: "Data", subtitle: "Connect and transform" },
     { id: "workflows", label: "Workflows", subtitle: "Automate processes" },
     { id: "agents", label: "Agents", subtitle: "Deploy AI agents" },
@@ -70,6 +69,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
   const handleSectionClick = (sectionId: string) => {
     setIsMobileMenuOpen(false);
+    setIsModalOpen(false);
 
     // Special case: Introduction should scroll to the very top
     if (sectionId === "intro") {
@@ -83,6 +83,25 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       return;
     }
 
+    // Special case: Builder on mobile should scroll to the first mobile builder card
+    if (sectionId === "builder") {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        const firstMobileCard = document.getElementById('mobile-builder-ui');
+        if (firstMobileCard) {
+          setTimeout(() => {
+            const navbarHeight = 180; // Account for navbar + builder tabs
+            const targetPosition = firstMobileCard.getBoundingClientRect().top + window.scrollY - navbarHeight;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth',
+            });
+          }, 100);
+          return;
+        }
+      }
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       const navbarHeight = 80;
@@ -93,18 +112,6 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       });
     }
   };
-
-  useEffect(() => {
-    const verifyAuth = async () => {
-      const authResult = await checkAuth();
-      if (authResult.authenticated && authResult.user) {
-        setUser(authResult.user);
-      }
-      setIsCheckingAuth(false);
-    };
-
-    verifyAuth();
-  }, []);
 
   // Close mobile menu on scroll
   useEffect(() => {
@@ -126,6 +133,12 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   // Track active section based on scroll position
   useEffect(() => {
     const updateActiveSection = () => {
+      // Don't update sections when modal is open
+      if (isModalOpen) {
+        console.log('⏸️ Skipping section update - modal is open');
+        return;
+      }
+
       const sectionIds = sections.map(s => s.id);
       const viewportCenter = window.scrollY + window.innerHeight / 2;
 
@@ -151,7 +164,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       window.removeEventListener('scroll', updateActiveSection);
       window.removeEventListener('resize', updateActiveSection);
     };
-  }, []);
+  }, [isModalOpen]);
 
   // Measure navbar height
   useEffect(() => {
@@ -172,7 +185,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     navbarPadding: "py-0.5", // keep compact
 
     // LOGO CONTROLS
-    logoGap: "gap-[.005rem]", // Space between logo and text: 'gap-1', 'gap-4', etc.
+    logoGap: "gap-2", // Space between logo and text: 'gap-1', 'gap-4', etc.
     logoSize: "width={40} height={40}", // Logo image size (change both width and height)
     logoTextSize: "text-xl", // Logo text size: 'text-xl', 'text-3xl', etc.
 
@@ -189,24 +202,64 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     <>
       <header className="w-full">
         <nav
-          className={`flex flex-col bg-white/10 border-2 border-white/20 border-t-0 backdrop-blur-md max-w-7xl mx-auto overflow-hidden`}
+          className={`flex flex-col bg-[#F5F1E8] border-2 border-[#9CA3AF] border-t-0 backdrop-blur-md max-w-7xl mx-auto`}
         style={{
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          borderBottomLeftRadius: '40px',
-          borderBottomRightRadius: '40px',
+          boxShadow: isMobileMenuOpen
+            ? '0 8px 24px -4px rgba(139, 119, 89, 0.15)'
+            : '0 4px 12px -2px rgba(139, 119, 89, 0.12), 0 2px 6px -1px rgba(139, 119, 89, 0.08)',
+          borderBottomLeftRadius: '24px',
+          borderBottomRightRadius: '24px',
+          overflow: 'hidden',
         }}
       >
-        {/* Top Row - Logo and Buttons */}
-        <div className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-2`}>
-        {/* LEFT SIDE - Logo */}
+        {/* Top Row - Logo/Back Button and Buttons */}
+        <div className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-4`}>
+        {/* LEFT SIDE - Logo or Back Button */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} pl-2 sm:pl-3 py-1.5`}>
-          <Image src="/logo.png" width={28} height={28} alt="Sena logo" className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px]" />
-          <span
-            className={`text-base sm:${NAVBAR_CONTROLS.logoTextSize}  font-rockwell text-waygent-text-primary`}
-          >
-            Sena
-          </span>
+          {showBackButton ? (
+            <button
+              onClick={onBackClick}
+              className="inline-flex items-center gap-2 text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk transition cursor-pointer text-sm"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Go back
+            </button>
+          ) : (
+            <>
+              <PinwheelLogo
+                size={28}
+                animationDuration={10}
+                showStick={true}
+                filter="saturate(50%) brightness(90%)"
+                className="sm:scale-[1.14] md:scale-[1.29]"
+              />
+              <Image
+                src="/sena-wordmark.png"
+                alt="Sena"
+                width={120}
+                height={28}
+                className="h-6 sm:h-7 w-auto"
+              />
+            </>
+          )}
         </div>
+
+        {/* CENTER - Blog Page Title (hidden on mobile to avoid overlap with Early Access) */}
+        {blogPageTitle && (
+          <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
+            <span className="text-sm font-semibold text-gray-700 font-space-grotesk uppercase tracking-wide">
+              {blogPageTitle}
+            </span>
+          </div>
+        )}
 
         {/* RIGHT SIDE */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.navToButtonGap}`}>
@@ -227,13 +280,12 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
           {/* CTA Buttons or Logged In Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {!user && (
-              <>
-                {/* Commented out Login and Sign Up buttons */}
+            <>
+              {/* Commented out Login and Sign Up buttons */}
                 {/* <Link
                   href="/login"
                   className="inline-flex items-center justify-center px-3 py-1.5 h-7 rounded-md transition-all duration-300 ease-out whitespace-nowrap text-sm font-semibold border cursor-pointer outline-none leading-none font-space-grotesk hover:border-waygent-orange/60 hover:text-waygent-orange focus-visible:outline-none"
-                  style={{ borderColor: '#E5E7EB', backgroundColor: '#FAF9F5', color: '#6B7280' }}
+                  style={{ borderColor: '#E5E7EB', backgroundColor: '#F5F1E8', color: '#6B7280' }}
                 >
                   <span className="leading-none">Log In</span>
                 </Link> */}
@@ -252,14 +304,18 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                   </div>
                 </Link> */}
 
-                {/* Get Early Access Button */}
+                {/* Get Early Access Button or Custom Action */}
                 <button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('🎯 Get Early Access button clicked - opening modal');
+                    setIsModalOpen(true);
+                  }}
                   className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold cursor-pointer outline-none leading-none focus-visible:outline-none"
                   style={{
                     background: '#8FB7C5',
                     border: '1px solid #7AA5B5',
-                    borderRadius: '1.5rem',
+                    borderRadius: '9999px',
                     color: '#FFFFFF',
                     fontFamily: 'system-ui, -apple-system, sans-serif',
                     boxShadow: '0 2px 8px rgba(143, 183, 197, 0.3)',
@@ -273,7 +329,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.3)';
                   }}
                 >
-                  <span className="leading-none">Get Early Access</span>
+                  <span className="leading-none">{blogPageAction || "Get Early Access"}</span>
                 </button>
 
                 {/* Hamburger Menu Button - Mobile Only */}
@@ -293,64 +349,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     }`}
                   />
                 </button>
-              </>
-            )}
-
-            {user && (
-              <>
-                {/* Environment/Home Button */}
-                <Link
-                  href={isOnEnvironmentSelector ? "/" : "/environment-selector"}
-                  className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 ease-out whitespace-nowrap cursor-pointer outline-none leading-none font-space-grotesk focus-visible:outline-none"
-                  style={{
-                    background: 'rgba(255,255,255,0.15)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255,255,255,0.25)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.4)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
-                    e.currentTarget.style.border = '1px solid rgba(255,255,255,0.25)';
-                  }}
-                >
-                  {isOnEnvironmentSelector ? (
-                    <>
-                      <Home className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-gray-900" />
-                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-gray-900">Home</span>
-                    </>
-                  ) : (
-                    <>
-                      <Database className="w-4 h-4 text-gray-600 transition-colors duration-300 group-hover:text-gray-900" />
-                      <span className="text-sm font-semibold text-waygent-text-primary transition-colors duration-300 group-hover:text-gray-900">ERP Environment</span>
-                    </>
-                  )}
-                </Link>
-
-                {/* User Avatar */}
-                <UserAvatar user={user} />
-
-                {/* Hamburger Menu Button - Mobile Only */}
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden flex flex-col justify-center items-center w-8 h-8 gap-[3px] focus:outline-none ml-2"
-                  aria-label="Toggle menu"
-                >
-                  <span
-                    className={`w-5 h-[2px] bg-waygent-text-primary transition-all duration-300 ease-in-out ${
-                      isMobileMenuOpen ? 'rotate-45 translate-y-[5px]' : ''
-                    }`}
-                  />
-                  <span
-                    className={`w-5 h-[2px] bg-waygent-text-primary transition-all duration-300 ease-in-out ${
-                      isMobileMenuOpen ? '-rotate-45 -translate-y-[5px]' : ''
-                    }`}
-                  />
-                </button>
-              </>
-            )}
+            </>
           </div>
         </div>
         </div>
@@ -395,7 +394,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 {/* Compact Tab Selector - No Subtitles */}
                 <div className="px-3 pb-2">
                   <div
-                    className="grid grid-cols-4 rounded-xl overflow-hidden"
+                    className="grid grid-cols-3 rounded-xl overflow-hidden max-w-xs mx-auto"
                     style={{
                       background: 'rgba(255, 255, 255, 0.4)',
                       border: '1px solid rgba(0, 0, 0, 0.08)',
@@ -406,8 +405,30 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                         key={tab.id}
                         onClick={() => {
                           setActiveBuilderTab(tab.id);
-                          // Dispatch event for BuilderTabbed component to listen
-                          window.dispatchEvent(new CustomEvent('builderTabChange', { detail: { tabId: tab.id } }));
+                          setIsModalOpen(false);
+
+                          // Check if mobile or desktop
+                          const isMobile = window.innerWidth < 768;
+
+                          if (isMobile) {
+                            // Scroll to the mobile builder card with proper offset
+                            const mobileCardId = `mobile-builder-${tab.id}`;
+                            const element = document.getElementById(mobileCardId);
+                            if (element) {
+                              // Small delay to let modal close
+                              setTimeout(() => {
+                                const navbarHeight = 180; // Account for navbar + builder tabs
+                                const targetPosition = element.getBoundingClientRect().top + window.scrollY - navbarHeight;
+                                window.scrollTo({
+                                  top: targetPosition,
+                                  behavior: 'smooth',
+                                });
+                              }, 100);
+                            }
+                          } else {
+                            // Desktop: dispatch event for BuilderTabbed component
+                            window.dispatchEvent(new CustomEvent('builderTabChange', { detail: { tabId: tab.id } }));
+                          }
                         }}
                         className={`px-2 py-2 transition-all duration-200 relative ${
                           index !== builderTabs.length - 1 ? 'border-r border-white/40' : ''
@@ -451,7 +472,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
               </div>
             )}
 
-            {showEnvironments && (
+            {showRegistry && (
               <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
                 <h2
                   style={{
@@ -463,7 +484,41 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     marginBottom: "0px",
                   }}
                 >
-                  Environments
+                  Registry
+                </h2>
+              </div>
+            )}
+
+            {showBlog && (
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "16px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Blog
+                </h2>
+              </div>
+            )}
+
+            {showCoFounders && (
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "16px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  CoFounders
                 </h2>
               </div>
             )}
@@ -487,51 +542,59 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           </>
         )}
 
-        {/* Mobile Dropdown Menu - INSIDE THE NAV - PART OF THE SAME COMPONENT */}
+        {/* Mobile Dropdown Menu - Redesigned with earthy theme */}
         {isMobileMenuOpen && (
-          <div className="md:hidden w-full px-4 pt-3 pb-3 border-t border-white/20">
-            <ul className="space-y-1.5">
+          <div
+            className="md:hidden w-full px-3 pt-2 pb-3"
+            style={{
+              borderTop: '1px solid rgba(156, 163, 175, 0.3)',
+            }}
+          >
+            {/* Two-column grid for compact layout */}
+            <div className="grid grid-cols-2 gap-2">
               {sections.map((section, index) => {
                 const isActive = section.id === activeSection;
                 const step = (index + 1).toString().padStart(2, "0");
 
                 return (
-                  <li key={section.id}>
-                    <button
-                      onClick={() => handleSectionClick(section.id)}
-                      className={`group relative flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ease-out cursor-pointer border ${
-                        !isActive && 'hover:bg-white/50 hover:border-white/40'
-                      } ${
-                        isActive ? 'bg-waygent-orange shadow-lg border-waygent-orange' : 'bg-white/30 backdrop-blur-sm border-white/30'
-                      }`}
+                  <button
+                    key={section.id}
+                    onClick={() => handleSectionClick(section.id)}
+                    className="group relative flex items-center gap-2 text-left transition-all duration-200 ease-out cursor-pointer"
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: '12px',
+                      background: isActive ? '#8FB7C5' : '#F5F1E8',
+                      border: isActive ? '2px solid #7AA5B5' : '2px solid #D1D5DB',
+                    }}
+                  >
+                    {/* Number circle */}
+                    <span
+                      className="text-[10px] font-bold flex-shrink-0 flex items-center justify-center font-space-grotesk"
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        color: isActive ? '#FFFFFF' : '#6B7280',
+                        background: isActive ? 'rgba(255,255,255,0.25)' : '#FFFFFF',
+                        border: isActive ? '1.5px solid rgba(255,255,255,0.4)' : '1.5px solid #9CA3AF',
+                      }}
                     >
-                      <span
-                        className="text-xs font-bold tracking-wide transition-colors duration-200 w-7 h-7 flex-shrink-0 flex items-center justify-center font-space-grotesk rounded-lg"
-                        style={{
-                          color: isActive ? 'white' : '#1F2937',
-                          background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.6)',
-                          lineHeight: '1',
-                        }}
-                      >
-                        {step}
-                      </span>
-                      <span
-                        className={`flex-1 text-sm font-bold transition-all duration-200 flex items-center whitespace-nowrap font-space-grotesk ${
-                          !isActive && 'group-hover:text-waygent-orange'
-                        }`}
-                        style={{
-                          color: isActive ? 'white' : '#1F2937',
-                          transform: isActive ? 'translateX(2px)' : 'translateX(0)',
-                          lineHeight: '1.4',
-                        }}
-                      >
-                        {section.label}
-                      </span>
-                    </button>
-                  </li>
+                      {step}
+                    </span>
+                    {/* Label */}
+                    <span
+                      className="flex-1 text-xs font-semibold font-space-grotesk truncate"
+                      style={{
+                        color: isActive ? '#FFFFFF' : '#374151',
+                      }}
+                    >
+                      {section.label}
+                    </span>
+                  </button>
                 );
               })}
-            </ul>
+            </div>
           </div>
         )}
         </nav>
@@ -539,17 +602,26 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         {/* Backdrop when menu is open */}
         {isMobileMenuOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm"
+            className="lg:hidden fixed inset-0"
             onClick={() => setIsMobileMenuOpen(false)}
-            style={{ top: `${navbarHeight}px`, zIndex: -1 }}
+            style={{
+              top: `${navbarHeight}px`,
+              zIndex: -1,
+              background: 'rgba(44, 24, 16, 0.15)',
+              backdropFilter: 'blur(2px)',
+            }}
           />
         )}
 
         {/* Early Access Modal */}
         <EarlyAccessModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            console.log('🚪 NavBar - closing modal');
+            setIsModalOpen(false);
+          }}
           onSuccess={handleWaitlistSuccess}
+          accessType="product"
         />
 
         {/* Toast Notification */}

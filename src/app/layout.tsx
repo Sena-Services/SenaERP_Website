@@ -1,13 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: "Sena",
   description: "Sena: AI-centred B2B travel platform",
   icons: {
-    icon: "/logo.ico",
-    shortcut: "/logo.ico",
-    apple: "/logo.png",
+    icon: "/sena-logo-pinwheel.png",
+    shortcut: "/sena-logo-pinwheel.png",
+    apple: "/sena-logo-pinwheel.png",
   },
 };
 

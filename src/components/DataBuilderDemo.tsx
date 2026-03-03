@@ -182,17 +182,17 @@ export default function DataBuilderDemo() {
       setStage(0);
       setFadeOut(false);
 
-      // Stage 0: Show user query only (500ms)
-      // Stage 1: Show white tables with gray content placeholders (600ms)
-      // Stage 2: Columns fill in with actual data (800ms)
-      // Stage 3: Relationship lines draw (800ms) - THE STAR! (faster)
-      // Stage 4: Validations appear (400ms) - faster
-      // Stage 5: Endpoints appear (400ms) - faster
-      // Stage 6: Permissions appear (600ms)
-      // Stage 7: Hold (3500ms) - Same as UI builder hold time
-      // Stage 8: Fade out (800ms) - SLOWER FADE
+      // Stage 0: Show user query only (600ms)
+      // Stage 1: Show white tables with gray content placeholders (700ms)
+      // Stage 2: Columns fill in with actual data (900ms)
+      // Stage 3: Relationship lines draw (1200ms) - THE STAR!
+      // Stage 4: Validations appear (600ms)
+      // Stage 5: Endpoints appear (600ms)
+      // Stage 6: Permissions appear (700ms)
+      // Stage 7: Hold (5000ms) - Longer hold time
+      // Stage 8: Fade out (800ms)
 
-      const stages = [500, 600, 800, 800, 400, 400, 600, 3500];
+      const stages = [600, 700, 900, 1200, 600, 600, 700, 5000];
       let currentStage = 0;
 
       const progressStages = () => {
@@ -271,7 +271,7 @@ export default function DataBuilderDemo() {
     <div className="flex flex-col h-full w-full overflow-hidden p-2 md:p-4" style={{
       scrollbarWidth: 'none',
       msOverflowStyle: 'none',
-      backgroundColor: '#ECFDF5' // green-50 to match tab theme
+      backgroundColor: '#FAFAF8'
     }}>
       {/* Request badge - appears first in stage 0 */}
       {stage >= 0 && !fadeOut && (
@@ -319,11 +319,11 @@ export default function DataBuilderDemo() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: tableIdx * 0.12, duration: 0.4, type: "spring", stiffness: 200 }}
-                  className="rounded-lg shadow-md border-2 border-emerald-200 bg-white p-1.5 md:p-2 w-32 md:w-48 relative flex-shrink-0"
+                  className="rounded-lg shadow-md border-2 border-[#8FB7C5] bg-white p-1.5 md:p-2 w-32 md:w-48 relative flex-shrink-0"
                 >
                 {/* Table name */}
                 <div className="flex items-center gap-1 mb-1 pb-1 border-b border-gray-200">
-                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-emerald-500" />
+                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-[#8FB7C5]" />
                   <h4 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 truncate">
                     {table.name}
                   </h4>
@@ -396,7 +396,7 @@ export default function DataBuilderDemo() {
                   orient="auto"
                   markerUnits="strokeWidth"
                 >
-                  <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6" />
+                  <path d="M0,0 L0,6 L9,3 z" fill="#6BA3B5" />
                 </marker>
               </defs>
 
@@ -416,15 +416,15 @@ export default function DataBuilderDemo() {
                     <motion.path
                       d={path}
                       fill="none"
-                      stroke="#3b82f6"
+                      stroke="#6BA3B5"
                       strokeWidth="2.5"
                       strokeLinecap="round"
                       markerEnd="url(#arrowhead)"
                       initial={{ pathLength: 0, opacity: 0 }}
                       animate={{ pathLength: 1, opacity: 1 }}
                       transition={{
-                        delay: idx * 0.5,
-                        duration: 1,
+                        delay: idx * 0.6,
+                        duration: 1.2,
                         ease: "easeInOut"
                       }}
                     />
@@ -433,25 +433,25 @@ export default function DataBuilderDemo() {
                     <motion.circle
                       cx={fromX}
                       cy={fromY}
-                      r="4"
-                      fill="#3b82f6"
+                      r="5"
+                      fill="#8FB7C5"
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{
-                        delay: idx * 0.5 + 0.2,
-                        duration: 0.3
+                        delay: idx * 0.6 + 0.2,
+                        duration: 0.4
                       }}
                     />
                     <motion.circle
                       cx={toX}
                       cy={toY}
-                      r="4"
-                      fill="#3b82f6"
+                      r="5"
+                      fill="#8FB7C5"
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{
-                        delay: idx * 0.5 + 0.8,
-                        duration: 0.3
+                        delay: idx * 0.6 + 0.9,
+                        duration: 0.4
                       }}
                     />
 
@@ -460,8 +460,8 @@ export default function DataBuilderDemo() {
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{
-                        delay: idx * 0.5 + 0.6,
-                        duration: 0.3,
+                        delay: idx * 0.6 + 0.7,
+                        duration: 0.4,
                         type: "spring",
                         stiffness: 300
                       }}
@@ -472,7 +472,7 @@ export default function DataBuilderDemo() {
                         width="40"
                         height="20"
                         rx="10"
-                        fill="#3b82f6"
+                        fill="#6BA3B5"
                       />
                       <text
                         x={midX}
@@ -502,11 +502,11 @@ export default function DataBuilderDemo() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border-2 border-green-200 p-2 md:p-3"
+              transition={{ duration: 0.5 }}
+              className="bg-white rounded-lg shadow-md border-2 border-[#8FB7C5] p-2 md:p-3"
             >
               <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
-                <svg className="w-3 h-3 md:w-4 md:h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-[#6BA3B5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">
@@ -522,7 +522,9 @@ export default function DataBuilderDemo() {
                     transition={{ delay: idx * 0.1, duration: 0.3 }}
                     className="flex items-start gap-1.5 md:gap-2"
                   >
-                    <span className="text-green-600 text-[10px] md:text-xs mt-0.5 flex-shrink-0">✓</span>
+                    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
                     <span className="text-[10px] md:text-xs font-futura text-gray-600 leading-tight">{validation}</span>
                   </motion.div>
                 ))}
@@ -535,11 +537,11 @@ export default function DataBuilderDemo() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border-2 border-blue-200 p-2 md:p-3"
+              transition={{ duration: 0.5 }}
+              className="bg-white rounded-lg shadow-md border-2 border-[#8FB7C5] p-2 md:p-3"
             >
               <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
-                <svg className="w-3 h-3 md:w-4 md:h-4 text-waygent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-[#6BA3B5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">
@@ -567,11 +569,11 @@ export default function DataBuilderDemo() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="bg-white rounded-lg shadow-md border-2 border-purple-200 p-2 md:p-3"
+              transition={{ duration: 0.5 }}
+              className="bg-white rounded-lg shadow-md border-2 border-[#8FB7C5] p-2 md:p-3"
             >
               <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
-                <svg className="w-3 h-3 md:w-4 md:h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3 h-3 md:w-4 md:h-4 text-[#6BA3B5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 <h5 className="font-futura font-bold text-[10px] md:text-xs text-gray-900 uppercase tracking-wide">
@@ -587,7 +589,9 @@ export default function DataBuilderDemo() {
                     transition={{ delay: idx * 0.1, duration: 0.3 }}
                     className="flex items-start gap-1.5 md:gap-2"
                   >
-                    <span className="text-purple-600 text-[10px] md:text-xs mt-0.5 flex-shrink-0">🔒</span>
+                    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-purple-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
                     <span className="text-[10px] md:text-xs font-futura text-gray-600 leading-tight">{permission}</span>
                   </motion.div>
                 ))}

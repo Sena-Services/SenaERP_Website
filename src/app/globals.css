@@ -151,7 +151,7 @@
   /* New Sena Brand Colors */
   --color-waygent-blue: #3b82f6;
   --color-waygent-orange: #f59e0b;
-  --color-waygent-cream: #FAF9F5;
+  --color-waygent-cream: #F5F1E8;
   --color-waygent-light-blue: #EEF2FF;
   --color-waygent-text-primary: #000000;
   --color-waygent-text-secondary: rgba(0, 0, 0, 0.7);
@@ -163,8 +163,8 @@
   /* Legacy colors for backward compatibility */
   --color-sentra-apricot-jet: #f59e0b;
   --color-sentra-midnight-deck: #000000;
-  --color-sentra-travertine: #FAF9F5;
-  --color-sentra-dune-mist: #FAF9F5;
+  --color-sentra-travertine: #F5F1E8;
+  --color-sentra-dune-mist: #F5F1E8;
   --color-sentra-ocean-route: #3b82f6;
 
   --animate-fade-in: fadeIn 0.3s ease-in-out;
@@ -189,7 +189,7 @@
 html,
 body {
   min-height: 100%;
-  background-color: var(--color-waygent-cream);
+  background-color: #F5F1E8;
   color: var(--color-waygent-text-primary);
   overscroll-behavior-x: none; /* Prevent horizontal overscroll only */
   overscroll-behavior-y: auto; /* Allow vertical elastic bounce */
@@ -210,7 +210,7 @@ html.smooth-scroll {
 }
 
 :root {
-  --background: #FAF9F5;
+  --background: #F5F1E8;
   --foreground: #16202b;
 }
 
@@ -223,13 +223,13 @@ html.smooth-scroll {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #FAF9F5;
+    --background: #F5F1E8;
     --foreground: #16202b;
   }
 }
 
 body {
-  background: #FAF9F5;
+  background: #F5F1E8;
   color: #16202b;
   /* font-family will be handled by Tailwind utility classes and base styles */
 }
@@ -247,6 +247,15 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
 
 /* Quill Editor Read Mode Styles */
@@ -317,7 +326,7 @@ body {
 .blog-content {
   font-family: SpaceGrotesk, sans-serif;
   color: #374151;
-  line-height: 1.75;
+  line-height: 1.6;
 }
 
 .blog-content h1,
@@ -355,8 +364,8 @@ body {
 }
 
 .blog-content p {
-  margin-bottom: 1.25rem;
-  line-height: 1.75;
+  margin-bottom: 1rem;
+  line-height: 1.6;
   color: #4b5563;
 }
 
@@ -497,4 +506,38 @@ body {
 .builder-no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+/* Hide Next.js dev indicator */
+#__next-build-watcher {
+  display: none !important;
+}
+
+nextjs-portal {
+  display: none !important;
+}
+
+/* Environment card HTML content styling */
+.text-waygent-text-secondary h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.text-waygent-text-secondary h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.375rem;
+  margin-top: 0.625rem;
+}
+
+.text-waygent-text-secondary p {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.text-waygent-text-secondary p:last-child {
+  margin-bottom: 0;
 }

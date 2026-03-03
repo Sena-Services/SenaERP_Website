@@ -63,6 +63,7 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
   const leftScrollRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
   // Detect active step based on left scroll position
   useEffect(() => {
@@ -180,6 +181,14 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
   const activeStep = showcaseSteps[activeIndex];
   const NAVBAR_HEIGHT = 80;
 
+  const openImageExpanded = (imageUrl: string) => {
+    setExpandedImage(imageUrl);
+  };
+
+  const closeImageExpanded = () => {
+    setExpandedImage(null);
+  };
+
   return (
     <div
       id="builder"
@@ -222,7 +231,16 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
               <div key={step.id} className="flex flex-col space-y-4">
                 {/* Mobile Image for each step */}
                 <div className="w-full px-4">
-                  <div className="relative w-full aspect-[16/10] rounded-2xl bg-white shadow-lg overflow-hidden">
+                  <div
+                    className="relative w-full aspect-[16/10] rounded-2xl bg-white shadow-lg overflow-hidden cursor-pointer group"
+                    onClick={() => openImageExpanded(step.image)}
+                  >
+                    {/* Subtle view hint */}
+                    <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+                        <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
+                      </div>
+                    </div>
                     <Image
                       src={step.image}
                       alt={`Screenshot showcasing ${step.title}`}
@@ -325,11 +343,18 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                className="relative w-full max-w-[900px] aspect-[16/10] rounded-[2rem] bg-white shadow-2xl overflow-hidden"
+                className="relative w-full max-w-[900px] aspect-[16/10] rounded-[2rem] bg-white shadow-2xl overflow-hidden cursor-pointer group"
                 style={{
                   boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
                 }}
+                onClick={() => openImageExpanded(activeStep.image)}
               >
+                {/* Subtle view hint */}
+                <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+                    <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
+                  </div>
+                </div>
                 <Image
                   src={activeStep.image}
                   alt={`Screenshot showcasing ${activeStep.title}`}
@@ -343,6 +368,51 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
           </div>
         </div>
       </div>
+
+      {/* Simple Image Expanded Modal */}
+      <AnimatePresence>
+        {expandedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center"
+            onClick={closeImageExpanded}
+          >
+            {/* Close button - top right */}
+            <button
+              onClick={closeImageExpanded}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200"
+              aria-label="Close"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Centered Image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-[90vw] max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={expandedImage}
+                alt="Expanded screenshot"
+                width={1200}
+                height={800}
+                quality={90}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 });
