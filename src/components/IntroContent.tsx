@@ -660,7 +660,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               fontWeight: 500,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
               width: isMobile ? '200px' : `${getScaledValue(240)}px`,
-            }}>Get started with Sena</span>
+            }}>Login</span>
             <svg
               width={isMobile ? 16 : getScaledValue(18)}
               height={isMobile ? 16 : getScaledValue(18)}
