@@ -23,6 +23,9 @@ export const API_CONFIG = {
     GET_PUBLISHED_ENVIRONMENTS: '/api/method/senaerp_platform.api.website_environment.get_published_environments',
     GET_ENVIRONMENT_BY_ID: '/api/method/senaerp_platform.api.website_environment.get_environment_by_id',
     GET_ENVIRONMENT_COUNT: '/api/method/senaerp_platform.api.website_environment.get_environment_count',
+    GOOGLE_SSO_LOGIN: '/api/method/senaerp_platform.api.sso.google_login',
+    VALIDATE_SSO_TOKEN: '/api/method/senaerp_platform.api.sso.validate_sso_token',
+    LOGIN: '/api/method/senaerp_platform.api.user_auth.login',
   }
 } as const;
 

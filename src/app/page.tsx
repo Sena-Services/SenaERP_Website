@@ -41,9 +41,9 @@ function HomeContent() {
   // Scroll to top on page load/refresh, or skip intro if section param is present
   useEffect(() => {
     const section = searchParams.get('section');
-    if (section === 'how-it-works') {
-      // Skip intro and go directly to "how it works" section
-      // Use a small delay to ensure the page is ready
+    const hasToken = searchParams.has('token');
+    if (section === 'how-it-works' || hasToken) {
+      // Skip intro: go to "how it works" section, or show NavBar for SSO token handling
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('triggerIntroSequence'));
         setShowNavigation(true);

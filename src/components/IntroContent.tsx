@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import PinwheelLogo from './PinwheelLogo';
-import EarlyAccessModal from './EarlyAccessModal';
+import SignupModal from './SignupModal';
 import Toast from './Toast';
 
 type IntroContentProps = {
@@ -20,7 +20,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const [isVideoHovered, setIsVideoHovered] = useState(false);
   const [isPdfHovered, setIsPdfHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  const [isPitchDeckModalOpen, setIsPitchDeckModalOpen] = useState(false);
+  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -643,9 +643,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             )}
           </div>
 
-          {/* Request access to pitch deck link */}
+          {/* Get Started link */}
           <div
-            onClick={() => setIsPitchDeckModalOpen(true)}
+            onClick={() => setIsSignupModalOpen(true)}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -660,7 +660,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               fontWeight: 500,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
               width: isMobile ? '200px' : `${getScaledValue(240)}px`,
-            }}>Request access to pitch deck</span>
+            }}>Get started with Sena</span>
             <svg
               width={isMobile ? 16 : getScaledValue(18)}
               height={isMobile ? 16 : getScaledValue(18)}
@@ -776,17 +776,14 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
         </div>
       </div>
 
-      {/* Pitch Deck Modal */}
-      <EarlyAccessModal
-        isOpen={isPitchDeckModalOpen}
-        onClose={() => setIsPitchDeckModalOpen(false)}
+      {/* Signup Modal */}
+      <SignupModal
+        isOpen={isSignupModalOpen}
+        onClose={() => setIsSignupModalOpen(false)}
         onSuccess={(message) => {
           setToastMessage(message);
           setShowToast(true);
         }}
-        title="Request Pitch Deck Access"
-        subtitle="Fill out the form and we'll send you our pitch deck"
-        accessType="pitchdeck"
       />
 
       {/* Toast */}

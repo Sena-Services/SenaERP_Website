@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import EarlyAccessModal from "./EarlyAccessModal";
+import SignupModal from "./SignupModal";
 import Toast from "./Toast";
 import Image from "next/image";
 import PinwheelLogo from "./PinwheelLogo";
+import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
 const links: { href: string; label: string }[] = [
   // { href: "#features", label: "Features" },
@@ -39,8 +40,42 @@ type NavBarProps = {
 
 export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showRegistry = false, showBlog = false, showCoFounders = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [googlePrefill, setGooglePrefill] = useState<{ name: string; email: string } | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+
+  // Auto-open modal when returning from Google SSO (with token validation)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (!token) return;
+
+    // Clean URL immediately
+    window.history.replaceState({}, "", window.location.pathname);
+
+    // Validate token server-side
+    (async () => {
+      try {
+        const resp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.VALIDATE_SSO_TOKEN), {
+          method: "POST",
+          body: JSON.stringify({ token }),
+        });
+        const data = await resp.json();
+        const result = data.message;
+        if (result?.success) {
+          setGooglePrefill({ name: result.google_name || "", email: result.email });
+          setIsModalOpen(true);
+        } else {
+          setToastMessage("Authentication failed. Please try again.");
+          setShowToast(true);
+        }
+      } catch {
+        setToastMessage("Authentication failed. Please try again.");
+        setShowToast(true);
+      }
+    })();
+  }, []);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [navbarHeight, setNavbarHeight] = useState(60);
@@ -308,7 +343,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('🎯 Get Early Access button clicked - opening modal');
+                    console.log('🎯 Login button clicked - opening modal');
                     setIsModalOpen(true);
                   }}
                   className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold cursor-pointer outline-none leading-none focus-visible:outline-none"
@@ -329,7 +364,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     e.currentTarget.style.boxShadow = '0 2px 8px rgba(143, 183, 197, 0.3)';
                   }}
                 >
-                  <span className="leading-none">{blogPageAction || "Get Early Access"}</span>
+                  <span className="leading-none">{blogPageAction || "Login"}</span>
                 </button>
 
                 {/* Hamburger Menu Button - Mobile Only */}
@@ -613,15 +648,18 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           />
         )}
 
-        {/* Early Access Modal */}
-        <EarlyAccessModal
+        {/* Signup Modal */}
+        <SignupModal
           isOpen={isModalOpen}
           onClose={() => {
-            console.log('🚪 NavBar - closing modal');
             setIsModalOpen(false);
+            setGooglePrefill(null);
           }}
-          onSuccess={handleWaitlistSuccess}
-          accessType="product"
+          onSuccess={(msg) => {
+            setGooglePrefill(null);
+            handleWaitlistSuccess(msg);
+          }}
+          googlePrefill={googlePrefill}
         />
 
         {/* Toast Notification */}
