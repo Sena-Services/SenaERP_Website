@@ -167,7 +167,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
       const result = data.message;
 
       if (result?.success) {
-        onSuccess(result.message || "Your account request has been submitted!");
+        onSuccess(result.message || "You have been added to the Waitlist!");
         onClose();
       } else {
         setError(result?.message || result?.error || "Failed to submit. Please try again.");
@@ -238,7 +238,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
           </div>
 
           {/* Right side — Form */}
-          <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+          <div className="p-6 sm:p-8 lg:p-10 flex flex-col overflow-y-auto modal-scroll">
             {/* Close button */}
             <button
               onClick={onClose}
@@ -252,7 +252,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
 
             {/* ─── SIGN IN VIEW ─── */}
             {view === "signin" && (
-              <>
+              <div className="my-auto">
                 <h2 className="text-2xl sm:text-[28px] font-bold text-gray-900 font-futura mb-2">
                   Sign in
                 </h2>
@@ -306,12 +306,12 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     Sign up
                   </button>
                 </p>
-              </>
+              </div>
             )}
 
             {/* ─── SIGN UP VIEW ─── */}
             {view === "signup" && (
-              <>
+              <div className="my-auto">
                 <h2 className="text-2xl sm:text-[28px] font-bold text-gray-900 font-futura mb-2">
                   Create your account
                 </h2>
@@ -434,12 +434,12 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     Sign in
                   </button>
                 </p>
-              </>
+              </div>
             )}
 
             {/* ─── PITCH DECK VIEW ─── */}
             {view === "pitch_deck" && (
-              <>
+              <div className="my-auto">
                 <h2 className="text-2xl sm:text-[28px] font-bold text-gray-900 font-futura mb-2">
                   Request Pitch Deck
                 </h2>
@@ -511,7 +511,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     Sign up
                   </button>
                 </p>
-              </>
+              </div>
             )}
           </div>
         </div>

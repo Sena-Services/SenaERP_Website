@@ -500,6 +500,28 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+/* Modal thin scrollbar - no arrows, rounded thumb */
+.modal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+.modal-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+.modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+.modal-scroll::-webkit-scrollbar-button {
+  display: none;
+}
+
 /* Hide Next.js dev indicator */
 #__next-build-watcher {
   display: none !important;

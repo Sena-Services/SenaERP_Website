@@ -268,6 +268,9 @@ function HomeContent() {
     };
 
     const handleWheel = (e: WheelEvent) => {
+      // Skip snap logic when body scroll is locked (e.g. modal open)
+      if (document.body.style.position === 'fixed') return;
+
       lastWheelTime = performance.now();
       const currentScrollY = window.scrollY;
       const direction = e.deltaY > 0 ? 'down' : 'up';
