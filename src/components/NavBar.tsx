@@ -19,8 +19,8 @@ const sections = [
   { id: "builder", label: "Builder" },
   { id: "integrations", label: "Integrations" },
   { id: "registry", label: "Registry" },
-  { id: "blog", label: "Blog" },
   { id: "get-access", label: "Get Access" },
+  { id: "blog", label: "Blog" },
   { id: "cofounders", label: "CoFounders" },
   { id: "join-us", label: "Join Us" },
 ];

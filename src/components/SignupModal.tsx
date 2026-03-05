@@ -64,6 +64,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
   const [signupEmail, setSignupEmail] = useState(googlePrefill?.email || "");
   const [signupSiteName, setSignupSiteName] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [pitchDeckMessage, setPitchDeckMessage] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -99,6 +100,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
       }
       setSignupSiteName("");
       setSignupPassword("");
+      setPitchDeckMessage("");
     }
   }, [isOpen, isGoogle, initialView]);
 
@@ -190,6 +192,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
           full_name: signupName,
           email: signupEmail,
           access_type: "Pitch Deck",
+          message: pitchDeckMessage || undefined,
         }),
       });
       const data = await resp.json();
@@ -235,7 +238,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
           </div>
 
           {/* Right side — Form */}
-          <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center overflow-y-auto">
+          <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
             {/* Close button */}
             <button
               onClick={onClose}
@@ -477,12 +480,24 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
                     />
                   </div>
+                  <div>
+                    <label className="block text-[13px] font-semibold text-gray-700 mb-1 font-space-grotesk">
+                      Message
+                    </label>
+                    <textarea
+                      value={pitchDeckMessage}
+                      onChange={(e) => setPitchDeckMessage(e.target.value)}
+                      placeholder="Tell us about yourself"
+                      rows={3}
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk resize-none"
+                    />
+                  </div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full py-3 bg-[#8FB7C5] text-white text-[15px] font-bold rounded-full hover:bg-[#7AA5B5] transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? "Submitting..." : "Send me the pitch deck"}
+                    {isSubmitting ? "Submitting..." : "Request Pitch Deck"}
                   </button>
                 </form>
 

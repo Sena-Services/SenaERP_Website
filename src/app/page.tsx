@@ -34,9 +34,9 @@ function HomeContent() {
     { id: "builder", label: "Builder" },
     { id: "integrations", label: "Integrations" },
     { id: "registry", label: "Registry" },
-    { id: "blog", label: "Blog" },
-    // { id: "pricing", label: "Pricing" },
     { id: "get-access", label: "Get Access" },
+    // { id: "pricing", label: "Pricing" },
+    { id: "blog", label: "Blog" },
     { id: "cofounders", label: "CoFounders" },
     { id: "join-us", label: "Join Our Team" },
   ];
@@ -96,8 +96,8 @@ function HomeContent() {
         const sections = [
           { id: 'join-us', el: joinUsEl },
           { id: 'cofounders', el: cofoundersEl },
-          { id: 'get-access', el: getAccessEl },
           { id: 'blog', el: blogEl },
+          { id: 'get-access', el: getAccessEl },
           { id: 'registry', el: registryEl },
           { id: 'integrations', el: integrationsEl },
           { id: 'builder', el: builderEl },
@@ -138,6 +138,8 @@ function HomeContent() {
     let manualScrollEnabled = false;
     let introSequencePlayed = false;
     let hasLeftHome = false; // Track if user has scrolled past home
+    let lastWheelTime = 0; // Track wheel events to distinguish scrollbar drag
+    let scrollEndTimeout: ReturnType<typeof setTimeout> | null = null;
     const lockDirection = (direction: 'up' | 'down', duration = 600) => {
       directionLock = direction;
       if (directionLockTimeout) {
@@ -266,6 +268,7 @@ function HomeContent() {
     };
 
     const handleWheel = (e: WheelEvent) => {
+      lastWheelTime = performance.now();
       const currentScrollY = window.scrollY;
       const direction = e.deltaY > 0 ? 'down' : 'up';
       const points = getSnapPoints();
@@ -461,7 +464,38 @@ function HomeContent() {
     };
 
 
+    // Scrollbar drag detection: snap when user drags scrollbar into the intro zone
+    // Wheel/touch events have their own snap logic, but scrollbar drag fires only 'scroll' events
+    const handleScroll = () => {
+      if (isAnimating) return;
+
+      // If a wheel event happened recently, this scroll is from the wheel — skip
+      if (performance.now() - lastWheelTime < 150) return;
+
+      // Debounce: wait for scrollbar drag to stop
+      if (scrollEndTimeout) clearTimeout(scrollEndTimeout);
+
+      scrollEndTimeout = setTimeout(() => {
+        if (isAnimating) return;
+
+        const currentScrollY = window.scrollY;
+        const points = getSnapPoints();
+
+        // If stuck in the intro animation zone, snap to the rotated position
+        if (currentScrollY > 50 && currentScrollY < points.rotated - 50) {
+          introSequencePlayed = true;
+          manualScrollEnabled = true;
+          autoRotateTriggered = true;
+          hasLeftHome = true;
+          setShowNavigation(true);
+          window.dispatchEvent(new CustomEvent('homeLeft'));
+          animateToPosition(points.rotated, 800);
+        }
+      }, 200);
+    };
+
     // Listen to wheel events with { passive: false } to allow preventDefault
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -586,6 +620,7 @@ function HomeContent() {
     clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
 
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
@@ -601,6 +636,9 @@ function HomeContent() {
       }
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
+      }
+      if (scrollEndTimeout) {
+        clearTimeout(scrollEndTimeout);
       }
     };
   }, []);
@@ -730,9 +768,9 @@ function HomeContent() {
             </div>
           </div>
 
-          {/* Blog - Color 1 */}
-          <div id="blog" style={{ backgroundColor: '#F5F1E8' }}>
-            <BlogSection ref={blogRef} />
+          {/* Get Access - Color 1 */}
+          <div style={{ backgroundColor: '#F5F1E8' }}>
+            <GetAccessSection ref={getAccessRef} />
           </div>
 
           {/* Section Divider & Color Transition */}
@@ -751,9 +789,9 @@ function HomeContent() {
             </div>
           </div>
 
-          {/* Get Started - Color 2 */}
-          <div style={{ backgroundColor: '#EDE7DC' }}>
-            <GetAccessSection ref={getAccessRef} />
+          {/* Blog - Color 2 */}
+          <div id="blog" style={{ backgroundColor: '#EDE7DC' }}>
+            <BlogSection ref={blogRef} />
           </div>
 
           {/* Section Divider & Color Transition */}
