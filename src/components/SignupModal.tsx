@@ -11,6 +11,7 @@ interface SignupModalProps {
   onClose: () => void;
   onSuccess: (message: string) => void;
   googlePrefill?: { name: string; email: string } | null;
+  initialView?: "signin" | "signup" | "pitch_deck";
 }
 
 /* ── Shared Google button ── */
@@ -46,9 +47,10 @@ function Divider() {
   );
 }
 
-export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill }: SignupModalProps) {
+export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill, initialView }: SignupModalProps) {
   const isGoogle = !!googlePrefill;
-  const [view, setView] = useState<"signin" | "signup">(isGoogle ? "signup" : "signin");
+  const defaultView = initialView === "pitch_deck" ? "pitch_deck" : (isGoogle ? "signup" : "signin");
+  const [view, setView] = useState<"signin" | "signup" | "pitch_deck">(defaultView);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -77,6 +79,13 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill 
     }
   }, [googlePrefill]);
 
+  // Sync view when initialView or isOpen changes
+  useEffect(() => {
+    if (isOpen && initialView) {
+      setView(initialView === "pitch_deck" ? "pitch_deck" : (isGoogle ? "signup" : initialView));
+    }
+  }, [isOpen, initialView, isGoogle]);
+
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -84,20 +93,20 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill 
       setLoginEmail("");
       setLoginPassword("");
       if (!isGoogle) {
-        setView("signin");
+        setView(initialView === "pitch_deck" ? "pitch_deck" : "signin");
         setSignupName("");
         setSignupEmail("");
       }
       setSignupSiteName("");
       setSignupPassword("");
     }
-  }, [isOpen, isGoogle]);
+  }, [isOpen, isGoogle, initialView]);
 
   useLockBodyScroll(isOpen);
 
   if (!isOpen || !mounted) return null;
 
-  const switchView = (v: "signin" | "signup") => {
+  const switchView = (v: "signin" | "signup" | "pitch_deck") => {
     setError(null);
     setView(v);
   };
@@ -157,6 +166,37 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill 
 
       if (result?.success) {
         onSuccess(result.message || "Your account request has been submitted!");
+        onClose();
+      } else {
+        setError(result?.message || result?.error || "Failed to submit. Please try again.");
+      }
+    } catch {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /* ── Pitch Deck Request handler ── */
+  const handlePitchDeck = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const resp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.SUBMIT_WAITLIST), {
+        method: "POST",
+        body: JSON.stringify({
+          full_name: signupName,
+          email: signupEmail,
+          access_type: "Pitch Deck",
+        }),
+      });
+      const data = await resp.json();
+      const result = data.message;
+
+      if (result?.success) {
+        onSuccess(result.message || "We'll send the pitch deck to your email shortly!");
         onClose();
       } else {
         setError(result?.message || result?.error || "Failed to submit. Please try again.");
@@ -389,6 +429,71 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill 
                     className="text-waygent-orange font-semibold hover:underline cursor-pointer"
                   >
                     Sign in
+                  </button>
+                </p>
+              </>
+            )}
+
+            {/* ─── PITCH DECK VIEW ─── */}
+            {view === "pitch_deck" && (
+              <>
+                <h2 className="text-2xl sm:text-[28px] font-bold text-gray-900 font-futura mb-2">
+                  Request Pitch Deck
+                </h2>
+                <p className="text-sm text-gray-500 font-space-grotesk mb-6">
+                  We&apos;ll send our pitch deck to your email
+                </p>
+
+                {error && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-700 font-space-grotesk">{error}</p>
+                  </div>
+                )}
+
+                <form onSubmit={handlePitchDeck} className="space-y-4">
+                  <div>
+                    <label className="block text-[13px] font-semibold text-gray-700 mb-1 font-space-grotesk">
+                      Full name <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={signupName}
+                      onChange={(e) => setSignupName(e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[13px] font-semibold text-gray-700 mb-1 font-space-grotesk">
+                      Email <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={signupEmail}
+                      onChange={(e) => setSignupEmail(e.target.value)}
+                      placeholder="john@example.com"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-3 bg-[#8FB7C5] text-white text-[15px] font-bold rounded-full hover:bg-[#7AA5B5] transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Submitting..." : "Send me the pitch deck"}
+                  </button>
+                </form>
+
+                <p className="text-sm text-gray-500 font-space-grotesk text-center mt-6">
+                  Want to get started instead?{" "}
+                  <button
+                    type="button"
+                    onClick={() => switchView("signup")}
+                    className="text-waygent-orange font-semibold hover:underline cursor-pointer"
+                  >
+                    Sign up
                   </button>
                 </p>
               </>

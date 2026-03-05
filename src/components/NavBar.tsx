@@ -20,6 +20,7 @@ const sections = [
   { id: "integrations", label: "Integrations" },
   { id: "registry", label: "Registry" },
   { id: "blog", label: "Blog" },
+  { id: "get-access", label: "Get Access" },
   { id: "cofounders", label: "CoFounders" },
   { id: "join-us", label: "Join Us" },
 ];
@@ -43,6 +44,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   const [googlePrefill, setGooglePrefill] = useState<{ name: string; email: string } | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [bannerDismissed, setBannerDismissed] = useState(true); // Default true to prevent flash
 
   // Auto-open modal when returning from Google SSO (with token validation)
   useEffect(() => {
@@ -76,6 +78,25 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       }
     })();
   }, []);
+
+  // Initialize banner dismissed state from localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const dismissed = localStorage.getItem("bannerDismissed");
+    if (dismissed !== "true") {
+      setBannerDismissed(false);
+    }
+  }, []);
+
+  // Listen for openSignupModal events from other components (e.g. GetAccessSection)
+  useEffect(() => {
+    const handleOpenSignupModal = () => {
+      setIsModalOpen(true);
+    };
+    window.addEventListener('openSignupModal', handleOpenSignupModal);
+    return () => window.removeEventListener('openSignupModal', handleOpenSignupModal);
+  }, []);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [navbarHeight, setNavbarHeight] = useState(60);
@@ -388,6 +409,49 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           </div>
         </div>
         </div>
+
+        {/* Announcement Banner */}
+        {!bannerDismissed && (
+          <div
+            className="w-full flex items-center justify-center relative"
+            style={{
+              borderTop: '1px solid rgba(156, 163, 175, 0.3)',
+              background: 'linear-gradient(135deg, rgba(218, 185, 107, 0.15) 0%, rgba(245, 183, 77, 0.12) 100%)',
+              padding: '6px 12px',
+              minHeight: '28px',
+            }}
+          >
+            <button
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+              className="text-center cursor-pointer bg-transparent border-none outline-none"
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontSize: '12px',
+                color: '#5a4520',
+                letterSpacing: '0.01em',
+              }}
+            >
+              Sena is now generally available —{' '}
+              <span className="underline font-semibold">Get access →</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setBannerDismissed(true);
+                localStorage.setItem("bannerDismissed", "true");
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer bg-transparent border-none outline-none hover:opacity-70 transition-opacity"
+              style={{ width: '18px', height: '18px' }}
+              aria-label="Dismiss banner"
+            >
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#5a4520" strokeWidth="1.5" strokeLinecap="round">
+                <path d="M1 1l8 8M9 1l-8 8" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Mobile Section Header - Show different sections based on scroll */}
         {!isMobileMenuOpen && (

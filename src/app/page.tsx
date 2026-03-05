@@ -11,6 +11,7 @@ import IntegrationsSection from "@/components/IntegrationsSection";
 import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
 import CoFoundersSection from "@/components/CoFoundersSection";
+import GetAccessSection from "@/components/GetAccessSection";
 import NavBar from "@/components/NavBar";
 import SidebarNav from "@/components/SidebarNav";
 
@@ -23,6 +24,7 @@ function HomeContent() {
   const builderRef = useRef<HTMLDivElement>(null);
   // const pricingRef = useRef<HTMLElement>(null);
   const blogRef = useRef<HTMLElement>(null);
+  const getAccessRef = useRef<HTMLElement>(null);
   const cofoundersRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
   const [showNavigation, setShowNavigation] = useState(false);
@@ -34,6 +36,7 @@ function HomeContent() {
     { id: "registry", label: "Registry" },
     { id: "blog", label: "Blog" },
     // { id: "pricing", label: "Pricing" },
+    { id: "get-access", label: "Get Access" },
     { id: "cofounders", label: "CoFounders" },
     { id: "join-us", label: "Join Our Team" },
   ];
@@ -53,7 +56,7 @@ function HomeContent() {
     }
   }, [searchParams]);
 
-  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'registry' | 'blog' | 'cofounders' | 'join-us' | 'other'>('other');
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'registry' | 'blog' | 'get-access' | 'cofounders' | 'join-us' | 'other'>('other');
 
   useEffect(() => {
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
@@ -85,6 +88,7 @@ function HomeContent() {
         const integrationsEl = document.getElementById('integrations');
         const registryEl = document.getElementById('registry');
         const blogEl = document.getElementById('blog');
+        const getAccessEl = document.getElementById('get-access');
         const cofoundersEl = document.getElementById('cofounders');
         const joinUsEl = document.getElementById('join-us');
 
@@ -92,6 +96,7 @@ function HomeContent() {
         const sections = [
           { id: 'join-us', el: joinUsEl },
           { id: 'cofounders', el: cofoundersEl },
+          { id: 'get-access', el: getAccessEl },
           { id: 'blog', el: blogEl },
           { id: 'registry', el: registryEl },
           { id: 'integrations', el: integrationsEl },
@@ -746,9 +751,9 @@ function HomeContent() {
             </div>
           </div>
 
-          {/* CoFounders - Color 2 */}
-          <div id="cofounders" style={{ backgroundColor: '#EDE7DC' }}>
-            <CoFoundersSection ref={cofoundersRef} />
+          {/* Get Started - Color 2 */}
+          <div style={{ backgroundColor: '#EDE7DC' }}>
+            <GetAccessSection ref={getAccessRef} />
           </div>
 
           {/* Section Divider & Color Transition */}
@@ -767,8 +772,29 @@ function HomeContent() {
             </div>
           </div>
 
-          {/* Join Us - Color 1 */}
-          <div id="join-us" style={{ backgroundColor: '#F5F1E8' }}>
+          {/* CoFounders - Color 1 */}
+          <div id="cofounders" style={{ backgroundColor: '#F5F1E8' }}>
+            <CoFoundersSection ref={cofoundersRef} />
+          </div>
+
+          {/* Section Divider & Color Transition */}
+          <div className="w-full" style={{
+            background: `linear-gradient(to bottom, #F5F1E8 0%, #F5F1E8 50%, #EDE7DC 50%, #EDE7DC 100%)`,
+            paddingTop: '8px',
+            paddingBottom: '8px'
+          }}>
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300/40"></div>
+              </div>
+              <div className="relative px-4">
+                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Join Us - Color 2 */}
+          <div id="join-us" style={{ backgroundColor: '#EDE7DC' }}>
             <JoinUsSection ref={joinUsRef} />
           </div>
         </div>
