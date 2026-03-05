@@ -26,6 +26,8 @@ export const API_CONFIG = {
     GOOGLE_SSO_LOGIN: '/api/method/senaerp_platform.api.sso.google_login',
     VALIDATE_SSO_TOKEN: '/api/method/senaerp_platform.api.sso.validate_sso_token',
     LOGIN: '/api/method/senaerp_platform.api.user_auth.login',
+    GET_PLATFORM_USER: '/api/method/senaerp_platform.api.user_auth.get_platform_user',
+    GO_TO_SITE: '/api/method/senaerp_platform.api.user_auth.go_to_site',
   }
 } as const;
 

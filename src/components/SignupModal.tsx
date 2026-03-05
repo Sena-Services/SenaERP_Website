@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
+import { storePlatformToken } from "@/lib/auth";
 import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 
 interface SignupModalProps {
@@ -50,7 +51,7 @@ function Divider() {
 export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill, initialView }: SignupModalProps) {
   const isGoogle = !!googlePrefill;
   const defaultView = initialView === "pitch_deck" ? "pitch_deck" : (isGoogle ? "signup" : "signin");
-  const [view, setView] = useState<"signin" | "signup" | "pitch_deck">(defaultView);
+  const [view, setView] = useState<"signin" | "signup" | "pitch_deck" | "verify">(defaultView);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -58,6 +59,11 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
   // Sign-in fields
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+
+  // Verification fields
+  const [verifyEmail, setVerifyEmail] = useState("");
+  const [verifyCode, setVerifyCode] = useState("");
+  const [resending, setResending] = useState(false);
 
   // Sign-up fields
   const [signupName, setSignupName] = useState(googlePrefill?.name || "");
@@ -127,8 +133,20 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
       const data = await resp.json();
       const result = data.message;
 
-      if (result?.success && result?.site_url && result?.token) {
-        window.location.href = `${result.site_url}/login?token=${result.token}`;
+      if (result?.success && result?.site_url) {
+        // User has a provisioned site — store token, stay on marketing site
+        if (result.platform_token) {
+          storePlatformToken(result.platform_token);
+        }
+        onSuccess(`Welcome back, ${result.full_name || ""}!`);
+        onClose();
+      } else if (result?.success && result?.no_site) {
+        // Signed in but no site yet (waitlisted)
+        if (result.platform_token) {
+          storePlatformToken(result.platform_token);
+        }
+        onSuccess("Welcome back! Your workspace is being set up. We\u2019ll notify you when it\u2019s ready.");
+        onClose();
       } else {
         setError(result?.error || "Invalid email or password.");
       }
@@ -166,7 +184,16 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
       const data = await resp.json();
       const result = data.message;
 
-      if (result?.success) {
+      if (result?.success && result?.needs_verification) {
+        // Password signup — needs email verification
+        setVerifyEmail(result.email || signupEmail);
+        setVerifyCode("");
+        setError(null);
+        setView("verify");
+      } else if (result?.success) {
+        if (result.platform_token) {
+          storePlatformToken(result.platform_token);
+        }
         onSuccess(result.message || "You have been added to the Waitlist!");
         onClose();
       } else {
@@ -208,6 +235,58 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
       setError("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  /* ── Verify Email handler ── */
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const resp = await frappeAPI.call(getApiUrl("/api/method/senaerp_platform.api.waitlist.verify_email"), {
+        method: "POST",
+        body: JSON.stringify({ email: verifyEmail, code: verifyCode }),
+      });
+      const data = await resp.json();
+      const result = data.message;
+
+      if (result?.success) {
+        if (result.platform_token) {
+          storePlatformToken(result.platform_token);
+        }
+        onSuccess(result.message || "Email verified! Your account has been created.");
+        onClose();
+      } else {
+        setError(result?.error || "Verification failed.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setResending(true);
+    setError(null);
+    try {
+      const resp = await frappeAPI.call(getApiUrl("/api/method/senaerp_platform.api.waitlist.resend_verification"), {
+        method: "POST",
+        body: JSON.stringify({ email: verifyEmail }),
+      });
+      const data = await resp.json();
+      const result = data.message;
+      if (result?.success) {
+        setError(null);
+      } else {
+        setError(result?.error || "Failed to resend code.");
+      }
+    } catch {
+      setError("Failed to resend code.");
+    } finally {
+      setResending(false);
     }
   };
 
@@ -432,6 +511,74 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     className="text-waygent-orange font-semibold hover:underline cursor-pointer"
                   >
                     Sign in
+                  </button>
+                </p>
+              </div>
+            )}
+
+            {/* ─── VERIFY EMAIL VIEW ─── */}
+            {view === "verify" && (
+              <div className="my-auto">
+                <div className="flex justify-center mb-5">
+                  <div className="w-14 h-14 rounded-full bg-[#8FB7C5]/10 flex items-center justify-center">
+                    <svg className="w-7 h-7 text-[#8FB7C5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                    </svg>
+                  </div>
+                </div>
+
+                <h2 className="text-2xl sm:text-[28px] font-bold text-gray-900 font-futura mb-2 text-center">
+                  Check your email
+                </h2>
+                <p className="text-sm text-gray-500 font-space-grotesk mb-6 text-center">
+                  We sent a 6-digit code to{" "}
+                  <strong className="text-gray-700">{verifyEmail}</strong>
+                </p>
+
+                {error && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-700 font-space-grotesk">{error}</p>
+                  </div>
+                )}
+
+                <form onSubmit={handleVerify} className="space-y-4">
+                  <div>
+                    <label className="block text-[13px] font-semibold text-gray-700 mb-1 font-space-grotesk">
+                      Verification code
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={verifyCode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                        setVerifyCode(val);
+                      }}
+                      placeholder="000000"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                      className="w-full px-4 py-3 text-center text-2xl tracking-[0.5em] font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || verifyCode.length !== 6}
+                    className="w-full py-3 bg-[#8FB7C5] text-white text-[15px] font-bold rounded-full hover:bg-[#7AA5B5] transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Verifying..." : "Verify"}
+                  </button>
+                </form>
+
+                <p className="text-sm text-gray-500 font-space-grotesk text-center mt-6">
+                  Didn&apos;t get the code?{" "}
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resending}
+                    className="text-waygent-orange font-semibold hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {resending ? "Sending..." : "Resend code"}
                   </button>
                 </p>
               </div>
