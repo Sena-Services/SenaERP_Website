@@ -14,7 +14,7 @@ const links: { href: string; label: string }[] = [
 ];
 
 const sections = [
-  { id: "intro", label: "Introduction" },
+  { id: "intro", label: "Home" },
   { id: "how-it-works", label: "How it Works" },
   { id: "builder", label: "Builder" },
   { id: "integrations", label: "Integrations" },

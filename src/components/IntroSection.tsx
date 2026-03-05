@@ -1064,52 +1064,6 @@ export default function IntroSection() {
         </div>
       </div>
 
-      {/* Fixed Home button - appears at top when scrolling down past How it Works, hidden when card is expanded */}
-      {isHomeButtonFixed && rotateProgress === 1 && !expandedCard && (() => {
-        // Calculate the same left position as the original button
-        // Container is centered with max-width 1280px
-        const containerWidth = Math.min(maxContainerWidth, viewportWidth - viewportPadding);
-        const containerLeftEdge = (viewportWidth - containerWidth) / 2;
-        const fixedButtonLeft = containerLeftEdge + builderPadding;
-
-        return (
-          <button
-            onClick={() => {
-              window.dispatchEvent(new CustomEvent('resetHome'));
-            }}
-            className="fixed flex items-center justify-center gap-2 text-gray-700 hover:text-white transition-all group cursor-pointer"
-            style={{
-              left: `${fixedButtonLeft}px`,
-              top: '5px',
-              zIndex: 250,
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: '#F5F1E8',
-              border: '2px solid #9CA3AF',
-              boxShadow: '0 2px 8px rgba(156, 163, 175, 0.2)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#8FB7C5';
-              e.currentTarget.style.borderColor = '#7AA5B5';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#F5F1E8';
-              e.currentTarget.style.borderColor = '#9CA3AF';
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="transition-all group-hover:scale-110">
-              <path
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        );
-      })()}
     </section>
   );
 }
