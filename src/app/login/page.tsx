@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
@@ -8,6 +8,14 @@ import { storePlatformToken, goToSite } from "@/lib/auth";
 import PinwheelLogo from "@/components/PinwheelLogo";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F7F5EF]" />}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginPageContent() {
   const searchParams = useSearchParams();
   const siteRedirect = searchParams.get("site") || "";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
@@ -10,6 +10,14 @@ import PinwheelLogo from "@/components/PinwheelLogo";
 const BASE_URL = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
 
 export default function InvitePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F7F5EF]" />}>
+      <InvitePageContent />
+    </Suspense>
+  );
+}
+
+function InvitePageContent() {
   const searchParams = useSearchParams();
   const inviteToken = searchParams.get("token") || "";
 
