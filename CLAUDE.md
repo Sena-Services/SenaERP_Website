@@ -1,2 +1,0 @@
-- avoid running dev servers automatically, but start them when the user explicitly asks
-- website typically runs on localhost:3000
