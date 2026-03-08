@@ -464,17 +464,17 @@ export default function FlipCard({
           >
             {position === "left" && (
               <>
-                Describe your agent in voice, text, any language. Sena interviews you, captures your intent, and generates a <span style={{ color: getCardColor(position).hex }}>build plan</span> automatically.
+                The one place to <span style={{ color: getCardColor(position).hex }}>build AI agents</span>. No coding needed. Whether it's for yourself, your company, or as a product for others, Sena handles the heavy lifting.
               </>
             )}
             {position === "center" && (
               <>
-                The Builder Agent pulls components from the <span style={{ color: getCardColor(position).hex }}>Registry</span> and assembles your agent. Tools, skills, triggers, UI, and logic.
+                Not demos. Agents that handle <span style={{ color: getCardColor(position).hex }}>economically useful workloads</span> inside your ERP. Real documents, real tasks, real coordination across your business.
               </>
             )}
             {position === "right" && (
               <>
-                Your agents go live instantly. Share them on the <span style={{ color: getCardColor(position).hex }}>Registry</span> for others to install, or keep them private. One conversation with Sena handles it all.
+                A growing community built around the <span style={{ color: getCardColor(position).hex }}>Registry</span>. Every agent, tool, and skill is stored as a granular building block. Mix them to create something entirely new, or make small customizations on what already exists.
               </>
             )}
           </p>
@@ -483,9 +483,9 @@ export default function FlipCard({
           <div className="space-y-1.5 sm:space-y-2 relative z-10 flex-1 overflow-hidden">
             {position === "left" && (
               <>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -493,11 +493,11 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Voice & text in 50+ languages</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Registry</strong> - install ready-made components</span>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -505,11 +505,11 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Express mode for quick builds</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Discovery</strong> - guided interview, full build plan</span>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -517,16 +517,28 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Visual graph builder for power users</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Express</strong> - quick build from a conversation</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="rounded-full"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: getCardColor(position).hex,
+                    }}
+                  />
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Configurations</strong> - full control with visual graph builder and code access</span>
                 </div>
               </>
             )}
 
             {position === "center" && (
               <>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -534,11 +546,11 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Composable Registry of components</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Tasks</strong> - agents delegate work to each other</span>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -546,11 +558,11 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Builder Agent assembles everything</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Approvals</strong> - human oversight when it matters</span>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -558,16 +570,40 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Publish your own, earn revenue</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Triggers</strong> - scheduled, event-driven, or on-demand</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="rounded-full"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: getCardColor(position).hex,
+                    }}
+                  />
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Routing</strong> - one conversation that routes everything</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="rounded-full"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: getCardColor(position).hex,
+                    }}
+                  />
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Observability</strong> - every action logged and fully traceable</span>
                 </div>
               </>
             )}
 
             {position === "right" && (
               <>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -575,11 +611,11 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Agent Apps for every domain</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Community</strong> - builders sharing and improving together</span>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -587,11 +623,11 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">One Sena Agent routes everything</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Composable</strong> - granular building blocks that snap together</span>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div
-                    className="rounded-full mt-1"
+                    className="rounded-full"
                     style={{
                       width: '5px',
                       height: '5px',
@@ -599,7 +635,19 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Agents get smarter over time</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Monetization</strong> - earn from every install of your work</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="rounded-full"
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      flexShrink: 0,
+                      background: getCardColor(position).hex,
+                    }}
+                  />
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight"><strong style={{ color: getCardColor(position).hex }}>Outcome as a Service</strong> - billing based on contract completion</span>
                 </div>
               </>
             )}

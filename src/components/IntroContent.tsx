@@ -18,15 +18,18 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const contentRef = scrollRef || localContentRef;
   const [isContentAtBottom, setIsContentAtBottom] = useState(false);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
-  const [isPdfHovered, setIsPdfHovered] = useState(false);
+
   const [isPitchHovered, setIsPitchHovered] = useState(false);
+  const [isPdfHovered, setIsPdfHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pdfHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const scrollAttemptRef = useRef(0);
   const lastScrollTopRef = useRef(0);
   const isManualScrollRef = useRef(false); // Flag to prevent double-scroll from arrow click
@@ -159,7 +162,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
     }, 100);
   };
 
-  // PDF hover handlers
+  // Hover handlers for PDF preview with debounce
   const handlePdfHoverEnter = () => {
     if (pdfHoverTimeoutRef.current) {
       clearTimeout(pdfHoverTimeoutRef.current);
@@ -173,6 +176,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
       setIsPdfHovered(false);
     }, 100);
   };
+
 
   // Mobile: Hybrid approach - native scroll with smart exhaustion detection
   // Content scrolls first with momentum, then window takes over when exhausted
@@ -552,12 +556,14 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             )}
           </div>
 
-          {/* View one pager link with hover preview */}
+          {/* Download one pager link with hover preview */}
           <div
             style={{ position: 'relative', display: 'flex' }}
           >
-            <a
-              href="/one-pager"
+            <div
+              onClick={() => setIsDownloadModalOpen(true)}
+              onMouseEnter={handlePdfHoverEnter}
+              onMouseLeave={handlePdfHoverLeave}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -566,17 +572,14 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                 textDecoration: 'none',
               }}
             >
-              <span
-                onMouseEnter={handlePdfHoverEnter}
-                onMouseLeave={handlePdfHoverLeave}
-                style={{
+              <span style={{
                 fontFamily: "Georgia, serif",
                 color: isMobile ? "#5a4938" : "#7a5f3a",
                 fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
                 fontWeight: 500,
                 textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
-                width: isMobile ? '150px' : `${getScaledValue(165)}px`,
-              }}>View our one pager</span>
+                whiteSpace: 'nowrap',
+              }}>Download our one pager</span>
               <svg
                 width={isMobile ? 16 : getScaledValue(18)}
                 height={isMobile ? 16 : getScaledValue(18)}
@@ -593,45 +596,57 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               >
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
-            </a>
+            </div>
 
             {/* PDF preview popup - positioned to the right */}
             {!isMobile && (
               <div
+                onMouseEnter={handlePdfHoverEnter}
+                onMouseLeave={handlePdfHoverLeave}
                 style={{
                   position: 'absolute',
                   top: '50%',
                   left: `${getScaledValue(235)}px`,
                   transform: isPdfHovered ? 'translateY(-50%) scale(1)' : 'translateY(-50%) translateX(-8px) scale(0.97)',
-                  width: `${getScaledValue(200)}px`,
+                  width: `${getScaledValue(280)}px`,
                   opacity: isPdfHovered ? 1 : 0,
                   visibility: isPdfHovered ? 'visible' : 'hidden',
                   transition: 'opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease',
                   zIndex: 100,
                 }}
               >
-                <a
-                  href="/one-pager"
+                <div
+                  onClick={() => {
+                    setIsPdfHovered(false);
+                    setIsDownloadModalOpen(true);
+                  }}
                   style={{
                     display: 'block',
                     borderRadius: `${getScaledValue(12)}px`,
                     overflow: 'hidden',
                     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1)',
-                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    background: '#f5f0eb',
                   }}
                 >
-                  {/* PDF preview - using image thumbnail */}
-                  <img
-                    src="/documents/sena-one-pager-thumb.png"
-                    alt="Sena One Pager Preview"
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      height: 'auto',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                  {/* Click to view caption */}
+                  <div style={{
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}>
+                    <Image
+                      src="/documents/sena-one-pager-thumb.png"
+                      alt="Sena One Pager Preview"
+                      width={280}
+                      height={396}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        height: 'auto',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                  {/* Click to download caption */}
                   <div style={{
                     padding: '8px 12px',
                     background: 'rgba(90, 73, 56, 0.9)',
@@ -641,9 +656,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                     textAlign: 'center',
                     letterSpacing: '0.03em',
                   }}>
-                    Click to view full pdf
+                    Click to download
                   </div>
-                </a>
+                </div>
               </div>
             )}
           </div>
@@ -787,6 +802,85 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           </div>
         </div>
       </div>
+
+      {/* Download One Pager Confirmation Modal */}
+      {isDownloadModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+          }}
+          onClick={() => setIsDownloadModalOpen(false)}
+        >
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }} />
+          <div
+            style={{
+              position: 'relative',
+              background: 'white',
+              borderRadius: '24px',
+              padding: '32px',
+              maxWidth: '400px',
+              width: '100%',
+              textAlign: 'center',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{
+              fontFamily: 'Futura, sans-serif',
+              fontSize: '22px',
+              fontWeight: 700,
+              color: '#1a1a1a',
+              marginBottom: '8px',
+            }}>Download One Pager</h3>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: '14px',
+              color: '#6b7280',
+              marginBottom: '24px',
+            }}>Would you like to download the Sena one pager?</p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setIsDownloadModalOpen(false)}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '9999px',
+                  border: '1px solid #d1d5db',
+                  background: 'white',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: '#374151',
+                  cursor: 'pointer',
+                }}
+              >Cancel</button>
+              <a
+                href="/documents/sena-one-pager.pdf"
+                download="Sena-One-Pager.pdf"
+                onClick={() => setIsDownloadModalOpen(false)}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '9999px',
+                  border: 'none',
+                  background: '#8FB7C5',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: 'white',
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                }}
+              >Yes, download</a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Signup Modal */}
       <SignupModal

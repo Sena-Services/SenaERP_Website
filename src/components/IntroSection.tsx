@@ -298,11 +298,14 @@ export default function IntroSection() {
     // Increase space for 720-760px range
     extraTopSpace = getResponsiveValue(60 + ((viewportHeight - 720) / (760 - 720)) * 20);
   } else if (viewportHeight <= 1000) {
-    // Gradually reduce from 80 to 30 between 760px and 1000px
-    extraTopSpace = getResponsiveValue(80 - ((viewportHeight - 760) / (1000 - 760)) * 50);
+    // Gradually increase from 80 to 100 between 760px and 1000px
+    extraTopSpace = getResponsiveValue(80 + ((viewportHeight - 760) / (1000 - 760)) * 20);
+  } else if (viewportHeight <= 1400) {
+    // Ramp from 100 to 145 between 1000px and 1400px — clear navbar but stay close to cards
+    extraTopSpace = getResponsiveValue(100 + ((viewportHeight - 1000) / (1400 - 1000)) * 45);
   } else {
-    // Keep some space for screens above 1000px
-    extraTopSpace = getResponsiveValue(30);
+    // Large screens (1400px+) — clear navbar + announcement bar comfortably
+    extraTopSpace = getResponsiveValue(145);
   }
   const topSpaceNeeded = navbarHeight + titleHeight + extraTopSpace;
 
@@ -598,7 +601,7 @@ export default function IntroSection() {
               videoBg="bg-[#f6efe4]"
               videoPosition="center 40%"
               cardNumber={1}
-              cardTitle="Describe"
+              cardTitle="Build"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "left" ? null : "left")}
@@ -614,11 +617,11 @@ export default function IntroSection() {
               rotateProgress={rotateProgress}
               position="center"
               imageOffset={-baseCardWidth}
-              videoSrc="/videos/card2.mp4"
+              videoSrc="/videos/card3.mp4"
               videoBg="bg-[#f5f2e9]"
               videoPosition="center 45%"
               cardNumber={2}
-              cardTitle="Build"
+              cardTitle="Run"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "center" ? null : "center")}
@@ -634,11 +637,11 @@ export default function IntroSection() {
               rotateProgress={rotateProgress}
               position="right"
               imageOffset={-baseCardWidth * 2}
-              videoSrc="/videos/card3.mp4"
+              videoSrc="/videos/card2.mp4"
               videoBg="bg-[#f6f2fb]"
               videoPosition="center 80%"
               cardNumber={3}
-              cardTitle="Share & Use"
+              cardTitle="Share"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "right" ? null : "right")}
@@ -712,34 +715,34 @@ export default function IntroSection() {
                           <span className="font-bold text-lg" style={{ color: '#4682A0' }}>1</span>
                         </div>
                         <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#4682A0' }}>
-                          Discovery
+                          Build
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Traditional ERP: consultants, months of development, thousands of dollars, and still unsatisfactory. We automate the entire lifecycle. The Discovery Agent talks to people across your organization—founders, managers, staff—in your own language.
+                        Everything you need to build AI agents, all in one place. No coding, no consultants, no months of waiting. Go completely hands-off or take infinite control. Four ways to get started, whether you're building for your company, a client, or yourself.
                       </p>
 
                       <div className="space-y-4">
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                             </svg>
-                            Voice & Text Conversations
+                            Registry
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Talk naturally in 50+ languages. Whether you have a fuzzy vision or know exactly what you want, Sena meets you where you are.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Browse and install from a library of ready-made components. Agents, tools, skills, triggers, and more. Pick what fits, install it, and you're running.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Voice conversations with real-time understanding</span>
+                              <span>Hundreds of pre-built components</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Text input for detailed requirements</span>
+                              <span>Install with one click</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Intelligent questioning that uncovers what you really need</span>
+                              <span>Composable building blocks you can customize</span>
                             </li>
                           </ul>
                         </div>
@@ -747,23 +750,23 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                             </svg>
-                            Multimodal Input
+                            Discovery
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Upload documents, images, videos, links, and websites. Sena processes everything to deeply understand your operations.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Tell Sena what you need in your own words. The Discovery Agent interviews you, understands your requirements, and generates a full build plan automatically.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Existing SOPs, process documents, spreadsheets</span>
+                              <span>Voice and text in 50+ languages</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Screenshots of current systems</span>
+                              <span>Captures your intent through intelligent questioning</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Deep web search capabilities</span>
+                              <span>Generates a complete build plan for approval</span>
                             </li>
                           </ul>
                         </div>
@@ -771,19 +774,19 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
-                            Parallel Team Discovery
+                            Express
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Discovery can happen in parallel with multiple users across your company's hierarchy. Everyone's input gets consolidated.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">The closest thing to vibe coding for your business. Talk to Express and watch changes happen in real time, live in production. No build plans, no waiting. Just describe what you want and see it come to life.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Founders share vision, managers share processes, staff share daily tasks</span>
+                              <span>Real-time changes in production as you talk</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
-                              <span>Consolidates all perspectives into unified requirements</span>
+                              <span>From conversation to working agent in minutes</span>
                             </li>
                           </ul>
                         </div>
@@ -791,11 +794,26 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(70, 130, 160, 0.08)', borderColor: 'rgba(70, 130, 160, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#4682A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            Business Requirements Document
+                            Configurations
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed">After taking in all the information, Sena generates a complete BRD—exactly what it learned and what it's going to build. You review and approve before anything gets built.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Full manual control for power users. Wire every component yourself with a visual graph builder, edit code directly, and connect to GitHub for version control.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Visual graph builder for agent networks</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Direct code access with GitHub integration</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#4682A0] mt-0.5">→</span>
+                              <span>Control every tool, skill, trigger, and model</span>
+                            </li>
+                          </ul>
                         </div>
                         </div>
                       </div>
@@ -816,34 +834,34 @@ export default function IntroSection() {
                           <span className="font-bold text-lg" style={{ color: '#826496' }}>2</span>
                         </div>
                         <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#826496' }}>
-                          Build
+                          Run
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Once your BRD is approved, the Builder Agent takes over. It doesn't write everything from scratch—it pulls the right modules from our Registry and customizes them to your specific needs.
+                        Not demos. Agents that handle economically useful workloads inside your ERP. Real documents, real tasks, real coordination. Multiple agents working together across your business, with full control over what they can and can't do.
                       </p>
 
                       <div className="space-y-4">
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
-                            Builder Agent
+                            Tasks
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Your dedicated AI that reads the BRD and assembles a complete custom system—database, logic, migrations, integrations.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Agents delegate work to each other through a structured task system. One agent can assign work to another, track progress, and report back. Complex workflows happen automatically.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span>Pulls modules from the Registry, doesn't code from scratch</span>
+                              <span>Structured delegation between agents</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span>Combines multiple building blocks for your use case</span>
+                              <span>Progress tracking and status reporting</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span>Customizes everything to your specific requirements</span>
+                              <span>Multi-step workflows without manual intervention</span>
                             </li>
                           </ul>
                         </div>
@@ -851,23 +869,23 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
-                            The Registry
+                            Approvals
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">An open-source, well-indexed library of building blocks—the Builder's toolbox.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Human oversight exactly where you want it. Set approval gates on any action so agents pause and ask before proceeding. Full control over autonomy levels.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span><strong>Modules:</strong> accounts, inventory, travel, HR, and more</span>
+                              <span>Per-tool and per-agent approval settings</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span><strong>Agents:</strong> pre-trained agents like accounts agent, TA agent</span>
+                              <span>Agents pause and ask when it matters</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span><strong>Connectors:</strong> Tally, WhatsApp, Stripe, Shopify, and more</span>
+                              <span>Adjust autonomy as trust builds</span>
                             </li>
                           </ul>
                         </div>
@@ -875,23 +893,23 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
-                            Human-in-the-Loop (when needed)
+                            Triggers
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">AI today isn't perfect. When the Builder can't fulfill something from the Registry alone, we have a system.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Agents wake up on their own. Scheduled jobs, document events, inbound messages, or manual requests. Your agents respond to what's happening in your business in real time.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span>Builder creates a ticket for missing functionality</span>
+                              <span>Scheduled runs on any cron pattern</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span>Developer community picks it up and builds it</span>
+                              <span>Document events trigger agent responses</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>
-                              <span>Solution goes back into the Registry</span>
+                              <span>Inbound channels like WhatsApp and email</span>
                             </li>
                           </ul>
                         </div>
@@ -899,11 +917,50 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                             </svg>
-                            The Flywheel Effect
+                            Routing
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed">Every new module built feeds back into the Registry. The next customer who asks for something similar? The Builder just pulls it. The platform gets richer for everyone, every single day.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">One conversation surface that understands what you need and routes to the right agent automatically. You never need to know which agent does what. Just talk and Sena figures it out.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Automatic agent discovery and selection</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Parallel delegation to multiple agents</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Results consolidated into one conversation</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(130, 100, 150, 0.08)', borderColor: 'rgba(130, 100, 150, 0.2)' }}>
+                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#826496]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Observability
+                          </h4>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Every action your agents take is logged and traceable. See what happened, why it happened, and what the agent was thinking. Full audit trail for every decision.</p>
+                          <ul className="space-y-1 text-xs text-gray-600">
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Complete activity log for every agent</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Token usage and model performance tracking</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-[#826496] mt-0.5">→</span>
+                              <span>Full audit trail for compliance</span>
+                            </li>
+                          </ul>
                         </div>
                         </div>
                       </div>
@@ -924,34 +981,34 @@ export default function IntroSection() {
                           <span className="font-bold text-lg" style={{ color: '#B4646E' }}>3</span>
                         </div>
                         <h2 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: '#B4646E' }}>
-                          Manage Agents
+                          Share
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Now that you have a custom ERP, who operates it? AI Agents—virtual employees running your operations tirelessly. Build agents that don't just respond, but actually work for you.
+                        A growing community built around the Registry. Every agent, tool, and skill is stored as a granular building block. Mix them to create something entirely new, or make small customizations on what already exists. Build once, and let others build on top of your work.
                       </p>
 
                       <div className="space-y-4">
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
-                            Agent Builder
+                            Community
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Most agent builders are too technical for business owners or too simple for developers. We built for both.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">A developer and builder community growing around Sena. Share what you build, learn from others, and collaborate on agent ecosystems that solve real problems.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span><strong>Autonomy slider:</strong> plain English on one end, full code control on the other</span>
+                              <span>Open ecosystem of builders and creators</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Define state, graph logic, and model prompts with full control</span>
+                              <span>Shared knowledge and patterns</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Deep ERP integration—agents know your system's current state</span>
+                              <span>Collaborative improvement over time</span>
                             </li>
                           </ul>
                         </div>
@@ -959,23 +1016,23 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
                             </svg>
-                            Automated Testing Framework
+                            Composable
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Building agents is easy. Making them reliable is hard. We provide the framework to ship agents that actually work.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Nothing is monolithic. Every component is stored at the smallest useful level. Take a tool from one agent, a skill from another, wire them with your own logic. Granular building blocks that snap together into infinite combinations.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Generate test data, run it through the agent</span>
+                              <span>Components stored at the smallest useful level</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Test tool calling, token usage, hallucination levels</span>
+                              <span>Mix and match from different agents</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>See how the graph is traversed, how many tokens used</span>
+                              <span>Infinite combinations from a shared library</span>
                             </li>
                           </ul>
                         </div>
@@ -983,23 +1040,23 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            Fine-Tuning
+                            Monetization
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">We don't just prompt models, we fine-tune them for repeatable tasks.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Every component you publish to the Registry is yours. When others install your agent, tool, or skill, you earn from it. Build quality, get rewarded.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Better efficiency, sharper tool-calling</span>
+                              <span>Earn from every install of your work</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Agents that just know what to do for your business</span>
+                              <span>Ownership tracked at the component level</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Every interaction makes your agents smarter</span>
+                              <span>Revenue grows with the community</span>
                             </li>
                           </ul>
                         </div>
@@ -1007,35 +1064,25 @@ export default function IntroSection() {
                         <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
                           <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
-                            Command Center
+                            Outcome as a Service
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">The daily driver screen for users. Where your agents live and talk to you.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">A new billing model. Instead of charging for seats or API calls, charge based on contract completion. Deliver outcomes, bill for results.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Agents report what they did, ask permission for next steps</span>
+                              <span>Bill based on delivered outcomes, not usage</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Mobile-first—this is what people see on their phones</span>
+                              <span>Contract-based pricing model</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-[#B4646E] mt-0.5">→</span>
-                              <span>Deep links into the ERP desk when you need to drill down</span>
+                              <span>Value-aligned incentives for builders and users</span>
                             </li>
                           </ul>
-                        </div>
-
-                        <div className="rounded-2xl p-4 border-2" style={{ background: 'rgba(180, 100, 110, 0.08)', borderColor: 'rgba(180, 100, 110, 0.2)' }}>
-                          <h4 className="font-bold text-gray-900 mb-2 text-base flex items-center gap-2">
-                            <svg className="w-5 h-5 text-[#B4646E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            Runtime Evolution
-                          </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed">If an agent encounters a new task it can't handle, it doesn't break. It proposes a plan, you approve it, the Builder creates it, and the system grows. Your ERP literally evolves alongside your business—without you ever touching a line of code.</p>
                         </div>
                         </div>
                       </div>
