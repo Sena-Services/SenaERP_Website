@@ -54,5 +54,23 @@ export function getFileUrl(filePath?: string | null): string | undefined {
   return `${API_CONFIG.BASE_URL}${filePath}`;
 }
 
-// Export the centralized API client
-export { frappeAPI } from './frappe-api-client';
+// Centralized Frappe API Client - guest API calls without credentials
+class FrappeAPIClient {
+  async call(url: string, options: RequestInit = {}): Promise<Response> {
+    try {
+      return await fetch(url, {
+        ...options,
+        credentials: 'omit',
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+    } catch (error) {
+      console.error('[FrappeAPIClient] Request failed:', error);
+      throw error;
+    }
+  }
+}
+
+export const frappeAPI = new FrappeAPIClient();

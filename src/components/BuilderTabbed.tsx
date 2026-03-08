@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AgentsBuilderDemo from "./AgentsBuilderDemo";
+import ModelConfigDemo from "./ModelConfigDemo";
+import { ToolsConfigPreview, SkillsConfigPreview, TriggersConfigPreview, UIConfigPreview, LogicConfigPreview } from "./TabConfigPreviews";
 import MobileBuilderCard from "./MobileBuilderCard";
 import MobileWorkflowsBuilderDemo from "./MobileWorkflowsBuilderDemo";
 import MobileDataBuilderDemo from "./MobileDataBuilderDemo";
@@ -1120,8 +1122,11 @@ export default function BuilderTabbed() {
           >
             AI Agent
           </h2>
-          <p className="text-gray-700 mx-auto max-w-3xl leading-relaxed text-base">
+          <p className="text-gray-700 mx-auto max-w-3xl leading-relaxed text-base font-futura">
             What is an agent, anyway?
+          </p>
+          <p className="text-gray-500 mx-auto max-w-2xl leading-relaxed font-futura mt-2" style={{ fontSize: '15px' }}>
+            An agent is a composition of six building blocks: the model it thinks with, the tools it acts through, the skills it knows, the triggers that wake it, the UI it presents, and the logic that governs it all.
           </p>
         </div>
 
@@ -1465,9 +1470,9 @@ export default function BuilderTabbed() {
                       </div>
                     </div>
 
-                    {/* Right: Animation */}
-                    <div className="rounded-xl overflow-hidden h-full">
-                      <AgentsBuilderDemo />
+                    {/* Right: Model Config Preview */}
+                    <div className="rounded-xl overflow-hidden h-full p-2" style={{ background: '#F8F9FB' }}>
+                      <ModelConfigDemo />
                     </div>
                   </div>
                 )}
@@ -1541,8 +1546,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-xl overflow-hidden h-full">
-                      <AgentsBuilderDemo />
+                    <div className="rounded-xl overflow-hidden h-full p-2" style={{ background: '#F8F9FB' }}>
+                      <ToolsConfigPreview />
                     </div>
                   </div>
                 )}
@@ -1616,8 +1621,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-xl overflow-hidden h-full">
-                      <AgentsBuilderDemo />
+                    <div className="rounded-xl overflow-hidden h-full p-2" style={{ background: '#F8F9FB' }}>
+                      <SkillsConfigPreview />
                     </div>
                   </div>
                 )}
@@ -1691,8 +1696,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-xl overflow-hidden h-full">
-                      <AgentsBuilderDemo />
+                    <div className="rounded-xl overflow-hidden h-full p-2" style={{ background: '#F8F9FB' }}>
+                      <TriggersConfigPreview />
                     </div>
                   </div>
                 )}
@@ -1766,8 +1771,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-xl overflow-hidden h-full">
-                      <AgentsBuilderDemo />
+                    <div className="rounded-xl overflow-hidden h-full p-2" style={{ background: '#F8F9FB' }}>
+                      <UIConfigPreview />
                     </div>
                   </div>
                 )}
@@ -1841,8 +1846,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-xl overflow-hidden h-full">
-                      <AgentsBuilderDemo />
+                    <div className="rounded-xl overflow-hidden h-full p-2" style={{ background: '#F8F9FB' }}>
+                      <LogicConfigPreview />
                     </div>
                   </div>
                 )}
