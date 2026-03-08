@@ -7,7 +7,6 @@ import MobileHowItWorks from "@/components/MobileHowItWorks";
 import BuilderTabbed from "@/components/BuilderTabbed";
 import LandingRegistry from "@/components/LandingRegistry";
 import IntegrationsSection from "@/components/IntegrationsSection";
-// import PricingSection from "@/components/PricingSection";
 import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
 import CoFoundersSection from "@/components/CoFoundersSection";
@@ -22,7 +21,6 @@ function HomeContent() {
   const registryRef = useRef<HTMLElement>(null);
   const integrationsRef = useRef<HTMLElement>(null);
   const builderRef = useRef<HTMLDivElement>(null);
-  // const pricingRef = useRef<HTMLElement>(null);
   const blogRef = useRef<HTMLElement>(null);
   const getAccessRef = useRef<HTMLElement>(null);
   const cofoundersRef = useRef<HTMLElement>(null);
@@ -35,7 +33,6 @@ function HomeContent() {
     { id: "integrations", label: "Integrations" },
     { id: "registry", label: "Registry" },
     { id: "get-access", label: "Get Access" },
-    // { id: "pricing", label: "Pricing" },
     { id: "blog", label: "Blog" },
     { id: "cofounders", label: "CoFounders" },
     { id: "join-us", label: "Join Our Team" },

@@ -3,12 +3,8 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-// import UIBuilderDemo from "./UIBuilderDemo"; // REMOVED: Interfaces tab
-import DataBuilderDemo from "./DataBuilderDemo";
-import WorkflowsBuilderDemo from "./WorkflowsBuilderDemo";
 import AgentsBuilderDemo from "./AgentsBuilderDemo";
 import MobileBuilderCard from "./MobileBuilderCard";
-// import MobileUIBuilderDemo from "./MobileUIBuilderDemo"; // REMOVED: Interfaces tab
 import MobileWorkflowsBuilderDemo from "./MobileWorkflowsBuilderDemo";
 import MobileDataBuilderDemo from "./MobileDataBuilderDemo";
 import MobileAgentsBuilderDemo from "./MobileAgentsBuilderDemo";
@@ -34,38 +30,6 @@ type ChatMessage = {
   type: "agent" | "user";
   text: string;
   status?: string;
-};
-
-// Color themes for each tab - Earthy teal to match sidebar (#8FB7C5)
-const tabThemes = {
-  brd: {
-    primary: '#8FB7C5', // muted teal (matches sidebar)
-    light: '#F5F1E8', // cream
-    border: '#9CA3AF', // gray border
-    ring: 'rgba(143, 183, 197, 0.3)',
-    text: '#374151', // dark text for contrast
-  },
-  data: {
-    primary: '#8FB7C5', // muted teal (matches sidebar)
-    light: '#F5F1E8', // cream
-    border: '#9CA3AF', // gray border
-    ring: 'rgba(143, 183, 197, 0.3)',
-    text: '#374151',
-  },
-  workflows: {
-    primary: '#8FB7C5', // muted teal (matches sidebar)
-    light: '#F5F1E8', // cream
-    border: '#9CA3AF', // gray border
-    ring: 'rgba(143, 183, 197, 0.3)',
-    text: '#374151',
-  },
-  agents: {
-    primary: '#8FB7C5', // muted teal (matches sidebar)
-    light: '#F5F1E8', // cream
-    border: '#9CA3AF', // gray border
-    ring: 'rgba(143, 183, 197, 0.3)',
-    text: '#374151',
-  },
 };
 
 const tabs: Tab[] = [
@@ -1040,7 +1004,7 @@ export default function BuilderTabbed() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeBuilderTab, setActiveBuilderTab] = useState("models"); // Models is the first tab
   const [viewportHeight, setViewportHeight] = useState(900);
-  const [showDetails, setShowDetails] = useState(true);
+  // showDetails state removed - split layout shows both simultaneously
 
   // Responsive scaling function - same as IntroSection
   const getResponsiveValue = (baseValue: number) => {
@@ -1403,207 +1367,21 @@ export default function BuilderTabbed() {
                       </div>
                     </>
                   )}
-                  {activeTab.id === 'brd' && (
-                    <>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.brd.light}80`,
-                        borderColor: `${tabThemes.brd.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.brd.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span className="font-medium">Auto-generated</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.brd.light}80`,
-                        borderColor: `${tabThemes.brd.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.brd.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        <span className="font-medium">Conversational</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md border" style={{
-                        backgroundColor: `${tabThemes.brd.light}80`,
-                        borderColor: `${tabThemes.brd.border}80`
-                      }}>
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: tabThemes.brd.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span className="font-medium">One-click approve</span>
-                      </div>
-                    </>
-                  )}
-                  {activeTab.id === 'data' && (
-                    <>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Any database</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Auto schemas</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Secure & validated</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Real-time sync</span>
-                      </div>
-                    </>
-                  )}
-                  {activeTab.id === 'workflows' && (
-                    <>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Event triggers</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Branching logic</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Auto retry</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Monitor & logs</span>
-                      </div>
-                    </>
-                  )}
-                  {activeTab.id === 'agents' && (
-                    <>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Custom training</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Tool access</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Human oversight</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#D1D5DB] text-[#6B7280]">
-                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span className="font-medium text-[10px]">Full audit trail</span>
-                      </div>
-                    </>
-                  )}
                   </div>
 
-                  {/* Toggle pill - Show for all tabs */}
-                  <div className="relative inline-flex items-center bg-[#F5F1E8] rounded-lg p-0.5 border border-[#D1D5DB] cursor-pointer">
-                    {/* Sliding indicator */}
-                    <motion.div
-                      className="absolute rounded-md"
-                      animate={{
-                        x: showDetails ? '0%' : 'calc(100% - 2px)',
-                      }}
-                      initial={false}
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 30,
-                        mass: 0.8
-                      }}
-                      style={{
-                        height: 'calc(100% - 4px)',
-                        width: 'calc(50% - 1px)',
-                        top: '2px',
-                        left: '2px',
-                        backgroundColor: '#8FB7C5'
-                      }}
-                    />
-
-                    {/* Details button */}
-                    <button
-                      onClick={() => setShowDetails(true)}
-                      className={`relative z-10 px-3 py-1 rounded-md text-[10px] font-semibold transition-colors duration-200 cursor-pointer ${
-                        showDetails ? 'text-white' : 'text-[#6B7280]'
-                      }`}
-                      style={{ width: '50%' }}
-                    >
-                      Details
-                    </button>
-
-                    {/* Animation button */}
-                    <button
-                      onClick={() => setShowDetails(false)}
-                      className={`relative z-10 px-3 py-1 rounded-md text-[10px] font-semibold transition-colors duration-200 cursor-pointer ${
-                        !showDetails ? 'text-white' : 'text-[#6B7280]'
-                      }`}
-                      style={{ width: '50%' }}
-                    >
-                      Animation
-                    </button>
-                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Content Area - Fixed height, description expands to cover animation */}
+          {/* Content Area - Split layout: description left, animation right */}
           <div
             className="h-[380px] xl:h-[420px] 2xl:h-[460px] overflow-hidden relative"
             style={{
               backgroundColor: '#FAFAF8'
             }}
           >
-            {/* Description area that slides down like a curtain/screen */}
-            <motion.div
-              className="absolute top-0 left-0 right-0 overflow-hidden"
-              initial={false}
-              animate={{
-                height: showDetails ? "100%" : "0%"
-              }}
-              transition={{
-                duration: 0.8,
-                ease: [0.4, 0.0, 0.2, 1]
-              }}
-              style={{
-                zIndex: 100,
-                backgroundColor: '#FCFCFA',
-                isolation: 'isolate'
-              }}
-            >
-              <motion.div
-                className="px-6 py-4 h-full overflow-y-auto"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{
-                  opacity: showDetails ? 1 : 0,
-                  y: showDetails ? 0 : -20
-                }}
-                transition={{ duration: 0.4, delay: showDetails ? 0.4 : 0 }}
-              >
+              <div className="px-6 py-4 h-full overflow-y-auto">
                 {activeTab.id === 'models' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
                     {/* Left: Compact info */}
@@ -1687,14 +1465,9 @@ export default function BuilderTabbed() {
                       </div>
                     </div>
 
-                    {/* Right: Placeholder */}
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
-                        <p className="text-sm text-gray-500 font-futura">Model Configuration</p>
-                      </div>
+                    {/* Right: Animation */}
+                    <div className="rounded-xl overflow-hidden h-full">
+                      <AgentsBuilderDemo />
                     </div>
                   </div>
                 )}
@@ -1768,13 +1541,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-                        </svg>
-                        <p className="text-sm text-gray-500 font-futura">Tool Configuration</p>
-                      </div>
+                    <div className="rounded-xl overflow-hidden h-full">
+                      <AgentsBuilderDemo />
                     </div>
                   </div>
                 )}
@@ -1848,13 +1616,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                        <p className="text-sm text-gray-500 font-futura">Skill Configuration</p>
-                      </div>
+                    <div className="rounded-xl overflow-hidden h-full">
+                      <AgentsBuilderDemo />
                     </div>
                   </div>
                 )}
@@ -1928,13 +1691,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <p className="text-sm text-gray-500 font-futura">Trigger Configuration</p>
-                      </div>
+                    <div className="rounded-xl overflow-hidden h-full">
+                      <AgentsBuilderDemo />
                     </div>
                   </div>
                 )}
@@ -2008,13 +1766,8 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                        </svg>
-                        <p className="text-sm text-gray-500 font-futura">UI Configuration</p>
-                      </div>
+                    <div className="rounded-xl overflow-hidden h-full">
+                      <AgentsBuilderDemo />
                     </div>
                   </div>
                 )}
@@ -2088,622 +1841,16 @@ export default function BuilderTabbed() {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
-                        <p className="text-sm text-gray-500 font-futura">Logic Configuration</p>
-                      </div>
+                    <div className="rounded-xl overflow-hidden h-full">
+                      <AgentsBuilderDemo />
                     </div>
                   </div>
                 )}
 
-                {activeTab.id === 'brd' && (
-                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    {/* Left: Compact info */}
-                    <div className="space-y-3">
-                      {/* Header */}
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Discovery Agent</h3>
-                        <p className="text-sm text-gray-600 leading-snug font-futura">
-                          Captures your business requirements through conversation. Generates a complete BRD.
-                        </p>
-                      </div>
-
-                      {/* BRD Contains - Compact list */}
-                      <div className="space-y-1.5">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">BRD Contains</div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Business Summary</span>
-                            <span className="text-xs text-gray-500">What we learned</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Data Schema</span>
-                            <span className="text-xs text-gray-500">Recommended DocTypes</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Module Registry</span>
-                            <span className="text-xs text-gray-500">Pre-built modules</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">AI Agents</span>
-                            <span className="text-xs text-gray-500">Suggested agents</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Integrations</span>
-                            <span className="text-xs text-gray-500">External systems</span>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
-                          One-click approval triggers system build
-                        </div>
-                      </div>
-
-                      {/* Key Features - Ultra compact */}
-                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Capabilities</div>
-                        <div className="space-y-1">
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Voice, text, docs, images supported</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Industry best practices built-in</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Web search for context enrichment</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Editable before approval</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right: BRD Preview placeholder */}
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto text-blue-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <p className="text-sm text-gray-500 font-futura">BRD Preview</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab.id === 'data' && (
-                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    {/* Left: Compact info */}
-                    <div className="space-y-3">
-                      {/* Header */}
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Data Connector</h3>
-                        <p className="text-sm text-gray-600 leading-snug font-futura">
-                          Connect any data source. Auto schema mapping, transformations, and real-time sync.
-                        </p>
-                      </div>
-
-                      {/* Core Capabilities - Compact list */}
-                      <div className="space-y-1.5">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Capabilities</div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Database Connections</span>
-                            <span className="text-xs text-gray-500">PostgreSQL, MySQL, MongoDB</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">API Integration</span>
-                            <span className="text-xs text-gray-500">REST, GraphQL, webhooks</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">SaaS Connectors</span>
-                            <span className="text-xs text-gray-500">Salesforce, HubSpot, Stripe</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">File Import</span>
-                            <span className="text-xs text-gray-500">CSV, Excel, JSON, XML</span>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
-                          50+ data sources with auto schema detection
-                        </div>
-                      </div>
-
-                      {/* Key Features - Ultra compact */}
-                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Features</div>
-                        <div className="space-y-1">
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Auto schema mapping and detection</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Real-time bidirectional sync</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Data transformation and validation</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Conflict resolution and error handling</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right: Data Gallery */}
-                    <DataGallery />
-                  </div>
-                )}
-
-                {activeTab.id === 'workflows' && (
-                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    {/* Left: Compact info */}
-                    <div className="space-y-3">
-                      {/* Header */}
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Workflow Engine</h3>
-                        <p className="text-sm text-gray-600 leading-snug font-futura">
-                          Automate business processes. Set triggers, conditional logic, and chain actions.
-                        </p>
-                      </div>
-
-                      {/* Core Capabilities - Compact list */}
-                      <div className="space-y-1.5">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Capabilities</div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Event Triggers</span>
-                            <span className="text-xs text-gray-500">Form submit, data changes</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Conditional Logic</span>
-                            <span className="text-xs text-gray-500">If/else, branching paths</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Multi-step Actions</span>
-                            <span className="text-xs text-gray-500">Chain complex operations</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Scheduled Jobs</span>
-                            <span className="text-xs text-gray-500">Cron, recurring tasks</span>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
-                          Visual builder with drag-and-drop nodes
-                        </div>
-                      </div>
-
-                      {/* Key Features - Ultra compact */}
-                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Features</div>
-                        <div className="space-y-1">
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Real-time monitoring and logs</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Auto retry with exponential backoff</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Version control and rollback</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Test mode before deployment</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right: Workflows Gallery */}
-                    <WorkflowsGallery />
-                  </div>
-                )}
-
-                {activeTab.id === 'agents' && (
-                  <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    {/* Left: Compact info */}
-                    <div className="space-y-3">
-                      {/* Header */}
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Agent Builder</h3>
-                        <p className="text-sm text-gray-600 leading-snug font-futura">
-                          Deploy AI agents that understand your business, make decisions, and take actions autonomously.
-                        </p>
-                      </div>
-
-                      {/* Core Capabilities - Compact list */}
-                      <div className="space-y-1.5">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Core Capabilities</div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Natural Language</span>
-                            <span className="text-xs text-gray-500">Conversations</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Data Analysis</span>
-                            <span className="text-xs text-gray-500">Reporting</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Automated Actions</span>
-                            <span className="text-xs text-gray-500">Workflows</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>
-                            <span className="text-gray-900 font-medium">Decision Routing</span>
-                            <span className="text-xs text-gray-500">Escalation</span>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-500 pt-1 border-t border-gray-200">
-                          Configure personality, stages, tools, and model parameters
-                        </div>
-                      </div>
-
-                      {/* Key Features - Ultra compact */}
-                      <div className="space-y-1.5 pt-2 border-t border-gray-200">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Enterprise Features</div>
-                        <div className="space-y-1">
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Full reasoning & audit logs</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Human oversight & approvals</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">Custom training on your data</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <svg className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs text-gray-700">24/7 autonomous operation</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right: Agents Gallery */}
-                    <AgentsGallery />
-                  </div>
-                )}
-                  </motion.div>
-            </motion.div>
-
-            {/* Animation area - always rendered underneath the screen */}
-            <AnimatePresence mode="sync">
-              <motion.div
-                key={activeTab.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-                className="h-full"
-              >
-                {/* All tabs use AgentsBuilderDemo for now */}
-                {activeTab.id === "models" || activeTab.id === "tools" || activeTab.id === "skills" || activeTab.id === "triggers" || activeTab.id === "ui" || activeTab.id === "logic" ? (
-                  <AgentsBuilderDemo />
-                ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 h-full">
-                {/* Left Section - Workflow */}
-                <div className="relative bg-gradient-to-br from-indigo-50/50 to-purple-50/50 p-8 lg:p-10 overflow-hidden lg:border-r border-gray-200/50">
-                    <>
-                      {/* Dotted Background Pattern */}
-                      <div
-                        className="absolute inset-0 opacity-20"
-                        style={{
-                          backgroundImage: `radial-gradient(circle, #6366f1 1.5px, transparent 1.5px)`,
-                          backgroundSize: "24px 24px",
-                        }}
-                      />
-
-                      {/* Content */}
-                      <div className="relative z-10">
-                        {/* Workflow Steps with Complex Animation */}
-                        <motion.div
-                          className="space-y-3"
-                          variants={containerVariants}
-                          initial="hidden"
-                          animate="visible"
-                        >
-                      {activeTab.workflowSteps.map((step, index) => (
-                        <motion.div
-                          key={`${activeTab.id}-${step.id}`}
-                          variants={workflowItemVariants}
-                          className="relative"
-                        >
-                          <motion.div
-                            className={`flex items-center gap-3 px-5 py-4 rounded-xl transition-all duration-300 backdrop-blur-sm ${
-                              step.status === "complete"
-                                ? "bg-white/80 shadow-sm border border-gray-100"
-                                : step.status === "loading"
-                                ? "bg-white shadow-lg ring-2 ring-[#8FB7C5]/50"
-                                : "bg-white/40 border border-gray-100/50"
-                            }`}
-                            whileHover={{ scale: 1.02, x: 4 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                          >
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                              step.status === "complete"
-                                ? "bg-green-100 text-green-600"
-                                : step.status === "loading"
-                                ? "bg-[#8FB7C5]/20 text-[#5B8A8A]"
-                                : "bg-gray-100 text-gray-400"
-                            }`}>
-                              {step.status === "complete" && (
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                                </svg>
-                              )}
-                              {step.status === "loading" && (
-                                <motion.div
-                                  animate={{ rotate: 360 }}
-                                  transition={{
-                                    duration: 1.5,
-                                    repeat: Infinity,
-                                    ease: "linear",
-                                  }}
-                                >
-                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                  </svg>
-                                </motion.div>
-                              )}
-                              {!step.status && (
-                                <div className="w-2 h-2 rounded-full bg-gray-400" />
-                              )}
-                            </div>
-                            <span
-                              className={`text-sm font-medium font-futura ${
-                                step.status ? "text-gray-900" : "text-gray-500"
-                              }`}
-                              style={{ letterSpacing: "-0.01em" }}
-                            >
-                              {step.label}
-                            </span>
-                            {step.status === "loading" && (
-                              <motion.div
-                                className="ml-auto flex items-center gap-2"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.3 }}
-                              >
-                                <motion.div
-                                  className="flex gap-1"
-                                  animate={{ opacity: [0.4, 1, 0.4] }}
-                                  transition={{ duration: 1.5, repeat: Infinity }}
-                                >
-                                  <div className="w-1.5 h-1.5 rounded-full bg-[#8FB7C5]" />
-                                  <div className="w-1.5 h-1.5 rounded-full bg-[#8FB7C5]" />
-                                  <div className="w-1.5 h-1.5 rounded-full bg-[#8FB7C5]" />
-                                </motion.div>
-                              </motion.div>
-                            )}
-                          </motion.div>
-
-                          {/* Connecting Line with Animation */}
-                          {index < activeTab.workflowSteps.length - 1 && (
-                            <motion.div
-                              className="w-0.5 h-3 bg-gradient-to-b from-gray-300 to-transparent ml-10 my-1"
-                              initial={{ scaleY: 0, originY: 0 }}
-                              animate={{ scaleY: 1 }}
-                              transition={{ delay: 0.15 * index + 0.2, duration: 0.3 }}
-                            />
-                          )}
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </div>
-                    </>
-                  </div>
-
-                {/* Right Section - Chat Interface */}
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 p-8 lg:p-10 flex flex-col">
-                  <div className="flex-1 flex flex-col">
-                    {/* Chat Header */}
-                    <motion.div
-                      className="flex items-center justify-between pb-5 border-b border-gray-200/80"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.15 }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[#8FB7C5] flex items-center justify-center text-white shadow-sm">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                        </div>
-                        <span className="font-semibold text-gray-900 text-sm uppercase tracking-wide font-futura">
-                          {activeTab.agentTitle}
-                        </span>
-                      </div>
-                      <button className="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </motion.div>
-
-                    {/* Messages */}
-                    <div className="flex-1 py-6 space-y-4">
-                      <motion.div
-                        className="text-center text-xs text-gray-400 uppercase tracking-wider mb-6"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="w-1 h-1 rounded-full bg-gray-300" />
-                          <div className="w-1 h-1 rounded-full bg-gray-300" />
-                          <div className="w-1 h-1 rounded-full bg-gray-300" />
-                        </div>
-                      </motion.div>
-
-                      {activeTab.chatMessages.map((message, index) => (
-                        <motion.div
-                          key={`${activeTab.id}-${message.id}`}
-                          custom={index}
-                          variants={chatMessageVariants}
-                          initial="hidden"
-                          animate="visible"
-                          className={`flex ${
-                            message.type === "agent" ? "justify-start" : "justify-end"
-                          }`}
-                        >
-                          <div
-                            className={`px-4 py-3 rounded-2xl max-w-[85%] font-futura ${
-                              message.type === "agent"
-                                ? "bg-white text-gray-800 rounded-tl-sm shadow-sm border border-gray-100"
-                                : "bg-[#8FB7C5] text-white rounded-tr-sm shadow-sm"
-                            }`}
-                            style={{ letterSpacing: "-0.01em" }}
-                          >
-                            <p className="text-sm leading-relaxed">{message.text}</p>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {/* Input Area */}
-                    <motion.div
-                      className="mt-auto relative"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 }}
-                    >
-                      <input
-                        type="text"
-                        placeholder="Ask"
-                        className="w-full px-4 py-3.5 pr-12 rounded-xl bg-white border border-gray-200 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8FB7C5] focus:border-transparent transition-all font-futura shadow-sm"
-                        style={{ letterSpacing: "-0.01em" }}
-                      />
-                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#5B8A8A] transition-colors">
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 10l7-7m0 0l7 7m-7-7v18"
-                          />
-                        </svg>
-                      </button>
-                    </motion.div>
-                  </div>
-                </div>
-                </div>
-              )}
-              </motion.div>
-            </AnimatePresence>
+              </div>
           </div>
         </div>
+
 
         {/* Mobile Builder - Show all tabs stacked vertically with separators */}
         {isMobile && (
