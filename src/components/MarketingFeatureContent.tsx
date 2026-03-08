@@ -286,7 +286,7 @@ const MarketingFeatureContent: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col lg:flex-row font-rockwell text-waygent-text-primary">
+    <div className="relative w-full h-full flex flex-col lg:flex-row font-rockwell text-sena-text-primary">
       {/* Header - Full width on mobile, positioned on desktop */}
       <motion.div
         className="w-full lg:absolute lg:top-0 lg:left-0 lg:right-0 mb-4 lg:mb-0 px-4 lg:px-8 lg:pt-4"
@@ -294,7 +294,7 @@ const MarketingFeatureContent: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h2 className="text-xl lg:text-2xl xl:text-3xl font-bold text-waygent-blue text-center lg:text-left">
+        <h2 className="text-xl lg:text-2xl xl:text-3xl font-bold text-sena-blue text-center lg:text-left">
           Scale Your Business Through Strategic Marketing
         </h2>
       </motion.div>
@@ -336,9 +336,9 @@ const MarketingFeatureContent: React.FC = () => {
                 {visibleCards.map((point, index) => (
                   <div
                     key={point.id}
-                    className={`bg-waygent-cream/60 backdrop-blur-sm ${
+                    className={`bg-sena-cream/60 backdrop-blur-sm ${
                       MANUAL_CONTROLS.spacing.cardPadding
-                    } rounded-xl shadow-lg border-2 border-waygent-cream ${
+                    } rounded-xl shadow-lg border-2 border-sena-cream ${
                       cardsToShow === 1
                         ? MANUAL_CONTROLS.cardSizing.single
                         : MANUAL_CONTROLS.cardSizing.multiple
@@ -347,15 +347,15 @@ const MarketingFeatureContent: React.FC = () => {
                     } flex flex-col justify-center`}
                   >
                     <div className="flex items-center mb-3 lg:mb-4">
-                      <div className="w-6 h-6 lg:w-8 lg:h-8 rounded-full bg-waygent-blue text-white flex items-center justify-center text-xs lg:text-sm font-bold mr-2 lg:mr-3 flex-shrink-0">
+                      <div className="w-6 h-6 lg:w-8 lg:h-8 rounded-full bg-sena-blue text-white flex items-center justify-center text-xs lg:text-sm font-bold mr-2 lg:mr-3 flex-shrink-0">
                         {currentIndex + index + 1}
                       </div>
-                      <h3 className="text-base lg:text-lg xl:text-xl font-semibold text-waygent-blue flex-1 leading-tight">
+                      <h3 className="text-base lg:text-lg xl:text-xl font-semibold text-sena-blue flex-1 leading-tight">
                         {point.title}
                       </h3>
-                      <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-waygent-orange ml-2 lg:ml-3 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-sena-orange ml-2 lg:ml-3 flex-shrink-0" />
                     </div>
-                    <p className="text-xs lg:text-sm xl:text-base text-waygent-text-primary leading-relaxed">
+                    <p className="text-xs lg:text-sm xl:text-base text-sena-text-primary leading-relaxed">
                       {point.description}
                     </p>
                   </div>
@@ -367,22 +367,22 @@ const MarketingFeatureContent: React.FC = () => {
             <div className="w-full flex items-center justify-center gap-4">
               <button
                 onClick={goToPrevious}
-                className="flex items-center justify-center w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-waygent-blue/20 hover:bg-waygent-blue/30 transition-all duration-300 group"
+                className="flex items-center justify-center w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-sena-blue/20 hover:bg-sena-blue/30 transition-all duration-300 group"
                 disabled={totalPages <= 1}
               >
-                <ChevronLeft className="w-4 h-4 lg:w-5 lg:h-5 text-waygent-blue group-hover:text-waygent-orange transition-colors" />
+                <ChevronLeft className="w-4 h-4 lg:w-5 lg:h-5 text-sena-blue group-hover:text-sena-orange transition-colors" />
               </button>
 
               {/* Enhanced Progress indicator */}
               <div className="flex items-center gap-1 min-w-[80px] justify-center">
-                <span className="text-sm lg:text-base text-waygent-blue font-medium">
+                <span className="text-sm lg:text-base text-sena-blue font-medium">
                   {getProgressText()}
                 </span>
-                <span className="text-sm lg:text-base text-waygent-text-secondary">
+                <span className="text-sm lg:text-base text-sena-text-secondary">
                   of {marketingPoints.length}
                 </span>
                 {cardsToShow > 1 && (
-                  <span className="text-xs text-waygent-text-muted ml-1">
+                  <span className="text-xs text-sena-text-muted ml-1">
                     ({cardsToShow} cards)
                   </span>
                 )}
@@ -390,10 +390,10 @@ const MarketingFeatureContent: React.FC = () => {
 
               <button
                 onClick={goToNext}
-                className="flex items-center justify-center w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-waygent-blue/20 hover:bg-waygent-blue/30 transition-all duration-300 group"
+                className="flex items-center justify-center w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-sena-blue/20 hover:bg-sena-blue/30 transition-all duration-300 group"
                 disabled={totalPages <= 1}
               >
-                <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5 text-waygent-blue group-hover:text-waygent-orange transition-colors" />
+                <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5 text-sena-blue group-hover:text-sena-orange transition-colors" />
               </button>
             </div>
           </div>

@@ -106,7 +106,7 @@ const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, re
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2 text-[14px] font-futura font-semibold text-[#211a14]">
               <span>I need</span>
-              <span className="inline-flex rounded-full bg-waygent-blue px-2.5 py-[5px] text-[12px] font-bold tracking-wide text-white">
+              <span className="inline-flex rounded-full bg-sena-blue px-2.5 py-[5px] text-[12px] font-bold tracking-wide text-white">
                 {formattedCreditCount}
               </span>
               <span>credits per month</span>
@@ -142,7 +142,7 @@ const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, re
                 left: `${badgePosition}%`,
               }}
             >
-              <span className="inline-flex rounded-full border-2 border-waygent-blue bg-white px-3 py-1.5 text-xs font-semibold text-waygent-blue shadow-sm">
+              <span className="inline-flex rounded-full border-2 border-sena-blue bg-white px-3 py-1.5 text-xs font-semibold text-sena-blue shadow-sm">
                 {formattedCreditCount}
               </span>
             </div>
@@ -234,7 +234,7 @@ const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, re
                 </button>
                 {/* Sliding background */}
                 <div
-                  className="absolute top-0.5 bottom-0.5 bg-waygent-blue rounded-full shadow-sm transition-all duration-300 ease-out"
+                  className="absolute top-0.5 bottom-0.5 bg-sena-blue rounded-full shadow-sm transition-all duration-300 ease-out"
                   style={{
                     left: isAnnual ? '50%' : '2px',
                     right: isAnnual ? '2px' : '50%',
@@ -320,7 +320,7 @@ const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, re
             return (
               <article
                 key={tier.plan}
-                className={`flex flex-col overflow-hidden rounded-[20px] border border-waygent-light-blue/40 bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                className={`flex flex-col overflow-hidden rounded-[20px] border border-sena-light-blue/40 bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-lg ${
                   !isAvailable ? 'opacity-50' : ''
                 }`}
               >
@@ -344,7 +344,7 @@ const PricingSection = forwardRef<HTMLElement>(function PricingSection(props, re
                   )}
                 </div>
 
-                <div className="flex flex-1 flex-col border-t border-waygent-light-blue/30 px-4 py-3">
+                <div className="flex flex-1 flex-col border-t border-sena-light-blue/30 px-4 py-3">
                   <div className="mb-2">
                     <h3 className="text-sm font-bold text-gray-900 font-futura mb-0.5">
                       {tier.plan}

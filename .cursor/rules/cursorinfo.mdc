@@ -3,11 +3,11 @@ description:
 globs: 
 alwaysApply: false
 ---
-# Waygent Landing Page Project Snapshot
+# SenaERP Landing Page Project Snapshot
 
 ## Overview
 
-This project is the landing page for Waygent, an ERP (Enterprise Resource Planning) platform for companies of all sizes. The landing page is designed as a single-page scrolling website, with different sections highlighting various aspects of the Waygent platform.
+This project is the landing page for SenaERP, an ERP (Enterprise Resource Planning) platform for companies of all sizes. The landing page is designed as a single-page scrolling website, with different sections highlighting various aspects of the SenaERP platform.
 
 ## Technology Stack
 
@@ -30,7 +30,7 @@ This project is the landing page for Waygent, an ERP (Enterprise Resource Planni
 *   `src/components/`: Contains reusable React components.
     *   `NavBar.tsx`: The navigation bar component. Includes a bottom border.
     *   `IntroSection.tsx`: The first section of the landing page.
-        *   Explains "What is Waygent?". The question uses the Space Grotesk font. The word "Waygent" is highlighted with a "rough" `ScribbleUnderline`.
+        *   Explains "What is SenaERP?". The question uses the Space Grotesk font. The word "SenaERP" is highlighted with a "rough" `ScribbleUnderline`.
         *   The answer sentence uses the local Rockwell font. Keywords within the answer are bold, Rockwell font, and `text-3xl`. The `ScribbleUnderline` (stroke 5, color matched to text) is always rendered but its opacity is 0 for inactive keywords and 0.9 for active/hovered ones to provide a highlight effect without layout shift.
         *   The keyword definition (description appearing when a keyword is active) uses Rockwell font (medium weight, non-italic) and a standard text color (`text-sentra-midnight-deck`).
         *   The keyword definition header (e.g., "lightweight:") matches the answer keywords in font (Rockwell), style (bold), and size (`text-3xl`). Its "rough" `ScribbleUnderline` (stroke 7) also dynamically matches the keyword's text color and is always visible.
@@ -42,12 +42,12 @@ This project is the landing page for Waygent, an ERP (Enterprise Resource Planni
     *   `ScribbleUnderline.tsx`: Reusable component for adding hand-drawn style underlines. Now includes a `variant` prop (`default` or `keyword`) to allow for slightly different SVG positioning and sizing based on context.
     *   `ScribbleDemo.tsx`: Demo component showcasing all scribble underline styles and customization options (temporarily added to main page).
     *   `FeaturesSection.tsx`: Placeholder for features section (currently commented out in `page.tsx`).
-    *   `MarketingFeatureContent.tsx`: Displays detailed information about the "Marketing" feature within the `FeaturesSection`. It lists various marketing tools and services offered by Waygent in a compact grid layout (2 columns on mobile, 4 columns on larger screens) with icons and descriptions. The component now includes the marketing.png image as a subtle background overlay and fits within the features section without scrolling. Text content uses line-clamp utilities for proper truncation.
+    *   `MarketingFeatureContent.tsx`: Displays detailed information about the "Marketing" feature within the `FeaturesSection`. It lists various marketing tools and services offered by SenaERP in a compact grid layout (2 columns on mobile, 4 columns on larger screens) with icons and descriptions. The component now includes the marketing.png image as a subtle background overlay and fits within the features section without scrolling. Text content uses line-clamp utilities for proper truncation.
     *   `src/components/magicui/grid-pattern.tsx`: The `GridPattern` component from Magic UI, used for subtle background effects.
 *   `public/`: Static assets, including font files in `public/fonts/`.
 *   `package.json`: Project dependencies and scripts.
 *   `next.config.ts`: Next.js configuration.
-*   `tailwind.config.ts`: Tailwind CSS configuration, including the `rockwell` font family and Waygent brand colors (apricot-jet: `#E26F3C`, midnight-deck: `#264653`, travertine: `#E9C46A`, dune-mist: `#EFE7DC`, ocean-route: `#4A868C`). Other display/body fonts are temporarily commented out for focused Rockwell testing.
+*   `tailwind.config.ts`: Tailwind CSS configuration, including the `rockwell` font family and SenaERP brand colors (apricot-jet: `#E26F3C`, midnight-deck: `#264653`, travertine: `#E9C46A`, dune-mist: `#EFE7DC`, ocean-route: `#4A868C`). Other display/body fonts are temporarily commented out for focused Rockwell testing.
 *   `tsconfig.json`: TypeScript configuration.
 
 ## Current Development State
@@ -55,7 +55,7 @@ This project is the landing page for Waygent, an ERP (Enterprise Resource Planni
 *   The basic structure of the single-page scrolling website is in place.
 *   The `NavBar` component is implemented.
 *   The `IntroSection` component is largely complete:
-    *   The "What is Waygent?" question uses Space Grotesk font, with "Waygent" having a `ScribbleUnderline`.
+    *   The "What is SenaERP?" question uses Space Grotesk font, with "SenaERP" having a `ScribbleUnderline`.
     *   The answer sentence is styled with the local Rockwell font. All keywords are Rockwell, bold, `text-3xl`. Underlines (stroke 5) for keywords are always rendered but only visible (opacity 0.9) for active/hovered states to highlight the active keyword and reduce layout shift.
     *   The keyword definition uses Rockwell font (medium weight, non-italic) with `text-sentra-midnight-deck` color. The definition header is styled to match the answer's keywords (Rockwell, bold, `text-3xl`), including a dynamically colored scribble underline (stroke 7) that is always visible.
     *   Keyword highlighting mechanism is implemented: keywords are always colored (text and underline dynamically matched for active state). Hover and timed rotation animations are active. The animated background fill on keywords is commented out.
@@ -68,7 +68,7 @@ This project is the landing page for Waygent, an ERP (Enterprise Resource Planni
 *   Local Space Grotesk font has been integrated and applied via `@font-face` in `src/app/globals.css` from `public/fonts/Bungee,Playfair_Display,Space_Grotesk/Space_Grotesk/static/` (using static font files).
 *   Local Rockybilly font has been integrated and applied via `@font-face` in `src/app/globals.css` from `public/fonts/rockybilly/Rockybilly.ttf`.
 *   All three fonts (`font-rockwell`, `font-space-grotesk`, `font-rockybilly`) are defined in `tailwind.config.ts`.
-*   Waygent brand colors in `tailwind.config.ts` and the corresponding `tailwindToHexColorMap` in `IntroSection.tsx` have been updated to ensure keyword text and underline colors match (waygent-blue: `#3b82f6`, waygent-orange: `#f59e0b`, waygent-light-blue: `#EEF2FF`, waygent-cream: `#FAF9F5`).
+*   SenaERP brand colors in `tailwind.config.ts` and the corresponding `tailwindToHexColorMap` in `IntroSection.tsx` have been updated to ensure keyword text and underline colors match (sena-blue: `#3b82f6`, sena-orange: `#f59e0b`, sena-light-blue: `#EEF2FF`, sena-cream: `#FAF9F5`).
 *   Other fonts (Plus Jakarta Sans, Inter) were previously configured; their `@import` in `globals.css` and definitions in `tailwind.config.ts` are currently commented out but can be re-enabled.
 *   Code across components like `IntroSection.tsx`, `Keyword.tsx`, `globals.css`, and `tailwind.config.ts` has been cleaned of unnecessary comments.
 *   The `FeaturesSection` and other planned sections ("About Us", "Book a Demo") exist as commented-out placeholders in `src/app/page.tsx`.
@@ -105,5 +105,5 @@ This project is the landing page for Waygent, an ERP (Enterprise Resource Planni
 
 *   Tailwind CSS utility classes are used extensively.
 *   Global styles and `@font-face` rules are in `src/app/globals.css`.
-*   Waygent brand colors are defined in `tailwind.config.ts` (waygent-blue: `#3b82f6`, waygent-orange: `#f59e0b`, waygent-light-blue: `#EEF2FF`, waygent-cream: `#FAF9F5`, waygent-text-primary: `#000000`, waygent-text-secondary: `rgba(0, 0, 0, 0.7)`, waygent-text-muted: `#6B7280`).
+*   SenaERP brand colors are defined in `tailwind.config.ts` (sena-blue: `#3b82f6`, sena-orange: `#f59e0b`, sena-light-blue: `#EEF2FF`, sena-cream: `#FAF9F5`, sena-text-primary: `#000000`, sena-text-secondary: `rgba(0, 0, 0, 0.7)`, sena-text-muted: `#6B7280`).
 *   Line-clamp utilities (.line-clamp-2, .line-clamp-3) are defined in `globals.css` for text truncation.

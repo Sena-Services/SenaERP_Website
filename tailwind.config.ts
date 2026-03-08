@@ -22,27 +22,27 @@ const config: Config = {
       },
       colors: {
         // Primary Brand Colors
-        "waygent-blue": "#3b82f6",
-        "waygent-orange": "#f59e0b",
-        "waygent-cream": "#FAF9F5",
-        "waygent-light-blue": "#EEF2FF",
+        "sena-blue": "#3b82f6",
+        "sena-orange": "#f59e0b",
+        "sena-cream": "#FAF9F5",
+        "sena-light-blue": "#EEF2FF",
         
         // Supporting Colors
-        "waygent-text-primary": "#000000",
-        "waygent-text-secondary": "rgba(0, 0, 0, 0.7)",
-        "waygent-text-muted": "#6B7280",
-        "waygent-white": "#FFFFFF",
+        "sena-text-primary": "#000000",
+        "sena-text-secondary": "rgba(0, 0, 0, 0.7)",
+        "sena-text-muted": "#6B7280",
+        "sena-white": "#FFFFFF",
         
         // Interactive States
-        "waygent-blue-hover": "#2563eb",
-        "waygent-orange-hover": "#d97706",
+        "sena-blue-hover": "#2563eb",
+        "sena-orange-hover": "#d97706",
         
         // Legacy colors for backward compatibility (will be phased out)
-        "sentra-apricot-jet": "#f59e0b", // Maps to waygent-orange
-        "sentra-midnight-deck": "#000000", // Maps to waygent-text-primary
-        "sentra-travertine": "#FAF9F5", // Maps to waygent-cream
-        "sentra-dune-mist": "#FAF9F5", // Maps to waygent-cream
-        "sentra-ocean-route": "#3b82f6", // Maps to waygent-blue
+        "sentra-apricot-jet": "#f59e0b", // Maps to sena-orange
+        "sentra-midnight-deck": "#000000", // Maps to sena-text-primary
+        "sentra-travertine": "#FAF9F5", // Maps to sena-cream
+        "sentra-dune-mist": "#FAF9F5", // Maps to sena-cream
+        "sentra-ocean-route": "#3b82f6", // Maps to sena-blue
       },
     },
   },

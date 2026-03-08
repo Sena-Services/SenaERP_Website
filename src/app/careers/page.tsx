@@ -18,7 +18,7 @@ export default function CareersPage() {
           />
         </div>
       </div>
-      <div className="bg-waygent-cream min-h-screen pt-16">
+      <div className="bg-sena-cream min-h-screen pt-16">
         <CareersSection />
       </div>
     </>

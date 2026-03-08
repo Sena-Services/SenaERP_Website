@@ -355,7 +355,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="Email"
-                    className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                    className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
                   />
                   <input
                     type="password"
@@ -364,7 +364,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="Password"
                     autoComplete="current-password"
-                    className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                    className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
                   />
                   <button
                     type="submit"
@@ -380,7 +380,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                   <button
                     type="button"
                     onClick={() => switchView("signup")}
-                    className="text-waygent-orange font-semibold hover:underline cursor-pointer"
+                    className="text-sena-orange font-semibold hover:underline cursor-pointer"
                   >
                     Sign up
                   </button>
@@ -437,7 +437,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       onChange={(e) => setSignupName(e.target.value)}
                       placeholder="John Doe"
                       readOnly={isGoogle}
-                      className={`w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk ${isGoogle ? "bg-gray-50 text-gray-500" : ""}`}
+                      className={`w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk ${isGoogle ? "bg-gray-50 text-gray-500" : ""}`}
                     />
                   </div>
                   <div>
@@ -451,7 +451,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       onChange={(e) => setSignupEmail(e.target.value)}
                       placeholder="john@example.com"
                       readOnly={isGoogle}
-                      className={`w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk ${isGoogle ? "bg-gray-50 text-gray-500" : ""}`}
+                      className={`w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk ${isGoogle ? "bg-gray-50 text-gray-500" : ""}`}
                     />
                   </div>
                   <div>
@@ -464,7 +464,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       value={signupSiteName}
                       onChange={(e) => setSignupSiteName(e.target.value)}
                       placeholder="e.g. acme, john"
-                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
                     />
                     <p className="text-xs text-gray-400 mt-1.5 ml-1 font-space-grotesk leading-relaxed">
                       This is your workspace URL:{" "}
@@ -485,7 +485,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                         onChange={(e) => setSignupPassword(e.target.value)}
                         placeholder="Min 8 characters"
                         autoComplete="new-password"
-                        className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                        className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
                       />
                       {signupPassword && (
                         <span className={`text-xs font-space-grotesk mt-1.5 ml-1 block ${signupPassword.length >= 8 ? "text-green-500" : "text-red-500"}`}>
@@ -508,7 +508,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                   <button
                     type="button"
                     onClick={() => switchView("signin")}
-                    className="text-waygent-orange font-semibold hover:underline cursor-pointer"
+                    className="text-sena-orange font-semibold hover:underline cursor-pointer"
                   >
                     Sign in
                   </button>
@@ -558,7 +558,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       inputMode="numeric"
                       autoComplete="one-time-code"
                       maxLength={6}
-                      className="w-full px-4 py-3 text-center text-2xl tracking-[0.5em] font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all"
+                      className="w-full px-4 py-3 text-center text-2xl tracking-[0.5em] font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all"
                     />
                   </div>
                   <button
@@ -576,7 +576,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     type="button"
                     onClick={handleResend}
                     disabled={resending}
-                    className="text-waygent-orange font-semibold hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="text-sena-orange font-semibold hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {resending ? "Sending..." : "Resend code"}
                   </button>
@@ -611,7 +611,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       value={signupName}
                       onChange={(e) => setSignupName(e.target.value)}
                       placeholder="John Doe"
-                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
                     />
                   </div>
                   <div>
@@ -624,7 +624,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       value={signupEmail}
                       onChange={(e) => setSignupEmail(e.target.value)}
                       placeholder="john@example.com"
-                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
                     />
                   </div>
                   <div>
@@ -636,7 +636,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                       onChange={(e) => setPitchDeckMessage(e.target.value)}
                       placeholder="Tell us about yourself"
                       rows={3}
-                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition-all font-space-grotesk resize-none"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk resize-none"
                     />
                   </div>
                   <button
@@ -653,7 +653,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                   <button
                     type="button"
                     onClick={() => switchView("signup")}
-                    className="text-waygent-orange font-semibold hover:underline cursor-pointer"
+                    className="text-sena-orange font-semibold hover:underline cursor-pointer"
                   >
                     Sign up
                   </button>

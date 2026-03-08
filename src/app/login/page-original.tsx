@@ -64,7 +64,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-waygent-light-blue to-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sena-light-blue to-white px-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Logo and Title */}
@@ -74,11 +74,11 @@ export default function LoginPage() {
                 src="/logo.png"
                 width={64}
                 height={64}
-                alt="Waygent logo"
+                alt="SenaERP logo"
                 className="mx-auto mb-4"
               />
             </Link>
-            <h1 className="text-3xl font-rockwell text-waygent-text-primary">
+            <h1 className="text-3xl font-rockwell text-sena-text-primary">
               Welcome Back
             </h1>
             <p className="text-gray-600 mt-2">Sign in to your account</p>
@@ -105,7 +105,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                 placeholder="you@example.com"
                 required
                 disabled={loading}
@@ -124,7 +124,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                 placeholder="••••••••"
                 required
                 disabled={loading}
@@ -134,7 +134,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-between text-sm">
               <Link
                 href="/forgot-password"
-                className="text-waygent-orange hover:text-orange-600"
+                className="text-sena-orange hover:text-orange-600"
               >
                 Forgot password?
               </Link>
@@ -143,7 +143,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-waygent-orange text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-sena-orange text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -164,7 +164,7 @@ export default function LoginPage() {
           {/* Sign Up Link */}
           <Link
             href="/signup"
-            className="block w-full text-center py-3 border-2 border-waygent-orange text-waygent-orange rounded-lg font-medium hover:bg-orange-50 transition duration-200"
+            className="block w-full text-center py-3 border-2 border-sena-orange text-sena-orange rounded-lg font-medium hover:bg-orange-50 transition duration-200"
           >
             Create Account
           </Link>

@@ -427,9 +427,9 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             {/* Native Integrations Header */}
             <div className="px-4">
               <div className="flex items-center gap-2 mb-3 justify-center">
-                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
-                <h3 className="text-xs font-futura tracking-wide text-waygent-blue uppercase font-semibold">Native Integrations</h3>
-                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+                <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
+                <h3 className="text-xs font-futura tracking-wide text-sena-blue uppercase font-semibold">Native Integrations</h3>
+                <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
               </div>
             </div>
 
@@ -567,7 +567,7 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                   onClick={() => goToMobileCard(index)}
                   className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                     mobileCardIndex === index
-                      ? 'bg-waygent-blue scale-125'
+                      ? 'bg-sena-blue scale-125'
                       : 'bg-gray-300 hover:bg-gray-400'
                   }`}
                 />
@@ -577,15 +577,15 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
             {/* 3rd Party Integrations - Horizontal scroll on mobile */}
             <div className="mt-4">
               <div className="flex items-center gap-2 mb-3 justify-center px-4">
-                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
-                <h3 className="text-xs font-futura tracking-wide text-waygent-blue uppercase font-semibold">3rd Party</h3>
-                <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+                <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
+                <h3 className="text-xs font-futura tracking-wide text-sena-blue uppercase font-semibold">3rd Party</h3>
+                <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
               </div>
               <div className="flex justify-center px-4">
                 <div className="flex gap-3 pb-2">
                   {thirdPartyIntegrations.map((integration) => (
                     <div key={integration.id} className="flex-shrink-0">
-                      <div className="w-12 h-12 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center hover:border-waygent-blue/40 transition-all">
+                      <div className="w-12 h-12 rounded-lg bg-white border-2 border-gray-200 flex items-center justify-center hover:border-sena-blue/40 transition-all">
                         <img src={integration.iconUrl} alt={integration.name} className="w-7 h-7 object-contain" />
                       </div>
                     </div>
@@ -600,9 +600,9 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           {/* Native Integrations */}
           <div className="md:px-0">
             <div className="flex items-center gap-2 mb-3 justify-center">
-              <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
-              <h3 className="text-xs md:text-xs font-futura tracking-wide text-waygent-blue uppercase font-semibold">Native Integrations</h3>
-              <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+              <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
+              <h3 className="text-xs md:text-xs font-futura tracking-wide text-sena-blue uppercase font-semibold">Native Integrations</h3>
+              <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
             </div>
             <div className="flex flex-wrap gap-2.5 md:gap-2 justify-center items-center">
               {nativeIntegrations.map((integration) => {
@@ -617,8 +617,8 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
                       <div
                         className={`relative flex items-center justify-center w-14 h-14 md:w-12 md:h-12 rounded-lg backdrop-blur-sm border transition-all duration-200 ease-out ${
                           isActive
-                            ? 'bg-white border-waygent-blue shadow-xl scale-110'
-                            : 'bg-white/90 border-gray-200 hover:bg-white hover:border-waygent-blue/40 hover:scale-105 hover:shadow-md'
+                            ? 'bg-white border-sena-blue shadow-xl scale-110'
+                            : 'bg-white/90 border-gray-200 hover:bg-white hover:border-sena-blue/40 hover:scale-105 hover:shadow-md'
                         }`}
                       >
                         <img
@@ -964,15 +964,15 @@ const IntegrationsSection = forwardRef<HTMLElement>(function IntegrationsSection
           {/* 3rd Party Integrations - Below everything (Desktop) */}
           <div className="md:px-0 mt-4 md:mt-4">
             <div className="flex items-center gap-2 mb-3 justify-center">
-              <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
-              <h3 className="text-xs md:text-xs font-futura tracking-wide text-waygent-blue uppercase font-semibold">3rd Party Integrations</h3>
-              <div className="h-px bg-gradient-to-r from-transparent via-waygent-blue/30 to-transparent flex-1"></div>
+              <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
+              <h3 className="text-xs md:text-xs font-futura tracking-wide text-sena-blue uppercase font-semibold">3rd Party Integrations</h3>
+              <div className="h-px bg-gradient-to-r from-transparent via-sena-blue/30 to-transparent flex-1"></div>
             </div>
             <div className="flex flex-wrap gap-2.5 md:gap-2 justify-center items-center">
               {thirdPartyIntegrations.map((integration) => (
                 <div key={integration.id} className="relative">
                   <div className="group flex flex-col items-center gap-2 cursor-default">
-                    <div className="relative flex items-center justify-center w-14 h-14 md:w-12 md:h-12 rounded-lg backdrop-blur-sm border bg-white/90 border-gray-200 transition-all duration-200 ease-out hover:bg-white hover:border-waygent-blue/40 hover:scale-105 hover:shadow-md">
+                    <div className="relative flex items-center justify-center w-14 h-14 md:w-12 md:h-12 rounded-lg backdrop-blur-sm border bg-white/90 border-gray-200 transition-all duration-200 ease-out hover:bg-white hover:border-sena-blue/40 hover:scale-105 hover:shadow-md">
                       <img
                         src={integration.iconUrl}
                         alt={integration.name}

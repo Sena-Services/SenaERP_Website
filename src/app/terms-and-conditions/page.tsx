@@ -38,450 +38,409 @@ export default function TermsAndConditions() {
             Terms & Conditions
           </h1>
           <p className="text-gray-600 text-lg">
-            Last updated: {new Date().toLocaleDateString()}
+            Last updated: March 2026
+          </p>
+          <p className="text-gray-700 text-lg mt-4 leading-relaxed">
+            These are the rules of the road for using SenaERP. We&apos;ve tried to
+            keep them clear and fair &mdash; no hidden gotchas, no walls of
+            legalese designed to confuse you.
           </p>
         </div>
 
         {/* Content */}
         <div className="prose prose-lg max-w-none">
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              1. Agreement to Terms
+              1. What you&apos;re agreeing to
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              By accessing and using Sena's services, website, or
-              communicating with us through any channel including WhatsApp
-              Business API, you agree to be bound by these Terms and Conditions
-              and all applicable laws and regulations. If you do not agree with
-              any of these terms, you are prohibited from using or accessing our
-              services.
+              By using SenaERP &mdash; our website, our app, our APIs, or any of
+              our communication channels including WhatsApp &mdash; you&apos;re
+              agreeing to these terms. If something here doesn&apos;t sit right
+              with you, please don&apos;t use the service. We&apos;d rather you
+              make an informed choice than agree to something you&apos;re not
+              comfortable with.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              These terms are a contract between you and Sena Services, the
+              company behind SenaERP. When we say &quot;Sena,&quot;
+              &quot;we,&quot; or &quot;us&quot; in this document, that&apos;s who
+              we mean.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              2. Description of Services
+              2. What SenaERP does
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Sena provides business software solutions including but not
-              limited to:
+              SenaERP is a business software platform. Depending on your plan, you
+              get access to:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
-              <li>Enterprise Resource Planning (ERP) systems</li>
-              <li>Customer Relationship Management (CRM) tools</li>
-              <li>Workflow automation and management</li>
-              <li>Data analytics and reporting</li>
-              <li>Integration services with third-party platforms</li>
-              <li>Customer support via multiple channels including WhatsApp</li>
+              <li>ERP and CRM tools to run your business</li>
+              <li>AI agents that automate workflows and handle tasks</li>
+              <li>Integrations with third-party platforms</li>
+              <li>Communication channels including WhatsApp for customer support</li>
+              <li>Analytics and reporting</li>
             </ul>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We reserve the right to modify, suspend, or discontinue any
-              aspect of our services at any time without prior notice.
+              We&apos;re constantly building and improving SenaERP. That means
+              features may change, get added, or occasionally get retired. If we
+              make a change that materially affects you, we&apos;ll give you
+              notice.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              3. WhatsApp Business Communication Terms
+              3. Your account
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              When you communicate with us via WhatsApp Business API:
-            </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
-              <li>
-                <strong>Opt-in Consent:</strong> You explicitly consent to
-                receive messages from Sena via WhatsApp by providing your
-                phone number and opting in to our messaging service
-              </li>
-              <li>
-                <strong>Message Types:</strong> You may receive transactional
-                messages (order confirmations, support responses, account
-                notifications) and, if you've opted in, promotional messages
-              </li>
-              <li>
-                <strong>Opt-out:</strong> You can stop receiving WhatsApp
-                messages at any time by sending "STOP" or contacting our support
-                team
-              </li>
-              <li>
-                <strong>Acceptable Use:</strong> You agree not to use WhatsApp
-                communication for unlawful purposes, harassment, spam, or any
-                activity that violates WhatsApp's terms of service
-              </li>
-              <li>
-                <strong>Response Times:</strong> While we strive to respond
-                promptly, we do not guarantee specific response times for
-                WhatsApp messages
-              </li>
-              <li>
-                <strong>Data Usage:</strong> Your WhatsApp communications are
-                subject to our Privacy Policy and WhatsApp's privacy practices
-              </li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              4. User Account and Registration
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              To access certain features of our services, you may be required to
-              register for an account. You agree to:
+              When you create an account, we need you to:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>
-                Provide accurate, current, and complete information during
-                registration
+                Give us accurate information. If your details change, update them.
               </li>
               <li>
-                Maintain and promptly update your account information to keep it
-                accurate and complete
+                Keep your login credentials secure. Don&apos;t share them with
+                anyone.
               </li>
               <li>
-                Maintain the security of your account credentials and accept all
-                responsibility for activities under your account
-              </li>
-              <li>
-                Notify us immediately of any unauthorized access or security
-                breach
-              </li>
-              <li>
-                Not share your account credentials with any third party
+                Let us know immediately if you suspect someone else has accessed
+                your account.
               </li>
             </ul>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We reserve the right to suspend or terminate accounts that violate
-              these terms or are inactive for extended periods.
+              You&apos;re responsible for everything that happens under your
+              account. If someone else uses your credentials, you&apos;re on the
+              hook for their actions &mdash; which is why keeping them private
+              matters.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              We may suspend or close accounts that violate these terms or that
+              have been inactive for a long time. We&apos;ll try to give you a
+              heads-up first if we can.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              5. Acceptable Use Policy
+              4. WhatsApp communication
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              You agree NOT to use our services to:
+              If you interact with SenaERP through WhatsApp, here&apos;s how it
+              works:
+            </p>
+            <div className="space-y-4 mb-4">
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p className="text-gray-800 font-medium mb-1">Opt-in only</p>
+                <p className="text-gray-600 text-base">
+                  We only message you on WhatsApp if you&apos;ve opted in. You
+                  choose to start the conversation.
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p className="text-gray-800 font-medium mb-1">What you&apos;ll receive</p>
+                <p className="text-gray-600 text-base">
+                  Transactional messages like order updates, support replies, and
+                  account notifications. Promotional messages only if you&apos;ve
+                  separately opted in.
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p className="text-gray-800 font-medium mb-1">Opting out</p>
+                <p className="text-gray-600 text-base">
+                  Send &quot;STOP&quot; at any time, or just tell us. No hoops to
+                  jump through.
+                </p>
+              </div>
+            </div>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Your WhatsApp messages are covered by our{" "}
+              <Link
+                href="/privacy-policy"
+                className="text-blue-600 hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              , and we comply with WhatsApp&apos;s{" "}
+              <a
+                href="https://www.whatsapp.com/legal/business-terms"
+                className="text-blue-600 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Business Terms
+              </a>
+              ,{" "}
+              <a
+                href="https://business.whatsapp.com/policy"
+                className="text-blue-600 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Business Policy
+              </a>
+              , and{" "}
+              <a
+                href="https://www.whatsapp.com/legal/commerce-policy"
+                className="text-blue-600 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Commerce Policy
+              </a>
+              .
+            </p>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              5. Things you shouldn&apos;t do
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              This is the &quot;please be reasonable&quot; section. Don&apos;t use
+              SenaERP to:
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+              <li>Break the law or help others break the law</li>
+              <li>Send malware, viruses, or anything designed to cause harm</li>
+              <li>Try to hack into our systems or other users&apos; accounts</li>
+              <li>Overload or disrupt the service</li>
+              <li>Harass, threaten, or abuse other people</li>
+              <li>Impersonate someone else</li>
+              <li>Scrape data or use bots without our permission</li>
+              <li>Collect other users&apos; personal information without their consent</li>
+            </ul>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              If we see activity that violates these rules, we&apos;ll take
+              action &mdash; which may include suspending your account.
+            </p>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              6. Your data and our data
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              <strong>Your data is yours.</strong> The business data you put into
+              SenaERP &mdash; your records, messages, files &mdash; belongs to
+              you. You can export it anytime. If you leave, you take your data
+              with you.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              <strong>Our stuff is ours.</strong> The SenaERP software, design,
+              branding, documentation, and underlying technology belong to Sena
+              Services. You get a license to use it while you&apos;re a customer,
+              but that&apos;s not a transfer of ownership.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              For the full picture on how we handle your data, read our{" "}
+              <Link
+                href="/privacy-policy"
+                className="text-blue-600 hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              . It&apos;s honest and worth your time.
+            </p>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              7. Payments
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              If you&apos;re on a paid plan:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>
-                Violate any applicable laws, regulations, or third-party rights
+                Prices are in the currency shown at checkout. All applicable taxes
+                (including GST) are your responsibility.
               </li>
               <li>
-                Transmit malware, viruses, or any harmful code
+                We bill on the schedule you chose &mdash; monthly, annually, or
+                whatever your plan specifies.
               </li>
               <li>
-                Attempt to gain unauthorized access to our systems or networks
+                If a payment fails, we&apos;ll let you know and give you time to
+                fix it before suspending access.
               </li>
               <li>
-                Interfere with or disrupt the services or servers
+                If we change our pricing, we&apos;ll give you at least 30 days&apos;
+                notice. No surprises.
               </li>
               <li>
-                Engage in any form of harassment, abuse, or harmful conduct
-              </li>
-              <li>
-                Impersonate any person or entity or misrepresent your affiliation
-              </li>
-              <li>
-                Collect or store personal data about other users without consent
-              </li>
-              <li>
-                Use automated systems or scripts to access the services without
-                permission
+                Refunds are handled on a case-by-case basis, in line with Indian
+                consumer protection law.
               </li>
             </ul>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              6. Intellectual Property Rights
+              8. What we&apos;re responsible for (and what we&apos;re not)
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              All content, features, and functionality of our services,
-              including but not limited to text, graphics, logos, icons,
-              images, audio clips, data compilations, and software, are the
-              exclusive property of Sena or its licensors and are protected by
-              international copyright, trademark, patent, trade secret, and
-              other intellectual property laws.
-            </p>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              You are granted a limited, non-exclusive, non-transferable license
-              to access and use our services for their intended purpose. You may
-              not reproduce, distribute, modify, create derivative works of,
-              publicly display, or exploit any of our content without express
-              written permission.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              7. Payment Terms
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              For paid services:
+              We work hard to keep SenaERP reliable, secure, and useful. But we
+              want to be upfront about the limits:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>
-                All fees are quoted in the currency specified at the time of
-                purchase
+                <strong>No guarantees of perfection.</strong> Software breaks
+                sometimes. We provide SenaERP &quot;as is&quot; &mdash; we
+                don&apos;t promise it will be 100% error-free or available every
+                second of every day.
               </li>
               <li>
-                Payment is due according to the billing schedule agreed upon
-                (monthly, annually, etc.)
+                <strong>Indirect damages.</strong> If something goes wrong on our
+                end, we&apos;re not liable for indirect losses like lost profits,
+                lost data, or business interruption &mdash; to the extent
+                permitted by Indian law.
               </li>
               <li>
-                Failure to pay may result in suspension or termination of
-                services
-              </li>
-              <li>
-                Refunds are subject to our refund policy and applicable law
-              </li>
-              <li>
-                We reserve the right to modify pricing with 30 days' notice
-              </li>
-              <li>
-                You are responsible for all applicable taxes
+                <strong>Liability cap.</strong> Our total liability to you for
+                anything related to SenaERP is limited to the amount you&apos;ve
+                paid us in the 12 months before the issue arose.
               </li>
             </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              8. Data Protection and Privacy
-            </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Your use of our services is also governed by our Privacy Policy,
-              which is incorporated into these Terms by reference. By using our
-              services, you consent to the collection, use, and sharing of your
-              information as described in our Privacy Policy.
-            </p>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We implement appropriate technical and organizational measures to
-              protect your data, but we cannot guarantee absolute security. You
-              acknowledge that you provide your data at your own risk.
+              This isn&apos;t about dodging responsibility. It&apos;s about
+              setting realistic expectations so we can focus on building great
+              software instead of managing unlimited risk.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              9. Disclaimers and Limitations of Liability
+              9. Third-party services
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              <strong>Disclaimer of Warranties:</strong> Our services are
-              provided "AS IS" and "AS AVAILABLE" without any warranties of any
-              kind, either express or implied, including but not limited to
-              warranties of merchantability, fitness for a particular purpose,
-              or non-infringement.
-            </p>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              <strong>Limitation of Liability:</strong> To the maximum extent
-              permitted by law, Sena shall not be liable for any indirect,
-              incidental, special, consequential, or punitive damages, or any
-              loss of profits or revenues, whether incurred directly or
-              indirectly, or any loss of data, use, goodwill, or other
-              intangible losses resulting from:
-            </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
-              <li>Your use or inability to use our services</li>
-              <li>Any unauthorized access to or use of our servers</li>
-              <li>Any interruption or cessation of transmission</li>
-              <li>Any bugs, viruses, or malware transmitted through our services</li>
-              <li>Any errors or omissions in any content</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              10. Indemnification
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              You agree to defend, indemnify, and hold harmless Sena, its
-              officers, directors, employees, agents, and affiliates from and
-              against any claims, liabilities, damages, losses, and expenses,
-              including reasonable attorneys' fees, arising out of or in any way
-              connected with your access to or use of our services, your
-              violation of these Terms, or your violation of any third-party
-              rights.
+              SenaERP connects with other services &mdash; WhatsApp, payment
+              gateways, LLM providers, and more. These are run by other
+              companies with their own terms and policies. We integrate with
+              them carefully, but we can&apos;t take responsibility for how they
+              run their services.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              11. Third-Party Services and Links
+              10. Ending the relationship
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Our services may contain links to third-party websites, services,
-              or integrations (including WhatsApp) that are not owned or
-              controlled by Sena. We have no control over and assume no
-              responsibility for the content, privacy policies, or practices of
-              any third-party services. You acknowledge and agree that we shall
-              not be responsible or liable for any damage or loss caused by or
-              in connection with the use of any such third-party services.
+              <strong>You can leave anytime.</strong> Cancel your account through
+              the app or email us at{" "}
+              <a
+                href="mailto:hello@sena.services"
+                className="text-blue-600 hover:underline"
+              >
+                hello@sena.services
+              </a>
+              . We&apos;ll give you time to export your data before we delete it.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              <strong>We can end it too.</strong> If you violate these terms, we
+              may suspend or terminate your access. For serious violations, this
+              may happen immediately. For less serious ones, we&apos;ll typically
+              warn you first and give you a chance to fix things.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Some parts of these terms survive even after the relationship
+              ends &mdash; things like intellectual property, liability
+              limitations, and the dispute resolution process.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              12. Termination
+              11. Disputes and governing law
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We may terminate or suspend your access to our services
-              immediately, without prior notice or liability, for any reason,
-              including but not limited to breach of these Terms. Upon
-              termination, your right to use our services will immediately
-              cease.
+              These terms are governed by the laws of India.
             </p>
             <p className="text-gray-700 leading-relaxed mb-4">
-              You may terminate your account at any time by contacting our
-              support team. All provisions of these Terms which by their nature
-              should survive termination shall survive, including ownership
-              provisions, warranty disclaimers, indemnity, and limitations of
-              liability.
+              If we have a disagreement, let&apos;s try to sort it out directly
+              first. Most issues can be resolved with a conversation. If
+              that doesn&apos;t work, disputes will be resolved through binding
+              arbitration under the Arbitration and Conciliation Act, 1996,
+              with the seat of arbitration in Chennai, Tamil Nadu. Courts in
+              Chennai will have exclusive jurisdiction for any matters that
+              can&apos;t be arbitrated.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              13. Governing Law and Dispute Resolution
+              12. Changes to these terms
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              These Terms shall be governed by and construed in accordance with
-              the laws of [Your Jurisdiction], without regard to its conflict of
-              law provisions.
+              We may update these terms from time to time. If we make meaningful
+              changes, we&apos;ll update the date at the top and notify you in the
+              app. We won&apos;t quietly change things and hope you don&apos;t
+              notice.
             </p>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Any disputes arising out of or relating to these Terms or our
-              services shall first be attempted to be resolved through good
-              faith negotiations. If negotiations fail, disputes shall be
-              resolved through binding arbitration in accordance with the rules
-              of [Arbitration Association], except where prohibited by law.
+              Continuing to use SenaERP after changes means you accept the new
+              terms. If you disagree with a change, you can stop using the
+              service.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              14. Changes to Terms
+              13. The fine print
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We reserve the right to modify or replace these Terms at any time
-              at our sole discretion. If a revision is material, we will provide
-              at least 30 days' notice prior to any new terms taking effect.
-              What constitutes a material change will be determined at our sole
-              discretion.
-            </p>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              By continuing to access or use our services after any revisions
-              become effective, you agree to be bound by the revised terms. If
-              you do not agree to the new terms, you must stop using our
-              services.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              15. Compliance with WhatsApp Policies
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              Our WhatsApp Business services comply with:
+              A few last things that matter legally:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>
-                WhatsApp Business Terms of Service:{" "}
-                <a
-                  href="https://www.whatsapp.com/legal/business-terms"
-                  className="text-blue-600 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  https://www.whatsapp.com/legal/business-terms
-                </a>
+                <strong>Severability.</strong> If a court finds any part of these
+                terms unenforceable, the rest still stands.
               </li>
               <li>
-                WhatsApp Business Policy:{" "}
-                <a
-                  href="https://business.whatsapp.com/policy"
-                  className="text-blue-600 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  https://business.whatsapp.com/policy
-                </a>
+                <strong>Entire agreement.</strong> These terms, plus our Privacy
+                Policy, are the full agreement between us. No side deals, no
+                verbal promises &mdash; just what&apos;s written here.
               </li>
               <li>
-                WhatsApp Commerce Policy:{" "}
-                <a
-                  href="https://www.whatsapp.com/legal/commerce-policy"
-                  className="text-blue-600 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  https://www.whatsapp.com/legal/commerce-policy
-                </a>
+                <strong>No waiver.</strong> If we don&apos;t enforce a rule once,
+                that doesn&apos;t mean we&apos;ve given up the right to enforce
+                it later.
               </li>
             </ul>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              By using our WhatsApp services, you also agree to comply with all
-              applicable WhatsApp policies.
-            </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              16. Severability
+              Talk to us
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              If any provision of these Terms is held to be unenforceable or
-              invalid, such provision will be changed and interpreted to
-              accomplish the objectives of such provision to the greatest extent
-              possible under applicable law, and the remaining provisions will
-              continue in full force and effect.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              17. Entire Agreement
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              These Terms, together with our Privacy Policy and any other legal
-              notices published by us on our services, constitute the entire
-              agreement between you and Sena concerning our services and
-              supersede all prior or contemporaneous communications and
-              proposals.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              18. Contact Information
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              If you have any questions about these Terms and Conditions, please
-              contact us at:
+              Questions about these terms? Something unclear? Just ask. We
+              actually read these messages.
             </p>
             <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
               <p className="text-gray-700">
-                <strong>Company Name:</strong> Sena
+                <strong>Company:</strong> Sena Services
               </p>
               <p className="text-gray-700 mt-2">
-                <strong>Email:</strong> it@sena.services
+                <strong>Email:</strong>{" "}
+                <a
+                  href="mailto:hello@sena.services"
+                  className="text-blue-600 hover:underline"
+                >
+                  hello@sena.services
+                </a>
               </p>
               <p className="text-gray-700 mt-2">
-                <strong>Address:</strong> 4th Floor, No 25, SSPDL, Alpha City It Park, Rajiv Gandhi Salai, Navalur, Chennai, Tamil Nadu 600130
-              </p>
-              <p className="text-gray-700 mt-2">
-                <strong>Phone:</strong> 9841797623
+                <strong>Address:</strong> 4th Floor, No 25, SSPDL, Alpha City IT
+                Park, Rajiv Gandhi Salai, Navalur, Chennai, Tamil Nadu 600130
               </p>
             </div>
           </section>
-
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mt-8">
-            <p className="text-gray-700">
-              <strong>Important Notice:</strong> By using Sena's services,
-              including our WhatsApp Business communication channel, you
-              acknowledge that you have read, understood, and agree to be bound
-              by these Terms and Conditions and our Privacy Policy.
-            </p>
-          </div>
         </div>
 
         {/* Footer Links */}

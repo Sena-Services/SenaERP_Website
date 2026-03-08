@@ -51,7 +51,7 @@ export default function CareersSection() {
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-16 h-16">
             <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-waygent-orange border-t-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 border-4 border-sena-orange border-t-transparent rounded-full animate-spin"></div>
           </div>
           <p className="text-gray-600 font-space-grotesk text-sm">Loading openings...</p>
         </div>
@@ -182,7 +182,7 @@ export default function CareersSection() {
                 <div className="pt-6 border-t border-gray-200">
                 <a
                   href={`mailto:it@sena.services?subject=Application for ${encodeURIComponent(selectedJob.title)} Position`}
-                  className="inline-block w-full md:w-auto px-8 py-3 bg-waygent-orange border-2 border-waygent-orange text-black font-bold rounded-lg hover:bg-waygent-orange/90 transition-all font-space-grotesk shadow-md hover:shadow-lg cursor-pointer text-center"
+                  className="inline-block w-full md:w-auto px-8 py-3 bg-sena-orange border-2 border-sena-orange text-black font-bold rounded-lg hover:bg-sena-orange/90 transition-all font-space-grotesk shadow-md hover:shadow-lg cursor-pointer text-center"
                 >
                   Apply for this position
                 </a>

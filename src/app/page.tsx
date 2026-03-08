@@ -647,7 +647,7 @@ function HomeContent() {
   }, []);
 
   return (
-    <main className="relative text-waygent-text-primary">
+    <main className="relative text-sena-text-primary">
       {/* Base background color layer - at the very back */}
       <div
         className="fixed inset-0"
@@ -699,7 +699,7 @@ function HomeContent() {
             <div className="w-full border-t border-gray-300/40"></div>
           </div>
           <div className="relative px-4">
-            <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+            <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
           </div>
         </div>
       </div>
@@ -723,7 +723,7 @@ function HomeContent() {
                   <div className="w-full border-t border-gray-300/40"></div>
                 </div>
                 <div className="relative px-4">
-                  <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+                  <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
                 </div>
               </div>
             </div>
@@ -744,7 +744,7 @@ function HomeContent() {
                   <div className="w-full border-t border-gray-300/40"></div>
                 </div>
                 <div className="relative px-4">
-                  <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+                  <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
                 </div>
               </div>
             </div>
@@ -766,7 +766,7 @@ function HomeContent() {
                 <div className="w-full border-t border-gray-300/40"></div>
               </div>
               <div className="relative px-4">
-                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+                <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
               </div>
             </div>
           </div>
@@ -787,7 +787,7 @@ function HomeContent() {
                 <div className="w-full border-t border-gray-300/40"></div>
               </div>
               <div className="relative px-4">
-                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+                <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
               </div>
             </div>
           </div>
@@ -808,7 +808,7 @@ function HomeContent() {
                 <div className="w-full border-t border-gray-300/40"></div>
               </div>
               <div className="relative px-4">
-                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+                <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
               </div>
             </div>
           </div>
@@ -829,7 +829,7 @@ function HomeContent() {
                 <div className="w-full border-t border-gray-300/40"></div>
               </div>
               <div className="relative px-4">
-                <div className="w-2 h-2 rounded-full bg-waygent-blue/20"></div>
+                <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
               </div>
             </div>
           </div>
@@ -954,7 +954,7 @@ function HomeContent() {
 // Default export wraps HomeContent in Suspense for useSearchParams
 export default function Home() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-waygent-cream" />}>
+    <Suspense fallback={<div className="min-h-screen bg-sena-cream" />}>
       <HomeContent />
     </Suspense>
   );

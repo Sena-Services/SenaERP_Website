@@ -361,7 +361,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
               Blog
             </h2>
             <p
-              className="text-waygent-text-secondary font-space-grotesk"
+              className="text-sena-text-secondary font-space-grotesk"
               style={{
                 fontSize: isMobile ? '14px' : '16px',
                 lineHeight: '1.6',
@@ -378,7 +378,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
               <div className="flex flex-col items-center gap-4">
                 <div className="relative w-16 h-16">
                   <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                  <div className="absolute inset-0 border-4 border-waygent-orange border-t-transparent rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 border-4 border-sena-orange border-t-transparent rounded-full animate-spin"></div>
                 </div>
                 <p className="text-gray-600 font-space-grotesk text-sm">Loading blog posts...</p>
               </div>
@@ -420,7 +420,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                         <Link
                           key={post.id}
                           href={`/blog/${post.id}`}
-                          className={`group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-waygent-text-primary transition-all duration-300 cursor-pointer w-[280px] flex-shrink-0 ${
+                          className={`group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-sena-text-primary transition-all duration-300 cursor-pointer w-[280px] flex-shrink-0 ${
                             isActive
                               ? 'border-[#9CA3AF] shadow-xl'
                               : 'border-[#9CA3AF]/60 shadow-md'
@@ -572,7 +572,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                             <Link
                               key={actualPost.id}
                               href={`/blog/${actualPost.id}`}
-                              className="group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-waygent-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer border-[#9CA3AF] hover:border-[#6B7280]"
+                              className="group relative flex flex-col overflow-hidden rounded-3xl border-2 bg-white text-sena-text-primary shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer border-[#9CA3AF] hover:border-[#6B7280]"
                               onMouseEnter={() => setHoveredCardId(actualPost.id)}
                               onMouseLeave={() => setHoveredCardId(null)}
                             >
@@ -596,7 +596,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                                   />
                                   <div className="relative z-10">
                                     <h3
-                                      className="text-white font-bold leading-tight mb-1.5 transition-all duration-300 group-hover:text-waygent-cream line-clamp-2"
+                                      className="text-white font-bold leading-tight mb-1.5 transition-all duration-300 group-hover:text-sena-cream line-clamp-2"
                                       style={{
                                         fontFamily: "Georgia, 'Times New Roman', serif",
                                         fontSize: '13px',
@@ -648,7 +648,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                       disabled={!hasPrevPage}
                       className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                         hasPrevPage
-                          ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                          ? 'border-sena-blue text-sena-blue hover:bg-sena-blue hover:text-white hover:scale-110 cursor-pointer'
                           : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
                       }`}
                       aria-label="Previous page"
@@ -676,7 +676,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                             }}
                             className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                               isActive
-                                ? 'bg-waygent-blue scale-125'
+                                ? 'bg-sena-blue scale-125'
                                 : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
                             }`}
                             aria-label={`Go to page ${pageIndex + 1}`}
@@ -695,7 +695,7 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                       disabled={!hasNextPage}
                       className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                         hasNextPage
-                          ? 'border-waygent-blue text-waygent-blue hover:bg-waygent-blue hover:text-white hover:scale-110 cursor-pointer'
+                          ? 'border-sena-blue text-sena-blue hover:bg-sena-blue hover:text-white hover:scale-110 cursor-pointer'
                           : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
                       }`}
                       aria-label="Next page"
@@ -713,8 +713,8 @@ const BlogSection = forwardRef<HTMLElement>(function BlogSection(props, ref) {
                   </div>
 
                   {/* Page Counter */}
-                  <div className="text-sm text-waygent-text-secondary font-space-grotesk">
-                    Page <span className="font-semibold text-waygent-text-primary">{currentPage + 1}</span> of <span className="font-semibold text-waygent-text-primary">{totalPages}</span>
+                  <div className="text-sm text-sena-text-secondary font-space-grotesk">
+                    Page <span className="font-semibold text-sena-text-primary">{currentPage + 1}</span> of <span className="font-semibold text-sena-text-primary">{totalPages}</span>
                   </div>
                 </div>
               );

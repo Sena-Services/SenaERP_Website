@@ -1131,7 +1131,7 @@ export default function BuilderTabbed() {
           zIndex: 10
         }}>
           {/* Tabs at Top with Description - All in same container */}
-          <div className="bg-waygent-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
+          <div className="bg-sena-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
             {/* Tabs Grid - Centered with 3 tabs */}
             <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-3 mb-2 max-w-3xl mx-auto">
               {tabs.map((tab, index) => (

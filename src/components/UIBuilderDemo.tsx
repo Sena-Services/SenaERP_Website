@@ -224,7 +224,7 @@ export default function UIBuilderDemo() {
                         {[0, 1, 2, 3, 4].map((i) => (
                           <motion.div
                             key={i}
-                            className="w-0.5 bg-waygent-blue rounded-full"
+                            className="w-0.5 bg-sena-blue rounded-full"
                             animate={{
                               height: [4, 8, 4],
                             }}
@@ -237,7 +237,7 @@ export default function UIBuilderDemo() {
                           />
                         ))}
                       </div>
-                      <span className="text-waygent-blue">{step}</span>
+                      <span className="text-sena-blue">{step}</span>
                     </>
                   ) : (
                     <>
@@ -274,9 +274,9 @@ export default function UIBuilderDemo() {
             <input
               type="text"
               placeholder="Describe your business..."
-              className="w-full px-2 py-1 pr-7 rounded-md bg-gray-50 border border-gray-200 text-[11px] text-gray-500 font-futura focus:outline-none focus:border-waygent-blue transition-colors"
+              className="w-full px-2 py-1 pr-7 rounded-md bg-gray-50 border border-gray-200 text-[11px] text-gray-500 font-futura focus:outline-none focus:border-sena-blue transition-colors"
             />
-            <button className="absolute right-3.5 top-1 text-gray-400 hover:text-waygent-blue transition-colors">
+            <button className="absolute right-3.5 top-1 text-gray-400 hover:text-sena-blue transition-colors">
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>

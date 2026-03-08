@@ -200,7 +200,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                     placeholder="John Doe"
                   />
                 </div>
@@ -220,7 +220,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -242,7 +242,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                     name="siteName"
                     value={formData.siteName}
                     onChange={handleChange}
-                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                     placeholder="e.g. acme, john"
                     required
                   />
@@ -262,7 +262,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk"
+                    className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent transition-all outline-none font-space-grotesk"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -282,7 +282,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                   value={formData.message}
                   onChange={handleChange}
                   rows={2}
-                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent transition-all outline-none font-space-grotesk resize-none"
+                  className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent transition-all outline-none font-space-grotesk resize-none"
                   placeholder="Tell us a bit about yourself"
                 />
               </div>
@@ -293,7 +293,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                   type="checkbox"
                   checked={alsoRequest}
                   onChange={(e) => setAlsoRequest(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-waygent-orange focus:ring-waygent-orange cursor-pointer accent-[#b8860b]"
+                  className="w-4 h-4 rounded border-gray-300 text-sena-orange focus:ring-sena-orange cursor-pointer accent-[#b8860b]"
                 />
                 <span className="text-[11px] sm:text-sm text-gray-600 font-space-grotesk">
                   {accessType === "product"
@@ -314,7 +314,7 @@ export default function EarlyAccessModal({ isOpen, onClose, onSuccess, title = "
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:flex-1 px-4 py-2 sm:px-6 sm:py-2.5 text-sm sm:text-base bg-waygent-orange border-2 border-waygent-orange text-black font-semibold rounded-lg hover:bg-waygent-orange/90 transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:flex-1 px-4 py-2 sm:px-6 sm:py-2.5 text-sm sm:text-base bg-sena-orange border-2 border-sena-orange text-black font-semibold rounded-lg hover:bg-sena-orange/90 transition-all font-space-grotesk cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </button>

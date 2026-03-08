@@ -337,7 +337,7 @@ export default function IntroSection() {
     <section
       id="intro"
       ref={sectionRef}
-      className="relative w-full bg-waygent-cream"
+      className="relative w-full bg-sena-cream"
       style={{
         height: viewportWidth < 768 ? sectionHeight : `${sectionHeight}px`,
       }}
@@ -598,7 +598,7 @@ export default function IntroSection() {
               videoBg="bg-[#f6efe4]"
               videoPosition="center 40%"
               cardNumber={1}
-              cardTitle="Discovery"
+              cardTitle="Describe"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "left" ? null : "left")}
@@ -638,7 +638,7 @@ export default function IntroSection() {
               videoBg="bg-[#f6f2fb]"
               videoPosition="center 80%"
               cardNumber={3}
-              cardTitle="Manage Agents"
+              cardTitle="Share & Use"
               cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "right" ? null : "right")}

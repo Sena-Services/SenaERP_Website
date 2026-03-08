@@ -253,15 +253,15 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
 
                 {/* Mobile Content for each step */}
                 <div className="px-6 space-y-3">
-                  <p className="text-xs uppercase tracking-wider text-waygent-blue font-semibold">
+                  <p className="text-xs uppercase tracking-wider text-sena-blue font-semibold">
                     {step.eyebrow}
                   </p>
 
-                  <h3 className="text-xl font-semibold text-waygent-text-primary font-futura leading-tight">
+                  <h3 className="text-xl font-semibold text-sena-text-primary font-futura leading-tight">
                     {step.title}
                   </h3>
 
-                  <p className="text-sm text-waygent-text-secondary leading-relaxed">
+                  <p className="text-sm text-sena-text-secondary leading-relaxed">
                     {step.description}
                   </p>
                 </div>
@@ -287,7 +287,7 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="text-lg sm:text-xl font-semibold text-waygent-text-primary font-futura leading-tight"
+                    className="text-lg sm:text-xl font-semibold text-sena-text-primary font-futura leading-tight"
                   >
                     {activeStep.title}
                   </motion.h3>
@@ -315,15 +315,15 @@ const Builder = forwardRef<HTMLDivElement>(function Builder(props, ref) {
                     }`}
                   >
                     <div className="space-y-4">
-                      <p className="text-xs uppercase tracking-wider text-waygent-blue font-semibold">
+                      <p className="text-xs uppercase tracking-wider text-sena-blue font-semibold">
                         {step.eyebrow}
                       </p>
 
-                      <h3 className="text-xl sm:text-2xl font-semibold text-waygent-text-primary font-futura leading-tight">
+                      <h3 className="text-xl sm:text-2xl font-semibold text-sena-text-primary font-futura leading-tight">
                         {step.title}
                       </h3>
 
-                      <p className="text-sm sm:text-base text-waygent-text-secondary leading-relaxed">
+                      <p className="text-sm sm:text-base text-sena-text-secondary leading-relaxed">
                         {step.description}
                       </p>
                     </div>

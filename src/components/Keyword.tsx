@@ -29,7 +29,7 @@ export function Keyword({
       {word}
       <span
         className={`absolute bottom-0 left-0 w-full h-0.5 rounded-full transition-all duration-300 ${
-          isActive ? 'bg-waygent-blue scale-x-100' : 'bg-waygent-blue scale-x-0'
+          isActive ? 'bg-sena-blue scale-x-100' : 'bg-sena-blue scale-x-0'
         }`}
       />
     </span>

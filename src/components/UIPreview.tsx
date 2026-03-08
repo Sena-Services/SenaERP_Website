@@ -123,7 +123,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                         stiffness: 200,
                         damping: 15
                       }}
-                      className="flex-1 bg-gradient-to-t from-waygent-blue to-blue-400 rounded-t-sm"
+                      className="flex-1 bg-gradient-to-t from-sena-blue to-blue-400 rounded-t-sm"
                       style={{ height: `${height}%` }}
                     />
                   ))}
@@ -355,7 +355,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                     <input
                       type="text"
                       placeholder="Enter your name"
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-xs font-futura focus:outline-none focus:border-waygent-blue"
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-xs font-futura focus:outline-none focus:border-sena-blue"
                       disabled
                     />
                   </>
@@ -375,7 +375,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                     <input
                       type="email"
                       placeholder="your@email.com"
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-xs font-futura focus:outline-none focus:border-waygent-blue"
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-xs font-futura focus:outline-none focus:border-sena-blue"
                       disabled
                     />
                   </>
@@ -398,7 +398,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                   <textarea
                     placeholder="Type your message..."
                     rows={2}
-                    className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-xs font-futura focus:outline-none focus:border-waygent-blue resize-none"
+                    className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-xs font-futura focus:outline-none focus:border-sena-blue resize-none"
                     disabled
                   />
                 </motion.div>
@@ -410,7 +410,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="w-full bg-waygent-blue text-white py-2 rounded-md text-xs font-semibold font-futura hover:bg-blue-600 transition-colors"
+                  className="w-full bg-sena-blue text-white py-2 rounded-md text-xs font-semibold font-futura hover:bg-blue-600 transition-colors"
                 >
                   Submit
                 </motion.button>

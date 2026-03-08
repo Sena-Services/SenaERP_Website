@@ -345,7 +345,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           {showBackButton ? (
             <button
               onClick={onBackClick}
-              className="inline-flex items-center gap-2 text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk transition cursor-pointer text-sm"
+              className="inline-flex items-center gap-2 text-sena-blue hover:text-sena-blue-hover font-space-grotesk transition cursor-pointer text-sm"
             >
               <svg
                 className="w-4 h-4"
@@ -390,7 +390,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         {/* RIGHT SIDE */}
         <div className={`flex items-center ${NAVBAR_CONTROLS.navToButtonGap}`}>
           <ul
-            className={`hidden md:flex items-center ${NAVBAR_CONTROLS.navLinksGap} text-waygent-text-primary`}
+            className={`hidden md:flex items-center ${NAVBAR_CONTROLS.navLinksGap} text-sena-text-primary`}
           >
             {links.map((l) => (
               <li key={l.href}>
@@ -523,12 +523,12 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                   aria-label="Toggle menu"
                 >
                   <span
-                    className={`w-5 h-[2px] bg-waygent-text-primary transition-all duration-300 ease-in-out ${
+                    className={`w-5 h-[2px] bg-sena-text-primary transition-all duration-300 ease-in-out ${
                       isMobileMenuOpen ? 'rotate-45 translate-y-[5px]' : ''
                     }`}
                   />
                   <span
-                    className={`w-5 h-[2px] bg-waygent-text-primary transition-all duration-300 ease-in-out ${
+                    className={`w-5 h-[2px] bg-sena-text-primary transition-all duration-300 ease-in-out ${
                       isMobileMenuOpen ? '-rotate-45 -translate-y-[5px]' : ''
                     }`}
                   />

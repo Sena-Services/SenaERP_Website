@@ -41,12 +41,12 @@ export default function Toast({ message, isVisible, onClose, duration = 3000 }: 
           }
         }
       `}</style>
-      <div className="bg-white border-2 border-waygent-orange rounded-lg shadow-2xl px-6 py-4 min-w-[320px] max-w-md">
+      <div className="bg-white border-2 border-sena-orange rounded-lg shadow-2xl px-6 py-4 min-w-[320px] max-w-md">
         <div className="flex items-center gap-3">
           {/* Success Icon */}
           <div className="flex-shrink-0">
             <svg
-              className="w-6 h-6 text-waygent-orange"
+              className="w-6 h-6 text-sena-orange"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

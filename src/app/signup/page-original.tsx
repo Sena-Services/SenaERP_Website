@@ -93,7 +93,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-waygent-light-blue to-white px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sena-light-blue to-white px-4 py-8">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Logo and Title */}
@@ -103,11 +103,11 @@ export default function SignupPage() {
                 src="/logo.png"
                 width={64}
                 height={64}
-                alt="Waygent logo"
+                alt="SenaERP logo"
                 className="mx-auto mb-4"
               />
             </Link>
-            <h1 className="text-3xl font-rockwell text-waygent-text-primary">
+            <h1 className="text-3xl font-rockwell text-sena-text-primary">
               Create Account
             </h1>
             <p className="text-gray-600 mt-2">Start your journey with us</p>
@@ -136,7 +136,7 @@ export default function SignupPage() {
                   type="text"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                   placeholder="John"
                   required
                   disabled={loading}
@@ -156,7 +156,7 @@ export default function SignupPage() {
                   type="text"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                   placeholder="Doe"
                   disabled={loading}
                 />
@@ -176,7 +176,7 @@ export default function SignupPage() {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                 placeholder="you@example.com"
                 required
                 disabled={loading}
@@ -196,7 +196,7 @@ export default function SignupPage() {
                 type="text"
                 value={formData.company}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                 placeholder="Your Company"
                 disabled={loading}
               />
@@ -215,7 +215,7 @@ export default function SignupPage() {
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                 placeholder="••••••••"
                 required
                 disabled={loading}
@@ -235,7 +235,7 @@ export default function SignupPage() {
                 type="password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-waygent-orange focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition"
                 placeholder="••••••••"
                 required
                 disabled={loading}
@@ -244,11 +244,11 @@ export default function SignupPage() {
 
             <div className="text-sm text-gray-600">
               By creating an account, you agree to our{" "}
-              <Link href="/terms" className="text-waygent-orange hover:text-orange-600">
+              <Link href="/terms" className="text-sena-orange hover:text-orange-600">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="text-waygent-orange hover:text-orange-600">
+              <Link href="/privacy" className="text-sena-orange hover:text-orange-600">
                 Privacy Policy
               </Link>
             </div>
@@ -256,7 +256,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-waygent-orange text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-sena-orange text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
@@ -277,7 +277,7 @@ export default function SignupPage() {
           {/* Login Link */}
           <Link
             href="/login"
-            className="block w-full text-center py-3 border-2 border-waygent-orange text-waygent-orange rounded-lg font-medium hover:bg-orange-50 transition duration-200"
+            className="block w-full text-center py-3 border-2 border-sena-orange text-sena-orange rounded-lg font-medium hover:bg-orange-50 transition duration-200"
           >
             Sign In
           </Link>

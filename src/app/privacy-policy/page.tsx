@@ -35,288 +35,299 @@ export default function PrivacyPolicy() {
             Go back
           </button>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Privacy Policy
+            Privacy at Sena
           </h1>
           <p className="text-gray-600 text-lg">
-            Last updated: {new Date().toLocaleDateString()}
+            Last updated: March 2026
+          </p>
+          <p className="text-gray-700 text-lg mt-4 leading-relaxed">
+            This isn&apos;t the kind of privacy policy you scroll past. We actually
+            want you to read it. It&apos;s short, it&apos;s honest, and it tells you
+            exactly what happens with your data.
           </p>
         </div>
 
         {/* Content */}
         <div className="prose prose-lg max-w-none">
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              1. Introduction
+              What we collect
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Welcome to Sena ("we," "our," or "us"). We respect your privacy
-              and are committed to protecting your personal data. This privacy
-              policy will inform you about how we look after your personal data
-              when you visit our website, use our services, or communicate with
-              us via WhatsApp Business API, and tell you about your privacy
-              rights and how the law protects you.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              2. Information We Collect
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We may collect, use, store and transfer different kinds of
-              personal data about you:
+              When you use Sena, we store:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>
-                <strong>Identity Data:</strong> First name, last name, username
-                or similar identifier
+                <strong>Your messages</strong> &mdash; everything you send through
+                Sena, whether that&apos;s through our chat interface, WhatsApp, or
+                any other channel your agents are connected to.
               </li>
               <li>
-                <strong>Contact Data:</strong> Email address, telephone number,
-                WhatsApp number
+                <strong>AI responses</strong> &mdash; what your agents say back,
+                including their reasoning and any tool calls they make.
               </li>
               <li>
-                <strong>Technical Data:</strong> Internet protocol (IP) address,
-                browser type and version, time zone setting, browser plug-in
-                types and versions, operating system and platform
+                <strong>Account info</strong> &mdash; your name, email, phone
+                number, and login credentials.
               </li>
               <li>
-                <strong>Usage Data:</strong> Information about how you use our
-                website, products and services
-              </li>
-              <li>
-                <strong>Marketing and Communications Data:</strong> Your
-                preferences in receiving marketing from us and your
-                communication preferences
+                <strong>Usage data</strong> &mdash; which features you use, when
+                you&apos;re active, basic browser and device info. This helps us
+                understand what&apos;s working and what isn&apos;t.
               </li>
             </ul>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              3. WhatsApp Business API - Specific Terms
+              How we protect it
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              When you communicate with us via WhatsApp Business API:
+              Your messages are encrypted at rest using AES-256-GCM &mdash; the
+              same standard used by banks and governments. Here&apos;s how it works
+              in plain terms:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>
-                <strong>Consent:</strong> By providing us your mobile phone
-                number and opting in to receive messages, you explicitly consent
-                to receive messages from Sena via WhatsApp
+                Every user gets their own unique encryption key. Your messages
+                are encrypted with your key before they hit the database.
               </li>
               <li>
-                <strong>Opt-in Requirement:</strong> We will only contact you on
-                WhatsApp if you have provided your phone number and given us
-                clear opt-in permission confirming you wish to receive messages
-                from us
+                If someone got a copy of our database, they&apos;d see gibberish.
+                Not your conversations. Not your data. Just ciphertext.
               </li>
               <li>
-                <strong>Data Usage:</strong> We will only use data obtained from
-                WhatsApp (other than message content) as reasonably necessary to
-                support messaging with you
-              </li>
-              <li>
-                <strong>Message Content:</strong> Messages you send to us via
-                WhatsApp are stored securely and used only for the purpose of
-                responding to your inquiries and providing our services
-              </li>
-              <li>
-                <strong>Opt-out:</strong> You can opt-out of receiving WhatsApp
-                messages from us at any time by sending "STOP" or by contacting
-                us directly
-              </li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              4. How We Use Your Information
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We will only use your personal data when the law allows us to.
-              Most commonly, we will use your personal data in the following
-              circumstances:
-            </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
-              <li>To provide and maintain our services to you</li>
-              <li>
-                To notify you about changes to our services or important updates
-              </li>
-              <li>
-                To provide customer support and respond to your inquiries
-              </li>
-              <li>
-                To send you marketing communications (only with your explicit
-                consent)
-              </li>
-              <li>To analyze usage and improve our services</li>
-              <li>To detect, prevent and address technical issues</li>
-              <li>To comply with legal obligations</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              5. Data Sharing and Disclosure
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We may share your personal data with:
-            </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
-              <li>
-                <strong>Service Providers:</strong> Third-party vendors who
-                provide services on our behalf (e.g., WhatsApp Business
-                Solution Providers, cloud hosting, analytics)
-              </li>
-              <li>
-                <strong>Business Transfers:</strong> In connection with any
-                merger, sale of company assets, financing, or acquisition
-              </li>
-              <li>
-                <strong>Legal Requirements:</strong> When required by law or to
-                protect our rights
+                Your encryption keys are themselves wrapped by a master key that
+                lives outside the database, on the server infrastructure.
               </li>
             </ul>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We do NOT sell your personal data to third parties.
+              This means that the most common attack vectors &mdash; database
+              leaks, unauthorized access, casual browsing &mdash; are fully
+              covered. Your data is protected at every layer we control.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              In the interest of full transparency: because your AI agents process
+              messages on our servers, it is theoretically possible for someone at
+              Sena to access your data. We take every step to safeguard against
+              this &mdash; encryption at rest, per-user keys, strict access
+              controls, and a full audit trail that you can review anytime. We
+              believe honesty is the foundation of trust.
             </p>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              6. Data Security
+              Who can see your data
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We have implemented appropriate security measures to prevent your
-              personal data from being accidentally lost, used or accessed in an
-              unauthorized way, altered or disclosed. We limit access to your
-              personal data to those employees, agents, contractors and other
-              third parties who have a business need to know.
+            <p className="text-gray-700 leading-relaxed mb-3">
+              Let&apos;s be specific:
             </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              7. Data Retention
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We will only retain your personal data for as long as necessary to
-              fulfill the purposes we collected it for, including for the
-              purposes of satisfying any legal, accounting, or reporting
-              requirements. When we no longer need your personal data, we will
-              securely delete or anonymize it.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              8. Your Legal Rights
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              Under certain circumstances, you have rights under data protection
-              laws in relation to your personal data:
-            </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
-              <li>Request access to your personal data</li>
-              <li>Request correction of your personal data</li>
-              <li>Request erasure of your personal data</li>
-              <li>Object to processing of your personal data</li>
-              <li>Request restriction of processing your personal data</li>
-              <li>Request transfer of your personal data</li>
-              <li>Right to withdraw consent</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              9. International Data Transfers
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We may transfer your personal data outside of your country of
-              residence. Whenever we transfer your personal data out of your
-              jurisdiction, we ensure a similar degree of protection is afforded
-              to it by implementing appropriate safeguards.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              10. Children's Privacy
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              Our services are not directed to individuals under the age of 16.
-              We do not knowingly collect personal data from children under 16.
-              If you become aware that a child has provided us with personal
-              data, please contact us.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              11. Changes to This Privacy Policy
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We may update our Privacy Policy from time to time. We will notify
-              you of any changes by posting the new Privacy Policy on this page
-              and updating the "Last updated" date. You are advised to review
-              this Privacy Policy periodically for any changes.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              12. Contact Us
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              If you have any questions about this Privacy Policy or our privacy
-              practices, please contact us at:
-            </p>
-            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-              <p className="text-gray-700">
-                <strong>Email:</strong> it@sena.services
-              </p>
-              <p className="text-gray-700 mt-2">
-                <strong>Address:</strong> 4th Floor, No 25, SSPDL, Alpha City It Park, Rajiv Gandhi Salai, Navalur, Chennai, Tamil Nadu 600130
-              </p>
-              <p className="text-gray-700 mt-2">
-                <strong>Phone:</strong> 9841797623
-              </p>
+            <div className="space-y-4 mb-4">
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p className="text-gray-800 font-medium mb-1">Your AI agents</p>
+                <p className="text-gray-600 text-base">
+                  They need to read your messages to respond. While an agent is
+                  processing your message, the plaintext exists in server memory.
+                  That&apos;s how AI works &mdash; the model needs to see the text
+                  to understand it.
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p className="text-gray-800 font-medium mb-1">LLM providers</p>
+                <p className="text-gray-600 text-base">
+                  Your messages are sent to AI providers like OpenAI, Anthropic, or
+                  Google for processing. This is the core of how Sena works. These
+                  providers contractually agree not to train their models on data
+                  sent through their APIs. We only use providers who make this
+                  commitment.
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p className="text-gray-800 font-medium mb-1">The Sena team</p>
+                <p className="text-gray-600 text-base">
+                  We will never access your data without your permission. If you
+                  reach out for support and we need to look at your conversations
+                  to help, every access is logged and auditable by you.
+                </p>
+              </div>
             </div>
           </section>
 
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              13. Compliance with WhatsApp Business Policies
+              Audit trail &mdash; we log everything
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We comply with WhatsApp Business Terms of Service and Commerce
-              Policy. Our use of WhatsApp Business API is in accordance with:
+              Every time your data is accessed &mdash; whether by an agent
+              processing your message, the Sena team debugging an issue, or an
+              API call &mdash; it gets logged. Who accessed it, when, from where,
+              and why.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              This isn&apos;t just an internal thing. You can see your own audit
+              trail. We built a transparency API specifically so you can verify
+              that nobody is accessing your data without reason.
+            </p>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              What we don&apos;t do
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Some things we want to be clear about:
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+              <li>We don&apos;t sell your data. Not to advertisers, not to data brokers, not to anyone.</li>
+              <li>We don&apos;t use your data for advertising or ad targeting.</li>
+              <li>We don&apos;t train our own AI models on your data.</li>
+              <li>We don&apos;t share your data with third parties for their marketing purposes.</li>
+            </ul>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Your privacy controls
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              You&apos;re not just trusting us to do the right thing &mdash; you can
+              verify it yourself. Inside the Sena app, under Settings, you can:
+            </p>
+            <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 space-y-3 mb-4">
+              <div className="flex items-start gap-3">
+                <span className="text-blue-600 font-bold text-lg mt-0.5">1.</span>
+                <div>
+                  <p className="text-gray-800 font-medium">View your audit trail</p>
+                  <p className="text-gray-600 text-base">
+                    See exactly who accessed your data, when, and in what context.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-blue-600 font-bold text-lg mt-0.5">2.</span>
+                <div>
+                  <p className="text-gray-800 font-medium">Export all your data</p>
+                  <p className="text-gray-600 text-base">
+                    Download everything we have on you as a JSON file, anytime.
+                    No waiting period, no hoops to jump through. GDPR-style data
+                    portability, because your data is yours.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              WhatsApp
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              If you interact with Sena through WhatsApp, a few extra things apply:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>
-                WhatsApp Business Terms of Service:{" "}
+                We only message you on WhatsApp if you&apos;ve opted in. You can
+                opt out anytime by sending &quot;STOP&quot; or contacting us.
+              </li>
+              <li>
+                WhatsApp messages are stored and encrypted the same way as all
+                other messages in Sena.
+              </li>
+              <li>
+                We comply with WhatsApp&apos;s{" "}
                 <a
                   href="https://www.whatsapp.com/legal/business-terms"
                   className="text-blue-600 hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://www.whatsapp.com/legal/business-terms
-                </a>
-              </li>
-              <li>
-                WhatsApp Business Policy:{" "}
+                  Business Terms of Service
+                </a>{" "}
+                and{" "}
                 <a
                   href="https://business.whatsapp.com/policy"
                   className="text-blue-600 hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://business.whatsapp.com/policy
+                  Business Policy
                 </a>
+                .
               </li>
             </ul>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Cookies and tracking
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Our website uses basic analytics to understand traffic and usage
+              patterns. We use cookies for authentication (keeping you logged in)
+              and basic site functionality. We don&apos;t run third-party ad
+              trackers on our site.
+            </p>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Data retention
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              We keep your data for as long as your account is active. If you
+              delete your account, we delete your data. Audit logs are retained
+              for at least one year for security purposes. If you want your data
+              deleted sooner, just ask.
+            </p>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Your rights
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              You have the right to access, correct, export, or delete your
+              personal data. You can do most of this yourself through the app. For
+              anything else, email us and we&apos;ll handle it within a few
+              business days.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Our services are not intended for children under 16. If you believe
+              a child has provided us with personal data, please contact us and
+              we&apos;ll remove it.
+            </p>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Changes to this policy
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              If we make meaningful changes, we&apos;ll update the date at the top
+              and notify you in the app. We won&apos;t quietly change things and
+              hope you don&apos;t notice.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Talk to us
+            </h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              If you have questions about your privacy, want to report a concern,
+              or just want to understand something better &mdash; reach out. We
+              actually read these.
+            </p>
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <p className="text-gray-700">
+                <strong>Email:</strong> it@sena.services
+              </p>
+              <p className="text-gray-700 mt-2">
+                <strong>Address:</strong> 4th Floor, No 25, SSPDL, Alpha City IT
+                Park, Rajiv Gandhi Salai, Navalur, Chennai, Tamil Nadu 600130
+              </p>
+            </div>
           </section>
         </div>
 

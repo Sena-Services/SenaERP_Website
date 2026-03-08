@@ -91,11 +91,11 @@ export default function FeaturesSection() {
     itemSpacing: "mb-1",
     iconSize: "w-6 h-6",
     textSize: "text-lg font-semibold tracking-wide",
-    activeItemBg: "bg-waygent-orange text-white",
+    activeItemBg: "bg-sena-orange text-white",
     inactiveItemBg:
-      "bg-transparent text-waygent-text-primary hover:bg-waygent-cream",
+      "bg-transparent text-sena-text-primary hover:bg-sena-cream",
     activeIconColor: "text-white",
-    inactiveIconColor: "text-waygent-blue",
+    inactiveIconColor: "text-sena-blue",
     imageMaxWidth: "max-w-[150%]",
     imageMaxHeight: "max-h-[100%]",
   };
@@ -125,7 +125,7 @@ export default function FeaturesSection() {
       className="relative z-20 min-h-[90vh] flex flex-col pt-8 pb-8"
     >
       <div className="px-8 mb-1 lg:mb-2 xl:mb-[-0.5rem] 2xl:mb-16  ml-[.5rem]">
-        <h2 className="font-rockwell text-waygent-orange font-bold text-3xl tracking-wide">
+        <h2 className="font-rockwell text-sena-orange font-bold text-3xl tracking-wide">
           <ScribbleUnderline variant="features" color="#f59e0b" strokeWidth={8}>
             FEATURES
           </ScribbleUnderline>
@@ -135,7 +135,7 @@ export default function FeaturesSection() {
       <div className="flex flex-1 h-full">
         {/* LEFT SIDEBAR: Features List */}
         <div
-          className={`${MANUAL_CONTROLS.leftWidth} border-r-4 border-waygent-cream flex-shrink-0 h-full ml-[-1rem]`}
+          className={`${MANUAL_CONTROLS.leftWidth} border-r-4 border-sena-cream flex-shrink-0 h-full ml-[-1rem]`}
         >
           <div className={`${MANUAL_CONTROLS.sidebarPadding}`}>
             <div className={`${MANUAL_CONTROLS.sidebarSpacing}`}>
@@ -201,10 +201,10 @@ export default function FeaturesSection() {
               {activeFeature !== "marketing" &&
                 feature.id === activeFeature && (
                   <div className="text-center">
-                    <h3 className="text-2xl font-semibold text-waygent-blue">
+                    <h3 className="text-2xl font-semibold text-sena-blue">
                       {feature.name}
                     </h3>
-                    <p className="text-waygent-text-primary mt-2">
+                    <p className="text-sena-text-primary mt-2">
                       {feature.description}
                     </p>
                     {feature.imageSrc && (

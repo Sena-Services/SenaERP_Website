@@ -19,6 +19,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const [isContentAtBottom, setIsContentAtBottom] = useState(false);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
   const [isPdfHovered, setIsPdfHovered] = useState(false);
+  const [isPitchHovered, setIsPitchHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -264,7 +265,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             textShadow: isMobile ? '0 3px 12px rgba(255, 255, 255, 1), 0 2px 8px rgba(255, 255, 255, 0.95), 0 1px 4px rgba(0, 0, 0, 0.3)' : undefined,
           }}
         >
-          Speak your business into existence
+          Speak your agents into existence
         </h1>
         <p
           style={{
@@ -279,7 +280,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             textShadow: isMobile ? '0 2px 8px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(0, 0, 0, 0.25)' : undefined,
           }}
         >
-          Craft your own ERP, from the ground up
+          Build it. Run it. Share it.
         </p>
       </div>
 
@@ -322,7 +323,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.2)' : undefined,
           }}
         >
-          Sena is the agentic enterprise platform where businesses can become AI-first. To achieve this, we're rethinking ERPs from first principles — built on three pillars:
+          We are stepping into an age of abundance created by AI. Every person deserves to shape this future with their own arsenal of agents. Sena is where anyone can build them. Built on three pillars:
         </p>
 
         {/* Three Pillars */}
@@ -345,7 +346,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               lineHeight: 1.6,
               margin: 0,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85)' : undefined,
-            }}><strong>Custom ERP</strong> : Your ERP should be a direct extension of how your business actually operates. Not locked into rigid templates, never trapped in boxes someone else designed.</p>
+            }}><strong>Build</strong> : Describe your agent in a sentence and let Sena handle the rest. Or take full control and wire every detail yourself. Both paths lead to the same place.</p>
           </div>
 
           {/* Pillar 2: AI Agents */}
@@ -366,7 +367,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               lineHeight: 1.6,
               margin: 0,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85)' : undefined,
-            }}><strong>AI Agents</strong> : An ERP isn't just a system of records. It's a workstation where humans and AI agents collaborate — virtual employees running your operations, tirelessly.</p>
+            }}><strong>Run</strong> : Reliable agents hosted on your site, running in parallel, on schedule, with full observability. Every action logged, every decision traceable.</p>
           </div>
 
           {/* Pillar 3: Democratized Access */}
@@ -387,7 +388,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               lineHeight: 1.6,
               margin: 0,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85)' : undefined,
-            }}><strong>Democratized Access</strong> : Zero technical skills required. Whether you're a founder or a manager, you hold the brush. If you can describe it, you can build it.</p>
+            }}><strong>Share</strong> : Publish your agents, tools, and skills to the Registry, a marketplace where creators earn from their work. Build a great agent, and everyone who installs it pays you.</p>
           </div>
         </div>
 
@@ -401,8 +402,6 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           {/* Watch our video link with hover preview */}
           <div
             style={{ position: 'relative', display: 'flex' }}
-            onMouseEnter={handleVideoHoverEnter}
-            onMouseLeave={handleVideoHoverLeave}
           >
             <a
               href="https://www.youtube.com/watch?v=VAZctriaoUg"
@@ -412,6 +411,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
+                gap: `${getScaledValue(6)}px`,
                 cursor: 'pointer',
                 textDecoration: 'none',
               }}
@@ -422,8 +422,11 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                 fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
                 fontWeight: 500,
                 textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
-                width: isMobile ? '200px' : `${getScaledValue(240)}px`,
-              }}>Watch our intro video</span>
+                width: isMobile ? '150px' : `${getScaledValue(165)}px`,
+              }}
+                onMouseEnter={handleVideoHoverEnter}
+                onMouseLeave={handleVideoHoverLeave}
+              >Watch our intro video</span>
               <svg
                 width={isMobile ? 16 : getScaledValue(18)}
                 height={isMobile ? 16 : getScaledValue(18)}
@@ -552,25 +555,27 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           {/* View one pager link with hover preview */}
           <div
             style={{ position: 'relative', display: 'flex' }}
-            onMouseEnter={handlePdfHoverEnter}
-            onMouseLeave={handlePdfHoverLeave}
           >
             <a
               href="/one-pager"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
+                gap: `${getScaledValue(6)}px`,
                 cursor: 'pointer',
                 textDecoration: 'none',
               }}
             >
-              <span style={{
+              <span
+                onMouseEnter={handlePdfHoverEnter}
+                onMouseLeave={handlePdfHoverLeave}
+                style={{
                 fontFamily: "Georgia, serif",
                 color: isMobile ? "#5a4938" : "#7a5f3a",
                 fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
                 fontWeight: 500,
                 textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
-                width: isMobile ? '200px' : `${getScaledValue(240)}px`,
+                width: isMobile ? '150px' : `${getScaledValue(165)}px`,
               }}>View our one pager</span>
               <svg
                 width={isMobile ? 16 : getScaledValue(18)}
@@ -646,9 +651,12 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           {/* Request Pitch Deck link */}
           <div
             onClick={() => setIsSignupModalOpen(true)}
+            onMouseEnter={() => setIsPitchHovered(true)}
+            onMouseLeave={() => setIsPitchHovered(false)}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
+              gap: `${getScaledValue(6)}px`,
               cursor: 'pointer',
               textDecoration: 'none',
             }}
@@ -659,7 +667,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
               fontWeight: 500,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
-              width: isMobile ? '200px' : `${getScaledValue(240)}px`,
+              width: isMobile ? '150px' : `${getScaledValue(165)}px`,
             }}>Request Pitch Deck</span>
             <svg
               width={isMobile ? 16 : getScaledValue(18)}
@@ -670,6 +678,10 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              style={{
+                transform: isPitchHovered ? 'translateX(3px)' : 'translateX(0)',
+                transition: 'transform 0.2s ease',
+              }}
             >
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
@@ -720,7 +732,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               fontWeight: 600,
             }}
           >
-            The ERP you'll never touch
+            One conversation. Everything handled.
           </p>
           <p
             style={{
@@ -730,7 +742,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               lineHeight: 1.6,
             }}
           >
-            No dashboards to navigate. No databases to manage. Just tell your agents what you need. They'll handle the rest—and get smarter with every interaction.
+            Talk to Sena and it figures out which agent handles what. You never need to know what's running behind the scenes. Just say what you need.
           </p>
           <div className="h-px bg-gray-400/40 w-full" style={{ marginTop: `${getScaledValue(7)}px` }}></div>
           <div className="flex items-center justify-between" style={{ paddingTop: `${getScaledValue(7)}px` }}>
@@ -742,7 +754,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                 fontSize: isMobile ? '10px' : `${getScaledValue(13.5)}px`,
               }}
             >
-              Scroll to meet your new operations team
+              Scroll to see how it works
             </p>
             <svg
               className="text-gray-600 animate-bounce cursor-pointer"

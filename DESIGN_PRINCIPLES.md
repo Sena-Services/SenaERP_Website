@@ -103,7 +103,7 @@ We use two carefully selected fonts that balance modernity with professionalism:
 - Smooth 500ms transitions with easing
 
 **Active Indicator:**
-- Orange gradient background (`from-waygent-orange to-waygent-orange/90`)
+- Orange gradient background (`from-sena-orange to-sena-orange/90`)
 - Slides smoothly to active item
 - Slight translation on text (`translateX(2px)`)
 

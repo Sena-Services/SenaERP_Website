@@ -99,13 +99,13 @@ export default function BlogArticlePage() {
             />
           </div>
         </div>
-        <main className="min-h-screen bg-waygent-cream pt-20 sm:pt-16">
+        <main className="min-h-screen bg-sena-cream pt-20 sm:pt-16">
           <div className="max-w-4xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-16">
             <div className="flex items-center justify-center py-12 min-h-[300px] sm:min-h-[400px]">
               <div className="flex flex-col items-center gap-4">
                 <div className="relative w-12 h-12 sm:w-16 sm:h-16">
                   <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                  <div className="absolute inset-0 border-4 border-waygent-orange border-t-transparent rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 border-4 border-sena-orange border-t-transparent rounded-full animate-spin"></div>
                 </div>
                 <p className="text-gray-600 font-space-grotesk text-sm">Loading article...</p>
               </div>
@@ -128,7 +128,7 @@ export default function BlogArticlePage() {
             />
           </div>
         </div>
-        <main className="min-h-screen bg-waygent-cream pt-20 sm:pt-16">
+        <main className="min-h-screen bg-sena-cream pt-20 sm:pt-16">
           <div className="max-w-4xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-16">
             <div className="text-center">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 font-futura mb-4">
@@ -136,7 +136,7 @@ export default function BlogArticlePage() {
               </h1>
               <button
                 onClick={handleBackClick}
-                className="text-waygent-blue hover:text-waygent-blue-hover font-space-grotesk cursor-pointer"
+                className="text-sena-blue hover:text-sena-blue-hover font-space-grotesk cursor-pointer"
               >
                 ← Go back
               </button>
@@ -165,7 +165,7 @@ export default function BlogArticlePage() {
           />
         </div>
       </div>
-      <main className="min-h-screen bg-waygent-cream pt-20 sm:pt-16 relative">
+      <main className="min-h-screen bg-sena-cream pt-20 sm:pt-16 relative">
         {/* Left Sidebar: Blog List - Positioned to the left of content */}
         <div className="hidden xl:block fixed top-24 z-10" style={{
           left: 'max(10px, calc(50% - 640px - 200px))',

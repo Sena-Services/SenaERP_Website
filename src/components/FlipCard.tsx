@@ -464,17 +464,17 @@ export default function FlipCard({
           >
             {position === "left" && (
               <>
-                Talk to Sena naturally—voice, text, any language. It understands your business and generates a complete <span style={{ color: getCardColor(position).hex }}>Business Requirements Document</span>.
+                Describe your agent in voice, text, any language. Sena interviews you, captures your intent, and generates a <span style={{ color: getCardColor(position).hex }}>build plan</span> automatically.
               </>
             )}
             {position === "center" && (
               <>
-                The Builder Agent pulls the right modules from our <span style={{ color: getCardColor(position).hex }}>Registry</span> and assembles your custom ERP—database, logic, integrations.
+                The Builder Agent pulls components from the <span style={{ color: getCardColor(position).hex }}>Registry</span> and assembles your agent. Tools, skills, triggers, UI, and logic.
               </>
             )}
             {position === "right" && (
               <>
-                Your AI agents run operations tirelessly. Build, test, and deploy agents that <span style={{ color: getCardColor(position).hex }}>get smarter</span> with every interaction.
+                Your agents go live instantly. Share them on the <span style={{ color: getCardColor(position).hex }}>Registry</span> for others to install, or keep them private. One conversation with Sena handles it all.
               </>
             )}
           </p>
@@ -505,7 +505,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Upload docs, images, videos</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Express mode for quick builds</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -517,7 +517,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Parallel conversations across teams</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Visual graph builder for power users</span>
                 </div>
               </>
             )}
@@ -534,7 +534,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Open-source Registry of modules</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Composable Registry of components</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -546,7 +546,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Builder Agent customizes for you</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Builder Agent assembles everything</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -558,7 +558,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Developer community fills gaps</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Publish your own, earn revenue</span>
                 </div>
               </>
             )}
@@ -575,7 +575,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Agent builder with autonomy slider</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Agent Apps for every domain</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -587,7 +587,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Automated testing framework</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">One Sena Agent routes everything</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <div
@@ -599,7 +599,7 @@ export default function FlipCard({
                       background: getCardColor(position).hex,
                     }}
                   />
-                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Fine-tuning for your business</span>
+                  <span className="text-gray-600 text-[10px] sm:text-xs leading-tight">Agents get smarter over time</span>
                 </div>
               </>
             )}
