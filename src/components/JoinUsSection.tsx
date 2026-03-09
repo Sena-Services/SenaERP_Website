@@ -262,16 +262,24 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
               </Link>
             </div>
 
-            {/* Optional tagline */}
-            <p
-              className="font-futura text-gray-600"
+            {/* About us + tagline */}
+            <div
+              className="flex items-center justify-center font-futura text-gray-600"
               style={{
                 fontSize: isMobile ? '11px' : `${getResponsiveValue(12)}px`,
                 paddingTop: isMobile ? '4px' : `${getResponsiveValue(4)}px`,
+                gap: '6px',
               }}
             >
-              Remote-friendly · Competitive benefits · Growing team
-            </p>
+              <span>Remote-friendly · Competitive benefits · Growing team</span>
+              <span>·</span>
+              <Link
+                href="/about"
+                className="underline hover:text-gray-900 transition-colors"
+              >
+                About us
+              </Link>
+            </div>
 
             {/* Legal Links */}
             <div

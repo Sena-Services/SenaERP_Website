@@ -562,7 +562,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
               }}
             >
               Sena Beta is now generally available —{' '}
-              <span className="underline font-semibold">Get access →</span>
+              <span className="underline font-semibold">Login →</span>
             </button>
             <button
               onClick={(e) => {

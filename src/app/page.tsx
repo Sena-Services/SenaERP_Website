@@ -9,7 +9,7 @@ import ContractsSection from "@/components/ContractsSection";
 import LandingRegistry from "@/components/LandingRegistry";
 // import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
-import CoFoundersSection from "@/components/CoFoundersSection";
+// import CoFoundersSection from "@/components/CoFoundersSection";
 import GetAccessSection from "@/components/GetAccessSection";
 import NavBar from "@/components/NavBar";
 import SidebarNav from "@/components/SidebarNav";
@@ -21,17 +21,16 @@ function HomeContent() {
   const registryRef = useRef<HTMLElement>(null);
   const builderRef = useRef<HTMLDivElement>(null);
   const getAccessRef = useRef<HTMLElement>(null);
-  const cofoundersRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
   const [showNavigation, setShowNavigation] = useState(false);
   const sidebarSections = [
     { id: "intro", label: "Home" },
     { id: "how-it-works", label: "How it works" },
-    { id: "builder", label: "Builder" },
+    { id: "builder", label: "AI Agents" },
+    { id: "contracts", label: "Contracts" },
     { id: "registry", label: "Registry" },
-    { id: "get-access", label: "Get Access" },
-    { id: "cofounders", label: "CoFounders" },
-    { id: "join-us", label: "Join Our Team" },
+    { id: "get-access", label: "Log In" },
+    { id: "join-us", label: "Join Us" },
   ];
 
   // Scroll to top on page load/refresh, or skip intro if section param is present
@@ -49,7 +48,7 @@ function HomeContent() {
     }
   }, [searchParams]);
 
-  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'registry' | 'get-access' | 'cofounders' | 'join-us' | 'other'>('other');
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'contracts' | 'registry' | 'get-access' | 'join-us' | 'other'>('other');
 
   useEffect(() => {
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
@@ -78,17 +77,17 @@ function HomeContent() {
         // Detect which section we're in based on scroll position
         const howItWorksEl = document.getElementById('how-it-works');
         const builderEl = document.getElementById('builder');
+        const contractsEl = document.getElementById('contracts');
         const registryEl = document.getElementById('registry');
         const getAccessEl = document.getElementById('get-access');
-        const cofoundersEl = document.getElementById('cofounders');
         const joinUsEl = document.getElementById('join-us');
 
         // Get all section positions
         const sections = [
           { id: 'join-us', el: joinUsEl },
-          { id: 'cofounders', el: cofoundersEl },
           { id: 'get-access', el: getAccessEl },
           { id: 'registry', el: registryEl },
+          { id: 'contracts', el: contractsEl },
           { id: 'builder', el: builderEl },
           { id: 'how-it-works', el: howItWorksEl },
         ];
@@ -655,7 +654,6 @@ function HomeContent() {
             showHowItWorks={currentSection === 'how-it-works'}
             showBuilder={currentSection === 'builder'}
             showRegistry={currentSection === 'registry'}
-            showCoFounders={currentSection === 'cofounders'}
             showJoinUs={currentSection === 'join-us'}
           />
         </div>
@@ -779,29 +777,8 @@ function HomeContent() {
             </div>
           </div>
 
-          {/* CoFounders - Color 2 */}
-          <div id="cofounders" style={{ backgroundColor: '#EDE7DC' }}>
-            <CoFoundersSection ref={cofoundersRef} />
-          </div>
-
-          {/* Section Divider & Color Transition */}
-          <div className="w-full" style={{
-            background: `linear-gradient(to bottom, #EDE7DC 0%, #EDE7DC 50%, #F5F1E8 50%, #F5F1E8 100%)`,
-            paddingTop: '8px',
-            paddingBottom: '8px'
-          }}>
-            <div className="relative flex items-center justify-center">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300/40"></div>
-              </div>
-              <div className="relative px-4">
-                <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Join Us - Color 1 */}
-          <div id="join-us" style={{ backgroundColor: '#F5F1E8' }}>
+          {/* Join Us - Color 2 */}
+          <div id="join-us" style={{ backgroundColor: '#EDE7DC' }}>
             <JoinUsSection ref={joinUsRef} />
           </div>
         </div>
