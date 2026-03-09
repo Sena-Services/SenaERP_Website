@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import PinwheelLogo from './PinwheelLogo';
 import SignupModal from './SignupModal';
@@ -399,8 +400,8 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           gap: `${getScaledValue(10)}px`,
         }}>
           {/* Launch notes link */}
-          <button
-            onClick={() => window.location.href = '/v01-beta'}
+          <Link
+            href="/v01-beta"
             onMouseEnter={() => setIsLaunchNotesHovered(true)}
             onMouseLeave={() => setIsLaunchNotesHovered(false)}
             style={{
@@ -409,9 +410,6 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               gap: `${getScaledValue(6)}px`,
               cursor: 'pointer',
               textDecoration: 'none',
-              background: 'none',
-              border: 'none',
-              padding: 0,
             }}
           >
             <span style={{
@@ -438,7 +436,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             >
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </button>
+          </Link>
 
           {/* Watch our video link with hover preview */}
           <div
@@ -655,7 +653,8 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                   zIndex: 100,
                 }}
               >
-                <div
+                <button
+                  aria-label="Preview PDF"
                   onClick={() => {
                     setIsPdfHovered(false);
                     setIsDownloadModalOpen(true);
@@ -667,7 +666,10 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1)',
                     cursor: 'pointer',
                     background: '#f5f0eb',
+                    border: 'none',
+                    padding: 0,
                   }}
+                  className="focus-visible:ring-2 focus-visible:ring-[#8FB7C5]"
                 >
                   <div style={{
                     position: 'relative',
@@ -698,7 +700,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                   }}>
                     Click to download
                   </div>
-                </div>
+                </button>
               </div>
             )}
           </div>
@@ -814,34 +816,37 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             >
               Scroll to see how it works
             </p>
-            <svg
-              className="text-gray-600 animate-bounce cursor-pointer"
-              style={{ width: `${getScaledValue(17)}px`, height: `${getScaledValue(17)}px` }}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <button
+              aria-label="Scroll down"
               onClick={() => {
                 if (isMobile) {
-                  // Set flag to prevent double-scroll from touch handler
                   isManualScrollRef.current = true;
-                  // Mobile: Smooth scroll down (same effect as scroll exhaustion)
                   window.scrollBy({
                     top: window.innerHeight * 0.5,
                     behavior: 'smooth'
                   });
                 } else {
-                  // Desktop: Trigger the animation sequence
                   window.dispatchEvent(new CustomEvent('triggerScrollAnimation'));
                 }
               }}
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+              className="focus-visible:ring-2 focus-visible:ring-[#8FB7C5] focus-visible:ring-offset-2 rounded"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
+              <svg
+                className="text-gray-600 animate-bounce"
+                style={{ width: `${getScaledValue(17)}px`, height: `${getScaledValue(17)}px` }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -849,6 +854,8 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
       {/* Download One Pager Confirmation Modal */}
       {isDownloadModalOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
           style={{
             position: 'fixed',
             inset: 0,
@@ -859,6 +866,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             padding: '16px',
           }}
           onClick={() => setIsDownloadModalOpen(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setIsDownloadModalOpen(false); }}
         >
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }} />
           <div

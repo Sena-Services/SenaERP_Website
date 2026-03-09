@@ -295,7 +295,7 @@ export default function AgentsBuilderDemo() {
               placeholder="Describe your agent..."
               className="w-full px-2.5 py-1.5 pr-8 rounded-lg bg-[#F5F1E8]/50 border border-[#9CA3AF]/50 text-[11px] text-gray-500 font-futura focus:outline-none focus:border-[#8FB7C5] transition-colors"
             />
-            <button className="absolute right-3.5 top-1.5 text-[#8FB7C5] hover:text-[#6BA3B5] transition-colors">
+            <button aria-label="Send message" className="absolute right-3.5 top-1.5 text-[#8FB7C5] hover:text-[#6BA3B5] transition-colors">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>

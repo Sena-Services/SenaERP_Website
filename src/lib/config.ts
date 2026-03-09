@@ -33,6 +33,8 @@ export const API_CONFIG = {
     VALIDATE_INVITE: '/api/method/senaerp_platform.api.invites.validate_invite',
     ACCEPT_INVITE: '/api/method/senaerp_platform.api.invites.accept_invite',
     SIGNUP_FOR_INVITE: '/api/method/senaerp_platform.api.invites.signup_for_invite',
+    VERIFY_EMAIL: '/api/method/senaerp_platform.api.waitlist.verify_email',
+    RESEND_VERIFICATION: '/api/method/senaerp_platform.api.waitlist.resend_verification',
   }
 } as const;
 
@@ -44,21 +46,24 @@ export function getApiUrl(endpoint: string): string {
 }
 
 // Centralized Frappe API Client - guest API calls without credentials
+import { fetchWithTimeout } from './fetchWithTimeout';
+
 class FrappeAPIClient {
-  async call(url: string, options: RequestInit = {}): Promise<Response> {
-    try {
-      return await fetch(url, {
-        ...options,
-        credentials: 'omit',
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-      });
-    } catch (error) {
-      console.error('[FrappeAPIClient] Request failed:', error);
-      throw error;
+  async call(url: string, options: RequestInit & { timeout?: number } = {}): Promise<Response> {
+    const { timeout, ...rest } = options;
+    const resp = await fetchWithTimeout(url, {
+      ...rest,
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json',
+        ...rest.headers,
+      },
+      timeout,
+    });
+    if (!resp.ok) {
+      throw new Error(`API request failed: ${resp.status} ${resp.statusText}`);
     }
+    return resp;
   }
 }
 

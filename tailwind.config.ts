@@ -36,13 +36,6 @@ const config: Config = {
         // Interactive States
         "sena-blue-hover": "#2563eb",
         "sena-orange-hover": "#d97706",
-        
-        // Legacy colors for backward compatibility (will be phased out)
-        "sentra-apricot-jet": "#f59e0b", // Maps to sena-orange
-        "sentra-midnight-deck": "#000000", // Maps to sena-text-primary
-        "sentra-travertine": "#FAF9F5", // Maps to sena-cream
-        "sentra-dune-mist": "#FAF9F5", // Maps to sena-cream
-        "sentra-ocean-route": "#3b82f6", // Maps to sena-blue
       },
     },
   },

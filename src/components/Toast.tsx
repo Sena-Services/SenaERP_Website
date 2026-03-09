@@ -24,6 +24,8 @@ export default function Toast({ message, isVisible, onClose, duration = 3000 }: 
 
   return (
     <div
+      role="alert"
+      aria-live="polite"
       className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[300] transition-all duration-300 ease-out"
       style={{
         animation: 'slideDown 0.3s ease-out',

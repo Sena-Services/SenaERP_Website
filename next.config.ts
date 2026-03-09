@@ -13,12 +13,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.simpleicons.org',
       },
-      {
-        protocol: 'http',
-        hostname: 'senatest2.localhost',
-        port: '8000',
-      },
-      {
+{
         protocol: 'https',
         hostname: 'senamarketing.senaerp.com',
       },

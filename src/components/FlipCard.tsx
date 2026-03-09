@@ -101,14 +101,21 @@ export default function FlipCard({
 
   // Update on client side only after hydration
   useEffect(() => {
+    let rafId: number;
     setVideoHeightPercentage(getVideoHeightPercentage());
 
     const handleResize = () => {
-      setVideoHeightPercentage(getVideoHeightPercentage());
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setVideoHeightPercentage(getVideoHeightPercentage());
+      });
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const [isHovered, setIsHovered] = useState(false);
@@ -276,6 +283,9 @@ export default function FlipCard({
       {/* Back face - How It Works card */}
       <div
         className="absolute inset-0 overflow-hidden flex flex-col group cursor-pointer"
+        role="button"
+        tabIndex={canClick && !isExpanded ? 0 : -1}
+        aria-label={`${cardTitle} - click to learn more`}
         style={{
           backfaceVisibility: "hidden",
           // When expanded, no lift effect on hover. Only in normal "how it works" view
@@ -293,7 +303,8 @@ export default function FlipCard({
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onClick={() => canClick && !isExpanded && onCardClick()} // Don't allow closing when expanded
+        onClick={() => canClick && !isExpanded && onCardClick()}
+        onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && canClick && !isExpanded) { e.preventDefault(); onCardClick(); } }}
       >
         {/* Subtle warm tint overlay - very minimal */}
         <div
@@ -352,7 +363,7 @@ export default function FlipCard({
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
           >
             <source src={videoSrc} type="video/mp4" />
           </video>

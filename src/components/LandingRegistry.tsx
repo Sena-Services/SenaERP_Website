@@ -134,6 +134,7 @@ const LandingRegistry = forwardRef<HTMLElement>(function LandingRegistry(_props,
           {!isMobile && (
             <button
               onClick={runAnimation}
+              aria-label="Replay animation"
               className="absolute right-0 top-0 text-[10px] uppercase tracking-widest font-black text-gray-400 border border-gray-200 px-4 py-2 rounded-full hover:bg-gray-50 hover:text-gray-900 transition-all active:scale-95 shadow-sm"
             >
               Replay

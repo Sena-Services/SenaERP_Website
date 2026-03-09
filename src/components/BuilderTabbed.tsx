@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { getResponsiveValue as _getResponsiveValue } from "@/lib/responsive";
 import ModelConfigDemo from "./ModelConfigDemo";
 import { ToolsConfigPreview, SkillsConfigPreview, TriggersConfigPreview, UIConfigPreview, LogicConfigPreview } from "./TabConfigPreviews";
 import MobileBuilderCard from "./MobileBuilderCard";
@@ -157,35 +158,25 @@ export default function BuilderTabbed() {
   const [viewportHeight, setViewportHeight] = useState(900);
   // showDetails state removed - split layout shows both simultaneously
 
-  // Responsive scaling function - same as IntroSection
-  const getResponsiveValue = (baseValue: number) => {
-    const baseScreenHeight = 1200;
-
-    // Aggressive scaling down for very low-height screens (600px and below)
-    if (viewportHeight <= 600) {
-      const scaleFactor = 0.4;
-      return baseValue * scaleFactor;
-    }
-    // Gradual scaling for low to medium heights (600-1200px)
-    else if (viewportHeight <= baseScreenHeight) {
-      // Smooth gradual scale from 0.4x at 600px to 1x at 1200px
-      const scaleFactor = 0.4 + ((viewportHeight - 600) / (baseScreenHeight - 600)) * 0.6;
-      return baseValue * scaleFactor;
-    }
-    // Scale up proportionally for screens taller than 1200px
-    const scaleFactor = viewportHeight / baseScreenHeight;
-    return baseValue * scaleFactor;
-  };
+  const getResponsiveValue = (baseValue: number) =>
+    _getResponsiveValue(viewportHeight, baseValue);
 
   // Detect mobile and sync with navbar tab selection
   useEffect(() => {
+    let rafId: number;
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      setViewportHeight(window.innerHeight);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setIsMobile(window.innerWidth < 768);
+        setViewportHeight(window.innerHeight);
+      });
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Listen for mobile navbar tab changes and scroll detection

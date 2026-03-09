@@ -284,7 +284,7 @@ export default function UIBuilderDemo() {
               placeholder="Describe your business..."
               className="w-full px-2 py-1 pr-7 rounded-md bg-gray-50 border border-gray-200 text-[11px] text-gray-500 font-futura focus:outline-none focus:border-sena-blue transition-colors"
             />
-            <button className="absolute right-3.5 top-1 text-gray-400 hover:text-sena-blue transition-colors">
+            <button aria-label="Send message" className="absolute right-3.5 top-1 text-gray-400 hover:text-sena-blue transition-colors">
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>

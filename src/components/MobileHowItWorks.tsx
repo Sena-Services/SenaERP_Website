@@ -375,6 +375,7 @@ export default function MobileHowItWorks() {
                 {expandedCard === index && (
                   <button
                     onClick={() => setExpandedCard(null)}
+                    aria-label="Close"
                     className="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center"
                     style={{
                       background: '#F5F1E8',

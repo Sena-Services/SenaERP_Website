@@ -9,7 +9,11 @@ import PinwheelLogo from "@/components/PinwheelLogo";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F7F5EF]" />}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F5EF]">
+        <div className="w-8 h-8 border-2 border-[#8FB7C5] border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
       <LoginPageContent />
     </Suspense>
   );
@@ -159,7 +163,9 @@ function LoginPageContent() {
 
         {/* Email/Password form */}
         <form onSubmit={handleSubmit} className="login-form">
+          <label htmlFor="login-email" className="sr-only">Email</label>
           <input
+            id="login-email"
             type="email"
             required
             value={email}
@@ -168,7 +174,9 @@ function LoginPageContent() {
             disabled={loading}
             className="login-input"
           />
+          <label htmlFor="login-password" className="sr-only">Password</label>
           <input
+            id="login-password"
             type="password"
             required
             value={password}

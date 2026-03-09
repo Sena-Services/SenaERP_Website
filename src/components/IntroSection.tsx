@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import FlipCard from "./FlipCard";
 import IntroContent from "./IntroContent";
+import { getResponsiveValue as _getResponsiveValue } from "@/lib/responsive";
 
 const SHRINK_SCROLL_DISTANCE = 900;
 const SPLIT_SCROLL_DISTANCE = 400; // Distance to split into 3 cards
@@ -94,14 +95,21 @@ export default function IntroSection() {
   }, [expandedCard]);
 
   useEffect(() => {
+    let rafId: number;
     const handleResize = () => {
-      setViewportWidth(window.innerWidth);
-      setViewportHeight(window.innerHeight);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setViewportWidth(window.innerWidth);
+        setViewportHeight(window.innerHeight);
+      });
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Mobile: Native scrolling with smooth momentum
@@ -205,25 +213,8 @@ export default function IntroSection() {
     };
   }, [animationLocked, viewportWidth, expandedCard]);
 
-  // Responsive scaling: scale down aggressively for low heights, scale up for tall screens
-  const getResponsiveValue = (baseValue: number) => {
-    const baseScreenHeight = 1200;
-
-    // Aggressive scaling down for very low-height screens (600px and below)
-    if (viewportHeight <= 600) {
-      const scaleFactor = 0.4;
-      return baseValue * scaleFactor;
-    }
-    // Gradual scaling for low to medium heights (600-1200px)
-    else if (viewportHeight <= baseScreenHeight) {
-      // Smooth gradual scale from 0.4x at 600px to 1x at 1200px
-      const scaleFactor = 0.4 + ((viewportHeight - 600) / (baseScreenHeight - 600)) * 0.6;
-      return baseValue * scaleFactor;
-    }
-    // Scale up proportionally for screens taller than 1200px
-    const scaleFactor = viewportHeight / baseScreenHeight;
-    return baseValue * scaleFactor;
-  };
+  const getResponsiveValue = (baseValue: number) =>
+    _getResponsiveValue(viewportHeight, baseValue);
 
   // Match BuilderTabbed and other components: min(1280px, calc(100vw - 320px))
   const maxContainerWidth = 1280;

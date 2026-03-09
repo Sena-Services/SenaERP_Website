@@ -245,7 +245,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
     setError(null);
 
     try {
-      const resp = await frappeAPI.call(getApiUrl("/api/method/senaerp_platform.api.waitlist.verify_email"), {
+      const resp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.VERIFY_EMAIL), {
         method: "POST",
         body: JSON.stringify({ email: verifyEmail, code: verifyCode }),
       });
@@ -272,7 +272,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
     setResending(true);
     setError(null);
     try {
-      const resp = await frappeAPI.call(getApiUrl("/api/method/senaerp_platform.api.waitlist.resend_verification"), {
+      const resp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.RESEND_VERIFICATION), {
         method: "POST",
         body: JSON.stringify({ email: verifyEmail }),
       });

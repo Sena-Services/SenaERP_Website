@@ -266,7 +266,11 @@ function HomeContent() {
 // Default export wraps HomeContent in Suspense for useSearchParams
 export default function Home() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-sena-cream" />}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-sena-cream">
+        <div className="w-8 h-8 border-2 border-sena-blue border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
       <HomeContent />
     </Suspense>
   );

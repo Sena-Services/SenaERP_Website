@@ -315,8 +315,11 @@ function InvitePageContent() {
                 </div>
 
                 <form onSubmit={handleSignIn} className="login-form">
-                  <input type="email" value={invite.email} disabled className="login-input login-input--disabled" />
+                  <label htmlFor="invite-signin-email" className="sr-only">Email</label>
+                  <input id="invite-signin-email" type="email" value={invite.email} disabled className="login-input login-input--disabled" />
+                  <label htmlFor="invite-signin-password" className="sr-only">Password</label>
                   <input
+                    id="invite-signin-password"
                     type="password"
                     required
                     value={password}
@@ -361,7 +364,9 @@ function InvitePageContent() {
                 </div>
 
                 <form onSubmit={handleSignUp} className="login-form">
+                  <label htmlFor="invite-signup-name" className="sr-only">Full name</label>
                   <input
+                    id="invite-signup-name"
                     type="text"
                     required
                     value={signupName}
@@ -370,14 +375,19 @@ function InvitePageContent() {
                     disabled={loading}
                     className="login-input"
                   />
-                  <input type="email" value={invite.email} disabled className="login-input login-input--disabled" />
+                  <label htmlFor="invite-signup-email" className="sr-only">Email</label>
+                  <input id="invite-signup-email" type="email" value={invite.email} disabled className="login-input login-input--disabled" />
+                  <label htmlFor="invite-signup-site" className="sr-only">Site name</label>
                   <input
+                    id="invite-signup-site"
                     type="text"
                     value={invite.site_name}
                     disabled
                     className="login-input login-input--disabled"
                   />
+                  <label htmlFor="invite-signup-password" className="sr-only">Password</label>
                   <input
+                    id="invite-signup-password"
                     type="password"
                     required
                     value={signupPassword}

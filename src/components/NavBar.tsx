@@ -2,15 +2,12 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import Link from "next/link";
 import SignupModal from "./SignupModal";
 import Toast from "./Toast";
 import Image from "next/image";
 import PinwheelLogo from "./PinwheelLogo";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import { storePlatformToken, clearPlatformToken, verifyPlatformToken, goToSite, type PlatformUser } from "@/lib/auth";
-
-const links: { href: string; label: string }[] = [];
 
 const sections = [
   { id: "intro", label: "Home" },
@@ -302,35 +299,24 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
   // Measure navbar height
   useEffect(() => {
+    let rafId: number;
     const measureNavbar = () => {
-      const header = document.querySelector('header');
-      if (header) {
-        setNavbarHeight(header.offsetHeight);
-      }
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const header = document.querySelector('header');
+        if (header) {
+          setNavbarHeight(header.offsetHeight);
+        }
+      });
     };
 
     measureNavbar();
     window.addEventListener('resize', measureNavbar);
-    return () => window.removeEventListener('resize', measureNavbar);
+    return () => {
+      window.removeEventListener('resize', measureNavbar);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
-  // 🎯 NAVBAR MANUAL CONTROLS - Adjust these values to control navbar positioning and spacing
-  const NAVBAR_CONTROLS = {
-    // NAVBAR POSITIONING & SPACING
-    navbarPadding: "py-0.5", // keep compact
-
-    // LOGO CONTROLS
-    logoGap: "gap-2", // Space between logo and text: 'gap-1', 'gap-4', etc.
-    logoSize: "width={40} height={40}", // Logo image size (change both width and height)
-    logoTextSize: "text-xl", // Logo text size: 'text-xl', 'text-3xl', etc.
-
-    // NAVIGATION SPACING
-    navLinksGap: "gap-6", // tighter on small screens
-    navToButtonGap: "gap-4", // reduce button spacing
-
-    // BUTTON STYLING
-    buttonPadding: "py-1.5 px-4", // CTA button size: 'py-2 px-4' (smaller), 'py-3 px-8' (larger)
-    buttonTextSize: "text-sm", // Button text size: 'text-sm', 'text-lg', etc.
-  };
 
   return (
     <>
@@ -347,9 +333,9 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         }}
       >
         {/* Top Row - Logo/Back Button and Buttons */}
-        <div className={`flex items-center justify-between ${NAVBAR_CONTROLS.navbarPadding} pl-2 pr-4`}>
+        <div className="flex items-center justify-between py-0.5 pl-2 pr-4">
         {/* LEFT SIDE - Logo or Back Button */}
-        <div className={`flex items-center ${NAVBAR_CONTROLS.logoGap} pl-2 sm:pl-3 py-1.5`}>
+        <div className="flex items-center gap-2 pl-2 sm:pl-3 py-1.5">
           {showBackButton ? (
             <button
               onClick={onBackClick}
@@ -396,22 +382,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         )}
 
         {/* RIGHT SIDE */}
-        <div className={`flex items-center ${NAVBAR_CONTROLS.navToButtonGap}`}>
-          <ul
-            className={`hidden md:flex items-center ${NAVBAR_CONTROLS.navLinksGap} text-sena-text-primary`}
-          >
-            {links.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="px-3 py-1.5 rounded-lg transition-all duration-300 ease-out hover:text-gray-900 hover:bg-gray-100 hover:shadow-sm"
-                >
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
+        <div className="flex items-center gap-4">
           {/* CTA Buttons or Logged In Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
             <>
@@ -838,7 +809,11 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         {isMobileMenuOpen && (
           <div
             className="lg:hidden fixed inset-0"
+            role="button"
+            tabIndex={0}
+            aria-label="Close menu"
             onClick={() => setIsMobileMenuOpen(false)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsMobileMenuOpen(false); } }}
             style={{
               top: `${navbarHeight}px`,
               zIndex: -1,

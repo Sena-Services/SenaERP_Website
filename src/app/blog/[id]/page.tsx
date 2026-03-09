@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
-import { getApiUrl, API_CONFIG } from "@/lib/config";
+import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import NavBar from "@/components/NavBar";
 import Link from "next/link";
 
@@ -43,11 +43,8 @@ export default function BlogArticlePage() {
     const fetchData = async () => {
       try {
         // Fetch the current article
-        const articleResponse = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.GET_BLOG_BY_ID), {
+        const articleResponse = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.GET_BLOG_BY_ID), {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({
             blog_id: blogId,
             name: blogId,
@@ -63,11 +60,8 @@ export default function BlogArticlePage() {
         }
 
         // Fetch all blogs for the sidebar
-        const blogsResponse = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_BLOGS), {
+        const blogsResponse = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_BLOGS), {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
         });
 
         const blogsResult = await blogsResponse.json();

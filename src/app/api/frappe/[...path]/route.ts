@@ -105,14 +105,27 @@ async function proxyToFrappe(request: NextRequest, context: RouteContext): Promi
   }
 
   const targetUrl = buildTargetUrl(path, request.url);
-  const upstream = await fetch(targetUrl, {
-    method,
-    headers: {
-      'content-type': request.headers.get('content-type') || 'application/json',
-    },
-    body: method === 'GET' ? undefined : await request.arrayBuffer(),
-    cache: 'no-store',
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+  let upstream: globalThis.Response;
+  try {
+    upstream = await fetch(targetUrl, {
+      method,
+      headers: {
+        'content-type': request.headers.get('content-type') || 'application/json',
+      },
+      body: method === 'GET' ? undefined : await request.arrayBuffer(),
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      return Response.json({ message: 'Upstream request timed out' }, { status: 504 });
+    }
+    throw err;
+  }
+  clearTimeout(timeoutId);
 
   return new Response(await upstream.arrayBuffer(), {
     status: upstream.status,

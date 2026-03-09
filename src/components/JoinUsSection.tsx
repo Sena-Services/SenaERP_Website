@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useState } from "react";
 import Link from "next/link";
+import { getResponsiveValue as _getResponsiveValue } from "@/lib/responsive";
 
 const socialLinks = [
   {
@@ -52,26 +53,25 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
   useEffect(() => {
+    let rafId: number;
     const handleResize = () => {
-      setViewportHeight(window.innerHeight);
-      setIsMobile(window.innerWidth < 768);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setViewportHeight(window.innerHeight);
+        setIsMobile(window.innerWidth < 768);
+      });
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
-  // Responsive scaling: only scale up when viewport HEIGHT > 1200px
-  const getResponsiveValue = (baseValue: number) => {
-    const baseScreenHeight = 1200;
-    if (viewportHeight <= baseScreenHeight) {
-      return baseValue;
-    }
-    // Scale proportionally for screens taller than 1200px
-    const scaleFactor = viewportHeight / baseScreenHeight;
-    return baseValue * scaleFactor;
-  };
+  const getResponsiveValue = (baseValue: number) =>
+    _getResponsiveValue(viewportHeight, baseValue);
 
   return (
     <section

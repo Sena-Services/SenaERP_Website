@@ -153,20 +153,27 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
+    let rafId: number;
     const updateScale = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) {
-        setScale(1);
-      } else if (width >= 768) {
-        setScale(0.6 + ((width - 768) / (1024 - 768)) * 0.4);
-      } else {
-        setScale(0);
-      }
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const width = window.innerWidth;
+        if (width >= 1024) {
+          setScale(1);
+        } else if (width >= 768) {
+          setScale(0.6 + ((width - 768) / (1024 - 768)) * 0.4);
+        } else {
+          setScale(0);
+        }
+      });
     };
 
     updateScale();
     window.addEventListener('resize', updateScale);
-    return () => window.removeEventListener('resize', updateScale);
+    return () => {
+      window.removeEventListener('resize', updateScale);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   if (scale === 0) return null;
