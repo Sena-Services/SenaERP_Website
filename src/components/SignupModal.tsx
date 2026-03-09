@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import { storePlatformToken } from "@/lib/auth";
-import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -292,7 +292,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-4"
       onClick={onClose}
     >
       {/* Backdrop */}
@@ -349,23 +349,31 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                 )}
 
                 <form onSubmit={handleSignIn} className="space-y-4">
-                  <input
-                    type="email"
-                    required
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="Email"
-                    className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
-                  />
-                  <input
-                    type="password"
-                    required
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="Password"
-                    autoComplete="current-password"
-                    className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
-                  />
+                  <div>
+                    <label htmlFor="login-email" className="sr-only">Email</label>
+                    <input
+                      id="login-email"
+                      type="email"
+                      required
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      placeholder="Email"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="login-password" className="sr-only">Password</label>
+                    <input
+                      id="login-password"
+                      type="password"
+                      required
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      placeholder="Password"
+                      autoComplete="current-password"
+                      className="w-full px-4 py-3 text-[15px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-sena-orange focus:border-transparent outline-none transition-all font-space-grotesk"
+                    />
+                  </div>
                   <button
                     type="submit"
                     disabled={isSubmitting}

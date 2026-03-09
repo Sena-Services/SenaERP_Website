@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState, cloneElement, isValidElement } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 type WorkflowStep = {
   id: string;
@@ -49,21 +49,18 @@ type MobileBuilderCardProps = {
   onVisibilityChange?: (isVisible: boolean) => void;
 };
 
-export default function MobileBuilderCard({
-  id,
-  title,
-  subtitle,
-  description,
-  features,
-  accentColor,
-  icon,
-  demoComponent,
-  workflowSteps,
-  chatMessages,
-  detailedContent,
-  screenshots,
-  onVisibilityChange,
-}: MobileBuilderCardProps) {
+export default function MobileBuilderCard(props: MobileBuilderCardProps) {
+  const {
+    id,
+    title,
+    subtitle,
+    description,
+    icon,
+    demoComponent,
+    detailedContent,
+    screenshots,
+    onVisibilityChange,
+  } = props;
   const cardRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -201,7 +198,7 @@ export default function MobileBuilderCard({
                 transition={{ duration: 0.3 }}
               >
                 {isValidElement(demoComponent)
-                  ? cloneElement(demoComponent, { isVisible } as any)
+                  ? cloneElement(demoComponent as React.ReactElement<{ isVisible: boolean }>, { isVisible })
                   : demoComponent}
               </motion.div>
             ) : (
@@ -243,6 +240,7 @@ export default function MobileBuilderCard({
                       <button
                         onClick={goToPrevScreenshot}
                         disabled={!hasPrevScreenshot}
+                        aria-label="Previous screenshot"
                         className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer ${
                           hasPrevScreenshot
                             ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white'
@@ -259,18 +257,25 @@ export default function MobileBuilderCard({
                           <button
                             key={idx}
                             onClick={() => setCurrentScreenshot(idx)}
-                            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                              idx === currentScreenshot
-                                ? 'bg-[#8FB7C5] scale-125'
-                                : 'bg-gray-300 hover:bg-gray-400'
-                            }`}
-                          />
+                            aria-label={`Go to screenshot ${idx + 1}`}
+                            className={`relative flex items-center justify-center transition-all duration-300 cursor-pointer`}
+                            style={{ width: '44px', height: '44px', background: 'transparent', border: 'none', padding: 0 }}
+                          >
+                            <span
+                              className={`block w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                                idx === currentScreenshot
+                                  ? 'bg-[#8FB7C5] scale-125'
+                                  : 'bg-gray-300 hover:bg-gray-400'
+                              }`}
+                            />
+                          </button>
                         ))}
                       </div>
 
                       <button
                         onClick={goToNextScreenshot}
                         disabled={!hasNextScreenshot}
+                        aria-label="Next screenshot"
                         className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer ${
                           hasNextScreenshot
                             ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white'

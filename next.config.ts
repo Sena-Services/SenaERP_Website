@@ -2,12 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   eslint: {
-    // Ignore ESLint errors during builds
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    // Ignore TypeScript errors during builds
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     remotePatterns: [
@@ -51,9 +49,7 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   // WSL2 optimizations to prevent file watching issues
-  experimental: {
-    webpackBuildWorker: true,
-  },
+  experimental: {},
   // Reduce memory pressure
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,

@@ -10,10 +10,7 @@ import PinwheelLogo from "./PinwheelLogo";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import { storePlatformToken, clearPlatformToken, verifyPlatformToken, goToSite, type PlatformUser } from "@/lib/auth";
 
-const links: { href: string; label: string }[] = [
-  // { href: "#features", label: "Features" },
-  // { href: "#about", label: "About Us" },
-];
+const links: { href: string; label: string }[] = [];
 
 const sections = [
   { id: "intro", label: "Home" },
@@ -152,8 +149,8 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       setActiveBuilderTab(e.detail.tabId);
     };
 
-    window.addEventListener('updateBuilderTab' as any, handleUpdateBuilderTab);
-    return () => window.removeEventListener('updateBuilderTab' as any, handleUpdateBuilderTab);
+    window.addEventListener('updateBuilderTab', handleUpdateBuilderTab as EventListener);
+    return () => window.removeEventListener('updateBuilderTab', handleUpdateBuilderTab as EventListener);
   }, []);
 
   const builderTabs = [
@@ -256,12 +253,13 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
     };
   }, [isMobileMenuOpen]);
 
-  // Track active section based on scroll position
+  // Track active section based on scroll position (rAF-throttled)
   useEffect(() => {
+    let rafId: number | null = null;
+
     const updateActiveSection = () => {
       // Don't update sections when modal is open
       if (isModalOpen) {
-        console.log('⏸️ Skipping section update - modal is open');
         return;
       }
 
@@ -282,13 +280,23 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
       }
     };
 
+    const throttledUpdate = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          updateActiveSection();
+          rafId = null;
+        });
+      }
+    };
+
     updateActiveSection();
-    window.addEventListener('scroll', updateActiveSection, { passive: true });
-    window.addEventListener('resize', updateActiveSection);
+    window.addEventListener('scroll', throttledUpdate, { passive: true });
+    window.addEventListener('resize', throttledUpdate);
 
     return () => {
-      window.removeEventListener('scroll', updateActiveSection);
-      window.removeEventListener('resize', updateActiveSection);
+      window.removeEventListener('scroll', throttledUpdate);
+      window.removeEventListener('resize', throttledUpdate);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [isModalOpen]);
 
@@ -423,7 +431,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                         }
                         setShowProfileMenu(!showProfileMenu);
                       }}
-                      className="inline-flex items-center gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-full transition-all duration-200 cursor-pointer outline-none"
+                      className="inline-flex items-center gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-full transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#8FB7C5]"
                       style={{
                         background: showProfileMenu ? '#E8E2D6' : 'transparent',
                         border: '1px solid #D1D5DB',
@@ -447,7 +455,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     {showProfileMenu && typeof document !== "undefined" && createPortal(
                       <div
                         className="fixed w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2"
-                        style={{ top: dropdownPos.top, left: dropdownPos.left, zIndex: 9999 }}
+                        style={{ top: dropdownPos.top, left: dropdownPos.left, zIndex: 100 }}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="px-4 py-2 border-b border-gray-100">
@@ -494,7 +502,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                       e.stopPropagation();
                       setIsModalOpen(true);
                     }}
-                    className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold cursor-pointer outline-none leading-none focus-visible:outline-none"
+                    className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 h-8 sm:h-9 transition-all duration-300 ease-out whitespace-nowrap text-xs sm:text-sm font-semibold cursor-pointer outline-none leading-none focus-visible:ring-2 focus-visible:ring-[#8FB7C5] focus-visible:ring-offset-1"
                     style={{
                       background: '#8FB7C5',
                       border: '1px solid #7AA5B5',
@@ -519,7 +527,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 {/* Hamburger Menu Button - Mobile Only */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden flex flex-col justify-center items-center w-8 h-8 gap-[3px] focus:outline-none ml-2"
+                  className="lg:hidden flex flex-col justify-center items-center w-8 h-8 gap-[3px] outline-none focus-visible:ring-2 focus-visible:ring-[#8FB7C5] focus-visible:rounded-md ml-2"
                   aria-label="Toggle menu"
                 >
                   <span
@@ -553,7 +561,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
               onClick={() => {
                 setIsModalOpen(true);
               }}
-              className="text-center cursor-pointer bg-transparent border-none outline-none"
+              className="text-center cursor-pointer bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-[#8FB7C5] focus-visible:rounded-md"
               style={{
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontSize: '12px',
@@ -570,7 +578,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 setBannerDismissed(true);
                 localStorage.setItem("bannerDismissed", "true");
               }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer bg-transparent border-none outline-none hover:opacity-70 transition-opacity"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-[#8FB7C5] focus-visible:rounded-full hover:opacity-70 transition-opacity"
               style={{ width: '18px', height: '18px' }}
               aria-label="Dismiss banner"
             >

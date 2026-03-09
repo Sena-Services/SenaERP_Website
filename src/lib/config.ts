@@ -8,26 +8,31 @@
  * - Local: http://localhost:8000
  */
 
-// Get API base URL from environment variable or use production as fallback
-const BASE_URL = process.env.NEXT_PUBLIC_FRAPPE_URL || 'https://senamarketing.senaerp.com';
+// Get API base URL from environment variable — must be set in .env.local
+const BASE_URL = process.env.NEXT_PUBLIC_FRAPPE_URL;
+
+if (!BASE_URL) {
+  throw new Error(
+    'NEXT_PUBLIC_FRAPPE_URL environment variable is not set. ' +
+    'Add it to your .env.local file (e.g., NEXT_PUBLIC_FRAPPE_URL=http://localhost:8000)'
+  );
+}
 
 export const API_CONFIG = {
   BASE_URL,
-  IS_DEV: BASE_URL.includes('localhost'),
   ENDPOINTS: {
     GET_PUBLISHED_BLOGS: '/api/method/senaerp_platform.api.website_blog.get_published_blogs',
     GET_BLOG_BY_ID: '/api/method/senaerp_platform.api.website_blog.get_blog_by_id',
-    GET_BLOG_COUNT: '/api/method/senaerp_platform.api.website_blog.get_blog_count',
     SUBMIT_WAITLIST: '/api/method/senaerp_platform.api.waitlist.submit_waitlist',
-    GET_ACTIVE_OPENINGS: '/api/method/senaerp_platform.api.opening.get_active_openings',
-    GET_PUBLISHED_ENVIRONMENTS: '/api/method/senaerp_platform.api.website_environment.get_published_environments',
-    GET_ENVIRONMENT_BY_ID: '/api/method/senaerp_platform.api.website_environment.get_environment_by_id',
-    GET_ENVIRONMENT_COUNT: '/api/method/senaerp_platform.api.website_environment.get_environment_count',
     GOOGLE_SSO_LOGIN: '/api/method/senaerp_platform.api.sso.google_login',
     VALIDATE_SSO_TOKEN: '/api/method/senaerp_platform.api.sso.validate_sso_token',
     LOGIN: '/api/method/senaerp_platform.api.user_auth.login',
     GET_PLATFORM_USER: '/api/method/senaerp_platform.api.user_auth.get_platform_user',
     GO_TO_SITE: '/api/method/senaerp_platform.api.user_auth.go_to_site',
+    REGISTER: '/api/method/senaerp_platform.api.user_auth.register',
+    VALIDATE_INVITE: '/api/method/senaerp_platform.api.invites.validate_invite',
+    ACCEPT_INVITE: '/api/method/senaerp_platform.api.invites.accept_invite',
+    SIGNUP_FOR_INVITE: '/api/method/senaerp_platform.api.invites.signup_for_invite',
   }
 } as const;
 
@@ -36,22 +41,6 @@ export const API_CONFIG = {
  */
 export function getApiUrl(endpoint: string): string {
   return `${API_CONFIG.BASE_URL}${endpoint}`;
-}
-
-/**
- * Get full file URL from Frappe file path
- * Handles both absolute URLs and relative Frappe file paths
- */
-export function getFileUrl(filePath?: string | null): string | undefined {
-  if (!filePath) return undefined;
-
-  // If already a full URL, return as is
-  if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
-    return filePath;
-  }
-
-  // Otherwise, prepend the base URL
-  return `${API_CONFIG.BASE_URL}${filePath}`;
 }
 
 // Centralized Frappe API Client - guest API calls without credentials

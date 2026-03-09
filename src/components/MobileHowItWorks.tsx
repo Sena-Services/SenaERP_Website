@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, animate, type PanInfo } from "motion/react";
 
 export default function MobileHowItWorks() {
   const [isMobile, setIsMobile] = useState(false);
@@ -34,7 +34,7 @@ export default function MobileHowItWorks() {
       video.playbackRate = 0.7;
 
       if (idx === currentCard && expandedCard === null) {
-        video.play().catch(err => console.log('Play error:', err));
+        video.play().catch(() => {});
       } else {
         video.pause();
       }
@@ -179,7 +179,7 @@ export default function MobileHowItWorks() {
   const cardWidth = containerWidth - 48;
   const cardGap = 16;
 
-  const handleDragEnd = (event: any, info: any) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (expandedCard !== null) return; // Disable swipe when expanded
 
     const threshold = 50;
@@ -518,14 +518,26 @@ export default function MobileHowItWorks() {
               setCurrentCard(index);
               setExpandedCard(null);
             }}
-            className="transition-all duration-300"
+            aria-label={`Go to card ${index + 1}: ${card.title}`}
+            className="transition-all duration-300 relative flex items-center justify-center"
             style={{
-              width: currentCard === index ? '24px' : '8px',
-              height: '8px',
-              borderRadius: '4px',
-              background: currentCard === index ? card.color : '#D1D5DB',
+              width: '44px',
+              height: '44px',
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
             }}
-          />
+          >
+            <span
+              className="block rounded-full transition-all duration-300"
+              style={{
+                width: currentCard === index ? '24px' : '8px',
+                height: '8px',
+                borderRadius: '4px',
+                background: currentCard === index ? card.color : '#D1D5DB',
+              }}
+            />
+          </button>
         ))}
       </div>
     </div>

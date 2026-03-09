@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 type MobileAgentsBuilderDemoProps = {
   isVisible?: boolean;
@@ -400,7 +400,7 @@ export default function MobileAgentsBuilderDemo({ isVisible = true }: MobileAgen
                         </svg>
                         <span className="text-[8px] font-semibold text-green-700 uppercase">Test Passed</span>
                       </div>
-                      <p className="text-[8px] text-gray-600 italic">"{currentExampleData.testQuestion}"</p>
+                      <p className="text-[8px] text-gray-600 italic">&ldquo;{currentExampleData.testQuestion}&rdquo;</p>
                     </div>
 
                     {/* Voice Mode */}

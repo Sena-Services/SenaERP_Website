@@ -7,7 +7,33 @@ import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import { storePlatformToken, verifyPlatformToken } from "@/lib/auth";
 import PinwheelLogo from "@/components/PinwheelLogo";
 
-const BASE_URL = process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000";
+/** Validate an invite token via the centralized API client. */
+async function validateInvite(token: string) {
+  const resp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.VALIDATE_INVITE), {
+    method: "POST",
+    body: JSON.stringify({ token }),
+  });
+  const data = await resp.json();
+  return data.message;
+}
+
+/** Accept an invite. Returns { success, site_url, token } or { error }. */
+async function acceptInvite(token: string, email: string) {
+  const resp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.ACCEPT_INVITE), {
+    method: "POST",
+    body: JSON.stringify({ token, email }),
+  });
+  const data = await resp.json();
+  return data.message;
+}
+
+/** Mask an email for display: "ak***@sena.services" */
+function maskEmail(email: string): string {
+  const [local, domain] = email.split('@');
+  if (!local || !domain) return '***@***';
+  const visible = local.slice(0, Math.min(2, local.length));
+  return `${visible}***@${domain}`;
+}
 
 export default function InvitePage() {
   return (
@@ -66,16 +92,7 @@ function InvitePageContent() {
         const ssoEmail = authState.user.email.toLowerCase();
 
         // Validate the invite to get the expected email
-        const validateResp = await fetch(
-          `${BASE_URL}/api/method/senaerp_platform.api.invites.validate_invite`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: inviteToken }),
-          }
-        );
-        const validateData = await validateResp.json();
-        const validateResult = validateData.message;
+        const validateResult = await validateInvite(inviteToken);
 
         if (!validateResult?.success) {
           setError(validateResult?.error || "Invalid or expired invite.");
@@ -90,7 +107,7 @@ function InvitePageContent() {
         if (ssoEmail !== inviteEmail) {
           setInvite(validateResult);
           setError(
-            `You signed in as ${ssoEmail}, but this invite is for ${inviteEmail}. Please sign in with the correct Google account.`
+            `You signed in as ${maskEmail(ssoEmail)}, but this invite is for ${maskEmail(inviteEmail)}. Please sign in with the correct Google account.`
           );
           setView("signup");
           setSsoRedirecting(false);
@@ -98,16 +115,7 @@ function InvitePageContent() {
         }
 
         // Emails match — accept the invite
-        const acceptResp = await fetch(
-          `${BASE_URL}/api/method/senaerp_platform.api.invites.accept_invite`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: inviteToken, email: inviteEmail }),
-          }
-        );
-        const acceptData = await acceptResp.json();
-        const acceptResult = acceptData.message;
+        const acceptResult = await acceptInvite(inviteToken, inviteEmail);
 
         if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token) {
           window.location.href = `${acceptResult.site_url}/login?token=${acceptResult.token}`;
@@ -137,16 +145,7 @@ function InvitePageContent() {
 
     (async () => {
       try {
-        const resp = await fetch(
-          `${BASE_URL}/api/method/senaerp_platform.api.invites.validate_invite`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: inviteToken }),
-          }
-        );
-        const data = await resp.json();
-        const result = data.message;
+        const result = await validateInvite(inviteToken);
 
         if (result?.success) {
           setInvite(result);
@@ -189,16 +188,7 @@ function InvitePageContent() {
       }
 
       // Accept the invite
-      const acceptResp = await fetch(
-        `${BASE_URL}/api/method/senaerp_platform.api.invites.accept_invite`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: inviteToken, email: invite.email }),
-        }
-      );
-      const acceptData = await acceptResp.json();
-      const acceptResult = acceptData.message;
+      const acceptResult = await acceptInvite(inviteToken, invite.email);
 
       if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token) {
         window.location.href = `${acceptResult.site_url}/login?token=${acceptResult.token}`;
@@ -226,18 +216,14 @@ function InvitePageContent() {
 
     try {
       // Create Platform User account via invite-specific signup endpoint
-      const signupResp = await fetch(
-        `${BASE_URL}/api/method/senaerp_platform.api.invites.signup_for_invite`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            full_name: signupName,
-            email: invite.email,
-            password: signupPassword,
-          }),
-        }
-      );
+      const signupResp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.SIGNUP_FOR_INVITE), {
+        method: "POST",
+        body: JSON.stringify({
+          full_name: signupName,
+          email: invite.email,
+          password: signupPassword,
+        }),
+      });
       const signupData = await signupResp.json();
       const signupResult = signupData.message;
 
@@ -252,16 +238,7 @@ function InvitePageContent() {
       }
 
       // Accept the invite
-      const acceptResp = await fetch(
-        `${BASE_URL}/api/method/senaerp_platform.api.invites.accept_invite`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: inviteToken, email: invite.email }),
-        }
-      );
-      const acceptData = await acceptResp.json();
-      const acceptResult = acceptData.message;
+      const acceptResult = await acceptInvite(inviteToken, invite.email);
 
       if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token) {
         window.location.href = `${acceptResult.site_url}/login?token=${acceptResult.token}`;
@@ -308,7 +285,7 @@ function InvitePageContent() {
             </div>
 
             <div className="invite-email">
-              Invite for: <strong>{invite.email}</strong>
+              Invite for: <strong>{maskEmail(invite.email)}</strong>
             </div>
 
             {error && (

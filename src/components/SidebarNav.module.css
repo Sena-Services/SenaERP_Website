@@ -56,6 +56,11 @@
   transition: all 0.3s ease-out;
   outline: none;
   cursor: pointer;
+}
+
+.button:focus-visible {
+  outline: 2px solid #8FB7C5;
+  outline-offset: 2px;
   height: 36px;
   border-radius: 9999px;
   background: transparent;

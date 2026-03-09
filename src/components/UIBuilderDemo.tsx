@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion } from "motion/react";
 import UIPreview from "./UIPreview";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function UIBuilderDemo() {
   const [currentExample, setCurrentExample] = useState(0);
@@ -13,13 +14,12 @@ export default function UIBuilderDemo() {
   const [showCursor, setShowCursor] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+  const isMobile = useIsMobile();
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const safeTimeout = useCallback((fn: () => void, ms: number) => {
+    const id = setTimeout(fn, ms);
+    timeoutsRef.current.push(id);
+    return id;
   }, []);
 
   const examples: Array<{
@@ -69,6 +69,9 @@ export default function UIBuilderDemo() {
   const currentExampleData = examples[currentExample];
 
   useEffect(() => {
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+
     const runBuildingSequence = () => {
       // Reset state
       setFadeOut(false);
@@ -80,7 +83,7 @@ export default function UIBuilderDemo() {
       setShowPreview(false);
 
       // Show user message first with delay
-      setTimeout(() => {
+      safeTimeout(() => {
         setShowUserMessage(true);
       }, 200);
 
@@ -90,33 +93,33 @@ export default function UIBuilderDemo() {
 
       const progressStages = () => {
         if (currentStage < currentExampleData.buildingSteps.length) {
-          setTimeout(() => {
+          safeTimeout(() => {
             currentStage++;
             setBuildingStage(currentStage);
             progressStages();
           }, stageIntervals[currentStage] || 600);
         } else {
           // Building complete, show final response
-          setTimeout(() => {
+          safeTimeout(() => {
             setShowFinalResponse(true);
             // After AI response finishes typing, wait then transition
-            setTimeout(() => {
+            safeTimeout(() => {
               // On mobile: switch to preview automatically with smooth fade
               if (isMobile) {
-                setTimeout(() => {
+                safeTimeout(() => {
                   setShowPreview(true);
                 }, 500);
                 // After showing preview for 4 seconds, fade out and move to next
-                setTimeout(() => {
+                safeTimeout(() => {
                   setFadeOut(true);
-                  setTimeout(() => {
+                  safeTimeout(() => {
                     setCurrentExample((prev) => (prev + 1) % examples.length);
                   }, 500);
                 }, 4500);
               } else {
                 // Desktop: fade out and move to next example
                 setFadeOut(true);
-                setTimeout(() => {
+                safeTimeout(() => {
                   setCurrentExample((prev) => (prev + 1) % examples.length);
                 }, 400);
               }
@@ -126,13 +129,18 @@ export default function UIBuilderDemo() {
       };
 
       // Start building stages after user message appears
-      setTimeout(() => {
+      safeTimeout(() => {
         progressStages();
       }, 400);
     };
 
     runBuildingSequence();
-  }, [currentExample]);
+
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+    };
+  }, [currentExample, safeTimeout]);
 
   useEffect(() => {
     if (showFinalResponse) {

@@ -5,6 +5,7 @@
   src: url("/fonts/rockybilly/Rockybilly.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -13,6 +14,7 @@
     format("opentype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -20,6 +22,7 @@
   src: url("/fonts/angelos-personal-use/Angelos.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -27,6 +30,7 @@
   src: url("/fonts/awesome/Awesome.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -35,6 +39,7 @@
     format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -43,6 +48,7 @@
     format("truetype");
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -51,6 +57,7 @@
     format("truetype");
   font-weight: 600;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -59,6 +66,7 @@
     format("truetype");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -66,6 +74,7 @@
   src: url("/fonts/Rockwell-Font/ROCK.TTF") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -73,6 +82,7 @@
   src: url("/fonts/Rockwell-Font/Rockwell-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -80,6 +90,7 @@
   src: url("/fonts/futura-pt/FuturaCyrillicBook.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -87,6 +98,7 @@
   src: url("/fonts/futura-pt/FuturaCyrillicMedium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -94,6 +106,7 @@
   src: url("/fonts/futura-pt/FuturaCyrillicDemi.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -101,43 +114,38 @@
   src: url("/fonts/futura-pt/FuturaCyrillicBold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @import "tailwindcss";
 
-/* Temporary test rule for Rockwell font */
-.font-rockwell {
-  font-family: Rockwell, serif !important;
+/* Custom font utility classes */
+@utility font-rockwell {
+  font-family: Rockwell, serif;
 }
 
-/* Test rule for SpaceGrotesk font */
-.font-space-grotesk {
-  font-family: SpaceGrotesk, sans-serif !important;
+@utility font-space-grotesk {
+  font-family: SpaceGrotesk, sans-serif;
 }
 
-/* Test rule for Rockybilly font */
-.font-rockybilly {
-  font-family: Rockybilly, cursive !important;
+@utility font-rockybilly {
+  font-family: Rockybilly, cursive;
 }
 
-/* Test rule for Rustic Roadway font */
-.font-rustic-roadway {
-  font-family: RusticRoadway, cursive !important;
+@utility font-rustic-roadway {
+  font-family: RusticRoadway, cursive;
 }
 
-/* Test rule for Angelos font */
-.font-angelos {
-  font-family: Angelos, cursive !important;
+@utility font-angelos {
+  font-family: Angelos, cursive;
 }
 
-/* Test rule for Awesome font */
-.font-awesome {
-  font-family: Awesome, cursive !important;
+@utility font-awesome {
+  font-family: Awesome, cursive;
 }
 
-/* Test rule for Futura PT font */
-.font-futura {
-  font-family: "Futura PT", sans-serif !important;
+@utility font-futura {
+  font-family: "Futura PT", sans-serif;
 }
 
 @theme {
@@ -153,19 +161,7 @@
   --color-sena-blue-hover: #2563eb;
   --color-sena-orange-hover: #d97706;
   
-  /* Legacy colors for backward compatibility */
-  --color-sentra-apricot-jet: #f59e0b;
-  --color-sentra-midnight-deck: #000000;
-  --color-sentra-travertine: #F5F1E8;
-  --color-sentra-dune-mist: #F5F1E8;
-  --color-sentra-ocean-route: #3b82f6;
-
   --animate-fade-in: fadeIn 0.3s ease-in-out;
-
-  /* MAJOR THEMES
-  --color-sentra-apricot-jet: #E26F3C;
-  --color-sentra-dune-mist: #EFE7DC;
-  --color-sentra-ocean-route: #4A868C; */
 }
 
 @keyframes fadeIn {
@@ -476,6 +472,17 @@ body {
 }
 
 /* Slide down animation for mobile dropdown */
+@keyframes slideInContent {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -491,14 +498,22 @@ body {
   animation: slideDown 0.3s ease-out;
 }
 
-/* Builder scrollbar styling - hide scrollbar */
-.builder-no-scrollbar::-webkit-scrollbar {
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
+/* Builder scrollbar styling - hide scrollbar (reuses scrollbar-hide pattern) */
 .builder-no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+.builder-no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 /* Modal thin scrollbar - no arrows, rounded thumb */
 .modal-scroll {

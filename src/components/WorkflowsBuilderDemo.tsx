@@ -1,14 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-interface WorkflowStep {
-  iconType: "trigger" | "read" | "slack" | "task" | "condition" | "email" | "pause" | "calculate" | "purchase";
-  title: string;
-  technicalDetails: { label: string; value: string }[];
-  naturalLanguage: string;
-}
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion } from "motion/react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // SVG Icon components for workflow steps
 const WorkflowIcons = {
@@ -69,15 +63,16 @@ export default function WorkflowsBuilderDemo() {
   const [showCursor, setShowCursor] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [, forceUpdate] = useState({});
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+  // Helper to track timeouts for cleanup
+  const safeTimeout = useCallback((fn: () => void, ms: number) => {
+    const id = setTimeout(fn, ms);
+    timeoutsRef.current.push(id);
+    return id;
   }, []);
 
   // Force re-render when cards are mounted to calculate line heights
@@ -231,6 +226,10 @@ export default function WorkflowsBuilderDemo() {
   const currentData = examples[currentExample];
 
   useEffect(() => {
+    // Clear any pending timeouts from the previous cycle
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+
     const runSequence = () => {
       // Reset state
       setFadeOut(false);
@@ -243,7 +242,7 @@ export default function WorkflowsBuilderDemo() {
       setShowPreview(false);
 
       // Show user message first with delay (matching UI builder)
-      setTimeout(() => {
+      safeTimeout(() => {
         setShowUserMessage(true);
       }, 200);
 
@@ -256,34 +255,34 @@ export default function WorkflowsBuilderDemo() {
           // Update building stage message
           setBuildingStage(currentStep + 1);
           // Show the actual node
-          setTimeout(() => {
+          safeTimeout(() => {
             currentStep++;
             setVisibleSteps(currentStep);
-            setTimeout(showNextStep, stepInterval);
+            safeTimeout(showNextStep, stepInterval);
           }, 150);
         } else {
           // All steps shown, show final response
-          setTimeout(() => {
+          safeTimeout(() => {
             setShowFinalResponse(true);
             // After AI response finishes typing, wait then transition
-            setTimeout(() => {
+            safeTimeout(() => {
               // On mobile: switch to preview automatically with smooth fade
               if (isMobile) {
-                setTimeout(() => {
+                safeTimeout(() => {
                   setShowPreview(true);
                 }, 600);
                 // After showing preview for 5 seconds, fade out and move to next
-                setTimeout(() => {
+                safeTimeout(() => {
                   setFadeOut(true);
-                  setTimeout(() => {
+                  safeTimeout(() => {
                     setCurrentExample((prev) => (prev + 1) % examples.length);
                   }, 600);
                 }, 5500);
               } else {
                 // Desktop: hold longer then fade out and move to next example
-                setTimeout(() => {
+                safeTimeout(() => {
                   setFadeOut(true);
-                  setTimeout(() => {
+                  safeTimeout(() => {
                     setCurrentExample((prev) => (prev + 1) % examples.length);
                   }, 500);
                 }, 4000); // 4 second hold on desktop
@@ -294,11 +293,16 @@ export default function WorkflowsBuilderDemo() {
       };
 
       // Start showing steps after user message appears
-      setTimeout(showNextStep, 500);
+      safeTimeout(showNextStep, 500);
     };
 
     runSequence();
-  }, [currentExample]);
+
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+    };
+  }, [currentExample, safeTimeout]);
 
   // Stream AI response
   useEffect(() => {

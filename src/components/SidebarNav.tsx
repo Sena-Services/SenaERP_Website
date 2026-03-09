@@ -133,7 +133,6 @@ export default function SidebarNav({ sections }: SidebarNavProps) {
     } else {
       const target = document.getElementById(id);
       if (!target) {
-        console.warn(`Section not found: ${id}`);
         isNavigatingRef.current = false;
         return;
       }

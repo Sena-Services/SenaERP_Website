@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -27,7 +28,23 @@ export default function SignupPage() {
     e.preventDefault();
     setError("");
 
-    // Basic validation
+    // Client-side validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    if (!formData.firstName.trim()) {
+      setError("First name is required");
+      return;
+    }
+
+    if (!formData.company.trim()) {
+      setError("Site name is required");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -42,23 +59,16 @@ export default function SignupPage() {
 
     try {
       // Call Frappe registration API
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_FRAPPE_URL || "http://localhost:8000"}/api/method/sentra_core.api.user_auth.register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            email: formData.email,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            password: formData.password,
-            company: formData.company,
-          }),
-        }
-      );
+      const response = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.REGISTER), {
+        method: "POST",
+        body: JSON.stringify({
+          email: formData.email,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          password: formData.password,
+          company: formData.company,
+        }),
+      });
 
       const data = await response.json();
 
@@ -68,9 +78,8 @@ export default function SignupPage() {
       } else {
         setError(data.message?.error || "Registration failed");
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Please check your connection.");
-      console.error("Signup error:", err);
     } finally {
       setLoading(false);
     }

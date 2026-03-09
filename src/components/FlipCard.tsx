@@ -67,24 +67,15 @@ type FlipCardProps = {
   currentWidthValue: number;
   cardGap: number;
   borderRadius: number;
-  elevation: string;
   splitProgress: number;
   rotateProgress: number;
   position: "left" | "center" | "right";
   imageOffset: number;
   videoSrc: string;
-  videoBg: string;
-  videoPosition: string;
   cardNumber: number;
   cardTitle: string;
-  cardDescription: string;
   expandedCard: ExpandedCard;
   onCardClick: () => void;
-};
-
-// When a card is expanded, show 100% video and hide the content section
-const getExpandedVideoHeight = (isExpanded: boolean) => {
-  return isExpanded ? 100 : undefined; // 100% when expanded, normal otherwise
 };
 
 export default function FlipCard({
@@ -92,17 +83,13 @@ export default function FlipCard({
   currentWidthValue,
   cardGap,
   borderRadius,
-  elevation,
   splitProgress,
   rotateProgress,
   position,
   imageOffset,
   videoSrc,
-  videoBg,
-  videoPosition,
   cardNumber,
   cardTitle,
-  cardDescription,
   expandedCard,
   onCardClick,
 }: FlipCardProps) {
@@ -189,10 +176,10 @@ export default function FlipCard({
 
       // Ensure video is loaded before playing
       if (video.readyState >= 2) {
-        video.play().catch(err => console.log('Play error:', err));
+        video.play().catch(() => {});
       } else {
         video.addEventListener('loadeddata', () => {
-          video.play().catch(err => console.log('Play error:', err));
+          video.play().catch(() => {});
         }, { once: true });
       }
     }
@@ -464,7 +451,7 @@ export default function FlipCard({
           >
             {position === "left" && (
               <>
-                The one place to <span style={{ color: getCardColor(position).hex }}>build AI agents</span>. No coding needed. Whether it's for yourself, your company, or as a product for others, Sena handles the heavy lifting.
+                The one place to <span style={{ color: getCardColor(position).hex }}>build AI agents</span>. No coding needed. Whether it&apos;s for yourself, your company, or as a product for others, Sena handles the heavy lifting.
               </>
             )}
             {position === "center" && (

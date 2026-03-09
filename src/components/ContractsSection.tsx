@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const steps = [
   {
@@ -141,14 +141,7 @@ function DownArrow() {
 }
 
 export default function ContractsSection() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  const isMobile = useIsMobile();
 
   return (
     <div id="contracts" className="scroll-mt-24">
@@ -184,8 +177,8 @@ export default function ContractsSection() {
           >
             Tell us what you need. Our Discovery Agent talks to you — no jargon, no forms, just a
             conversation. It asks the right questions, takes notes as you go, and turns your answers
-            into a structured plan. When you're happy with it, one click kicks off the build.
-            That's a contract.
+            into a structured plan. When you&apos;re happy with it, one click kicks off the build.
+            That&apos;s a contract.
           </p>
         </div>
 
@@ -266,7 +259,7 @@ export default function ContractsSection() {
                 <div className="flex items-start gap-2">
                   <span className="font-futura text-gray-400 flex-shrink-0" style={{ fontSize: "12px", marginTop: "1px" }}>2.</span>
                   <p className="font-futura text-gray-600 leading-relaxed" style={{ fontSize: "13px" }}>
-                    <span style={{ color: "#5A4938", fontWeight: 600 }}>Custom build</span> — If the requirement goes beyond what's in the Registry, we build it. A community of developers picks up these contracts, powered by the Sena SDK — AI and human working together.
+                    <span style={{ color: "#5A4938", fontWeight: 600 }}>Custom build</span> — If the requirement goes beyond what&apos;s in the Registry, we build it. A community of developers picks up these contracts, powered by the Sena SDK — AI and human working together.
                   </p>
                 </div>
                 <div className="flex items-start gap-2">

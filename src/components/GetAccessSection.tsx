@@ -1,18 +1,10 @@
 "use client";
 
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const GetAccessSection = forwardRef<HTMLElement>(function GetAccessSection(props, ref) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const isMobile = useIsMobile();
 
   const handleLogin = () => {
     window.dispatchEvent(new CustomEvent('openSignupModal'));
@@ -76,7 +68,7 @@ const GetAccessSection = forwardRef<HTMLElement>(function GetAccessSection(props
           {/* CTA Button */}
           <button
             onClick={handleLogin}
-            className="inline-flex items-center justify-center transition-all duration-300 ease-out whitespace-nowrap font-semibold cursor-pointer outline-none leading-none focus-visible:outline-none"
+            className="inline-flex items-center justify-center transition-all duration-300 ease-out whitespace-nowrap font-semibold cursor-pointer outline-none leading-none focus-visible:ring-2 focus-visible:ring-[#8FB7C5] focus-visible:ring-offset-2"
             style={{
               background: "#8FB7C5",
               border: "1px solid #7AA5B5",

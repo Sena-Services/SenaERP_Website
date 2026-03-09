@@ -1,31 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-interface ColumnRef {
-  tableIdx: number;
-  colIdx: number;
-  element: HTMLDivElement | null;
-}
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function DataBuilderDemo() {
-  // Add style to hide scrollbars
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .hide-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
   const [currentExample, setCurrentExample] = useState(0);
   const [stage, setStage] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
   const columnRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const safeTimeout = useCallback((fn: () => void, ms: number) => {
+    const id = setTimeout(fn, ms);
+    timeoutsRef.current.push(id);
+    return id;
+  }, []);
 
   const examples = [
     {
@@ -177,6 +166,9 @@ export default function DataBuilderDemo() {
   const currentData = examples[currentExample];
 
   useEffect(() => {
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+
     const runSequence = () => {
       // Reset everything immediately to skeleton state
       setStage(0);
@@ -197,17 +189,17 @@ export default function DataBuilderDemo() {
 
       const progressStages = () => {
         if (currentStage < stages.length) {
-          setTimeout(() => {
+          safeTimeout(() => {
             currentStage++;
             setStage(currentStage);
             progressStages();
           }, stages[currentStage] || 500);
         } else {
           // Hold completed, now fade out and switch
-          setTimeout(() => {
+          safeTimeout(() => {
             setFadeOut(true);
             // After fade completes, switch example (which will reset stage to 0)
-            setTimeout(() => {
+            safeTimeout(() => {
               setCurrentExample((prev) => (prev + 1) % examples.length);
             }, 600);
           }, 100);
@@ -215,13 +207,18 @@ export default function DataBuilderDemo() {
       };
 
       // Start the sequence after a brief delay to let stage 0 render
-      setTimeout(() => {
+      safeTimeout(() => {
         progressStages();
       }, 100);
     };
 
     runSequence();
-  }, [currentExample]);
+
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+    };
+  }, [currentExample, safeTimeout]);
 
   // Calculate line path between two specific column rows
   const getLinePathBetweenColumns = (fromTable: number, fromCol: number, toTable: number, toCol: number) => {
@@ -286,7 +283,7 @@ export default function DataBuilderDemo() {
               className="inline-block bg-white px-3 md:px-4 py-1.5 md:py-2 rounded-full shadow-md border border-gray-200"
             >
               <p className="text-[10px] md:text-xs font-futura text-gray-700">
-                "{currentData.request}"
+                &quot;{currentData.request}&quot;
               </p>
             </motion.div>
           </AnimatePresence>

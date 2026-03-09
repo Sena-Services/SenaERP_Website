@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import AgentsBuilderDemo from "./AgentsBuilderDemo";
+import { motion, AnimatePresence } from "motion/react";
 import ModelConfigDemo from "./ModelConfigDemo";
 import { ToolsConfigPreview, SkillsConfigPreview, TriggersConfigPreview, UIConfigPreview, LogicConfigPreview } from "./TabConfigPreviews";
 import MobileBuilderCard from "./MobileBuilderCard";
@@ -151,860 +149,11 @@ const tabs: Tab[] = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const workflowItemVariants = {
-  hidden: {
-    opacity: 0,
-    x: -40,
-    scale: 0.9,
-  },
-  visible: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-    transition: {
-      type: "spring" as const,
-      stiffness: 100,
-      damping: 15,
-    }
-  },
-};
-
-const chatMessageVariants = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-    scale: 0.95,
-  },
-  visible: (custom: number) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      delay: custom * 0.2,
-      type: "spring" as const,
-      stiffness: 120,
-      damping: 20,
-    }
-  }),
-};
-
-// Interface Gallery Component
-function InterfaceGallery() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const images = [
-    { src: "/images/interfaces-dashbaord.png", alt: "Analytics Dashboard" },
-    { src: "/images/interface-form.png", alt: "Customer Form" },
-    { src: "/images/interface-table.png", alt: "Data Table" },
-    { src: "/images/interface-ai.png", alt: "AI Assistant" }
-  ];
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const goToPrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  const openImageExpanded = () => {
-    setIsExpanded(true);
-  };
-
-  const closeImageExpanded = () => {
-    setIsExpanded(false);
-  };
-
-  const hasPrev = currentIndex > 0;
-  const hasNext = currentIndex < images.length - 1;
-
-  // Keyboard navigation when expanded
-  useEffect(() => {
-    if (!isExpanded) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
-        setCurrentIndex(prev => prev + 1);
-      } else if (e.key === 'Escape') {
-        setIsExpanded(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded, currentIndex, images.length]);
-
-  return (
-    <>
-      <div className="relative flex flex-col h-full gap-3">
-        {/* Image Container - rounded, no visible border */}
-        <div
-          onClick={openImageExpanded}
-          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
-          style={{ backgroundColor: '#FCFCFA' }}
-        >
-          {/* Subtle view hint */}
-          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
-              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
-            </div>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentIndex}
-              src={images[currentIndex].src}
-              alt={images[currentIndex].alt}
-              className="w-auto cursor-pointer"
-              style={{
-                maxHeight: '340px',
-                height: 'auto',
-                border: '2px solid #9CA3AF',
-                borderRadius: '16px',
-                boxShadow: '0 4px 16px rgba(139, 119, 89, 0.12)'
-              }}
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-            />
-          </AnimatePresence>
-        </div>
-
-      {/* Navigation BELOW image - like BlogSection */}
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={goToPrev}
-            disabled={!hasPrev}
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
-              hasPrev
-                ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer'
-                : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Previous interface"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          {/* Dot indicators */}
-          <div className="flex items-center gap-2">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === currentIndex
-                    ? 'bg-[#8FB7C5] scale-125'
-                    : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
-                }`}
-                aria-label={`Go to image ${idx + 1}`}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={goToNext}
-            disabled={!hasNext}
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
-              hasNext
-                ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer'
-                : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Next interface"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Page Counter - like BlogSection */}
-        <div className="text-xs text-gray-600 font-futura">
-          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Image Expanded Modal - Rendered via Portal */}
-    {typeof document !== 'undefined' && createPortal(
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
-            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-            onClick={closeImageExpanded}
-          >
-            {/* Close button - top right */}
-            <button
-              onClick={closeImageExpanded}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-              aria-label="Close"
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* Previous button */}
-            {hasPrev && (
-              <button
-                onClick={(e) => { e.stopPropagation(); goToPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-                aria-label="Previous"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-            )}
-
-            {/* Next button */}
-            {hasNext && (
-              <button
-                onClick={(e) => { e.stopPropagation(); goToNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-                aria-label="Next"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            )}
-
-            {/* Centered Image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="max-w-[90vw] max-h-[90vh]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={images[currentIndex].src}
-                alt={images[currentIndex].alt}
-                className="max-w-full max-h-[90vh] object-contain rounded-lg"
-                style={{ imageRendering: '-webkit-optimize-contrast' }}
-              />
-            </motion.div>
-
-            {/* Page indicator */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
-              {currentIndex + 1} / {images.length}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>,
-      document.body
-    )}
-    </>
-  );
-}
-
-// Data Gallery Component - Same design as Interface
-function DataGallery() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const images = [
-    { src: "/images/data-fields.png", alt: "Data Fields" },
-    { src: "/images/data-create.png", alt: "Data Create" },
-    { src: "/images/data-records.png", alt: "Data Records" }
-  ];
-
-  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
-  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-
-  const openImageExpanded = () => setIsExpanded(true);
-  const closeImageExpanded = () => setIsExpanded(false);
-
-  const hasPrev = currentIndex > 0;
-  const hasNext = currentIndex < images.length - 1;
-
-  // Keyboard navigation when expanded
-  useEffect(() => {
-    if (!isExpanded) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
-        setCurrentIndex(prev => prev + 1);
-      } else if (e.key === 'Escape') {
-        setIsExpanded(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded, currentIndex, images.length]);
-
-  return (
-    <>
-      <div className="relative flex flex-col h-full gap-3">
-        <div
-          onClick={openImageExpanded}
-          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
-          style={{ backgroundColor: '#FCFCFA' }}
-        >
-          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
-              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
-            </div>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentIndex}
-              src={images[currentIndex].src}
-              alt={images[currentIndex].alt}
-              className="w-auto cursor-pointer"
-              style={{
-                maxHeight: '340px',
-                height: 'auto',
-                border: '2px solid #9CA3AF',
-                borderRadius: '16px',
-                boxShadow: '0 4px 16px rgba(139, 119, 89, 0.12)'
-              }}
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-            />
-          </AnimatePresence>
-        </div>
-
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={goToPrev}
-            disabled={!hasPrev}
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
-              hasPrev ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Previous"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <div className="flex items-center gap-2">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === currentIndex ? 'bg-[#8FB7C5] scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
-                }`}
-                aria-label={`Go to image ${idx + 1}`}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={goToNext}
-            disabled={!hasNext}
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
-              hasNext ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Next"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="text-xs text-gray-600 font-futura">
-          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Image Expanded Modal - Rendered via Portal */}
-    {typeof document !== 'undefined' && createPortal(
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
-            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-            onClick={closeImageExpanded}
-          >
-            <button
-              onClick={closeImageExpanded}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-              aria-label="Close"
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            {hasPrev && (
-              <button
-                onClick={(e) => { e.stopPropagation(); goToPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-            )}
-            {hasNext && (
-              <button
-                onClick={(e) => { e.stopPropagation(); goToNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            )}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="max-w-[90vw] max-h-[90vh]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={images[currentIndex].src}
-                alt={images[currentIndex].alt}
-                className="max-w-full max-h-[90vh] object-contain rounded-lg"
-                style={{ imageRendering: '-webkit-optimize-contrast' }}
-              />
-            </motion.div>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
-              {currentIndex + 1} / {images.length}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>,
-      document.body
-    )}
-    </>
-  );
-}
-
-// Workflows Gallery Component - Same design as Interface
-function WorkflowsGallery() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const images = [
-    { src: "/images/workflow-summary.png", alt: "Workflow Summary" },
-    { src: "/images/workflow-detailed.png", alt: "Workflow Detailed" }
-  ];
-
-  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
-  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-
-  const openImageExpanded = () => setIsExpanded(true);
-  const closeImageExpanded = () => setIsExpanded(false);
-
-  const hasPrev = currentIndex > 0;
-  const hasNext = currentIndex < images.length - 1;
-
-  // Keyboard navigation when expanded
-  useEffect(() => {
-    if (!isExpanded) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
-        setCurrentIndex(prev => prev + 1);
-      } else if (e.key === 'Escape') {
-        setIsExpanded(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded, currentIndex, images.length]);
-
-  return (
-    <>
-      <div className="relative flex flex-col h-full gap-3">
-        <div
-          onClick={openImageExpanded}
-          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
-          style={{ backgroundColor: '#FCFCFA' }}
-        >
-          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
-              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
-            </div>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentIndex}
-              src={images[currentIndex].src}
-              alt={images[currentIndex].alt}
-              className="w-auto cursor-pointer"
-              style={{
-                maxHeight: '340px',
-                height: 'auto',
-                border: '2px solid #9CA3AF',
-                borderRadius: '16px',
-                boxShadow: '0 4px 16px rgba(139, 119, 89, 0.12)'
-              }}
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-            />
-          </AnimatePresence>
-        </div>
-
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={goToPrev}
-            disabled={!hasPrev}
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
-              hasPrev ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Previous"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <div className="flex items-center gap-2">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === currentIndex ? 'bg-[#8FB7C5] scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
-                }`}
-                aria-label={`Go to image ${idx + 1}`}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={goToNext}
-            disabled={!hasNext}
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 ${
-              hasNext ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-white hover:scale-105 cursor-pointer' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-            }`}
-            aria-label="Next"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="text-xs text-gray-600 font-futura">
-          Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Image Expanded Modal - Rendered via Portal */}
-    {typeof document !== 'undefined' && createPortal(
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
-            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-            onClick={closeImageExpanded}
-          >
-            <button
-              onClick={closeImageExpanded}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-              aria-label="Close"
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            {hasPrev && (
-              <button
-                onClick={(e) => { e.stopPropagation(); goToPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-            )}
-            {hasNext && (
-              <button
-                onClick={(e) => { e.stopPropagation(); goToNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            )}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="max-w-[90vw] max-h-[90vh]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={images[currentIndex].src}
-                alt={images[currentIndex].alt}
-                className="max-w-full max-h-[90vh] object-contain rounded-lg"
-                style={{ imageRendering: '-webkit-optimize-contrast' }}
-              />
-            </motion.div>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
-              {currentIndex + 1} / {images.length}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>,
-      document.body
-    )}
-    </>
-  );
-}
-
-// Agents Gallery Component - Same design as Interface
-function AgentsGallery() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const images = [
-    { src: "/images/agents-role.jpeg", alt: "Agent Role Configuration" },
-    { src: "/images/agents-greeting.jpeg", alt: "Agent Greeting Stages" },
-    { src: "/images/agents-personality.jpeg", alt: "Agent Personality Settings" },
-    { src: "/images/agents-mode.jpeg", alt: "Agent Mode Configuration" }
-  ];
-
-  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % images.length);
-  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-
-  const openImageExpanded = () => setIsExpanded(true);
-  const closeImageExpanded = () => setIsExpanded(false);
-
-  const hasPrev = currentIndex > 0;
-  const hasNext = currentIndex < images.length - 1;
-
-  // Keyboard navigation when expanded
-  useEffect(() => {
-    if (!isExpanded) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-      } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
-        setCurrentIndex(prev => prev + 1);
-      } else if (e.key === 'Escape') {
-        setIsExpanded(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded, currentIndex, images.length]);
-
-  return (
-    <>
-      <div className="relative flex flex-col h-full gap-3">
-        <div
-          onClick={openImageExpanded}
-          className="relative rounded-2xl overflow-hidden flex-1 flex items-center justify-center max-h-[340px] group/screenshot cursor-pointer"
-          style={{ backgroundColor: '#FCFCFA' }}
-        >
-          {/* Subtle view hint */}
-          <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover/screenshot:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
-              <span className="text-xs text-gray-600 font-medium font-futura">Click to view full size</span>
-            </div>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentIndex}
-              src={images[currentIndex].src}
-              alt={images[currentIndex].alt}
-              className="w-auto rounded-xl cursor-pointer"
-              style={{
-                maxHeight: '340px',
-                height: 'auto',
-                border: '2px solid #9CA3AF',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-              }}
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-              onClick={openImageExpanded}
-            />
-          </AnimatePresence>
-        </div>
-
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center justify-center gap-3">
-            <button
-              onClick={goToPrev}
-              disabled={!hasPrev}
-              className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer ${
-                hasPrev ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-[#374151] hover:scale-105' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-              }`}
-              aria-label="Previous"
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <div className="flex items-center gap-2">
-              {images.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    idx === currentIndex ? 'bg-[#8FB7C5] scale-125' : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
-                  }`}
-                  aria-label={`Go to image ${idx + 1}`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={goToNext}
-              disabled={!hasNext}
-              className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer ${
-                hasNext ? 'border-[#8FB7C5] text-[#5B8A8A] hover:bg-[#8FB7C5] hover:text-[#374151] hover:scale-105' : 'border-gray-300 text-gray-300 cursor-not-allowed opacity-40'
-              }`}
-              aria-label="Next"
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-
-          <div className="text-xs text-gray-600 font-futura">
-            Page <span className="font-semibold text-gray-900">{currentIndex + 1}</span> of <span className="font-semibold text-gray-900">{images.length}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Image Expanded Modal - Rendered via Portal */}
-      {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center"
-              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-              onClick={closeImageExpanded}
-            >
-              {/* Close button - top right */}
-              <button
-                onClick={closeImageExpanded}
-                className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-                aria-label="Close"
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-
-              {/* Previous button */}
-              {hasPrev && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToPrev();
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-                  aria-label="Previous image"
-                >
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              )}
-
-              {/* Next button */}
-              {hasNext && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToNext();
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-                  aria-label="Next image"
-                >
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              )}
-
-              {/* Centered Image */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                className="max-w-[90vw] max-h-[90vh]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <img
-                  src={images[currentIndex].src}
-                  alt={images[currentIndex].alt}
-                  className="max-w-full max-h-[90vh] object-contain rounded-lg"
-                  style={{ imageRendering: '-webkit-optimize-contrast' }}
-                />
-              </motion.div>
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-futura">
-                {currentIndex + 1} / {images.length}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
-    </>
-  );
-}
+// Animation variants removed — were dead code (defined but never used in JSX)
 
 export default function BuilderTabbed() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [isMobile, setIsMobile] = useState(false);
-  const [activeBuilderTab, setActiveBuilderTab] = useState("models"); // Models is the first tab
   const [viewportHeight, setViewportHeight] = useState(900);
   // showDetails state removed - split layout shows both simultaneously
 
@@ -1056,8 +205,8 @@ export default function BuilderTabbed() {
       }
     };
 
-    window.addEventListener('builderTabChange' as any, handleNavbarTabChange);
-    return () => window.removeEventListener('builderTabChange' as any, handleNavbarTabChange);
+    window.addEventListener('builderTabChange', handleNavbarTabChange as EventListener);
+    return () => window.removeEventListener('builderTabChange', handleNavbarTabChange as EventListener);
   }, [isMobile]);
 
   // Auto-update navbar tabs based on scroll position (mobile only)
@@ -1089,10 +238,23 @@ export default function BuilderTabbed() {
       }
     };
 
-    // Run immediately and on scroll
+    // Run immediately and on scroll (rAF-throttled)
+    let rafId: number | null = null;
+    const throttledScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          handleScroll();
+          rafId = null;
+        });
+      }
+    };
+
     handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', throttledScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, [isMobile, activeTab, tabs]);
 
   return (
@@ -1141,7 +303,7 @@ export default function BuilderTabbed() {
           <div className="bg-sena-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
             {/* Tabs Grid - Centered with 6 tabs */}
             <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-2 max-w-5xl mx-auto">
-              {tabs.map((tab, index) => (
+              {tabs.map((tab) => (
                 <motion.button
                   key={tab.id}
                   onClick={() => {
@@ -1557,7 +719,7 @@ export default function BuilderTabbed() {
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Skills</h3>
                         <p className="text-sm text-gray-600 leading-snug font-futura">
-                          Knowledge and instructions injected into your agent's context at runtime.
+                          Knowledge and instructions injected into your agent&apos;s context at runtime.
                         </p>
                       </div>
                       <div className="space-y-1.5">
@@ -1916,7 +1078,6 @@ export default function BuilderTabbed() {
               demoComponent={<MobileDataBuilderDemo />}
               onVisibilityChange={(isVisible) => {
                 if (isVisible) {
-                  setActiveBuilderTab("brd");
                   window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'brd' } }));
                 }
               }}
@@ -1986,7 +1147,6 @@ export default function BuilderTabbed() {
               demoComponent={<MobileDataBuilderDemo />}
               onVisibilityChange={(isVisible) => {
                 if (isVisible) {
-                  setActiveBuilderTab("data");
                   window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'data' } }));
                 }
               }}
@@ -2056,7 +1216,6 @@ export default function BuilderTabbed() {
               demoComponent={<MobileWorkflowsBuilderDemo />}
               onVisibilityChange={(isVisible) => {
                 if (isVisible) {
-                  setActiveBuilderTab("workflows");
                   window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'workflows' } }));
                 }
               }}
@@ -2128,7 +1287,6 @@ export default function BuilderTabbed() {
               demoComponent={<MobileAgentsBuilderDemo />}
               onVisibilityChange={(isVisible) => {
                 if (isVisible) {
-                  setActiveBuilderTab("agents");
                   window.dispatchEvent(new CustomEvent('updateBuilderTab', { detail: { tabId: 'agents' } }));
                 }
               }}

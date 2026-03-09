@@ -16,7 +16,6 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const [viewportHeight, setViewportHeight] = useState(900);
   const localContentRef = useRef<HTMLDivElement>(null);
   const contentRef = scrollRef || localContentRef;
-  const [isContentAtBottom, setIsContentAtBottom] = useState(false);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
 
   const [isLaunchNotesHovered, setIsLaunchNotesHovered] = useState(false);
@@ -31,7 +30,6 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const videoHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pdfHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const scrollAttemptRef = useRef(0);
   const lastScrollTopRef = useRef(0);
   const isManualScrollRef = useRef(false); // Flag to prevent double-scroll from arrow click
 
@@ -87,11 +85,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
     };
 
     const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = element;
-      const scrollBottom = scrollTop + clientHeight;
-      const isAtBottom = scrollBottom >= scrollHeight - 5; // 5px threshold
-
-      setIsContentAtBottom(isAtBottom);
+      const { scrollTop } = element;
       lastScrollTopRef.current = scrollTop;
     };
 
@@ -405,7 +399,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           gap: `${getScaledValue(10)}px`,
         }}>
           {/* Launch notes link */}
-          <div
+          <button
             onClick={() => window.location.href = '/v01-beta'}
             onMouseEnter={() => setIsLaunchNotesHovered(true)}
             onMouseLeave={() => setIsLaunchNotesHovered(false)}
@@ -415,6 +409,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               gap: `${getScaledValue(6)}px`,
               cursor: 'pointer',
               textDecoration: 'none',
+              background: 'none',
+              border: 'none',
+              padding: 0,
             }}
           >
             <span style={{
@@ -441,7 +438,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             >
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </div>
+          </button>
 
           {/* Watch our video link with hover preview */}
           <div
@@ -600,7 +597,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           <div
             style={{ position: 'relative', display: 'flex' }}
           >
-            <div
+            <button
               onClick={() => setIsDownloadModalOpen(true)}
               onMouseEnter={handlePdfHoverEnter}
               onMouseLeave={handlePdfHoverLeave}
@@ -610,6 +607,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
                 gap: `${getScaledValue(6)}px`,
                 cursor: 'pointer',
                 textDecoration: 'none',
+                background: 'none',
+                border: 'none',
+                padding: 0,
               }}
             >
               <span style={{
@@ -636,7 +636,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               >
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
-            </div>
+            </button>
 
             {/* PDF preview popup - positioned to the right */}
             {!isMobile && (
@@ -704,7 +704,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           </div>
 
           {/* Request Pitch Deck link */}
-          <div
+          <button
             onClick={() => setIsSignupModalOpen(true)}
             onMouseEnter={() => setIsPitchHovered(true)}
             onMouseLeave={() => setIsPitchHovered(false)}
@@ -714,6 +714,9 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               gap: `${getScaledValue(6)}px`,
               cursor: 'pointer',
               textDecoration: 'none',
+              background: 'none',
+              border: 'none',
+              padding: 0,
             }}
           >
             <span style={{
@@ -722,7 +725,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
               fontWeight: 500,
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
-              width: isMobile ? '150px' : `${getScaledValue(165)}px`,
+              whiteSpace: 'nowrap',
             }}>Request Pitch Deck</span>
             <svg
               width={isMobile ? 16 : getScaledValue(18)}
@@ -740,7 +743,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
             >
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </div>
+          </button>
         </div>
 
         <div style={{ marginTop: `${getScaledValue(10)}px`, paddingTop: `${getScaledValue(10)}px`, position: 'relative' }}>
@@ -797,7 +800,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               lineHeight: 1.6,
             }}
           >
-            Talk to Sena and it figures out which agent handles what. You never need to know what's running behind the scenes. Just say what you need.
+            Talk to Sena and it figures out which agent handles what. You never need to know what&apos;s running behind the scenes. Just say what you need.
           </p>
           <div className="h-px bg-gray-400/40 w-full" style={{ marginTop: `${getScaledValue(7)}px` }}></div>
           <div className="flex items-center justify-between" style={{ paddingTop: `${getScaledValue(7)}px` }}>
@@ -849,7 +852,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 9999,
+            zIndex: 200,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

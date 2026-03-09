@@ -12,24 +12,6 @@ const EXTRA_HOLD_DISTANCE = 50; // Minimal hold to ensure animations complete, t
 type ExpandedCard = "left" | "center" | "right" | null;
 
 export default function IntroSection() {
-  // Add keyframe animation for content
-  if (typeof document !== 'undefined' && !document.getElementById('intro-animations')) {
-    const style = document.createElement('style');
-    style.id = 'intro-animations';
-    style.textContent = `
-      @keyframes slideInContent {
-        0% {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    `;
-    document.head.appendChild(style);
-  }
   const sectionRef = useRef<HTMLElement | null>(null);
   const contentScrollRef = useRef<HTMLDivElement | null>(null);
   const detailScrollRef = useRef<HTMLDivElement | null>(null);
@@ -205,9 +187,22 @@ export default function IntroSection() {
       setSplitProgress(actualSplitProgress);
     };
 
+    let rafId: number | null = null;
+    const throttledScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          handleScroll();
+          rafId = null;
+        });
+      }
+    };
+
     handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", throttledScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", throttledScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, [animationLocked, viewportWidth, expandedCard]);
 
   // Responsive scaling: scale down aggressively for low heights, scale up for tall screens
@@ -268,16 +263,10 @@ export default function IntroSection() {
   const currentHeight =
     viewportHeight === 0 ? (viewportWidth < 768 ? "100vh" : "92vh") : `${currentHeightValue}px`;
 
-  const clamp01 = (n: number) => Math.min(Math.max(n, 0), 1);
   const responsiveBorderRadius = getResponsiveValue(32) + scrollProgress * getResponsiveValue(16);
   // On mobile, no border radius for full-screen effect
   const borderRadius = viewportWidth < 768 ? 0 : responsiveBorderRadius;
   const contentOpacity = Math.max(0, 1 - scrollProgress * 1.2);
-  const elevation =
-    scrollProgress < 1
-      ? "0 20px 60px -12px rgba(0, 0, 0, 0.15)"
-      : "0 12px 32px -10px rgba(0, 0, 0, 0.12)";
-
   // On mobile, use normal height instead of extended scrolling height
   const sectionHeight = viewportWidth < 768
     ? 'auto'
@@ -438,7 +427,7 @@ export default function IntroSection() {
                   left: `${currentPadding}px`,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  zIndex: 1000,
+                  zIndex: 50,
                   width: '48px',
                   height: '48px',
                   borderRadius: '50%',
@@ -593,17 +582,13 @@ export default function IntroSection() {
               currentWidthValue={currentWidthValue}
               cardGap={cardGap}
               borderRadius={borderRadius}
-              elevation={elevation}
               splitProgress={splitProgress}
               rotateProgress={rotateProgress}
               position="left"
               imageOffset={0}
               videoSrc="/videos/card1.mp4"
-              videoBg="bg-[#f6efe4]"
-              videoPosition="center 40%"
               cardNumber={1}
               cardTitle="Build"
-              cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "left" ? null : "left")}
             />
@@ -613,17 +598,13 @@ export default function IntroSection() {
               currentWidthValue={currentWidthValue}
               cardGap={cardGap}
               borderRadius={borderRadius}
-              elevation={elevation}
               splitProgress={splitProgress}
               rotateProgress={rotateProgress}
               position="center"
               imageOffset={-baseCardWidth}
               videoSrc="/videos/card3.mp4"
-              videoBg="bg-[#f5f2e9]"
-              videoPosition="center 45%"
               cardNumber={2}
               cardTitle="Run"
-              cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "center" ? null : "center")}
             />
@@ -633,17 +614,13 @@ export default function IntroSection() {
               currentWidthValue={currentWidthValue}
               cardGap={cardGap}
               borderRadius={borderRadius}
-              elevation={elevation}
               splitProgress={splitProgress}
               rotateProgress={rotateProgress}
               position="right"
               imageOffset={-baseCardWidth * 2}
               videoSrc="/videos/card2.mp4"
-              videoBg="bg-[#f6f2fb]"
-              videoPosition="center 80%"
               cardNumber={3}
               cardTitle="Share"
-              cardDescription=""
               expandedCard={expandedCard}
               onCardClick={() => setExpandedCard(expandedCard === "right" ? null : "right")}
             />
@@ -720,7 +697,7 @@ export default function IntroSection() {
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Everything you need to build AI agents, all in one place. No coding, no consultants, no months of waiting. Go completely hands-off or take infinite control. Four ways to get started, whether you're building for your company, a client, or yourself.
+                        Everything you need to build AI agents, all in one place. No coding, no consultants, no months of waiting. Go completely hands-off or take infinite control. Four ways to get started, whether you&apos;re building for your company, a client, or yourself.
                       </p>
 
                       <div className="space-y-4">
@@ -731,7 +708,7 @@ export default function IntroSection() {
                             </svg>
                             Registry
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Browse and install from a library of ready-made components. Agents, tools, skills, triggers, and more. Pick what fits, install it, and you're running.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Browse and install from a library of ready-made components. Agents, tools, skills, triggers, and more. Pick what fits, install it, and you&apos;re running.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#4682A0] mt-0.5">→</span>
@@ -839,7 +816,7 @@ export default function IntroSection() {
                         </h2>
                       </div>
                       <p className="text-gray-700 mb-5 leading-relaxed text-base">
-                        Not demos. Agents that handle economically useful workloads inside your ERP. Real documents, real tasks, real coordination. Multiple agents working together across your business, with full control over what they can and can't do.
+                        Not demos. Agents that handle economically useful workloads inside your ERP. Real documents, real tasks, real coordination. Multiple agents working together across your business, with full control over what they can and can&apos;t do.
                       </p>
 
                       <div className="space-y-4">
@@ -898,7 +875,7 @@ export default function IntroSection() {
                             </svg>
                             Triggers
                           </h4>
-                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Agents wake up on their own. Scheduled jobs, document events, inbound messages, or manual requests. Your agents respond to what's happening in your business in real time.</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">Agents wake up on their own. Scheduled jobs, document events, inbound messages, or manual requests. Your agents respond to what&apos;s happening in your business in real time.</p>
                           <ul className="space-y-1 text-xs text-gray-600">
                             <li className="flex items-start gap-2">
                               <span className="text-[#826496] mt-0.5">→</span>

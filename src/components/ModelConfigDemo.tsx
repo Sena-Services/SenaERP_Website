@@ -181,6 +181,8 @@ export default function ModelConfigDemo() {
       className="h-full flex flex-col font-futura"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
     >
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
@@ -296,18 +298,24 @@ export default function ModelConfigDemo() {
           </div>
 
           {/* Footer dots */}
-          <div className="flex items-center justify-center gap-1 py-1" style={{ borderTop: '1px solid rgba(0,0,0,0.03)' }}>
+          <div className="flex items-center justify-center gap-0 py-1" style={{ borderTop: '1px solid rgba(0,0,0,0.03)' }}>
             {MODELS.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
-                className="rounded-full transition-all duration-300"
-                style={{
-                  width: i === idx ? 14 : 4,
-                  height: 4,
-                  background: i === idx ? '#8FB7C5' : 'rgba(0, 0, 0, 0.10)',
-                }}
-              />
+                aria-label={`Go to model ${i + 1}: ${MODELS[i].name}`}
+                className="relative flex items-center justify-center transition-all duration-300"
+                style={{ width: '24px', height: '24px', background: 'transparent', border: 'none', padding: 0 }}
+              >
+                <span
+                  className="block rounded-full transition-all duration-300"
+                  style={{
+                    width: i === idx ? 14 : 4,
+                    height: 4,
+                    background: i === idx ? '#8FB7C5' : 'rgba(0, 0, 0, 0.10)',
+                  }}
+                />
+              </button>
             ))}
           </div>
         </motion.div>

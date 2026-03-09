@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import DOMPurify from "dompurify";
 import { getApiUrl, API_CONFIG } from "@/lib/config";
 import NavBar from "@/components/NavBar";
 import Link from "next/link";
@@ -74,8 +75,7 @@ export default function BlogArticlePage() {
         if (blogsResult.message?.success && blogsResult.message?.data) {
           setAllBlogs(blogsResult.message.data);
         }
-      } catch (err) {
-        console.error("Error fetching blog data:", err);
+      } catch {
         setError("Failed to load blog post");
       } finally {
         setLoading(false);
@@ -146,13 +146,6 @@ export default function BlogArticlePage() {
       </>
     );
   }
-
-  // Determine if attachment is a video
-  // const isVideo = article.attachment
-  //   ? [".mp4", ".webm", ".ogg", ".mov"].some((ext) =>
-  //       article.attachment!.toLowerCase().endsWith(ext)
-  //     )
-  //   : false;
 
   return (
     <>
@@ -273,7 +266,7 @@ export default function BlogArticlePage() {
                 {article.content && (
                   <div
                     className="prose prose-sm sm:prose-lg max-w-none font-space-grotesk blog-content"
-                    dangerouslySetInnerHTML={{ __html: article.content }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
                   />
                 )}
               </div>
