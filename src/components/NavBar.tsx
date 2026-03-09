@@ -561,7 +561,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 letterSpacing: '0.01em',
               }}
             >
-              Sena is now generally available —{' '}
+              Sena Beta is now generally available —{' '}
               <span className="underline font-semibold">Get access →</span>
             </button>
             <button

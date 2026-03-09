@@ -232,7 +232,8 @@ export default function IntroSection() {
 
   // Match BuilderTabbed and other components: min(1280px, calc(100vw - 320px))
   const maxContainerWidth = 1280;
-  const viewportPadding = 320; // Matching Builder's calc(100vw - 320px)
+  // Reduce side padding on smaller screens so cards get enough width
+  const viewportPadding = viewportWidth < 900 ? 80 : viewportWidth < 1100 ? 160 : 320;
 
   // Calculate Builder's responsive padding value
   const builderPadding = Math.max(16, Math.min(32, viewportWidth * 0.02));

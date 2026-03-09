@@ -8,34 +8,34 @@ import Image from "next/image";
 // As height decreases, sacrifice MORE video to show ALL content
 // As height increases past 740px, increase video ratio so content doesn't get too big
 const getVideoHeightPercentage = () => {
-  if (typeof window === 'undefined') return 50;
+  if (typeof window === 'undefined') return 45;
   const height = window.innerHeight;
 
-  // Very short screens (< 600px): 45% video, 55% content - prioritize showing all content
-  if (height < 600) return 45;
+  // Very short screens (< 600px): 38% video, 62% content - prioritize showing all content
+  if (height < 600) return 38;
 
-  // Short screens (600-680px): gradually increase from 45% to 50%
+  // Short screens (600-680px): gradually increase from 38% to 42%
   if (height < 680) {
-    return 45 + ((height - 600) / (680 - 600)) * 5;
+    return 38 + ((height - 600) / (680 - 600)) * 4;
   }
 
-  // Medium-short screens (680-740px): gradually increase from 50% to 55%
+  // Medium-short screens (680-740px): gradually increase from 42% to 45%
   if (height < 740) {
-    return 50 + ((height - 680) / (740 - 680)) * 5;
+    return 42 + ((height - 680) / (740 - 680)) * 3;
   }
 
-  // Medium screens (740-900px): gradually increase from 55% to 60%
+  // Medium screens (740-900px): gradually increase from 45% to 50%
   if (height < 900) {
-    return 55 + ((height - 740) / (900 - 740)) * 5;
+    return 45 + ((height - 740) / (900 - 740)) * 5;
   }
 
-  // Large screens (900-1200px): gradually increase from 60% to 65%
+  // Large screens (900-1200px): gradually increase from 50% to 58%
   if (height < 1200) {
-    return 60 + ((height - 900) / (1200 - 900)) * 5;
+    return 50 + ((height - 900) / (1200 - 900)) * 8;
   }
 
-  // Very tall screens (1200px+): 65% video, 35% content - more content space
-  return 65;
+  // Very tall screens (1200px+): 58% video, 42% content
+  return 58;
 };
 
 // Get card-specific color based on position - refined earthy palette with more richness
@@ -479,8 +479,8 @@ export default function FlipCard({
             )}
           </p>
 
-          {/* Feature highlights - matte style, no scrolling, fill remaining space */}
-          <div className="space-y-1.5 sm:space-y-2 relative z-10 flex-1 overflow-hidden">
+          {/* Feature highlights - matte style, fill remaining space */}
+          <div className="space-y-1 sm:space-y-1.5 relative z-10 flex-1 min-h-0">
             {position === "left" && (
               <>
                 <div className="flex items-center gap-2">

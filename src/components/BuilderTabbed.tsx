@@ -1131,10 +1131,11 @@ export default function BuilderTabbed() {
         </div>
 
         {/* Desktop White Container with Tabs and Content */}
-        <div className="hidden md:block bg-white rounded-[2rem] overflow-hidden relative" style={{
+        <div className="hidden md:flex md:flex-col bg-white rounded-[2rem] overflow-hidden relative" style={{
           border: '2px solid #9CA3AF',
           boxShadow: '0 12px 40px -8px rgba(139, 119, 89, 0.12), 0 4px 16px -4px rgba(139, 119, 89, 0.08)',
-          zIndex: 10
+          zIndex: 10,
+          minHeight: 'clamp(520px, 65vh, 780px)',
         }}>
           {/* Tabs at Top with Description - All in same container */}
           <div className="bg-sena-cream/50 px-3 pt-3 pb-3 border-b border-gray-200">
@@ -1162,24 +1163,22 @@ export default function BuilderTabbed() {
                   whileTap={{ scale: 0.99 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                  <div className="relative z-10 flex items-start gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div
-                        className={`font-futura font-bold text-sm mb-1 ${
-                          activeTab.id === tab.id ? "text-white" : "text-[#6B7280]"
-                        }`}
-                        style={{ letterSpacing: "-0.02em" }}
-                      >
-                        {tab.label}
-                      </div>
-                      <div
-                        className={`text-xs font-futura ${
-                          activeTab.id === tab.id ? "text-white/80" : "text-[#9CA3AF]"
-                        }`}
-                        style={{ letterSpacing: "-0.01em" }}
-                      >
-                        {tab.subtitle}
-                      </div>
+                  <div className="relative z-10 flex flex-col justify-between h-full">
+                    <div
+                      className={`font-futura font-bold text-sm ${
+                        activeTab.id === tab.id ? "text-white" : "text-[#6B7280]"
+                      }`}
+                      style={{ letterSpacing: "-0.02em" }}
+                    >
+                      {tab.label}
+                    </div>
+                    <div
+                      className={`text-xs font-futura mt-auto ${
+                        activeTab.id === tab.id ? "text-white/80" : "text-[#9CA3AF]"
+                      }`}
+                      style={{ letterSpacing: "-0.01em" }}
+                    >
+                      {tab.subtitle}
                     </div>
                   </div>
                 </motion.button>
@@ -1381,16 +1380,16 @@ export default function BuilderTabbed() {
 
           {/* Content Area - Split layout: description left, animation right */}
           <div
-            className="h-[380px] xl:h-[420px] 2xl:h-[460px] overflow-hidden relative"
+            className="flex-1 overflow-hidden relative"
             style={{
               backgroundColor: '#FAFAF8'
             }}
           >
-              <div className="px-6 py-4 h-full overflow-y-auto">
+              <div className="px-6 py-3 h-full overflow-hidden">
                 {activeTab.id === 'models' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
                     {/* Left: Compact info */}
-                    <div className="space-y-3">
+                    <div className="flex flex-col justify-between h-full">
                       {/* Header */}
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Models</h3>
@@ -1479,7 +1478,7 @@ export default function BuilderTabbed() {
 
                 {activeTab.id === 'tools' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    <div className="space-y-3">
+                    <div className="flex flex-col justify-between h-full">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Tools</h3>
                         <p className="text-sm text-gray-600 leading-snug font-futura">
@@ -1554,7 +1553,7 @@ export default function BuilderTabbed() {
 
                 {activeTab.id === 'skills' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    <div className="space-y-3">
+                    <div className="flex flex-col justify-between h-full">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Skills</h3>
                         <p className="text-sm text-gray-600 leading-snug font-futura">
@@ -1629,7 +1628,7 @@ export default function BuilderTabbed() {
 
                 {activeTab.id === 'triggers' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    <div className="space-y-3">
+                    <div className="flex flex-col justify-between h-full">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Triggers</h3>
                         <p className="text-sm text-gray-600 leading-snug font-futura">
@@ -1704,7 +1703,7 @@ export default function BuilderTabbed() {
 
                 {activeTab.id === 'ui' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    <div className="space-y-3">
+                    <div className="flex flex-col justify-between h-full">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">UI</h3>
                         <p className="text-sm text-gray-600 leading-snug font-futura">
@@ -1779,7 +1778,7 @@ export default function BuilderTabbed() {
 
                 {activeTab.id === 'logic' && (
                   <div className="grid grid-cols-[1fr_1.2fr] gap-4 h-full">
-                    <div className="space-y-3">
+                    <div className="flex flex-col justify-between h-full">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1 font-futura">Logic</h3>
                         <p className="text-sm text-gray-600 leading-snug font-futura">

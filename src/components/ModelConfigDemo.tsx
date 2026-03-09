@@ -200,43 +200,43 @@ export default function ModelConfigDemo() {
         >
           {/* Header */}
           <div
-            className="flex items-center gap-2.5 px-4 py-2"
+            className="flex items-center gap-2 px-3 py-1"
             style={{ background: '#F5F1E8', borderBottom: '1px solid rgba(0, 0, 0, 0.05)' }}
           >
-            <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'rgba(143, 183, 197, 0.18)' }}>
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="#5B8A8A" strokeWidth={2}>
+            <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: 'rgba(143, 183, 197, 0.18)' }}>
+              <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="#5B8A8A" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <span className="font-bold text-[#2C1810] truncate block" style={{ fontSize: '13px', letterSpacing: '-0.01em' }}>
+              <span className="font-bold text-[#2C1810] truncate" style={{ fontSize: '10px', letterSpacing: '-0.01em' }}>
                 {m.name}
               </span>
-              <span className="text-[#94A3B8]" style={{ fontSize: '10px' }}>{m.provider}</span>
+              <span className="text-[#94A3B8] ml-1.5" style={{ fontSize: '8px' }}>{m.provider}</span>
             </div>
-            <span className="text-[#B0ADA6] tabular-nums" style={{ fontSize: '10px' }}>
+            <span className="text-[#B0ADA6] tabular-nums" style={{ fontSize: '8px' }}>
               {idx + 1} / {MODELS.length}
             </span>
           </div>
 
-          {/* Body - scrollable dense content */}
-          <div className="flex-1 px-4 py-2 flex flex-col gap-1.5 overflow-y-auto">
+          {/* Body - dense content, fills available space */}
+          <div className="flex-1 px-3 py-2 flex flex-col justify-between overflow-hidden min-h-0">
             {/* Description */}
-            <p className="text-[#64748B] leading-snug" style={{ fontSize: '11px' }}>
+            <p className="text-[#64748B] leading-tight" style={{ fontSize: '10px' }}>
               {m.desc}
             </p>
 
             {/* Capabilities */}
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-0.5">
               {m.caps.map((c) => (
-                <span key={c} className="px-1.5 py-0.5 rounded font-medium" style={{ fontSize: '8.5px', color: '#64748B', background: 'rgba(0,0,0,0.035)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                <span key={c} className="px-1 py-px rounded font-medium" style={{ fontSize: '7.5px', color: '#64748B', background: 'rgba(0,0,0,0.035)', border: '1px solid rgba(0,0,0,0.05)' }}>
                   {c}
                 </span>
               ))}
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-4 gap-x-3">
+            <div className="grid grid-cols-4 gap-x-2">
               <Stat label="Context" value={fmt(m.ctx)} />
               <Stat label="Max Output" value={fmt(m.out)} />
               <Stat label="Price/1M" value={m.price} small />
@@ -246,7 +246,7 @@ export default function ModelConfigDemo() {
             <div style={{ borderTop: '1px solid rgba(0,0,0,0.04)' }} />
 
             {/* Defaults */}
-            <div className="grid grid-cols-3 gap-x-4 gap-y-0.5">
+            <div className="grid grid-cols-3 gap-x-3 gap-y-0">
               <KV label="Temperature" value={m.temp.toFixed(2)} />
               <KV label="Max Turns" value={String(m.turns)} />
               <KV label="Think Mode" value={m.think} />
@@ -259,12 +259,12 @@ export default function ModelConfigDemo() {
 
             {/* Benchmarks */}
             <div>
-              <div className="uppercase font-bold text-[#B0ADA6] mb-1" style={{ fontSize: '7.5px', letterSpacing: '0.06em' }}>Benchmarks</div>
-              <div className="flex gap-3">
+              <div className="uppercase font-bold text-[#B0ADA6] mb-0.5" style={{ fontSize: '7px', letterSpacing: '0.06em' }}>Benchmarks</div>
+              <div className="flex gap-2">
                 {m.benchmarks.map((b) => (
                   <div key={b.name} className="flex-1">
-                    <div className="text-[#94A3B8]" style={{ fontSize: '8.5px' }}>{b.name}</div>
-                    <div className="font-bold text-[#2C1810]" style={{ fontSize: '12px', fontVariantNumeric: 'tabular-nums' }}>{b.score}</div>
+                    <div className="text-[#94A3B8]" style={{ fontSize: '7.5px' }}>{b.name}</div>
+                    <div className="font-bold text-[#2C1810]" style={{ fontSize: '11px', fontVariantNumeric: 'tabular-nums' }}>{b.score}</div>
                   </div>
                 ))}
               </div>
@@ -273,20 +273,20 @@ export default function ModelConfigDemo() {
             <div style={{ borderTop: '1px solid rgba(0,0,0,0.04)' }} />
 
             {/* Best For + Features side by side */}
-            <div className="grid grid-cols-2 gap-x-4">
+            <div className="grid grid-cols-2 gap-x-3">
               <div>
-                <div className="uppercase font-bold text-[#B0ADA6] mb-0.5" style={{ fontSize: '7.5px', letterSpacing: '0.06em' }}>Best For</div>
+                <div className="uppercase font-bold text-[#B0ADA6] mb-0" style={{ fontSize: '7px', letterSpacing: '0.06em' }}>Best For</div>
                 {m.bestFor.map((b) => (
-                  <div key={b} className="flex items-center gap-1" style={{ fontSize: '10px', color: '#64748B', lineHeight: '16px' }}>
+                  <div key={b} className="flex items-center gap-1" style={{ fontSize: '9px', color: '#64748B', lineHeight: '13px' }}>
                     <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: '#8FB7C5' }} />
                     {b}
                   </div>
                 ))}
               </div>
               <div>
-                <div className="uppercase font-bold text-[#B0ADA6] mb-0.5" style={{ fontSize: '7.5px', letterSpacing: '0.06em' }}>Key Features</div>
+                <div className="uppercase font-bold text-[#B0ADA6] mb-0" style={{ fontSize: '7px', letterSpacing: '0.06em' }}>Key Features</div>
                 {m.features.map((f) => (
-                  <div key={f} className="flex items-center gap-1" style={{ fontSize: '10px', color: '#64748B', lineHeight: '16px' }}>
+                  <div key={f} className="flex items-center gap-1" style={{ fontSize: '9px', color: '#64748B', lineHeight: '13px' }}>
                     <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: '#10B981' }} />
                     {f}
                   </div>
@@ -296,7 +296,7 @@ export default function ModelConfigDemo() {
           </div>
 
           {/* Footer dots */}
-          <div className="flex items-center justify-center gap-1 py-1.5" style={{ borderTop: '1px solid rgba(0,0,0,0.03)' }}>
+          <div className="flex items-center justify-center gap-1 py-1" style={{ borderTop: '1px solid rgba(0,0,0,0.03)' }}>
             {MODELS.map((_, i) => (
               <button
                 key={i}
@@ -319,17 +319,17 @@ export default function ModelConfigDemo() {
 function Stat({ label, value, small }: { label: string; value: string; small?: boolean }) {
   return (
     <div>
-      <div className="uppercase font-bold text-[#B0ADA6]" style={{ fontSize: '7.5px', letterSpacing: '0.06em', lineHeight: 1 }}>{label}</div>
-      <div className="font-semibold text-[#2C1810] mt-0.5 truncate" style={{ fontSize: small ? '10px' : '13px', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{value}</div>
+      <div className="uppercase font-bold text-[#B0ADA6]" style={{ fontSize: '7px', letterSpacing: '0.06em', lineHeight: 1 }}>{label}</div>
+      <div className="font-semibold text-[#2C1810] mt-px truncate" style={{ fontSize: small ? '9px' : '11px', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{value}</div>
     </div>
   );
 }
 
 function KV({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between" style={{ borderBottom: '1px solid rgba(0,0,0,0.025)', paddingBottom: '1px' }}>
-      <span className="text-[#94A3B8] font-medium truncate" style={{ fontSize: '9.5px' }}>{label}</span>
-      <span className="font-semibold text-[#2C1810] ml-1 truncate" style={{ fontSize: '9.5px', fontVariantNumeric: 'tabular-nums' }}>{value}</span>
+    <div className="flex items-center justify-between" style={{ borderBottom: '1px solid rgba(0,0,0,0.025)', paddingBottom: '0px' }}>
+      <span className="text-[#94A3B8] font-medium truncate" style={{ fontSize: '8.5px' }}>{label}</span>
+      <span className="font-semibold text-[#2C1810] ml-1 truncate" style={{ fontSize: '8.5px', fontVariantNumeric: 'tabular-nums' }}>{value}</span>
     </div>
   );
 }

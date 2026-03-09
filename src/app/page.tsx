@@ -5,9 +5,9 @@ import { useSearchParams } from "next/navigation";
 import IntroSection from "@/components/IntroSection";
 import MobileHowItWorks from "@/components/MobileHowItWorks";
 import BuilderTabbed from "@/components/BuilderTabbed";
+import ContractsSection from "@/components/ContractsSection";
 import LandingRegistry from "@/components/LandingRegistry";
-import IntegrationsSection from "@/components/IntegrationsSection";
-import BlogSection from "@/components/BlogSection";
+// import BlogSection from "@/components/BlogSection";
 import JoinUsSection from "@/components/JoinUsSection";
 import CoFoundersSection from "@/components/CoFoundersSection";
 import GetAccessSection from "@/components/GetAccessSection";
@@ -19,9 +19,7 @@ function HomeContent() {
   const searchParams = useSearchParams();
   const introRef = useRef<HTMLDivElement>(null);
   const registryRef = useRef<HTMLElement>(null);
-  const integrationsRef = useRef<HTMLElement>(null);
   const builderRef = useRef<HTMLDivElement>(null);
-  const blogRef = useRef<HTMLElement>(null);
   const getAccessRef = useRef<HTMLElement>(null);
   const cofoundersRef = useRef<HTMLElement>(null);
   const joinUsRef = useRef<HTMLElement>(null);
@@ -30,10 +28,8 @@ function HomeContent() {
     { id: "intro", label: "Home" },
     { id: "how-it-works", label: "How it works" },
     { id: "builder", label: "Builder" },
-    { id: "integrations", label: "Integrations" },
     { id: "registry", label: "Registry" },
     { id: "get-access", label: "Get Access" },
-    { id: "blog", label: "Blog" },
     { id: "cofounders", label: "CoFounders" },
     { id: "join-us", label: "Join Our Team" },
   ];
@@ -53,7 +49,7 @@ function HomeContent() {
     }
   }, [searchParams]);
 
-  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'integrations' | 'registry' | 'blog' | 'get-access' | 'cofounders' | 'join-us' | 'other'>('other');
+  const [currentSection, setCurrentSection] = useState<'how-it-works' | 'builder' | 'registry' | 'get-access' | 'cofounders' | 'join-us' | 'other'>('other');
 
   useEffect(() => {
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
@@ -82,9 +78,7 @@ function HomeContent() {
         // Detect which section we're in based on scroll position
         const howItWorksEl = document.getElementById('how-it-works');
         const builderEl = document.getElementById('builder');
-        const integrationsEl = document.getElementById('integrations');
         const registryEl = document.getElementById('registry');
-        const blogEl = document.getElementById('blog');
         const getAccessEl = document.getElementById('get-access');
         const cofoundersEl = document.getElementById('cofounders');
         const joinUsEl = document.getElementById('join-us');
@@ -93,10 +87,8 @@ function HomeContent() {
         const sections = [
           { id: 'join-us', el: joinUsEl },
           { id: 'cofounders', el: cofoundersEl },
-          { id: 'blog', el: blogEl },
           { id: 'get-access', el: getAccessEl },
           { id: 'registry', el: registryEl },
-          { id: 'integrations', el: integrationsEl },
           { id: 'builder', el: builderEl },
           { id: 'how-it-works', el: howItWorksEl },
         ];
@@ -662,9 +654,7 @@ function HomeContent() {
           <NavBar
             showHowItWorks={currentSection === 'how-it-works'}
             showBuilder={currentSection === 'builder'}
-            showIntegrations={currentSection === 'integrations'}
             showRegistry={currentSection === 'registry'}
-            showBlog={currentSection === 'blog'}
             showCoFounders={currentSection === 'cofounders'}
             showJoinUs={currentSection === 'join-us'}
           />
@@ -725,9 +715,9 @@ function HomeContent() {
               </div>
             </div>
 
-            {/* Integrations - Color 1 */}
-            <div id="integrations" style={{ backgroundColor: '#F5F1E8' }}>
-              <IntegrationsSection ref={integrationsRef} />
+            {/* Contracts - Color 1 */}
+            <div style={{ backgroundColor: '#F5F1E8' }}>
+              <ContractsSection />
             </div>
 
             {/* Section Divider & Color Transition */}
@@ -789,9 +779,9 @@ function HomeContent() {
             </div>
           </div>
 
-          {/* Blog - Color 2 */}
-          <div id="blog" style={{ backgroundColor: '#EDE7DC' }}>
-            <BlogSection ref={blogRef} />
+          {/* CoFounders - Color 2 */}
+          <div id="cofounders" style={{ backgroundColor: '#EDE7DC' }}>
+            <CoFoundersSection ref={cofoundersRef} />
           </div>
 
           {/* Section Divider & Color Transition */}
@@ -810,29 +800,8 @@ function HomeContent() {
             </div>
           </div>
 
-          {/* CoFounders - Color 1 */}
-          <div id="cofounders" style={{ backgroundColor: '#F5F1E8' }}>
-            <CoFoundersSection ref={cofoundersRef} />
-          </div>
-
-          {/* Section Divider & Color Transition */}
-          <div className="w-full" style={{
-            background: `linear-gradient(to bottom, #F5F1E8 0%, #F5F1E8 50%, #EDE7DC 50%, #EDE7DC 100%)`,
-            paddingTop: '8px',
-            paddingBottom: '8px'
-          }}>
-            <div className="relative flex items-center justify-center">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300/40"></div>
-              </div>
-              <div className="relative px-4">
-                <div className="w-2 h-2 rounded-full bg-sena-blue/20"></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Join Us - Color 2 */}
-          <div id="join-us" style={{ backgroundColor: '#EDE7DC' }}>
+          {/* Join Us - Color 1 */}
+          <div id="join-us" style={{ backgroundColor: '#F5F1E8' }}>
             <JoinUsSection ref={joinUsRef} />
           </div>
         </div>

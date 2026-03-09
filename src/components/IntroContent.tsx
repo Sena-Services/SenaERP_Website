@@ -19,6 +19,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
   const [isContentAtBottom, setIsContentAtBottom] = useState(false);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
 
+  const [isLaunchNotesHovered, setIsLaunchNotesHovered] = useState(false);
   const [isPitchHovered, setIsPitchHovered] = useState(false);
   const [isPdfHovered, setIsPdfHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
@@ -403,6 +404,45 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           flexDirection: 'column',
           gap: `${getScaledValue(10)}px`,
         }}>
+          {/* Launch notes link */}
+          <div
+            onClick={() => window.location.href = '/v01-beta'}
+            onMouseEnter={() => setIsLaunchNotesHovered(true)}
+            onMouseLeave={() => setIsLaunchNotesHovered(false)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: `${getScaledValue(6)}px`,
+              cursor: 'pointer',
+              textDecoration: 'none',
+            }}
+          >
+            <span style={{
+              fontFamily: "Georgia, serif",
+              color: isMobile ? "#5a4938" : "#7a5f3a",
+              fontSize: isMobile ? '0.85rem' : `${getScaledValue(16)}px`,
+              fontWeight: 500,
+              textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1)' : '0 0 12px rgba(194, 160, 100, 0.4), 0 0 4px rgba(194, 160, 100, 0.2)',
+              whiteSpace: 'nowrap',
+            }}>Read our v0.1 Beta launch notes</span>
+            <svg
+              width={isMobile ? 16 : getScaledValue(18)}
+              height={isMobile ? 16 : getScaledValue(18)}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={isMobile ? "#5a4938" : "#7a5f3a"}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                transform: isLaunchNotesHovered ? 'translateX(3px)' : 'translateX(0)',
+                transition: 'transform 0.2s ease',
+              }}
+            >
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+
           {/* Watch our video link with hover preview */}
           <div
             style={{ position: 'relative', display: 'flex' }}
