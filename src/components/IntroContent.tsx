@@ -390,23 +390,19 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
               textShadow: isMobile ? '0 2px 6px rgba(255, 255, 255, 1), 0 1px 4px rgba(255, 255, 255, 0.85)' : undefined,
             }}><strong>Share</strong> : Publish your agents, tools, and skills to the Registry, a marketplace where creators earn from their work. Build a great agent, and everyone who installs it pays you.</p>
           </div>
-        </div>
-
-        {/* Decorative fading line — right-aligned after pillars */}
-        <div style={{ position: 'relative', marginTop: `${getScaledValue(10)}px`, height: '1px' }}>
+          {/* Decorative fading line — right-aligned at bottom of pillars */}
           <div style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
             width: isMobile ? '100px' : `${getScaledValue(200)}px`,
             height: '1px',
             background: 'linear-gradient(to left, rgba(139, 115, 85, 0.6), transparent)',
+            marginLeft: 'auto',
+            marginTop: `${getScaledValue(6)}px`,
           }} />
         </div>
 
         {/* Links section - aligned */}
         <div style={{
-          marginTop: `${getScaledValue(12)}px`,
+          marginTop: `-${getScaledValue(4)}px`,
           display: 'flex',
           flexDirection: 'column',
           gap: `${getScaledValue(10)}px`,
