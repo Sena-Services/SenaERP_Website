@@ -36,6 +36,11 @@ export const API_CONFIG = {
     VERIFY_EMAIL: '/api/method/senaerp_platform.api.waitlist.verify_email',
     RESEND_VERIFICATION: '/api/method/senaerp_platform.api.waitlist.resend_verification',
     GET_ACTIVE_OPENINGS: '/api/method/senaerp_platform.api.careers.get_active_openings',
+    // Billing
+    GET_BILLING_OVERVIEW: '/api/method/senaerp_platform.api.billing.get_billing_overview',
+    GET_CREDIT_STATUS: '/api/method/senaerp_platform.api.billing.get_credit_status',
+    REFRESH_CREDIT_STATUS: '/api/method/senaerp_platform.api.billing.refresh_credit_status',
+    GET_CREDIT_HISTORY: '/api/method/senaerp_platform.api.billing.get_credit_history',
   }
 } as const;
 
