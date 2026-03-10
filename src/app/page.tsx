@@ -109,7 +109,7 @@ function HomeContent() {
         </div>
       )}
 
-      <div ref={introRef} className="relative">
+      <div ref={introRef} className="relative" style={{ zIndex: 20 }}>
         <IntroSection />
       </div>
 

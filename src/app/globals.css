@@ -489,6 +489,33 @@ body {
   animation: slideDown 0.3s ease-out;
 }
 
+/* Global scrollbar — thumb only, no track, always visible */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(44, 24, 16, 0.18) transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(44, 24, 16, 0.18);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(44, 24, 16, 0.32);
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* Hide scrollbar utility */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

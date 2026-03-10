@@ -392,6 +392,18 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           </div>
         </div>
 
+        {/* Decorative fading line — right-aligned after pillars */}
+        <div style={{ position: 'relative', marginTop: `${getScaledValue(10)}px`, height: '1px' }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: isMobile ? '100px' : `${getScaledValue(200)}px`,
+            height: '1px',
+            background: 'linear-gradient(to left, rgba(139, 115, 85, 0.6), transparent)',
+          }} />
+        </div>
+
         {/* Links section - aligned */}
         <div style={{
           marginTop: `${getScaledValue(12)}px`,
@@ -748,16 +760,8 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
           </button>
         </div>
 
-        <div style={{ marginTop: `${getScaledValue(10)}px`, paddingTop: `${getScaledValue(10)}px`, position: 'relative' }}>
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: isMobile ? '100px' : `${getScaledValue(200)}px`,
-            height: '1px',
-            background: 'linear-gradient(to left, rgba(139, 115, 85, 0.6), transparent)'
-          }}></div>
-        </div>
+
+
       </div>
 {/* footer */}
       <div style={{
