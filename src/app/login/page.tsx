@@ -11,7 +11,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#F7F5EF]">
-        <div className="w-8 h-8 border-2 border-[#8FB7C5] border-t-transparent rounded-full animate-spin" />
+        <img src="/sena-logo-pinwheel.png" alt="" style={{ width: "48px", height: "48px", animation: "spin 3s linear infinite" }} />
       </div>
     }>
       <LoginPageContent />

@@ -8,6 +8,8 @@ import MobileHowItWorks from "@/components/MobileHowItWorks";
 import NavBar from "@/components/NavBar";
 import SidebarNav from "@/components/SidebarNav";
 import { useHomeScrollSnap } from "@/hooks/useHomeScrollSnap";
+import { PageTransition } from "@/components/PageTransition";
+
 
 // Lazy-load below-fold sections
 const BuilderTabbed = dynamic(() => import("@/components/BuilderTabbed"), { ssr: false });
@@ -74,6 +76,7 @@ function HomeContent() {
   }, [searchParams]);
 
   return (
+    <PageTransition>
     <main className="relative text-sena-text-primary">
       {/* Base background color layer - at the very back */}
       <div
@@ -92,6 +95,7 @@ function HomeContent() {
           <NavBar
             showHowItWorks={currentSection === 'how-it-works'}
             showBuilder={currentSection === 'builder'}
+            showContracts={currentSection === 'contracts'}
             showRegistry={currentSection === 'registry'}
             showJoinUs={currentSection === 'join-us'}
           />
@@ -260,6 +264,7 @@ function HomeContent() {
         }
       `}</style>
     </main>
+    </PageTransition>
   );
 }
 
@@ -268,7 +273,7 @@ export default function Home() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-sena-cream">
-        <div className="w-8 h-8 border-2 border-sena-blue border-t-transparent rounded-full animate-spin" />
+        <img src="/sena-logo-pinwheel.png" alt="" style={{ width: "48px", height: "48px", animation: "spin 3s linear infinite" }} />
       </div>
     }>
       <HomeContent />

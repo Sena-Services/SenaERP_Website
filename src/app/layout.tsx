@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -29,7 +30,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@400;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased overflow-x-hidden" suppressHydrationWarning={true}>{children}</body>
+      <body className="antialiased overflow-x-hidden" suppressHydrationWarning={true}>
+        <LoadingScreen />
+        {children}
+      </body>
     </html>
   );
 }

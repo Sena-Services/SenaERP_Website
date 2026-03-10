@@ -21,21 +21,20 @@ const GetAccessSection = forwardRef<HTMLElement>(function GetAccessSection(props
       }}
     >
       <div
-        className="mx-auto"
+        className="relative mx-auto"
         style={{
-          maxWidth: isMobile ? "100%" : "min(480px, calc(100vw - 400px))",
-          paddingLeft: isMobile ? "24px" : "0",
-          paddingRight: isMobile ? "24px" : "0",
+          maxWidth: isMobile ? "calc(100vw - 32px)" : "min(480px, calc(100vw - 400px))",
         }}
       >
         <div
           className="text-center"
           style={{
-            background: "rgba(255, 255, 255, 0.5)",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(44, 24, 16, 0.08)",
-            borderRadius: isMobile ? "16px" : "20px",
-            padding: isMobile ? "28px 24px" : "36px 40px",
+            backgroundColor: "#F5F3E8",
+            border: "2px solid #9CA3AF",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            borderRadius: isMobile ? "24px" : "40px",
+            padding: isMobile ? "36px 24px" : "48px 40px",
+            overflow: "hidden",
           }}
         >
           {/* Heading */}
@@ -100,7 +99,7 @@ const GetAccessSection = forwardRef<HTMLElement>(function GetAccessSection(props
           >
             Don&apos;t have an account?{" "}
             <button
-              onClick={handleLogin}
+              onClick={() => window.dispatchEvent(new CustomEvent('openSignupModal', { detail: { view: 'signup' } }))}
               className="underline hover:text-gray-700 transition-colors cursor-pointer"
               style={{ background: "none", border: "none", font: "inherit", color: "inherit" }}
             >

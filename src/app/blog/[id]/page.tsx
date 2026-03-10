@@ -96,12 +96,11 @@ export default function BlogArticlePage() {
         <main className="min-h-screen bg-sena-cream pt-20 sm:pt-16">
           <div className="max-w-4xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-16">
             <div className="flex items-center justify-center py-12 min-h-[300px] sm:min-h-[400px]">
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative w-12 h-12 sm:w-16 sm:h-16">
-                  <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                  <div className="absolute inset-0 border-4 border-sena-orange border-t-transparent rounded-full animate-spin"></div>
-                </div>
-                <p className="text-gray-600 font-space-grotesk text-sm">Loading article...</p>
+              <div className="flex flex-col items-center gap-3">
+                <img src="/sena-logo-pinwheel.png" alt="" style={{ width: "48px", height: "48px", animation: "spin 3s linear infinite" }} />
+                <p className="text-gray-400" style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", fontSize: "13px", letterSpacing: "0.05em" }}>
+                  Loading article...
+                </p>
               </div>
             </div>
           </div>

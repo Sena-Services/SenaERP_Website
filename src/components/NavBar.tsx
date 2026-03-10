@@ -12,18 +12,17 @@ import { storePlatformToken, clearPlatformToken, verifyPlatformToken, goToSite, 
 const sections = [
   { id: "intro", label: "Home" },
   { id: "how-it-works", label: "How it Works" },
-  { id: "builder", label: "Builder" },
-  { id: "integrations", label: "Integrations" },
+  { id: "builder", label: "AI Agent" },
+  { id: "contracts", label: "Contracts" },
   { id: "registry", label: "Registry" },
-  { id: "get-access", label: "Get Access" },
-  { id: "blog", label: "Blog" },
-  { id: "cofounders", label: "CoFounders" },
+  { id: "get-access", label: "Log In" },
   { id: "join-us", label: "Join Us" },
 ];
 
 type NavBarProps = {
   showHowItWorks?: boolean;
   showBuilder?: boolean;
+  showContracts?: boolean;
   showIntegrations?: boolean;
   showRegistry?: boolean;
   showBlog?: boolean;
@@ -35,8 +34,9 @@ type NavBarProps = {
   blogPageAction?: string;
 };
 
-export default function NavBar({ showHowItWorks = false, showBuilder = false, showIntegrations = false, showRegistry = false, showBlog = false, showCoFounders = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
+export default function NavBar({ showHowItWorks = false, showBuilder = false, showContracts = false, showIntegrations = false, showRegistry = false, showBlog = false, showCoFounders = false, showJoinUs = false, showBackButton = false, onBackClick, blogPageTitle, blogPageAction }: NavBarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalInitialView, setModalInitialView] = useState<"signin" | "signup" | undefined>(undefined);
   const [googlePrefill, setGooglePrefill] = useState<{ name: string; email: string } | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -128,7 +128,10 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
 
   // Listen for openSignupModal events from other components (e.g. GetAccessSection)
   useEffect(() => {
-    const handleOpenSignupModal = () => {
+    const handleOpenSignupModal = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.view) setModalInitialView(detail.view);
+      else setModalInitialView(undefined);
       setIsModalOpen(true);
     };
     window.addEventListener('openSignupModal', handleOpenSignupModal);
@@ -138,23 +141,6 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [navbarHeight, setNavbarHeight] = useState(60);
-  const [activeBuilderTab, setActiveBuilderTab] = useState<string>("ui");
-
-  // Listen for scroll-based tab updates from BuilderTabbed
-  useEffect(() => {
-    const handleUpdateBuilderTab = (e: CustomEvent) => {
-      setActiveBuilderTab(e.detail.tabId);
-    };
-
-    window.addEventListener('updateBuilderTab', handleUpdateBuilderTab as EventListener);
-    return () => window.removeEventListener('updateBuilderTab', handleUpdateBuilderTab as EventListener);
-  }, []);
-
-  const builderTabs = [
-    { id: "data", label: "Data", subtitle: "Connect and transform" },
-    { id: "workflows", label: "Workflows", subtitle: "Automate processes" },
-    { id: "agents", label: "Agents", subtitle: "Deploy AI agents" },
-  ];
 
   const handleWaitlistSuccess = (message: string) => {
     setToastMessage(message);
@@ -540,7 +526,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                 letterSpacing: '0.01em',
               }}
             >
-              Sena Beta is now generally available —{' '}
+              Sena Beta is now generally available:{' '}
               <span className="underline font-semibold">Login →</span>
             </button>
             <button
@@ -581,83 +567,36 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
             )}
 
             {showBuilder && (
-              <div className="md:hidden w-full border-t border-white/20">
-                {/* Builder Title */}
-                <div className="text-center px-3 pt-1.5 pb-1">
-                  <h2
-                    style={{
-                      fontFamily: "Georgia, 'Times New Roman', serif",
-                      fontWeight: 400,
-                      letterSpacing: "-0.02em",
-                      color: "#2C1810",
-                      fontSize: "16px",
-                    }}
-                  >
-                    Builder
-                  </h2>
-                </div>
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "16px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  AI Agent
+                </h2>
+              </div>
+            )}
 
-                {/* Compact Tab Selector - No Subtitles */}
-                <div className="px-3 pb-2">
-                  <div
-                    className="grid grid-cols-3 rounded-xl overflow-hidden max-w-xs mx-auto"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.4)',
-                      border: '1px solid rgba(0, 0, 0, 0.08)',
-                    }}
-                  >
-                    {builderTabs.map((tab, index) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => {
-                          setActiveBuilderTab(tab.id);
-                          setIsModalOpen(false);
-
-                          // Check if mobile or desktop
-                          const isMobile = window.innerWidth < 768;
-
-                          if (isMobile) {
-                            // Scroll to the mobile builder card with proper offset
-                            const mobileCardId = `mobile-builder-${tab.id}`;
-                            const element = document.getElementById(mobileCardId);
-                            if (element) {
-                              // Small delay to let modal close
-                              setTimeout(() => {
-                                const navbarHeight = 180; // Account for navbar + builder tabs
-                                const targetPosition = element.getBoundingClientRect().top + window.scrollY - navbarHeight;
-                                window.scrollTo({
-                                  top: targetPosition,
-                                  behavior: 'smooth',
-                                });
-                              }, 100);
-                            }
-                          } else {
-                            // Desktop: dispatch event for BuilderTabbed component
-                            window.dispatchEvent(new CustomEvent('builderTabChange', { detail: { tabId: tab.id } }));
-                          }
-                        }}
-                        className={`px-2 py-2 transition-all duration-200 relative ${
-                          index !== builderTabs.length - 1 ? 'border-r border-white/40' : ''
-                        }`}
-                        style={{
-                          background: activeBuilderTab === tab.id
-                            ? '#3B82F6'
-                            : 'transparent',
-                        }}
-                      >
-                        <div className="text-center">
-                          <div
-                            className={`text-[10px] font-bold transition-colors ${
-                              activeBuilderTab === tab.id ? 'text-white' : 'text-gray-900'
-                            }`}
-                          >
-                            {tab.label}
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            {showContracts && (
+              <div className="md:hidden w-full px-3 pb-1.5 pt-1 text-center border-t border-white/20">
+                <h2
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "#2C1810",
+                    fontSize: "16px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Contracts
+                </h2>
               </div>
             )}
 
@@ -826,8 +765,10 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         {/* Signup Modal */}
         <SignupModal
           isOpen={isModalOpen}
+          initialView={modalInitialView}
           onClose={() => {
             setIsModalOpen(false);
+            setModalInitialView(undefined);
             setGooglePrefill(null);
           }}
           onSuccess={(msg) => {

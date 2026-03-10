@@ -180,8 +180,6 @@ export default function MobileHowItWorks() {
   const cardGap = 16;
 
   const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (expandedCard !== null) return; // Disable swipe when expanded
-
     const threshold = 50;
     const velocity = info.velocity.x;
     const offset = info.offset.x;
@@ -189,10 +187,12 @@ export default function MobileHowItWorks() {
     if (offset < -threshold || velocity < -500) {
       if (currentCard < cards.length - 1) {
         setCurrentCard(currentCard + 1);
+        setExpandedCard(null);
       }
     } else if (offset > threshold || velocity > 500) {
       if (currentCard > 0) {
         setCurrentCard(currentCard - 1);
+        setExpandedCard(null);
       }
     }
   };
@@ -287,7 +287,7 @@ export default function MobileHowItWorks() {
       <div
         ref={containerRef}
         className="relative"
-        style={{ touchAction: expandedCard !== null ? 'pan-y' : 'pan-y' }}
+        style={{ touchAction: 'pan-y' }}
       >
         <motion.div
           className="flex"
@@ -295,14 +295,25 @@ export default function MobileHowItWorks() {
             x,
             paddingLeft: '24px',
             gap: `${cardGap}px`,
+            touchAction: 'pan-y',
           }}
-          drag={expandedCard === null ? "x" : false}
+          drag="x"
+          dragDirectionLock
           dragConstraints={{
             left: -((cards.length - 1) * (cardWidth + cardGap)),
             right: 0,
           }}
           dragElastic={0.1}
-          onDragEnd={handleDragEnd}
+          onDirectionLock={(axis) => {
+            if (axis === "x") {
+              // Lock to horizontal — prevent vertical scroll interference
+              document.body.style.overflow = "hidden";
+            }
+          }}
+          onDragEnd={(...args) => {
+            document.body.style.overflow = "";
+            handleDragEnd(...args);
+          }}
         >
           {cards.map((card, index) => (
             <motion.div
@@ -392,9 +403,14 @@ export default function MobileHowItWorks() {
               {/* Content Section */}
               <div
                 className="relative px-4 py-4 overflow-y-auto"
+                onPointerDownCapture={(e) => {
+                  // Let the motion drag handler see horizontal swipes even inside scroll area
+                  e.stopPropagation = () => {};
+                }}
                 style={{
                   background: '#FAF8F5',
                   maxHeight: expandedCard === index ? '55vh' : 'auto',
+                  touchAction: 'pan-y',
                 }}
               >
                 <AnimatePresence mode="wait">
