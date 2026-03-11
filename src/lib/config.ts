@@ -41,6 +41,12 @@ export const API_CONFIG = {
     GET_CREDIT_STATUS: '/api/method/senaerp_platform.api.billing.get_credit_status',
     REFRESH_CREDIT_STATUS: '/api/method/senaerp_platform.api.billing.refresh_credit_status',
     GET_CREDIT_HISTORY: '/api/method/senaerp_platform.api.billing.get_credit_history',
+    // Subscriptions
+    GET_PLANS: '/api/method/senaerp_platform.api.subscriptions.get_plans',
+    GET_SUBSCRIPTION: '/api/method/senaerp_platform.api.subscriptions.get_subscription',
+    CREATE_SUBSCRIPTION: '/api/method/senaerp_platform.api.subscriptions.create_subscription',
+    VERIFY_PAYMENT: '/api/method/senaerp_platform.api.subscriptions.verify_payment',
+    CANCEL_SUBSCRIPTION: '/api/method/senaerp_platform.api.subscriptions.cancel_subscription',
   }
 } as const;
 

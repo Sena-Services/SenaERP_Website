@@ -6,6 +6,8 @@ import NavBar from "@/components/NavBar";
 import { getPlatformToken } from "@/lib/auth";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
+// ───── Types ─────
+
 interface CreditStatus {
   limit: number;
   usage: number;
@@ -34,6 +36,44 @@ interface BillingData {
   message?: string;
 }
 
+interface BillingPlan {
+  plan_name: string;
+  amount_inr: number;
+  amount_usd: number;
+  interval: string;
+  credit_amount: number;
+  description: string;
+  features: string;
+}
+
+interface SubscriptionData {
+  has_subscription: boolean;
+  subscription?: {
+    plan_name: string;
+    amount_inr: number;
+    amount_usd: number;
+    interval: string;
+    credit_amount: number;
+    status: string;
+    current_start: string | null;
+    current_end: string | null;
+    charge_at: string | null;
+    total_paid: number;
+    total_credits_provisioned: number;
+    payment_count: number;
+    razorpay_subscription_id: string;
+  };
+}
+
+// ───── Constants ─────
+
+type Currency = "INR" | "USD";
+
+const CURRENCY_SYMBOL: Record<Currency, string> = {
+  INR: "₹",
+  USD: "$",
+};
+
 const EVENT_LABELS: Record<string, string> = {
   provision: "Credits Provisioned",
   sync: "Usage Updated",
@@ -42,6 +82,7 @@ const EVENT_LABELS: Record<string, string> = {
   alert_sent: "Low Credit Alert",
   key_disabled: "Key Disabled",
   key_enabled: "Key Re-enabled",
+  subscription_payment: "Subscription Payment",
 };
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -51,17 +92,67 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> =
   not_provisioned: { bg: "bg-yellow-50", text: "text-yellow-700", dot: "bg-yellow-500" },
 };
 
+const SUB_STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  active: { label: "Active", color: "text-emerald-700 bg-emerald-50" },
+  authenticated: { label: "Pending Activation", color: "text-blue-700 bg-blue-50" },
+  created: { label: "Awaiting Payment", color: "text-yellow-700 bg-yellow-50" },
+  pending: { label: "Payment Pending", color: "text-orange-700 bg-orange-50" },
+  halted: { label: "Payment Failed", color: "text-red-700 bg-red-50" },
+  cancelled: { label: "Cancelled", color: "text-gray-600 bg-gray-100" },
+  completed: { label: "Completed", color: "text-gray-600 bg-gray-100" },
+  expired: { label: "Expired", color: "text-gray-600 bg-gray-100" },
+};
+
+// ───── Razorpay Checkout Script Loader ─────
+
+declare global {
+  interface Window {
+    Razorpay: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
+
+function loadRazorpayScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (window.Razorpay) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Failed to load Razorpay"));
+    document.head.appendChild(script);
+  });
+}
+
+// ───── Component ─────
+
 export default function BillingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [billing, setBilling] = useState<BillingData | null>(null);
+  const [plans, setPlans] = useState<BillingPlan[]>([]);
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+  const [subscribing, setSubscribing] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [currency, setCurrency] = useState<Currency>("INR");
 
+  // ───── Helpers ─────
+
+  function getPlanPrice(plan: BillingPlan): number {
+    return currency === "USD" ? plan.amount_usd : plan.amount_inr;
+  }
+
+  function formatPrice(amount: number): string {
+    return `${CURRENCY_SYMBOL[currency]}${amount.toLocaleString()}`;
+  }
+
+  // ───── Fetch billing overview ─────
   const fetchBilling = useCallback(async () => {
     const token = getPlatformToken();
     if (!token) {
-      router.push("/login");
+      setLoading(false);
       return;
     }
 
@@ -78,20 +169,52 @@ export default function BillingPage() {
 
       if (result?.success) {
         setBilling(result);
-      } else {
-        setError("Failed to load billing information.");
       }
     } catch {
-      setError("Could not connect to billing service.");
+      // Billing fetch failed — still show plans
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, []);
+
+  // ───── Fetch plans + subscription ─────
+  const fetchPlansAndSubscription = useCallback(async () => {
+    const token = getPlatformToken();
+
+    try {
+      const plansResp = await frappeAPI.call(
+        getApiUrl(API_CONFIG.ENDPOINTS.GET_PLANS),
+        { method: "POST", body: JSON.stringify({}) }
+      );
+      const plansData = await plansResp.json();
+      if (plansData.message?.success) {
+        setPlans(plansData.message.plans || []);
+      }
+
+      if (token) {
+        const subResp = await frappeAPI.call(
+          getApiUrl(API_CONFIG.ENDPOINTS.GET_SUBSCRIPTION),
+          {
+            method: "POST",
+            body: JSON.stringify({ platform_token: token }),
+          }
+        );
+        const subData = await subResp.json();
+        if (subData.message?.success) {
+          setSubscription(subData.message);
+        }
+      }
+    } catch {
+      // Plans/subscription fetch failure is non-critical
+    }
+  }, []);
 
   useEffect(() => {
     fetchBilling();
-  }, [fetchBilling]);
+    fetchPlansAndSubscription();
+  }, [fetchBilling, fetchPlansAndSubscription]);
 
+  // ───── Refresh credits ─────
   const handleRefresh = async () => {
     const token = getPlatformToken();
     if (!token) return;
@@ -107,7 +230,6 @@ export default function BillingPage() {
       );
       const data = await resp.json();
       if (data.message?.success) {
-        // Re-fetch the full billing data
         await fetchBilling();
       }
     } catch {
@@ -117,6 +239,110 @@ export default function BillingPage() {
     }
   };
 
+  // ───── Subscribe to a plan ─────
+  const handleSubscribe = async (planName: string) => {
+    const token = getPlatformToken();
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    setSubscribing(planName);
+
+    try {
+      const resp = await frappeAPI.call(
+        getApiUrl(API_CONFIG.ENDPOINTS.CREATE_SUBSCRIPTION),
+        {
+          method: "POST",
+          body: JSON.stringify({ platform_token: token, plan_name: planName, currency }),
+        }
+      );
+      const data = await resp.json();
+      const result = data.message;
+
+      if (!result?.success) {
+        alert(result?.message || "Failed to create subscription.");
+        return;
+      }
+
+      await loadRazorpayScript();
+
+      const rzp = new window.Razorpay({
+        key: result.razorpay_key_id,
+        subscription_id: result.subscription_id,
+        name: "SenaERP",
+        description: `${planName} Plan`,
+        handler: async (response: {
+          razorpay_payment_id: string;
+          razorpay_subscription_id: string;
+          razorpay_signature: string;
+        }) => {
+          try {
+            await frappeAPI.call(
+              getApiUrl(API_CONFIG.ENDPOINTS.VERIFY_PAYMENT),
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  platform_token: token,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_subscription_id: response.razorpay_subscription_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              }
+            );
+          } catch {
+            // Verification handled by webhook anyway
+          }
+
+          await fetchBilling();
+          await fetchPlansAndSubscription();
+        },
+        theme: {
+          color: "#2C1810",
+        },
+      });
+
+      rzp.open();
+    } catch (err) {
+      alert("Something went wrong. Please try again.");
+      console.error(err);
+    } finally {
+      setSubscribing(null);
+    }
+  };
+
+  // ───── Cancel subscription ─────
+  const handleCancel = async () => {
+    const token = getPlatformToken();
+    if (!token) return;
+
+    if (!confirm("Are you sure you want to cancel your subscription? You'll keep access until the current billing period ends.")) {
+      return;
+    }
+
+    setCancelling(true);
+    try {
+      const resp = await frappeAPI.call(
+        getApiUrl(API_CONFIG.ENDPOINTS.CANCEL_SUBSCRIPTION),
+        {
+          method: "POST",
+          body: JSON.stringify({ platform_token: token }),
+        }
+      );
+      const data = await resp.json();
+      if (data.message?.success) {
+        await fetchPlansAndSubscription();
+      } else {
+        alert(data.message?.message || "Failed to cancel subscription.");
+      }
+    } catch {
+      alert("Could not cancel subscription. Please try again.");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  // ───── Loading ─────
   if (loading) {
     return (
       <>
@@ -134,22 +360,12 @@ export default function BillingPage() {
     );
   }
 
-  if (error) {
-    return (
-      <>
-        <NavBar />
-        <main className="min-h-screen bg-[#faf8f3] pt-28 px-4">
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="text-red-600 font-futura">{error}</p>
-          </div>
-        </main>
-      </>
-    );
-  }
-
   const credit = billing?.credit;
   const history = billing?.history || [];
   const statusStyle = STATUS_COLORS[credit?.status || "active"];
+  const sub = subscription?.subscription;
+  const hasActiveSub = sub && ["active", "authenticated", "created", "pending"].includes(sub.status);
+  const subStatusInfo = SUB_STATUS_LABELS[sub?.status || ""] || { label: sub?.status, color: "text-gray-600 bg-gray-100" };
 
   return (
     <>
@@ -190,6 +406,168 @@ export default function BillingPage() {
               {refreshing ? "Syncing..." : "Refresh"}
             </button>
           </div>
+
+          {/* ───── Current Subscription ───── */}
+          {sub && (
+            <div className="rounded-2xl border border-[#dcd2c1] bg-white p-6 shadow-sm mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-bold font-futura text-gray-900">
+                  Your Subscription
+                </h2>
+                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold font-futura ${subStatusInfo.color}`}>
+                  {subStatusInfo.label}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                  <div className="text-[10px] font-futura text-gray-500 mb-0.5">Plan</div>
+                  <div className="text-sm font-bold font-futura text-gray-900">{sub.plan_name}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-futura text-gray-500 mb-0.5">Price</div>
+                  <div className="text-sm font-bold font-futura text-gray-900">
+                    ₹{sub.amount_inr}/{sub.interval === "monthly" ? "mo" : "yr"}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-futura text-gray-500 mb-0.5">AI Credits / Cycle</div>
+                  <div className="text-sm font-bold font-futura text-gray-900">${sub.credit_amount}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-futura text-gray-500 mb-0.5">Payments</div>
+                  <div className="text-sm font-bold font-futura text-gray-900">{sub.payment_count}</div>
+                </div>
+              </div>
+              {sub.current_end && (
+                <p className="text-[9px] font-futura text-gray-400 mb-3">
+                  Current period ends: {new Date(sub.current_end).toLocaleDateString()}
+                </p>
+              )}
+              {hasActiveSub && (
+                <button
+                  onClick={handleCancel}
+                  disabled={cancelling}
+                  className="text-[10px] font-bold font-futura text-red-500 hover:text-red-700 disabled:opacity-50"
+                >
+                  {cancelling ? "Cancelling..." : "Cancel Subscription"}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* ───── Plans ───── */}
+          {plans.length > 0 && !hasActiveSub && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2
+                  className="text-xl"
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 400,
+                    color: "#2C1810",
+                  }}
+                >
+                  Choose a Plan
+                </h2>
+                {/* Currency toggle */}
+                <div className="flex items-center bg-white border border-gray-200 rounded-full p-0.5 shadow-sm">
+                  <button
+                    onClick={() => setCurrency("INR")}
+                    className={`px-3 py-1 text-[10px] font-bold font-futura rounded-full transition-colors ${
+                      currency === "INR"
+                        ? "bg-[#2C1810] text-white"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    ₹ INR
+                  </button>
+                  <button
+                    onClick={() => setCurrency("USD")}
+                    className={`px-3 py-1 text-[10px] font-bold font-futura rounded-full transition-colors ${
+                      currency === "USD"
+                        ? "bg-[#2C1810] text-white"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    $ USD
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {plans.map((plan) => {
+                  const price = getPlanPrice(plan);
+                  const isFree = price === 0;
+
+                  return (
+                    <div
+                      key={plan.plan_name}
+                      className="rounded-2xl border border-[#dcd2c1] bg-white p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                    >
+                      <h3 className="text-sm font-bold font-futura text-gray-900 mb-1">
+                        {plan.plan_name}
+                      </h3>
+                      {plan.description && (
+                        <p className="text-[10px] font-futura text-gray-500 mb-3">
+                          {plan.description}
+                        </p>
+                      )}
+                      <div className="mb-1">
+                        <span className="text-2xl font-bold font-futura text-gray-900">
+                          {isFree ? "Free" : formatPrice(price)}
+                        </span>
+                        {!isFree && (
+                          <span className="text-xs font-futura text-gray-500">
+                            /{plan.interval === "monthly" ? "mo" : "yr"}
+                          </span>
+                        )}
+                      </div>
+                      {!isFree && (
+                        <div className="text-[10px] font-futura text-gray-500 mb-3">
+                          <span className="font-bold text-emerald-600">${plan.credit_amount}</span> AI credits per cycle
+                        </div>
+                      )}
+                      {isFree && (
+                        <div className="text-[10px] font-futura text-gray-500 mb-3">
+                          <span className="font-bold text-emerald-600">${plan.credit_amount}</span> AI credits included
+                        </div>
+                      )}
+                      {plan.features && (
+                        <ul className="space-y-1 mb-4">
+                          {plan.features.split("\n").filter(Boolean).map((f, i) => (
+                            <li key={i} className="flex items-start gap-1.5 text-[10px] font-futura text-gray-600">
+                              <svg className="w-3 h-3 text-emerald-500 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                              {f.trim()}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <div className="mt-auto">
+                        {isFree ? (
+                          <div
+                            className="w-full py-2 text-xs font-bold font-futura text-center rounded-full border"
+                            style={{ color: "#7AA5B5", borderColor: "#8FB7C5" }}
+                          >
+                            Current Plan
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleSubscribe(plan.plan_name)}
+                            disabled={subscribing === plan.plan_name}
+                            className="w-full py-2 text-xs font-bold font-futura text-white rounded-full shadow-sm disabled:opacity-50 transition-colors hover:opacity-90"
+                            style={{ backgroundColor: "#8FB7C5" }}
+                          >
+                            {subscribing === plan.plan_name ? "Processing..." : "Subscribe"}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {!billing?.has_billing ? (
             <div className="rounded-2xl border border-[#dcd2c1] bg-white p-8 text-center">
@@ -304,8 +682,10 @@ export default function BillingPage() {
                       </h3>
                       <p className="text-xs font-futura text-red-600 mt-1">
                         Your AI agents have stopped working because credits are
-                        used up. Contact us to add more credits and resume
-                        service.
+                        used up.{" "}
+                        {!hasActiveSub
+                          ? "Subscribe to a plan above to add more credits."
+                          : "Your next billing cycle will add more credits automatically."}
                       </p>
                     </div>
                   </div>
@@ -334,7 +714,7 @@ export default function BillingPage() {
                             className={`w-2 h-2 rounded-full ${
                               entry.event_type === "exhausted"
                                 ? "bg-red-500"
-                                : entry.event_type === "top_up"
+                                : entry.event_type === "top_up" || entry.event_type === "subscription_payment"
                                 ? "bg-emerald-500"
                                 : entry.event_type === "provision"
                                 ? "bg-blue-500"

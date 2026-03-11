@@ -65,7 +65,7 @@ function HomeContent() {
   // Scroll to top on page load/refresh, or skip intro if section param is present
   useEffect(() => {
     const section = searchParams.get('section');
-    const hasToken = searchParams.has('token');
+    const hasToken = searchParams.has('token') || searchParams.has('platform_token');
     if (section === 'how-it-works' || hasToken) {
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('triggerIntroSequence'));
