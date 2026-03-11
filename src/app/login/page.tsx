@@ -114,6 +114,14 @@ function LoginPageContent() {
       />
       <div className="login-overlay" />
 
+      {/* Back to website */}
+      <a href="/" className="login-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 12H5" /><polyline points="12 19 5 12 12 5" />
+        </svg>
+        Website
+      </a>
+
       <div className="login-card">
         {/* Logo */}
         <div className="login-logo">
@@ -217,6 +225,26 @@ function LoginPageContent() {
           inset: 0;
           background: rgba(0, 0, 0, 0.15);
           z-index: 1;
+        }
+
+        .login-back {
+          position: absolute;
+          top: 20px;
+          left: 24px;
+          z-index: 3;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: rgba(255, 255, 255, 0.85);
+          font-family: "Space Grotesk", sans-serif;
+          font-size: 13px;
+          font-weight: 500;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+
+        .login-back:hover {
+          color: #fff;
         }
 
         .login-card {
