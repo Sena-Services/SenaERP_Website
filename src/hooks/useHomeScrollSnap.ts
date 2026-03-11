@@ -24,6 +24,12 @@ export function useHomeScrollSnap({
   const [currentSection, setCurrentSection] = useState<SectionId>('other');
   const touchStartYRef = useRef<number>(0);
 
+  // Refs to hold latest setters — prevents stale closures after Suspense hydration
+  const setShowNavRef = useRef(setShowNavigation);
+  const setCurrentSectionRef = useRef(setCurrentSection);
+  setShowNavRef.current = setShowNavigation;
+  setCurrentSectionRef.current = setCurrentSection;
+
   useEffect(() => {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
@@ -47,9 +53,9 @@ export function useHomeScrollSnap({
         const seventyPercentPoint = introTop + (introHeight * 0.7);
 
         if (scrollY > seventyPercentPoint) {
-          setShowNavigation(true);
+          setShowNavRef.current(true);
         } else {
-          setShowNavigation(false);
+          setShowNavRef.current(false);
         }
 
         // Detect which section we're in based on scroll position
@@ -85,7 +91,7 @@ export function useHomeScrollSnap({
           }
         }
 
-        setCurrentSection(foundSection);
+        setCurrentSectionRef.current(foundSection);
       };
 
       handleMobileScroll();
@@ -200,7 +206,7 @@ export function useHomeScrollSnap({
           manualScrollEnabled = true;
           autoRotateTriggered = false;
           hasLeftHome = true;
-          setShowNavigation(true);
+          setShowNavRef.current(true);
           window.dispatchEvent(new CustomEvent('homeLeft'));
         });
       });
@@ -418,7 +424,7 @@ export function useHomeScrollSnap({
           manualScrollEnabled = true;
           autoRotateTriggered = true;
           hasLeftHome = true;
-          setShowNavigation(true);
+          setShowNavRef.current(true);
           window.dispatchEvent(new CustomEvent('homeLeft'));
           animateToPosition(points.rotated, 800);
         }
@@ -438,6 +444,7 @@ export function useHomeScrollSnap({
       manualScrollEnabled = true;
       autoRotateTriggered = false;
       hasLeftHome = true;
+      setShowNavRef.current(true);
       window.scrollTo({ top: points.rotated, behavior: 'auto' });
       window.dispatchEvent(new Event('scroll'));
       window.dispatchEvent(new CustomEvent('homeLeft'));
@@ -458,7 +465,7 @@ export function useHomeScrollSnap({
     // Custom event: reset home from sidebar/button
     const handleResetHome = () => {
       hasLeftHome = false;
-      setShowNavigation(false);
+      setShowNavRef.current(false);
       window.dispatchEvent(new CustomEvent('homeUnlocked'));
 
       const points = getSnapPoints();
