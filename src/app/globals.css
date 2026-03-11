@@ -180,8 +180,8 @@ body {
   min-height: 100%;
   background-color: #F5F1E8;
   color: var(--color-sena-text-primary);
-  overscroll-behavior-x: none; /* Prevent horizontal overscroll only */
-  overscroll-behavior-y: auto; /* Allow vertical elastic bounce */
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
   margin: 0;
   overflow-x: clip;
@@ -190,8 +190,8 @@ body {
 
 html {
   scroll-behavior: auto;
-  overscroll-behavior-x: none; /* Prevent horizontal overscroll only */
-  overscroll-behavior-y: auto; /* Allow vertical elastic bounce */
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
 }
 
 html.smooth-scroll {

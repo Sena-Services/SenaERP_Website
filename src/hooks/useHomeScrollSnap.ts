@@ -25,6 +25,10 @@ export function useHomeScrollSnap({
   const touchStartYRef = useRef<number>(0);
 
   useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
     // On mobile, show navbar when scrolled 70% through intro AND detect current section
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
@@ -531,6 +535,21 @@ export function useHomeScrollSnap({
       }
     };
     window.addEventListener('scroll', startClampIfNeeded, { passive: true });
+
+    // Mount-time check: handle browser restoring scroll to a mid-intro position
+    const initialScrollY = window.scrollY;
+    const initialPoints = getSnapPoints();
+    if (initialScrollY > 50 && initialScrollY < initialPoints.rotated - 50) {
+      hasLeftHome = true;
+      introSequencePlayed = true;
+      manualScrollEnabled = true;
+      autoRotateTriggered = false;
+      setShowNavigation(true);
+      window.scrollTo(0, initialPoints.rotated);
+      window.dispatchEvent(new CustomEvent('homeLeft'));
+    } else if (initialScrollY <= 50) {
+      window.scrollTo(0, 0);
+    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll);

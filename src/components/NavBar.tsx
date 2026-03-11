@@ -412,7 +412,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
                     {showProfileMenu && typeof document !== "undefined" && createPortal(
                       <div
                         className="fixed w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2"
-                        style={{ top: dropdownPos.top, left: dropdownPos.left, zIndex: 100 }}
+                        style={{ top: dropdownPos.top, left: dropdownPos.left, zIndex: 9999 }}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="px-4 py-2 border-b border-gray-100">
