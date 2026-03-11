@@ -476,7 +476,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
                     />
                     <p className="text-xs text-gray-400 mt-1.5 ml-1 font-space-grotesk leading-relaxed">
                       This is your workspace URL:{" "}
-                      <strong>{signupSiteName ? signupSiteName.toLowerCase() : "yoursite"}.senaerp.com</strong>
+                      <strong>{signupSiteName ? signupSiteName.toLowerCase() : "yoursite"}.{process.env.NEXT_PUBLIC_SITE_DOMAIN || "senaerp.com"}</strong>
                       <br />
                       Pick a short, memorable name — you can&apos;t change it later.
                     </p>
