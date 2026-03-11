@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import { storePlatformToken, goToSite } from "@/lib/auth";
 import PinwheelLogo from "@/components/PinwheelLogo";
@@ -115,12 +116,12 @@ function LoginPageContent() {
       <div className="login-overlay" />
 
       {/* Back to website */}
-      <a href="/" className="login-back">
+      <Link href="/" className="login-back">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M19 12H5" /><polyline points="12 19 5 12 12 5" />
         </svg>
         Website
-      </a>
+      </Link>
 
       <div className="login-card">
         {/* Logo */}
