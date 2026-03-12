@@ -937,7 +937,7 @@ export default function IntroContent({ contentOpacity, scrollRef }: IntroContent
       <SignupModal
         isOpen={isSignupModalOpen}
         onClose={() => setIsSignupModalOpen(false)}
-        onSuccess={(message, _email) => {
+        onSuccess={(message) => {
           setToastMessage(message);
           setShowToast(true);
         }}
