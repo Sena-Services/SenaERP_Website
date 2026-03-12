@@ -33,6 +33,7 @@ const ALLOWED_ENDPOINTS: Record<string, ('GET' | 'POST')[]> = {
   'api/method/senaerp_platform.api.waitlist.submit_waitlist': ['POST'],
   'api/method/senaerp_platform.api.waitlist.verify_email': ['POST'],
   'api/method/senaerp_platform.api.waitlist.resend_verification': ['POST'],
+  'api/method/senaerp_platform.api.waitlist.check_provisioning_status': ['POST'],
   'api/method/senaerp_platform.api.website_blog.get_published_blogs': ['GET', 'POST'],
   'api/method/senaerp_platform.api.website_blog.get_blog_by_id': ['GET', 'POST'],
 };

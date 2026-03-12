@@ -35,6 +35,7 @@ export const API_CONFIG = {
     SIGNUP_FOR_INVITE: '/api/method/senaerp_platform.api.invites.signup_for_invite',
     VERIFY_EMAIL: '/api/method/senaerp_platform.api.waitlist.verify_email',
     RESEND_VERIFICATION: '/api/method/senaerp_platform.api.waitlist.resend_verification',
+    CHECK_PROVISIONING: '/api/method/senaerp_platform.api.waitlist.check_provisioning_status',
     GET_ACTIVE_OPENINGS: '/api/method/senaerp_platform.api.careers.get_active_openings',
     // Billing
     GET_BILLING_OVERVIEW: '/api/method/senaerp_platform.api.billing.get_billing_overview',

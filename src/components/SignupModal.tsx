@@ -10,7 +10,7 @@ import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 interface SignupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (message: string) => void;
+  onSuccess: (message: string, email?: string) => void;
   googlePrefill?: { name: string; email: string } | null;
   initialView?: "signin" | "signup" | "pitch_deck";
 }
@@ -194,7 +194,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
         if (result.platform_token) {
           storePlatformToken(result.platform_token);
         }
-        onSuccess(result.message || "You have been added to the Waitlist!");
+        onSuccess("Setting up your workspace \u2014 this takes about a minute...", signupEmail);
         onClose();
       } else {
         setError(result?.message || result?.error || "Failed to submit. Please try again.");
@@ -256,7 +256,7 @@ export default function SignupModal({ isOpen, onClose, onSuccess, googlePrefill,
         if (result.platform_token) {
           storePlatformToken(result.platform_token);
         }
-        onSuccess(result.message || "Email verified! Your account has been created.");
+        onSuccess("Email verified! Setting up your workspace \u2014 this takes about a minute...", verifyEmail);
         onClose();
       } else {
         setError(result?.error || "Verification failed.");

@@ -40,6 +40,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   const [googlePrefill, setGooglePrefill] = useState<{ name: string; email: string } | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [toastDuration, setToastDuration] = useState(3000);
   const [bannerDismissed, setBannerDismissed] = useState(true); // Default true to prevent flash
   const [platformUser, setPlatformUser] = useState<PlatformUser | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -142,7 +143,67 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   const [activeSection, setActiveSection] = useState<string>("intro");
   const [navbarHeight, setNavbarHeight] = useState(60);
 
-  const handleWaitlistSuccess = (message: string) => {
+  const pollProvisioningRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startProvisioningPoll = (email: string) => {
+    // Clear any existing poll
+    if (pollProvisioningRef.current) clearInterval(pollProvisioningRef.current);
+
+    let elapsed = 0;
+    const INTERVAL = 5000;
+    const TIMEOUT = 120000; // 2 minutes
+
+    pollProvisioningRef.current = setInterval(async () => {
+      elapsed += INTERVAL;
+      if (elapsed > TIMEOUT) {
+        if (pollProvisioningRef.current) clearInterval(pollProvisioningRef.current);
+        pollProvisioningRef.current = null;
+        setToastDuration(6000);
+        setToastMessage("Setup is taking longer than expected. We\u2019ll email you when your workspace is ready.");
+        setShowToast(true);
+        return;
+      }
+
+      try {
+        const resp = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.CHECK_PROVISIONING), {
+          method: "POST",
+          body: JSON.stringify({ email }),
+        });
+        const data = await resp.json();
+        const result = data.message;
+
+        if (result?.status === "ready") {
+          if (pollProvisioningRef.current) clearInterval(pollProvisioningRef.current);
+          pollProvisioningRef.current = null;
+          setToastDuration(8000);
+          setToastMessage("Your workspace is ready! Check your email for login details.");
+          setShowToast(true);
+          // Refresh platform user state
+          verifyPlatformToken().then(({ authenticated, user }) => {
+            if (authenticated && user) setPlatformUser(user);
+          });
+        } else if (result?.status === "failed") {
+          if (pollProvisioningRef.current) clearInterval(pollProvisioningRef.current);
+          pollProvisioningRef.current = null;
+          setToastDuration(6000);
+          setToastMessage("Something went wrong setting up your workspace. Please contact support.");
+          setShowToast(true);
+        }
+      } catch {
+        // Silently retry on network errors
+      }
+    }, INTERVAL);
+  };
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollProvisioningRef.current) clearInterval(pollProvisioningRef.current);
+    };
+  }, []);
+
+  const handleWaitlistSuccess = (message: string, email?: string) => {
+    setToastDuration(email ? 6000 : 3000);
     setToastMessage(message);
     setShowToast(true);
     // Refresh platform user state (token was stored by SignupModal)
@@ -151,6 +212,10 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         setPlatformUser(user);
       }
     });
+    // Start polling for provisioning status
+    if (email) {
+      startProvisioningPoll(email);
+    }
   };
 
   const handleGoToSite = async () => {
@@ -771,9 +836,9 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
             setModalInitialView(undefined);
             setGooglePrefill(null);
           }}
-          onSuccess={(msg) => {
+          onSuccess={(msg, email) => {
             setGooglePrefill(null);
-            handleWaitlistSuccess(msg);
+            handleWaitlistSuccess(msg, email);
           }}
           googlePrefill={googlePrefill}
         />
@@ -783,6 +848,7 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
           message={toastMessage}
           isVisible={showToast}
           onClose={() => setShowToast(false)}
+          duration={toastDuration}
         />
       </header>
     </>
