@@ -7,9 +7,11 @@ interface ToastProps {
   isVisible: boolean;
   onClose: () => void;
   duration?: number;
+  actionUrl?: string;
+  actionLabel?: string;
 }
 
-export default function Toast({ message, isVisible, onClose, duration = 3000 }: ToastProps) {
+export default function Toast({ message, isVisible, onClose, duration = 3000, actionUrl, actionLabel }: ToastProps) {
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -58,11 +60,24 @@ export default function Toast({ message, isVisible, onClose, duration = 3000 }: 
             </svg>
           </div>
 
-          {/* Message */}
+          {/* Message + Action */}
           <div className="flex-1">
             <p className="text-sm font-semibold text-gray-900 font-space-grotesk">
               {message}
             </p>
+            {actionUrl && actionLabel && (
+              <a
+                href={actionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 mt-2 text-sm font-semibold text-sena-orange hover:underline font-space-grotesk"
+              >
+                {actionLabel}
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
+              </a>
+            )}
           </div>
 
           {/* Close Button */}

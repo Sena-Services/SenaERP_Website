@@ -41,6 +41,8 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastDuration, setToastDuration] = useState(3000);
+  const [toastActionUrl, setToastActionUrl] = useState<string | undefined>();
+  const [toastActionLabel, setToastActionLabel] = useState<string | undefined>();
   const [bannerDismissed, setBannerDismissed] = useState(true); // Default true to prevent flash
   const [platformUser, setPlatformUser] = useState<PlatformUser | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -175,8 +177,10 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         if (result?.status === "ready") {
           if (pollProvisioningRef.current) clearInterval(pollProvisioningRef.current);
           pollProvisioningRef.current = null;
-          setToastDuration(8000);
-          setToastMessage("Your workspace is ready! Check your email for login details.");
+          setToastDuration(10000);
+          setToastMessage("Your workspace is ready!");
+          setToastActionUrl(result.site_url || undefined);
+          setToastActionLabel(result.site_url ? "Go to workspace" : undefined);
           setShowToast(true);
           // Refresh platform user state
           verifyPlatformToken().then(({ authenticated, user }) => {
@@ -847,8 +851,10 @@ export default function NavBar({ showHowItWorks = false, showBuilder = false, sh
         <Toast
           message={toastMessage}
           isVisible={showToast}
-          onClose={() => setShowToast(false)}
+          onClose={() => { setShowToast(false); setToastActionUrl(undefined); setToastActionLabel(undefined); }}
           duration={toastDuration}
+          actionUrl={toastActionUrl}
+          actionLabel={toastActionLabel}
         />
       </header>
     </>
