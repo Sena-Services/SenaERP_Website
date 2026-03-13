@@ -13,16 +13,20 @@ export default function MobileHowItWorks() {
   const [containerWidth, setContainerWidth] = useState(0);
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-    setContainerWidth(window.innerWidth);
-
+    let rafId: number;
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setContainerWidth(window.innerWidth);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setIsMobile(window.innerWidth < 768);
+        setContainerWidth(window.innerWidth);
+      });
     };
-
+    handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Play video when it becomes current

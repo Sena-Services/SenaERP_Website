@@ -70,9 +70,9 @@ export default function AboutPage() {
 
         {/* Cofounders */}
         <div className="space-y-6">
-          {cofounders.map((cofounder, index) => (
+          {cofounders.map((cofounder) => (
             <div
-              key={index}
+              key={cofounder.email}
               className="rounded-2xl overflow-hidden"
               style={{
                 background: "#FCFCFA",

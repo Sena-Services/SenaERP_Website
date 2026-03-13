@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import IntroSection from "@/components/IntroSection";
@@ -273,7 +274,7 @@ export default function Home() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-sena-cream">
-        <img src="/sena-logo-pinwheel.png" alt="" style={{ width: "48px", height: "48px", animation: "spin 3s linear infinite" }} />
+        <Image src="/sena-logo-pinwheel.png" alt="" width={48} height={48} style={{ animation: "spin 3s linear infinite" }} />
       </div>
     }>
       <HomeContent />

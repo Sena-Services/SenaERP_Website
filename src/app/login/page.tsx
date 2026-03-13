@@ -5,14 +5,14 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
-import { storePlatformToken, goToSite } from "@/lib/auth";
+import { storePlatformToken, goToSite, isSafeRedirectUrl } from "@/lib/auth";
 import PinwheelLogo from "@/components/PinwheelLogo";
 
 export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#F7F5EF]">
-        <img src="/sena-logo-pinwheel.png" alt="" style={{ width: "48px", height: "48px", animation: "spin 3s linear infinite" }} />
+        <Image src="/sena-logo-pinwheel.png" alt="" width={48} height={48} style={{ animation: "spin 3s linear infinite" }} />
       </div>
     }>
       <LoginPageContent />
@@ -45,7 +45,7 @@ function LoginPageContent() {
       (async () => {
         try {
           const result = await goToSite();
-          if (result) {
+          if (result && isSafeRedirectUrl(result.site_url)) {
             window.location.href = `${result.site_url}/login?token=${result.token}`;
             return;
           }
@@ -77,7 +77,7 @@ function LoginPageContent() {
           storePlatformToken(result.platform_token);
         }
 
-        if (siteRedirect && result.site_url && result.token) {
+        if (siteRedirect && result.site_url && result.token && isSafeRedirectUrl(result.site_url)) {
           // Tenant login flow — redirect back to tenant with login token
           window.location.href = `${result.site_url}/login?token=${result.token}`;
         } else if (result.no_site) {

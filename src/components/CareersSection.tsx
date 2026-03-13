@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import DOMPurify from "dompurify";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
 type JobOpening = {
@@ -35,8 +36,8 @@ export default function CareersSection() {
             setSelectedJob(result.message.data[0]);
           }
         }
-      } catch (error) {
-        console.error('Error fetching job openings:', error);
+      } catch {
+        // Fetch failed — section will show empty state
       } finally {
         setLoading(false);
       }
@@ -50,14 +51,12 @@ export default function CareersSection() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 min-h-[60vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div style={{ width: "64px", height: "64px" }}>
-            <img
+            <Image
               src="/sena-logo-pinwheel.png"
               alt=""
-              style={{
-                width: "100%",
-                height: "100%",
-                animation: "spin 3s linear infinite",
-              }}
+              width={64}
+              height={64}
+              style={{ animation: "spin 3s linear infinite" }}
             />
           </div>
           <p
@@ -191,7 +190,7 @@ export default function CareersSection() {
                 {/* Job Description */}
                 <div className="mb-8">
                   <div
-                    dangerouslySetInnerHTML={{ __html: selectedJob.job_description }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedJob.job_description) }}
                   />
                 </div>
 

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
+import Toast from "@/components/Toast";
 import { getPlatformToken } from "@/lib/auth";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 
@@ -136,7 +137,15 @@ export default function BillingPage() {
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
   const [subscribing, setSubscribing] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
   const [currency, setCurrency] = useState<Currency>("INR");
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
+  const showError = (msg: string) => {
+    setToastMessage(msg);
+    setShowToast(true);
+  };
 
   // ───── Helpers ─────
 
@@ -261,7 +270,7 @@ export default function BillingPage() {
       const result = data.message;
 
       if (!result?.success) {
-        alert(result?.message || "Failed to create subscription.");
+        showError(result?.message || "Failed to create subscription.");
         return;
       }
 
@@ -303,9 +312,8 @@ export default function BillingPage() {
       });
 
       rzp.open();
-    } catch (err) {
-      alert("Something went wrong. Please try again.");
-      console.error(err);
+    } catch {
+      showError("Something went wrong. Please try again.");
     } finally {
       setSubscribing(null);
     }
@@ -315,10 +323,6 @@ export default function BillingPage() {
   const handleCancel = async () => {
     const token = getPlatformToken();
     if (!token) return;
-
-    if (!confirm("Are you sure you want to cancel your subscription? You'll keep access until the current billing period ends.")) {
-      return;
-    }
 
     setCancelling(true);
     try {
@@ -333,10 +337,10 @@ export default function BillingPage() {
       if (data.message?.success) {
         await fetchPlansAndSubscription();
       } else {
-        alert(data.message?.message || "Failed to cancel subscription.");
+        showError(data.message?.message || "Failed to cancel subscription.");
       }
     } catch {
-      alert("Could not cancel subscription. Please try again.");
+      showError("Could not cancel subscription. Please try again.");
     } finally {
       setCancelling(false);
     }
@@ -370,6 +374,12 @@ export default function BillingPage() {
   return (
     <>
       <NavBar />
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        duration={5000}
+      />
       <main className="min-h-screen bg-[#faf8f3] pt-28 pb-16 px-4">
         <div className="mx-auto max-w-4xl">
           {/* Header */}
@@ -444,13 +454,33 @@ export default function BillingPage() {
                 </p>
               )}
               {hasActiveSub && (
-                <button
-                  onClick={handleCancel}
-                  disabled={cancelling}
-                  className="text-[10px] font-bold font-futura text-red-500 hover:text-red-700 disabled:opacity-50"
-                >
-                  {cancelling ? "Cancelling..." : "Cancel Subscription"}
-                </button>
+                confirmingCancel ? (
+                  <div className="flex items-center gap-3">
+                    <p className="text-[10px] font-futura text-gray-600">
+                      Cancel subscription? You&apos;ll keep access until the period ends.
+                    </p>
+                    <button
+                      onClick={() => { setConfirmingCancel(false); handleCancel(); }}
+                      disabled={cancelling}
+                      className="text-[10px] font-bold font-futura text-red-500 hover:text-red-700 disabled:opacity-50"
+                    >
+                      {cancelling ? "Cancelling..." : "Yes, cancel"}
+                    </button>
+                    <button
+                      onClick={() => setConfirmingCancel(false)}
+                      className="text-[10px] font-bold font-futura text-gray-500 hover:text-gray-700"
+                    >
+                      Keep plan
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmingCancel(true)}
+                    className="text-[10px] font-bold font-futura text-red-500 hover:text-red-700"
+                  >
+                    Cancel Subscription
+                  </button>
+                )
               )}
             </div>
           )}
@@ -533,8 +563,8 @@ export default function BillingPage() {
                       )}
                       {plan.features && (
                         <ul className="space-y-1 mb-4">
-                          {plan.features.split("\n").filter(Boolean).map((f, i) => (
-                            <li key={i} className="flex items-start gap-1.5 text-[10px] font-futura text-gray-600">
+                          {plan.features.split("\n").filter(Boolean).map((f) => (
+                            <li key={f.trim()} className="flex items-start gap-1.5 text-[10px] font-futura text-gray-600">
                               <svg className="w-3 h-3 text-emerald-500 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
@@ -704,9 +734,9 @@ export default function BillingPage() {
                   </p>
                 ) : (
                   <div className="space-y-3">
-                    {history.map((entry, i) => (
+                    {history.map((entry) => (
                       <div
-                        key={i}
+                        key={`${entry.timestamp}-${entry.event_type}`}
                         className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0"
                       >
                         <div className="flex items-center gap-3">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 const MODELS = [
   {
@@ -299,9 +299,9 @@ export default function ModelConfigDemo() {
 
           {/* Footer dots */}
           <div className="flex items-center justify-center gap-0 py-1" style={{ borderTop: '1px solid rgba(0,0,0,0.03)' }}>
-            {MODELS.map((_, i) => (
+            {MODELS.map((model, i) => (
               <button
-                key={i}
+                key={model.name}
                 onClick={() => goTo(i)}
                 aria-label={`Go to model ${i + 1}: ${MODELS[i].name}`}
                 className="relative flex items-center justify-center transition-all duration-300"

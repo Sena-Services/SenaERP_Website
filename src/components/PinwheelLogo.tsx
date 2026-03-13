@@ -61,6 +61,7 @@ export default function PinwheelLogo({
       `}</style>
 
       {showStick && (
+        // eslint-disable-next-line @next/next/no-img-element -- CSS-class-based sizing via <style jsx> is incompatible with next/image wrapper
         <img
           className="logo-stick"
           src="/sena-logo-stick.png"
@@ -68,6 +69,7 @@ export default function PinwheelLogo({
           style={filter ? { filter } : undefined}
         />
       )}
+      {/* eslint-disable-next-line @next/next/no-img-element -- CSS-class-based sizing via <style jsx> is incompatible with next/image wrapper */}
       <img
         className="logo-pinwheel"
         src="/sena-logo-pinwheel.png"

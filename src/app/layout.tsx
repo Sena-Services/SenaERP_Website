@@ -1,6 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Tangerine } from "next/font/google";
 import "./globals.css";
 import LoadingScreen from "@/components/LoadingScreen";
+
+const tangerine = Tangerine({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-tangerine",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -24,12 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning={true}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@400;700&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" suppressHydrationWarning={true} className={tangerine.variable}>
       <body className="antialiased overflow-x-hidden" suppressHydrationWarning={true}>
         <LoadingScreen />
         {children}

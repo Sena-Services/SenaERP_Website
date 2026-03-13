@@ -99,9 +99,6 @@ export function useHomeScrollSnap({
       return () => window.removeEventListener('scroll', handleMobileScroll);
     }
 
-    // IMPORTANT: Skip all desktop scroll snapping logic on mobile
-    if (isMobile) return;
-
     let isAnimating = false;
     let animationFrameId: number;
     let directionLock: 'up' | 'down' | null = null;
@@ -498,47 +495,53 @@ export function useHomeScrollSnap({
     let isBouncing = false;
 
     const clampScrollPosition = () => {
-      if (hasLeftHome) {
-        const points = getSnapPoints();
-        const minScroll = points.rotated;
-        const currentScroll = window.scrollY;
+      if (!hasLeftHome) {
+        clampAnimationFrame = null;
+        return;
+      }
 
-        if (currentScroll < minScroll) {
-          const overscroll = minScroll - currentScroll;
+      const points = getSnapPoints();
+      const minScroll = points.rotated;
+      const currentScroll = window.scrollY;
 
-          if (!isBouncing) {
-            isBouncing = true;
-            bounceVelocity = Math.min(overscroll * 0.15, 8);
-          }
+      if (currentScroll < minScroll) {
+        const overscroll = minScroll - currentScroll;
 
-          const springForce = overscroll * 0.12;
-          const damping = 0.85;
+        if (!isBouncing) {
+          isBouncing = true;
+          bounceVelocity = Math.min(overscroll * 0.15, 8);
+        }
 
-          bounceVelocity = (bounceVelocity + springForce) * damping;
+        const springForce = overscroll * 0.12;
+        const damping = 0.85;
 
-          const newScroll = currentScroll + bounceVelocity;
+        bounceVelocity = (bounceVelocity + springForce) * damping;
 
-          if (Math.abs(minScroll - newScroll) < 1 && Math.abs(bounceVelocity) < 0.5) {
-            window.scrollTo(0, minScroll);
-            isBouncing = false;
-            bounceVelocity = 0;
-          } else {
-            window.scrollTo(0, Math.min(newScroll, minScroll));
-          }
-        } else {
+        const newScroll = currentScroll + bounceVelocity;
+
+        if (Math.abs(minScroll - newScroll) < 1 && Math.abs(bounceVelocity) < 0.5) {
+          window.scrollTo(0, minScroll);
           isBouncing = false;
           bounceVelocity = 0;
+          clampAnimationFrame = null;
+        } else {
+          window.scrollTo(0, Math.min(newScroll, minScroll));
+          clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
         }
-      }
-      if (hasLeftHome) {
-        clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
+      } else {
+        isBouncing = false;
+        bounceVelocity = 0;
+        clampAnimationFrame = null;
       }
     };
 
-    // Only start the clamping loop when hasLeftHome is true via a scroll listener
+    // Start the clamping rAF loop only when overscroll is detected, not continuously
     const startClampIfNeeded = () => {
       if (hasLeftHome && clampAnimationFrame === null) {
-        clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
+        const points = getSnapPoints();
+        if (window.scrollY < points.rotated) {
+          clampAnimationFrame = requestAnimationFrame(clampScrollPosition);
+        }
       }
     };
     window.addEventListener('scroll', startClampIfNeeded, { passive: true });

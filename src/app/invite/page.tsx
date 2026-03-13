@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
-import { storePlatformToken, verifyPlatformToken } from "@/lib/auth";
+import { storePlatformToken, verifyPlatformToken, isSafeRedirectUrl } from "@/lib/auth";
 import PinwheelLogo from "@/components/PinwheelLogo";
 
 /** Validate an invite token via the centralized API client. */
@@ -117,7 +117,7 @@ function InvitePageContent() {
         // Emails match — accept the invite
         const acceptResult = await acceptInvite(inviteToken, inviteEmail);
 
-        if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token) {
+        if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token && isSafeRedirectUrl(acceptResult.site_url)) {
           window.location.href = `${acceptResult.site_url}/login?token=${acceptResult.token}`;
           return;
         } else {
@@ -160,7 +160,7 @@ function InvitePageContent() {
         setView("error");
       }
     })();
-  }, [inviteToken]);
+  }, [inviteToken, searchParams]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,7 +190,7 @@ function InvitePageContent() {
       // Accept the invite
       const acceptResult = await acceptInvite(inviteToken, invite.email);
 
-      if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token) {
+      if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token && isSafeRedirectUrl(acceptResult.site_url)) {
         window.location.href = `${acceptResult.site_url}/login?token=${acceptResult.token}`;
       } else {
         setError(acceptResult?.error || "Failed to accept invite.");
@@ -240,7 +240,7 @@ function InvitePageContent() {
       // Accept the invite
       const acceptResult = await acceptInvite(inviteToken, invite.email);
 
-      if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token) {
+      if (acceptResult?.success && acceptResult?.site_url && acceptResult?.token && isSafeRedirectUrl(acceptResult.site_url)) {
         window.location.href = `${acceptResult.site_url}/login?token=${acceptResult.token}`;
       } else {
         setError(acceptResult?.error || "Failed to accept invite.");

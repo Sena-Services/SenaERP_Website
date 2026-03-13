@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import DOMPurify from "dompurify";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import NavBar from "@/components/NavBar";
@@ -40,6 +41,9 @@ export default function BlogArticlePage() {
   };
 
   useEffect(() => {
+    if (!blogId) return;
+    const controller = new AbortController();
+
     const fetchData = async () => {
       try {
         // Fetch the current article
@@ -49,6 +53,7 @@ export default function BlogArticlePage() {
             blog_id: blogId,
             name: blogId,
           }),
+          signal: controller.signal,
         });
 
         const articleResult = await articleResponse.json();
@@ -62,6 +67,7 @@ export default function BlogArticlePage() {
         // Fetch all blogs for the sidebar
         const blogsResponse = await frappeAPI.call(getApiUrl(API_CONFIG.ENDPOINTS.GET_PUBLISHED_BLOGS), {
           method: "POST",
+          signal: controller.signal,
         });
 
         const blogsResult = await blogsResponse.json();
@@ -69,16 +75,16 @@ export default function BlogArticlePage() {
         if (blogsResult.message?.success && blogsResult.message?.data) {
           setAllBlogs(blogsResult.message.data);
         }
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
         setError("Failed to load blog post");
       } finally {
         setLoading(false);
       }
     };
 
-    if (blogId) {
-      fetchData();
-    }
+    fetchData();
+    return () => controller.abort();
   }, [blogId]);
 
   if (loading) {
@@ -97,7 +103,7 @@ export default function BlogArticlePage() {
           <div className="max-w-4xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-16">
             <div className="flex items-center justify-center py-12 min-h-[300px] sm:min-h-[400px]">
               <div className="flex flex-col items-center gap-3">
-                <img src="/sena-logo-pinwheel.png" alt="" style={{ width: "48px", height: "48px", animation: "spin 3s linear infinite" }} />
+                <Image src="/sena-logo-pinwheel.png" alt="" width={48} height={48} style={{ animation: "spin 3s linear infinite" }} />
                 <p className="text-gray-400" style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", fontSize: "13px", letterSpacing: "0.05em" }}>
                   Loading article...
                 </p>

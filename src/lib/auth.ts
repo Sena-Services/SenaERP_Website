@@ -3,6 +3,32 @@
  * Handles platform token auth (localStorage-based) and user management
  */
 
+/**
+ * Validates that a redirect URL is a safe origin before navigating.
+ * Accepts https:// on senaerp.com / *.senaerp.com, and localhost variants for dev.
+ */
+export function isSafeRedirectUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === 'https:') {
+      return (
+        parsed.hostname === 'senaerp.com' ||
+        parsed.hostname.endsWith('.senaerp.com')
+      );
+    }
+    // Allow localhost / *.localhost for local dev
+    if (parsed.protocol === 'http:') {
+      return (
+        parsed.hostname === 'localhost' ||
+        parsed.hostname.endsWith('.localhost')
+      );
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 import { getApiUrl, API_CONFIG, frappeAPI } from './config';
 
 const PLATFORM_TOKEN_KEY = 'sena_platform_token';

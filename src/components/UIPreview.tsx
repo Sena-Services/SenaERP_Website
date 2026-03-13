@@ -62,7 +62,7 @@ export default function UIPreview({ buildingStage, exampleType }: UIPreviewProps
               { label: "Users", value: "892", change: "+5.7%" },
             ].map((metric, i) => (
               <motion.div
-                key={i}
+                key={metric.label}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: i * 0.1 }}

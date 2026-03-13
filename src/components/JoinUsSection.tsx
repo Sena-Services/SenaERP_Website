@@ -2,7 +2,7 @@
 
 import { forwardRef, useEffect, useState } from "react";
 import Link from "next/link";
-import { getResponsiveValue as _getResponsiveValue } from "@/lib/responsive";
+import { getResponsiveValue } from "@/lib/responsive";
 
 const socialLinks = [
   {
@@ -70,8 +70,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
     };
   }, []);
 
-  const getResponsiveValue = (baseValue: number) =>
-    _getResponsiveValue(viewportHeight, baseValue);
+  const getResponsiveVal = (baseValue: number) =>
+    getResponsiveValue(viewportHeight, baseValue);
 
   return (
     <section
@@ -80,7 +80,7 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
       className="scroll-mt-24"
       style={{
         paddingTop: '16px',
-        paddingBottom: isMobile ? '80px' : `${getResponsiveValue(120)}px`,
+        paddingBottom: isMobile ? '80px' : `${getResponsiveVal(120)}px`,
       }}
     >
       <div
@@ -92,11 +92,11 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           backgroundColor: '#F5F3E8',
           border: '2px solid #9CA3AF',
-          minHeight: isMobile ? '400px' : `${getResponsiveValue(320)}px`,
+          minHeight: isMobile ? '400px' : `${getResponsiveVal(320)}px`,
           height: 'auto',
-          maxHeight: isMobile ? 'none' : `${getResponsiveValue(400)}px`,
+          maxHeight: isMobile ? 'none' : `${getResponsiveVal(400)}px`,
           overflow: 'hidden',
-          borderRadius: isMobile ? '24px' : `${getResponsiveValue(40)}px`,
+          borderRadius: isMobile ? '24px' : `${getResponsiveVal(40)}px`,
           zIndex: 10,
         }}
       >
@@ -104,8 +104,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
         <div
           className="absolute bottom-0 left-0 pointer-events-none"
           style={{
-            width: isMobile ? '180px' : `${getResponsiveValue(360)}px`,
-            height: isMobile ? '180px' : `${getResponsiveValue(360)}px`,
+            width: isMobile ? '180px' : `${getResponsiveVal(360)}px`,
+            height: isMobile ? '180px' : `${getResponsiveVal(360)}px`,
             backgroundImage: 'url(/illustrations/joinus-bottomleft.png)',
             backgroundSize: 'contain',
             backgroundPosition: 'bottom left',
@@ -118,8 +118,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
         <div
           className="absolute top-0 right-0 pointer-events-none"
           style={{
-            width: isMobile ? '180px' : `${getResponsiveValue(360)}px`,
-            height: isMobile ? '180px' : `${getResponsiveValue(360)}px`,
+            width: isMobile ? '180px' : `${getResponsiveVal(360)}px`,
+            height: isMobile ? '180px' : `${getResponsiveVal(360)}px`,
             backgroundImage: 'url(/illustrations/joinus-topright.png)',
             backgroundSize: 'contain',
             backgroundPosition: 'top right',
@@ -134,7 +134,7 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
           style={{
             background: 'linear-gradient(to bottom, rgba(235, 229, 217, 0.2) 0%, rgba(235, 229, 217, 0.05) 50%, rgba(235, 229, 217, 0.2) 100%)',
             mixBlendMode: 'overlay',
-            borderRadius: isMobile ? '24px' : `${getResponsiveValue(40)}px`,
+            borderRadius: isMobile ? '24px' : `${getResponsiveVal(40)}px`,
           }}
         />
 
@@ -142,13 +142,13 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
         <div
           className="relative h-full flex flex-col items-center justify-center text-center"
           style={{
-            paddingTop: isMobile ? '48px' : `${getResponsiveValue(32)}px`,
-            paddingBottom: isMobile ? '48px' : `${getResponsiveValue(32)}px`,
-            paddingLeft: isMobile ? '24px' : `${getResponsiveValue(24)}px`,
-            paddingRight: isMobile ? '24px' : `${getResponsiveValue(24)}px`,
+            paddingTop: isMobile ? '48px' : `${getResponsiveVal(32)}px`,
+            paddingBottom: isMobile ? '48px' : `${getResponsiveVal(32)}px`,
+            paddingLeft: isMobile ? '24px' : `${getResponsiveVal(24)}px`,
+            paddingRight: isMobile ? '24px' : `${getResponsiveVal(24)}px`,
           }}
         >
-          <div style={{ maxWidth: isMobile ? '100%' : `${getResponsiveValue(672)}px`, display: 'flex', flexDirection: 'column', gap: isMobile ? '20px' : `${getResponsiveValue(16)}px` }}>
+          <div style={{ maxWidth: isMobile ? '100%' : `${getResponsiveVal(672)}px`, display: 'flex', flexDirection: 'column', gap: isMobile ? '20px' : `${getResponsiveVal(16)}px` }}>
             {/* Main heading */}
             <div>
               <h2
@@ -158,7 +158,7 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                   letterSpacing: "-0.02em",
                   color: "#2C1810",
                   fontSize: isMobile ? '32px' : '40px',
-                  marginBottom: isMobile ? '8px' : `${getResponsiveValue(8)}px`,
+                  marginBottom: isMobile ? '8px' : `${getResponsiveVal(8)}px`,
                   lineHeight: "1.2",
                 }}
               >
@@ -167,7 +167,7 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
               <p
                 className="text-gray-700 font-futura mx-auto"
                 style={{
-                  maxWidth: isMobile ? '100%' : `${getResponsiveValue(576)}px`,
+                  maxWidth: isMobile ? '100%' : `${getResponsiveVal(576)}px`,
                   letterSpacing: "-0.01em",
                   fontSize: isMobile ? '14px' : '16px',
                 }}
@@ -179,7 +179,7 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             {/* Social links */}
             <div
               className="flex items-center justify-center py-2"
-              style={{ gap: isMobile ? '12px' : `${getResponsiveValue(16)}px` }}
+              style={{ gap: isMobile ? '12px' : `${getResponsiveVal(16)}px` }}
             >
               {socialLinks.map((social) => (
                 <div key={social.name} className="relative">
@@ -192,8 +192,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                       aria-label={social.name}
                       className="group relative flex items-center justify-center rounded-full bg-white/70 backdrop-blur-md border border-gray-200/50 shadow-md hover:shadow-xl hover:bg-white transition-all duration-300 hover:-translate-y-1"
                       style={{
-                        width: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
-                        height: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
+                        width: isMobile ? '44px' : `${getResponsiveVal(48)}px`,
+                        height: isMobile ? '44px' : `${getResponsiveVal(48)}px`,
                       }}
                     >
                       <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
@@ -208,8 +208,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                       aria-label={social.name}
                       className="group relative flex items-center justify-center rounded-full bg-white/70 backdrop-blur-md border border-gray-200/50 shadow-md hover:shadow-xl hover:bg-white transition-all duration-300 hover:-translate-y-1"
                       style={{
-                        width: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
-                        height: isMobile ? '44px' : `${getResponsiveValue(48)}px`,
+                        width: isMobile ? '44px' : `${getResponsiveVal(48)}px`,
+                        height: isMobile ? '44px' : `${getResponsiveVal(48)}px`,
                       }}
                     >
                       <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
@@ -232,17 +232,17 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             </div>
 
             {/* CTA Button */}
-            <div style={{ paddingTop: isMobile ? '8px' : `${getResponsiveValue(4)}px` }}>
+            <div style={{ paddingTop: isMobile ? '8px' : `${getResponsiveVal(4)}px` }}>
               <Link
                 href="/careers"
                 className="inline-flex items-center rounded-full bg-white text-gray-700 font-futura font-bold shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-gray-50 transition-all duration-300 hover:-translate-y-1 border-2 border-gray-200"
                 style={{
-                  gap: isMobile ? '8px' : `${getResponsiveValue(8)}px`,
-                  paddingLeft: isMobile ? '24px' : `${getResponsiveValue(28)}px`,
-                  paddingRight: isMobile ? '24px' : `${getResponsiveValue(28)}px`,
-                  paddingTop: isMobile ? '12px' : `${getResponsiveValue(12)}px`,
-                  paddingBottom: isMobile ? '12px' : `${getResponsiveValue(12)}px`,
-                  fontSize: isMobile ? '15px' : `${getResponsiveValue(16)}px`,
+                  gap: isMobile ? '8px' : `${getResponsiveVal(8)}px`,
+                  paddingLeft: isMobile ? '24px' : `${getResponsiveVal(28)}px`,
+                  paddingRight: isMobile ? '24px' : `${getResponsiveVal(28)}px`,
+                  paddingTop: isMobile ? '12px' : `${getResponsiveVal(12)}px`,
+                  paddingBottom: isMobile ? '12px' : `${getResponsiveVal(12)}px`,
+                  fontSize: isMobile ? '15px' : `${getResponsiveVal(16)}px`,
                 }}
               >
                 <span>View open positions</span>
@@ -253,8 +253,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
                   stroke="currentColor"
                   strokeWidth={2.5}
                   style={{
-                    width: isMobile ? '16px' : `${getResponsiveValue(16)}px`,
-                    height: isMobile ? '16px' : `${getResponsiveValue(16)}px`,
+                    width: isMobile ? '16px' : `${getResponsiveVal(16)}px`,
+                    height: isMobile ? '16px' : `${getResponsiveVal(16)}px`,
                   }}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -266,8 +266,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             <div
               className="flex items-center justify-center font-futura text-gray-600"
               style={{
-                fontSize: isMobile ? '11px' : `${getResponsiveValue(12)}px`,
-                paddingTop: isMobile ? '4px' : `${getResponsiveValue(4)}px`,
+                fontSize: isMobile ? '11px' : `${getResponsiveVal(12)}px`,
+                paddingTop: isMobile ? '4px' : `${getResponsiveVal(4)}px`,
                 gap: '6px',
               }}
             >
@@ -285,8 +285,8 @@ const JoinUsSection = forwardRef<HTMLElement>(function JoinUsSection(props, ref)
             <div
               className="flex items-center justify-center gap-2 font-futura text-gray-500"
               style={{
-                fontSize: isMobile ? '10px' : `${getResponsiveValue(11)}px`,
-                paddingTop: isMobile ? '8px' : `${getResponsiveValue(8)}px`,
+                fontSize: isMobile ? '10px' : `${getResponsiveVal(11)}px`,
+                paddingTop: isMobile ? '8px' : `${getResponsiveVal(8)}px`,
               }}
             >
               <Link

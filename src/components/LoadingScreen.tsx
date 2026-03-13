@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import NextImage from "next/image";
 
 const CRITICAL_IMAGES = [
   "/sena-logo-pinwheel.png",
@@ -177,12 +178,13 @@ export default function LoadingScreen() {
         }}
       >
         {/* Stick */}
-        <img
+        <NextImage
           src="/sena-logo-stick.png"
           alt=""
+          width={140}
+          height={140}
           style={{
             position: "absolute",
-            width: "140px",
             height: "auto",
             left: "50%",
             top: "30px",
@@ -203,12 +205,12 @@ export default function LoadingScreen() {
             zIndex: 2,
           }}
         >
-          <img
+          <NextImage
             src="/sena-logo-pinwheel.png"
             alt="Sena"
+            width={130}
+            height={130}
             style={{
-              width: "100%",
-              height: "100%",
               transformOrigin: "center center",
               animation: "loadingSpin 3s linear infinite",
             }}
