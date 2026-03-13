@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import SignupModal from './SignupModal';
-import Toast from './Toast';
+import SignupModal from '@/components/shared/SignupModal';
+import Toast from '@/components/shared/Toast';
 
 type IntroCTAButtonsProps = {
   isMobile: boolean;

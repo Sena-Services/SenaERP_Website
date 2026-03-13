@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/NavBar";
-import CareersSection from "@/components/CareersSection";
-import { PageTransition } from "@/components/PageTransition";
+import NavBar from "@/components/nav/NavBar";
+import CareersSection from "@/components/sections/CareersSection";
+import { PageTransition } from "@/components/shared/PageTransition";
 
 export default function CareersPage() {
   const router = useRouter();

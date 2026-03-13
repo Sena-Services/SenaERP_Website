@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import PinwheelLogo from './PinwheelLogo';
+import PinwheelLogo from '@/components/shared/PinwheelLogo';
 import IntroCTAButtons from './IntroCTAButtons';
-import { useIntroContentScroll } from './useIntroContentScroll';
+import { useIntroContentScroll } from '@/hooks/useIntroContentScroll';
 
 type IntroContentProps = {
   contentOpacity: number;

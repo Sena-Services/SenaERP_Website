@@ -5,7 +5,7 @@ import Image from "next/image";
 import FlipCard from "./FlipCard";
 import IntroContent from "./IntroContent";
 import IntroCardDetail from "./IntroCardDetail";
-import { useIntroScrollAnimation, type ExpandedCard } from "./useIntroScrollAnimation";
+import { useIntroScrollAnimation, type ExpandedCard } from "@/hooks/useIntroScrollAnimation";
 
 export default function IntroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/NavBar";
-import { PageTransition } from "@/components/PageTransition";
+import NavBar from "@/components/nav/NavBar";
+import { PageTransition } from "@/components/shared/PageTransition";
 
 const buildingBlocks = [
   { name: "Model", desc: "The LLM that powers the agent's thinking." },

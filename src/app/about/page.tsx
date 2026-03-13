@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import NavBar from "@/components/NavBar";
-import { PageTransition, BackButton } from "@/components/PageTransition";
+import NavBar from "@/components/nav/NavBar";
+import { PageTransition, BackButton } from "@/components/shared/PageTransition";
 
 const cofounders = [
   {

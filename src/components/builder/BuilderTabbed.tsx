@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { getResponsiveValue } from "@/lib/responsive";
 import ModelConfigDemo from "./ModelConfigDemo";
 import { ToolsConfigPreview, SkillsConfigPreview, TriggersConfigPreview, UIConfigPreview, LogicConfigPreview } from "./TabConfigPreviews";
-import MobileAgentBlocks from "./MobileAgentBlocks";
+import MobileAgentBlocks from "@/components/sections/MobileAgentBlocks";
 import { tabs } from "./builderTabsData";
 
 // Module-level lookup map — stable, not a React dep

@@ -4,20 +4,20 @@ import React, { Suspense, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import IntroSection from "@/components/IntroSection";
-import MobileHowItWorks from "@/components/MobileHowItWorks";
-import NavBar from "@/components/NavBar";
-import SidebarNav from "@/components/SidebarNav";
+import IntroSection from "@/components/intro/IntroSection";
+import MobileHowItWorks from "@/components/sections/MobileHowItWorks";
+import NavBar from "@/components/nav/NavBar";
+import SidebarNav from "@/components/nav/SidebarNav";
 import { useHomeScrollSnap } from "@/hooks/useHomeScrollSnap";
-import { PageTransition } from "@/components/PageTransition";
+import { PageTransition } from "@/components/shared/PageTransition";
 
 
 // Lazy-load below-fold sections
-const BuilderTabbed = dynamic(() => import("@/components/BuilderTabbed"), { ssr: false });
-const ContractsSection = dynamic(() => import("@/components/ContractsSection"), { ssr: false });
-const LandingRegistry = dynamic(() => import("@/components/LandingRegistry"), { ssr: false });
-const JoinUsSection = dynamic(() => import("@/components/JoinUsSection"), { ssr: false });
-const GetAccessSection = dynamic(() => import("@/components/GetAccessSection"), { ssr: false });
+const BuilderTabbed = dynamic(() => import("@/components/builder/BuilderTabbed"), { ssr: false });
+const ContractsSection = dynamic(() => import("@/components/sections/ContractsSection"), { ssr: false });
+const LandingRegistry = dynamic(() => import("@/components/sections/LandingRegistry"), { ssr: false });
+const JoinUsSection = dynamic(() => import("@/components/sections/JoinUsSection"), { ssr: false });
+const GetAccessSection = dynamic(() => import("@/components/sections/GetAccessSection"), { ssr: false });
 
 function SectionDivider({ fromColor, toColor }: { fromColor: string; toColor: string }) {
   return (

@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/NavBar";
-import Toast from "@/components/Toast";
+import NavBar from "@/components/nav/NavBar";
+import Toast from "@/components/shared/Toast";
 import { getPlatformToken } from "@/lib/auth";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 

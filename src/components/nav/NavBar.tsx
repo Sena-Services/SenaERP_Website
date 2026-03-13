@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SignupModal from "./SignupModal";
-import Toast from "./Toast";
+import SignupModal from "@/components/shared/SignupModal";
+import Toast from "@/components/shared/Toast";
 import Image from "next/image";
-import PinwheelLogo from "./PinwheelLogo";
+import PinwheelLogo from "@/components/shared/PinwheelLogo";
 import NavProfileDropdown from "./NavProfileDropdown";
-import { useNavAuth } from "./useNavAuth";
+import { useNavAuth } from "@/hooks/useNavAuth";
 
 const sections = [
   { id: "intro", label: "Home" },

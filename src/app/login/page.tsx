@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import { storePlatformToken, goToSite, isSafeRedirectUrl } from "@/lib/auth";
-import PinwheelLogo from "@/components/PinwheelLogo";
+import PinwheelLogo from "@/components/shared/PinwheelLogo";
 
 export default function LoginPage() {
   return (

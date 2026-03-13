@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { PageTransition, BackButton } from "@/components/PageTransition";
+import { PageTransition, BackButton } from "@/components/shared/PageTransition";
 
 export default function TermsAndConditions() {
   return (

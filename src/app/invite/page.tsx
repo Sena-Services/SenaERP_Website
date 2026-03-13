@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
 import { storePlatformToken, verifyPlatformToken, isSafeRedirectUrl } from "@/lib/auth";
-import PinwheelLogo from "@/components/PinwheelLogo";
+import PinwheelLogo from "@/components/shared/PinwheelLogo";
 
 /** Validate an invite token via the centralized API client. */
 async function validateInvite(token: string) {

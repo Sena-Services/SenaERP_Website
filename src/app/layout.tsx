@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Tangerine } from "next/font/google";
 import "./globals.css";
-import LoadingScreen from "@/components/LoadingScreen";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 
 const tangerine = Tangerine({
   weight: ["400", "700"],

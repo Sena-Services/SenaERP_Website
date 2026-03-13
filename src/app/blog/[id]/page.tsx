@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import DOMPurify from "dompurify";
 import { getApiUrl, API_CONFIG, frappeAPI } from "@/lib/config";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/nav/NavBar";
 import Link from "next/link";
 
 type BlogArticle = {

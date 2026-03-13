@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import type { ExpandedCard } from "./useIntroScrollAnimation";
+import type { ExpandedCard } from "@/hooks/useIntroScrollAnimation";
 
 type IntroCardDetailProps = {
   expandedCard: ExpandedCard;
